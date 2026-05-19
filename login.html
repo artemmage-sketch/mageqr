@@ -82,6 +82,21 @@ body::before{
 
 .footer{text-align:center;margin-top:1.5rem;font-size:11px;color:var(--muted)}
 </style>
+
+<!-- ═══════════════════════════════════════════════════════
+     FIREBASE CONFIG — ВСТАВТЕ СВОЇ КЛЮЧІ ТУТ
+     Замініть значення нижче на свої з Firebase Console
+     ═══════════════════════════════════════════════════════ -->
+<script>
+window.__MQ_CFG = {
+  apiKey:            "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
+  authDomain:        "mageqrrest.firebaseapp.com",
+  projectId:         "mageqrrest",
+  storageBucket:     "mageqrrest.firebasestorage.app",
+  messagingSenderId: "207231972557",
+  appId:             "1:207231972557:web:f8234c22e6b32a0a2ee584"
+};
+</script>
 </head>
 <body>
 <!-- ДІАГНОСТИКА: тимчасово замінює anti-scraping.js -->
@@ -101,9 +116,9 @@ window.onerror=(m,s,l)=>{lg('ERR: '+m+' ('+( s||'').split('/').pop()+':'+l+')','
 window.addEventListener('unhandledrejection',e=>{lg('PROMISE: '+(e.reason?.code||e.reason?.message||String(e.reason)),'e');});
 lg('Домен: '+location.hostname);
 lg('Origin: '+location.origin);
-import('./firebase-config.js')
-  .then(m=>{lg('✓ firebase-config.js OK');lg('projectId: '+(m.firebaseConfig?.projectId||'???'));lg('apiKey: '+(m.firebaseConfig?.apiKey?m.firebaseConfig.apiKey.slice(0,14)+'...':'НЕ ЗНАЙДЕНО'));})
-  .catch(e=>{lg('✗ firebase-config.js FAILED: '+e.message,'e');});
+lg('✓ Конфіг вбудовано напряму в HTML');
+lg('projectId: ' + (window.__MQ_CFG?.projectId || '???'));
+lg('Домен дозволений: перевіряємо...');
 </script>
 
 <!-- HONEYPOT -->
@@ -287,9 +302,10 @@ async function doVenueLogin() {
     const { getAuth, signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
 
     // Ініціалізуємо Firebase (тільки один раз)
-    const { firebaseConfig } = await import('./firebase-config.js');
+    const firebaseConfig = window.__MQ_CFG;
     const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    lg && lg('Спроба входу: ' + email);
 
     // Спроба входу
     const userCred = await signInWithEmailAndPassword(auth, email, pass);
@@ -335,7 +351,7 @@ async function doSuperLogin() {
     const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
     const { getAuth, signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
 
-    const { firebaseConfig } = await import('./firebase-config.js');
+    const firebaseConfig = window.__MQ_CFG;
     const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
