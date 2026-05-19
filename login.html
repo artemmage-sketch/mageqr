@@ -84,7 +84,27 @@ body::before{
 </style>
 </head>
 <body>
-<script src="anti-scraping.js"></script>
+<!-- ДІАГНОСТИКА: тимчасово замінює anti-scraping.js -->
+<style>
+#dbg{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #2a2a2a;padding:.625rem 1rem;font-family:monospace;font-size:11px;color:#4ADE80;max-height:160px;overflow-y:auto;z-index:9999;display:none}
+#dbg.on{display:block}
+#dbg .e{color:#F87171}
+#dbg .w{color:#FCD34D}
+#dbg-btn{position:fixed;bottom:0;right:1rem;background:#1a1a1a;border:1px solid #333;color:#666;font-size:10px;padding:2px 8px;border-radius:4px 4px 0 0;cursor:pointer;z-index:10000;font-family:monospace;border-bottom:none}
+</style>
+<button id="dbg-btn" onclick="document.getElementById('dbg').classList.toggle('on');this.textContent=document.getElementById('dbg').classList.contains('on')?'▼ LOG':'▲ LOG'">▲ LOG</button>
+<div id="dbg"></div>
+<script>
+const _dbg=document.getElementById('dbg');
+function lg(m,t){const d=document.createElement('div');d.className=t||'';d.textContent='['+new Date().toLocaleTimeString()+'] '+m;_dbg.appendChild(d);_dbg.scrollTop=_dbg.scrollHeight;_dbg.classList.add('on');document.getElementById('dbg-btn').textContent='▼ LOG';}
+window.onerror=(m,s,l)=>{lg('ERR: '+m+' ('+( s||'').split('/').pop()+':'+l+')','e');};
+window.addEventListener('unhandledrejection',e=>{lg('PROMISE: '+(e.reason?.code||e.reason?.message||String(e.reason)),'e');});
+lg('Домен: '+location.hostname);
+lg('Origin: '+location.origin);
+import('./firebase-config.js')
+  .then(m=>{lg('✓ firebase-config.js OK');lg('projectId: '+(m.firebaseConfig?.projectId||'???'));lg('apiKey: '+(m.firebaseConfig?.apiKey?m.firebaseConfig.apiKey.slice(0,14)+'...':'НЕ ЗНАЙДЕНО'));})
+  .catch(e=>{lg('✗ firebase-config.js FAILED: '+e.message,'e');});
+</script>
 
 <!-- HONEYPOT -->
 <div style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
