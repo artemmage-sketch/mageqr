@@ -1225,6 +1225,10 @@ window.__MQ_CFG = window.__MQ_CFG || {
       <div><label class="field-label">Вага / об'єм</label><input id="if-weight" type="text" placeholder="250 г"/></div>
       <div><label class="field-label">Категорія</label><select id="if-cat"></select></div>
       <div><label class="field-label">Артикул / код</label><input id="if-sku" type="text" placeholder="необов'язково"/></div>
+      <div class="span2">
+        <label class="field-label">Алергени (оберіть всі що є)</label>
+        <div id="allergen-checkboxes" style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.375rem"></div>
+      </div>
     </div>
     <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveItem()">Зберегти страву</button>
   </div>
@@ -1803,6 +1807,43 @@ async function uploadPhotoAndGetUrl() {
 window.handlePhotoSelect = handlePhotoSelect;
 window.clearPhoto = clearPhoto;
 window.setPhotoFromUrl = setPhotoFromUrl;
+// ── АЛЕРГЕНИ ─────────────────────────────────────────────
+const ALLERGENS_LIST = [
+  {id:'gluten',    icon:'🌾', name:'Глютен'},
+  {id:'milk',      icon:'🥛', name:'Молоко'},
+  {id:'eggs',      icon:'🥚', name:'Яйця'},
+  {id:'nuts',      icon:'🥜', name:'Горіхи'},
+  {id:'fish',      icon:'🐟', name:'Риба'},
+  {id:'seafood',   icon:'🦐', name:'Морепродукти'},
+  {id:'soy',       icon:'🫘', name:'Соя'},
+  {id:'celery',    icon:'🥬', name:'Селера'},
+  {id:'mustard',   icon:'🌶️', name:'Гірчиця'},
+  {id:'sesame',    icon:'🌰', name:'Кунжут'},
+  {id:'sulphites', icon:'⚗️', name:'Сульфіти'},
+  {id:'lupin',     icon:'🌸', name:'Люпин'},
+  {id:'peanuts',   icon:'🥜', name:'Арахіс'},
+];
+
+function renderAllergenCheckboxes(selected=[]) {
+  const wrap = document.getElementById('allergen-checkboxes');
+  if(!wrap) return;
+  wrap.innerHTML = ALLERGENS_LIST.map(a => `
+    <label class="allergen-cb${selected.includes(a.name)?' selected':''}" onclick="toggleAllergen(this,'${a.name}')">
+      <input type="checkbox" value="${a.name}"${selected.includes(a.name)?' checked':''}/>
+      ${a.icon} ${a.name}
+    </label>`).join('');
+}
+
+window.toggleAllergen = function(el, name) {
+  el.classList.toggle('selected');
+  const inp = el.querySelector('input');
+  inp.checked = !inp.checked;
+};
+
+function getSelectedAllergens() {
+  return Array.from(document.querySelectorAll('#allergen-checkboxes input:checked')).map(i=>i.value);
+}
+
 window.saveItem = async function() {
   const { collection, doc, addDoc, setDoc } = window.__FS;
   const name  = document.getElementById('if-name').value.trim();
@@ -1814,12 +1855,13 @@ window.saveItem = async function() {
 
   const data = {
     name,
-    desc:     document.getElementById('if-desc').value,
+    desc:      document.getElementById('if-desc').value,
     price,
-    photoUrl: photoUrl || '',
-    weight:   document.getElementById('if-weight').value,
-    category: document.getElementById('if-cat').value,
-    sku:      document.getElementById('if-sku')?.value || '',
+    photoUrl:  photoUrl || '',
+    weight:    document.getElementById('if-weight').value,
+    category:  document.getElementById('if-cat').value,
+    sku:       document.getElementById('if-sku')?.value || '',
+    allergens: getSelectedAllergens(),
     updatedAt: new Date().toISOString(),
   };
   try {
@@ -2074,7 +2116,7 @@ function openItemModal(id=null){
     document.getElementById('if-weight').value=i.weight||'';
     document.getElementById('if-sku')&&(document.getElementById('if-sku').value=i.sku||'');
     document.getElementById('if-cat').value=i.category||'';
-    // Показуємо фото якщо є
+    renderAllergenCheckboxes(i.allergens||[]);
     if(i.photoUrl){
       document.getElementById('if-photo-url').value=i.photoUrl;
       document.getElementById('if-photo-url-input').value=i.photoUrl;
@@ -2084,6 +2126,7 @@ function openItemModal(id=null){
     document.getElementById('item-modal-t').textContent='Нова страва';
     ['if-name','if-desc','if-price','if-weight'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('if-sku')&&(document.getElementById('if-sku').value='');
+    renderAllergenCheckboxes([]);
     clearPhoto();
     currentPhotoFile=null;
   }
