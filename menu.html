@@ -226,7 +226,8 @@ async function init() {
     activeCat = allCats[0]?.name || null;
     renderCats(); renderMenu();
   } catch(e) {
-    $('menu-body').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div>Не вдалось завантажити меню. Оновіть сторінку.</div></div>';
+    console.error('init error:', e);
+    $('menu-body').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div style="font-size:13px;margin-top:.5rem">Код помилки: <b>${e.code||'unknown'}</b></div><div style="font-size:11px;color:#999;margin-top:.375rem;padding:0 1rem;word-break:break-all">${e.message}</div></div>`;
   } finally {
     $('loader').classList.add('gone');
   }
