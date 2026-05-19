@@ -21,14 +21,15 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .loader-spin{width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loader.gone{display:none}
-.banner{width:100%;min-height:130px;background:var(--accent);position:relative;display:flex;align-items:flex-end;padding:1rem}
-.banner-bg{position:absolute;inset:0;background-size:cover;background-position:center}
-.banner-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);display:none}
-.banner-content{position:relative;z-index:1;display:flex;align-items:center;gap:.875rem}
-.venue-logo{width:56px;height:56px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;overflow:hidden;border:2px solid rgba(255,255,255,.4)}
+/* BANNER — дві зони: фото зверху, інфо знизу */
+.banner-photo{width:100%;height:160px;background:var(--accent);position:relative;overflow:hidden}
+.banner-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.banner-photo-placeholder{width:100%;height:100%;background:var(--accent)}
+.venue-header{background:var(--card);border-bottom:1px solid var(--border);padding:.875rem 1rem;display:flex;align-items:center;gap:.875rem}
+.venue-logo{width:52px;height:52px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;overflow:hidden;border:2px solid var(--border)}
 .venue-logo img{width:100%;height:100%;object-fit:cover}
-.venue-name{font-family:var(--font-head);font-size:1.3rem;color:#fff;font-weight:600;line-height:1.2}
-.venue-tag{font-size:12px;color:rgba(255,255,255,.8);margin-top:.25rem}
+.venue-name{font-family:var(--font-head);font-size:1.15rem;color:var(--text);font-weight:600;line-height:1.2}
+.venue-tag{font-size:12px;color:var(--muted);margin-top:.2rem}
 .cat-bar{background:var(--card);border-bottom:1px solid var(--border);padding:.625rem 1rem;display:flex;gap:.5rem;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:10}
 .cat-bar::-webkit-scrollbar{display:none}
 .cat-pill{padding:5px 14px;border-radius:20px;font-size:13px;border:1px solid var(--border);white-space:nowrap;cursor:pointer;background:var(--card);color:var(--muted);transition:all .15s;font-family:var(--font-body);flex-shrink:0}
@@ -103,11 +104,11 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 <script>
 window.__MQ_CFG = {
   apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-    authDomain: "mageqrrest.firebaseapp.com",
-    projectId: "mageqrrest",
-    storageBucket: "mageqrrest.firebasestorage.app",
-    messagingSenderId: "207231972557",
-    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+  authDomain: "mageqrrest.firebaseapp.com",
+  projectId: "mageqrrest",
+  storageBucket: "mageqrrest.firebasestorage.app",
+  messagingSenderId: "207231972557",
+  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 </script>
 
@@ -116,15 +117,17 @@ window.__MQ_CFG = {
   <div class="loader-spin"></div>
 </div>
 
-<div class="banner" id="banner">
-  <div class="banner-bg" id="banner-bg"></div>
-  <div class="banner-overlay" id="banner-ov"></div>
-  <div class="banner-content">
-    <div class="venue-logo" id="venue-logo">🍽️</div>
-    <div>
-      <div class="venue-name" id="venue-name">Меню</div>
-      <div class="venue-tag" id="venue-tag"></div>
-    </div>
+<!-- БАНЕР: фото зверху -->
+<div class="banner-photo" id="banner-photo">
+  <img id="banner-img" src="" alt="" style="display:none"/>
+  <div class="banner-photo-placeholder" id="banner-placeholder"></div>
+</div>
+<!-- ІНФО: назва і лого окремо внизу -->
+<div class="venue-header">
+  <div class="venue-logo" id="venue-logo">🍽️</div>
+  <div>
+    <div class="venue-name" id="venue-name">Меню</div>
+    <div class="venue-tag" id="venue-tag"></div>
   </div>
 </div>
 
@@ -238,8 +241,27 @@ function applySettings(s) {
   $('venue-name').textContent = s.name || 'Меню закладу';
   const parts = [s.tagline, s.city, s.phone].filter(Boolean);
   $('venue-tag').textContent  = parts.join(' · ');
-  if (s.logoUrl) $('venue-logo').innerHTML = `<img src="${s.logoUrl}" alt="${s.name}"/>`;
-  else if (s.logoEmoji) $('venue-logo').textContent = s.logoEmoji;
+
+  // Логотип
+  if (s.logoUrl) {
+    $('venue-logo').innerHTML = `<img src="${s.logoUrl}" alt="${s.name||''}"/>`;
+  } else if (s.logoEmoji) {
+    $('venue-logo').textContent = s.logoEmoji;
+  }
+
+  // Банер (окрема зона зверху)
+  if (s.bannerUrl) {
+    const img = $('banner-img');
+    img.src = s.bannerUrl;
+    img.style.display = 'block';
+    $('banner-placeholder').style.display = 'none';
+    // Колір акценту для placeholder якщо є
+  } else {
+    // Якщо немає банеру — ховаємо зону фото
+    $('banner-photo').style.display = 'none';
+  }
+
+  // Колір акценту з дизайн-налаштувань вже застосований через applyDesign
 }
 
 function applyDesign(d) {
