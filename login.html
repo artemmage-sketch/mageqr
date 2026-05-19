@@ -262,25 +262,40 @@ async function doVenueLogin() {
   await new Promise(r => setTimeout(r, 600 + Math.random() * 300));
 
   try {
-    // ── FIREBASE AUTH (підключити після налаштування Firebase) ──
-    // const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
-    // const userCred = await signInWithEmailAndPassword(auth, email, pass);
-    // window.location.replace('admin.html');
+    // ── FIREBASE AUTH ──────────────────────────────────────────
+    const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const { getAuth, signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
 
-    // ── DEMO MODE (видалити після підключення Firebase) ──
-    if (email === 'demo@mageqrrest.com' && pass === 'demo1234') {
-      sessionStorage.setItem('__mq_auth', '1');
-      sessionStorage.setItem('__mq_venue', 'demo');
-      window.location.replace('admin.html');
-    } else {
-      incrementAttempts();
-      showErr('v-err', attempts >= 3
-        ? `Невірні дані. Залишилось спроб: ${MAX_ATTEMPTS - attempts}`
-        : 'Невірний email або пароль');
-    }
+    // Ініціалізуємо Firebase (тільки один раз)
+    const { firebaseConfig } = await import('./firebase-config.js');
+    const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Спроба входу
+    const userCred = await signInWithEmailAndPassword(auth, email, pass);
+
+    // Успіх — зберігаємо сесію і переходимо в адмінку
+    sessionStorage.setItem('__mq_auth', '1');
+    sessionStorage.setItem('__mq_uid',   userCred.user.uid);
+    sessionStorage.setItem('__mq_email', userCred.user.email);
+    window.location.replace('admin.html');
+
   } catch (e) {
     incrementAttempts();
-    showErr('v-err', 'Помилка входу. Спробуйте ще раз.');
+
+    // Розшифровуємо помилки Firebase у зрозумілі повідомлення
+    const msg = {
+      'auth/invalid-credential':   'Невірний email або пароль',
+      'auth/user-not-found':       'Користувача не знайдено',
+      'auth/wrong-password':       'Невірний пароль',
+      'auth/too-many-requests':    'Забагато спроб. Спробуйте пізніше.',
+      'auth/user-disabled':        'Акаунт заблоковано. Зверніться до підтримки.',
+      'auth/network-request-failed': 'Немає з\'єднання з інтернетом.',
+    }[e.code] || 'Помилка входу. Перевірте дані і спробуйте ще раз.';
+
+    showErr('v-err', attempts >= 3
+      ? `${msg} (залишилось спроб: ${MAX_ATTEMPTS - attempts})`
+      : msg);
   } finally {
     setLoading('v-btn', false);
   }
@@ -296,13 +311,37 @@ async function doSuperLogin() {
   await new Promise(r => setTimeout(r, 700 + Math.random() * 400));
 
   try {
-    // ── DEMO ──
-    if (email === 'super@mageqrrest.com' && pass === 'super1234') {
-      sessionStorage.setItem('__mq_super', '1');
-      window.location.replace('superadmin.html');
-    } else {
-      showErr('s-err', 'Доступ заборонено');
+    // ── FIREBASE AUTH ──────────────────────────────────────────
+    const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const { getAuth, signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+
+    const { firebaseConfig } = await import('./firebase-config.js');
+    const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const userCred = await signInWithEmailAndPassword(auth, email, pass);
+
+    // Перевіряємо що це дійсно супер-адмін (за email)
+    const SUPER_EMAIL = 'super@mageqrrest.com'; // ← ваш супер-адмін email
+    if (userCred.user.email !== SUPER_EMAIL) {
+      // Не супер-адмін — виходимо і блокуємо
+      await getAuth(app).signOut();
+      showErr('s-err', 'Доступ заборонено для цього акаунту');
+      setLoading('s-btn', false);
+      return;
     }
+
+    sessionStorage.setItem('__mq_super', '1');
+    sessionStorage.setItem('__mq_uid',   userCred.user.uid);
+    window.location.replace('superadmin.html');
+
+  } catch (e) {
+    const msg = {
+      'auth/invalid-credential':   'Невірний email або пароль',
+      'auth/too-many-requests':    'Забагато спроб. Спробуйте пізніше.',
+      'auth/network-request-failed': 'Немає з\'єднання з інтернетом.',
+    }[e.code] || 'Доступ заборонено';
+    showErr('s-err', msg);
   } finally {
     setLoading('s-btn', false);
   }
