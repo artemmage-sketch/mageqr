@@ -1120,14 +1120,41 @@ window.__MQ_CFG = window.__MQ_CFG || {
       <button class="close-btn" onclick="closeModal('modal-item')">✕</button>
     </div>
     <div class="modal-grid">
-      <div class="span2"><label class="field-label">Назва</label><input id="if-name" type="text" placeholder="Філадельфія класик"/></div>
+      <!-- ФОТО СТРАВИ -->
+      <div class="span2">
+        <label class="field-label">Фото страви</label>
+        <div class="photo-upload-wrap" id="photo-wrap" onclick="document.getElementById('if-photo').click()">
+          <img id="photo-preview" src="" alt="" style="display:none;width:100%;height:140px;object-fit:cover;border-radius:8px"/>
+          <div id="photo-placeholder">
+            <div style="font-size:2rem;margin-bottom:.375rem">📷</div>
+            <div style="font-size:12px;color:var(--muted)">Натисніть щоб завантажити фото</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px">JPG, PNG, WebP — до 5 МБ</div>
+          </div>
+          <div id="photo-progress" style="display:none">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:.5rem">Завантаження...</div>
+            <div style="height:4px;background:var(--border);border-radius:2px">
+              <div id="photo-progress-bar" style="height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .3s"></div>
+            </div>
+          </div>
+        </div>
+        <input type="file" id="if-photo" accept="image/*" style="display:none" onchange="handlePhotoSelect(this)"/>
+        <input type="hidden" id="if-photo-url" value=""/>
+        <div style="display:flex;gap:.375rem;margin-top:.375rem">
+          <button class="btn btn-outline btn-sm" type="button" onclick="document.getElementById('if-photo').click()">📁 Вибрати файл</button>
+          <button class="btn btn-outline btn-sm" type="button" id="photo-clear-btn" onclick="clearPhoto()" style="display:none">✕ Видалити фото</button>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:.375rem">або вставте URL зображення:</div>
+        <input id="if-photo-url-input" type="text" placeholder="https://..." style="margin-top:.25rem;font-size:12px" oninput="setPhotoFromUrl(this.value)"/>
+      </div>
+
+      <div class="span2"><label class="field-label">Назва страви</label><input id="if-name" type="text" placeholder="Філадельфія класик"/></div>
       <div class="span2"><label class="field-label">Опис</label><textarea id="if-desc" rows="2" placeholder="Свіжий лосось, вершковий сир..."></textarea></div>
       <div><label class="field-label">Ціна (грн)</label><input id="if-price" type="number" placeholder="189"/></div>
-      <div><label class="field-label">Emoji</label><input id="if-emoji" type="text" placeholder="🌀" maxlength="2"/></div>
-      <div><label class="field-label">Вага</label><input id="if-weight" type="text" placeholder="250 г"/></div>
+      <div><label class="field-label">Вага / об'єм</label><input id="if-weight" type="text" placeholder="250 г"/></div>
       <div><label class="field-label">Категорія</label><select id="if-cat"></select></div>
+      <div><label class="field-label">Артикул / код</label><input id="if-sku" type="text" placeholder="необов'язково"/></div>
     </div>
-    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveItem()">Зберегти</button>
+    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveItem()">Зберегти страву</button>
   </div>
 </div>
 
@@ -1449,18 +1476,121 @@ async function loadItems() {
   } catch(e) { console.warn('loadItems:', e.message); }
 }
 
+
+// ── FIREBASE STORAGE — завантаження фото страв ──────────
+async function getStorage() {
+  const { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject }
+    = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
+  const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+  return { storage: getStorage(getApp()), ref, uploadBytesResumable, getDownloadURL, deleteObject };
+}
+
+let currentPhotoFile = null;
+
+function handlePhotoSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  // Перевірка розміру (5 МБ)
+  if (file.size > 5 * 1024 * 1024) {
+    notify('Фото занадто велике. Максимум 5 МБ.', 'err');
+    return;
+  }
+  currentPhotoFile = file;
+
+  // Показуємо превʼю локально
+  const reader = new FileReader();
+  reader.onload = e => showPhotoPreview(e.target.result);
+  reader.readAsDataURL(file);
+}
+
+function showPhotoPreview(src) {
+  document.getElementById('photo-preview').src = src;
+  document.getElementById('photo-preview').style.display = 'block';
+  document.getElementById('photo-placeholder').style.display = 'none';
+  document.getElementById('photo-progress').style.display = 'none';
+  document.getElementById('photo-wrap').classList.add('has-photo');
+  document.getElementById('photo-clear-btn').style.display = 'inline-flex';
+}
+
+function clearPhoto() {
+  currentPhotoFile = null;
+  document.getElementById('if-photo-url').value = '';
+  document.getElementById('if-photo-url-input').value = '';
+  document.getElementById('photo-preview').src = '';
+  document.getElementById('photo-preview').style.display = 'none';
+  document.getElementById('photo-placeholder').style.display = 'flex';
+  document.getElementById('photo-wrap').classList.remove('has-photo');
+  document.getElementById('photo-clear-btn').style.display = 'none';
+  document.getElementById('if-photo').value = '';
+}
+
+function setPhotoFromUrl(url) {
+  if (!url) return;
+  document.getElementById('if-photo-url').value = url;
+  showPhotoPreview(url);
+  currentPhotoFile = null; // URL замість файлу
+}
+
+async function uploadPhotoAndGetUrl() {
+  // Якщо вже є URL (вставлений вручну) — повертаємо його
+  const manualUrl = document.getElementById('if-photo-url').value.trim();
+  if (manualUrl && !currentPhotoFile) return manualUrl;
+
+  // Якщо немає файлу — нема фото
+  if (!currentPhotoFile) return '';
+
+  // Завантажуємо у Firebase Storage
+  try {
+    const { storage, ref, uploadBytesResumable, getDownloadURL } = await getStorage();
+    const path = `venues/${venueId}/items/${Date.now()}_${currentPhotoFile.name.replace(/[^a-z0-9.]/gi,'_')}`;
+    const storageRef = ref(storage, path);
+
+    // Показуємо прогрес-бар
+    document.getElementById('photo-progress').style.display = 'block';
+    document.getElementById('photo-placeholder').style.display = 'none';
+
+    return await new Promise((resolve, reject) => {
+      const task = uploadBytesResumable(storageRef, currentPhotoFile);
+      task.on('state_changed',
+        snap => {
+          const pct = Math.round(snap.bytesTransferred / snap.totalBytes * 100);
+          document.getElementById('photo-progress-bar').style.width = pct + '%';
+        },
+        err => reject(err),
+        async () => {
+          const url = await getDownloadURL(task.snapshot.ref);
+          document.getElementById('photo-progress').style.display = 'none';
+          resolve(url);
+        }
+      );
+    });
+  } catch(e) {
+    notify('Помилка завантаження фото: ' + e.message, 'err');
+    return '';
+  }
+}
+window.handlePhotoSelect = handlePhotoSelect;
+window.clearPhoto = clearPhoto;
+window.setPhotoFromUrl = setPhotoFromUrl;
 window.saveItem = async function() {
   const { collection, doc, addDoc, setDoc } = window.__FS;
   const name  = document.getElementById('if-name').value.trim();
   const price = parseFloat(document.getElementById('if-price').value);
   if (!name || !price) { notify('Заповніть назву та ціну', 'err'); return; }
+  // Завантажуємо фото якщо є
+  notify('Збереження...', 'ok');
+  const photoUrl = await uploadPhotoAndGetUrl();
+
   const data = {
     name,
     desc:     document.getElementById('if-desc').value,
     price,
-    emoji:    document.getElementById('if-emoji').value || '🍽️',
+    photoUrl: photoUrl || '',
     weight:   document.getElementById('if-weight').value,
     category: document.getElementById('if-cat').value,
+    sku:      document.getElementById('if-sku')?.value || '',
+    updatedAt: new Date().toISOString(),
   };
   try {
     if (editItemId) {
@@ -1640,7 +1770,11 @@ function renderItems(){
   sel.innerHTML='<option value="">Всі категорії</option>'+cats.map(c=>`<option${c.name===prev?' selected':''}>${c.name}</option>`).join('');
   document.getElementById('items-list').innerHTML=list.length?list.map(i=>`
     <div class="item-row">
-      <div class="item-em">${i.emoji||'🍽️'}</div>
+      <div class="item-em" style="overflow:hidden;padding:0">
+        ${i.photoUrl
+          ? `<img src="${i.photoUrl}" alt="${i.name}" style="width:100%;height:100%;object-fit:cover;border-radius:8px"/>`
+          : `<span style="font-size:1.5rem">🍽️</span>`}
+      </div>
       <div class="item-body"><div class="item-name">${i.name}</div><div class="item-sub">${i.category} · ${i.weight||''}</div></div>
       <span class="item-price">${i.price} грн</span>
       <div class="item-btns">
@@ -1652,8 +1786,28 @@ function renderItems(){
 function openItemModal(id=null){
   editItemId=id;
   document.getElementById('if-cat').innerHTML=cats.map(c=>`<option>${c.name}</option>`).join('');
-  if(id){const i=items.find(x=>x.id===id);document.getElementById('item-modal-t').textContent='Редагувати';document.getElementById('if-name').value=i.name;document.getElementById('if-desc').value=i.desc||'';document.getElementById('if-price').value=i.price;document.getElementById('if-emoji').value=i.emoji||'';document.getElementById('if-weight').value=i.weight||'';document.getElementById('if-cat').value=i.category;}
-  else{document.getElementById('item-modal-t').textContent='Нова страва';['if-name','if-desc','if-price','if-emoji','if-weight'].forEach(f=>document.getElementById(f).value='');}
+  if(id){
+    const i=items.find(x=>x.id===id);
+    document.getElementById('item-modal-t').textContent='Редагувати страву';
+    document.getElementById('if-name').value=i.name||'';
+    document.getElementById('if-desc').value=i.desc||'';
+    document.getElementById('if-price').value=i.price||'';
+    document.getElementById('if-weight').value=i.weight||'';
+    document.getElementById('if-sku')&&(document.getElementById('if-sku').value=i.sku||'');
+    document.getElementById('if-cat').value=i.category||'';
+    // Показуємо фото якщо є
+    if(i.photoUrl){
+      document.getElementById('if-photo-url').value=i.photoUrl;
+      document.getElementById('if-photo-url-input').value=i.photoUrl;
+      showPhotoPreview(i.photoUrl);
+    } else { clearPhoto(); }
+  } else {
+    document.getElementById('item-modal-t').textContent='Нова страва';
+    ['if-name','if-desc','if-price','if-weight'].forEach(f=>document.getElementById(f).value='');
+    document.getElementById('if-sku')&&(document.getElementById('if-sku').value='');
+    clearPhoto();
+    currentPhotoFile=null;
+  }
   openModal('modal-item');
 }
 function saveItem(){
