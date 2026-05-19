@@ -211,6 +211,7 @@ const $ = id => document.getElementById(id);
 
 async function init() {
   try {
+    // Завантажуємо всі дані паралельно
     const [sSnap, dSnap, cSnap, iSnap] = await Promise.all([
       getDoc(doc(db,'venues',venueId,'settings','main')),
       getDoc(doc(db,'venues',venueId,'design','main')),
@@ -218,19 +219,32 @@ async function init() {
       getDocs(collection(db,'venues',venueId,'items')),
     ]);
 
-    applySettings(sSnap.exists() ? sSnap.data() : {});
-    design = dSnap.exists() ? dSnap.data() : {};
-    applyDesign(design);
+    // Налаштування — окремий try щоб не блокував страви
+    try {
+      applySettings(sSnap.exists() ? sSnap.data() : {});
+    } catch(e) { console.warn('applySettings error:', e.message); }
 
+    // Дизайн — окремий try
+    try {
+      design = dSnap.exists() ? dSnap.data() : {};
+      applyDesign(design);
+    } catch(e) { console.warn('applyDesign error:', e.message); }
+
+    // Категорії і страви — головне
     allCats  = cSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
     allItems = iSnap.docs.map(d=>({id:d.id,...d.data()}));
 
-    if (tableId) $('venue-tag').textContent += ` · Стіл №${tableId}`;
     activeCat = allCats[0]?.name || null;
-    renderCats(); renderMenu();
+    renderCats();
+    renderMenu();
+
   } catch(e) {
     console.error('init error:', e);
-    $('menu-body').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div style="font-size:13px;margin-top:.5rem">Код помилки: <b>${e.code||'unknown'}</b></div><div style="font-size:11px;color:#999;margin-top:.375rem;padding:0 1rem;word-break:break-all">${e.message}</div></div>`;
+    $('menu-body').innerHTML = `<div class="empty">
+      <div class="empty-icon">⚠️</div>
+      <div style="font-size:13px;margin-top:.5rem">Код помилки: <b>${e.code||'unknown'}</b></div>
+      <div style="font-size:11px;color:#999;margin-top:.375rem;padding:0 1rem;word-break:break-all">${e.message}</div>
+    </div>`;
   } finally {
     $('loader').classList.add('gone');
   }
@@ -239,8 +253,22 @@ async function init() {
 function applySettings(s) {
   document.title = s.name || 'Меню';
   $('venue-name').textContent = s.name || 'Меню закладу';
-  const parts = [s.tagline, s.city, s.phone].filter(Boolean);
-  $('venue-tag').textContent  = parts.join(' · ');
+
+  // Слоган і місто — перший рядок
+  const line1 = [s.tagline, s.city].filter(Boolean).join(' · ');
+  // Телефон і адреса — другий рядок
+  const line2 = [s.phone, s.address].filter(Boolean).join(' · ');
+  // Години — третій рядок
+  const line3 = s.hours || '';
+
+  let tagHtml = '';
+  if (line1) tagHtml += `<div>${line1}</div>`;
+  if (line2) tagHtml += `<div style="margin-top:2px">${line2}</div>`;
+  if (line3) tagHtml += `<div style="margin-top:2px">🕐 ${line3}</div>`;
+  $('venue-tag').innerHTML = tagHtml;
+
+  // Стіл
+  if (tableId) $('venue-tag').innerHTML += `<div style="margin-top:3px"><span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Стіл №${tableId}</span></div>`;
 
   // Логотип
   if (s.logoUrl) {
@@ -255,13 +283,10 @@ function applySettings(s) {
     img.src = s.bannerUrl;
     img.style.display = 'block';
     $('banner-placeholder').style.display = 'none';
-    // Колір акценту для placeholder якщо є
   } else {
     // Якщо немає банеру — ховаємо зону фото
     $('banner-photo').style.display = 'none';
   }
-
-  // Колір акценту з дизайн-налаштувань вже застосований через applyDesign
 }
 
 function applyDesign(d) {
@@ -276,11 +301,7 @@ function applyDesign(d) {
     r.style.setProperty('--font-head', `'${d.fontHead}',serif`);
     $('font-link').href = `https://fonts.googleapis.com/css2?family=${d.fontHead.replace(/ /g,'+')}:wght@500;600&family=${(d.fontBody||'DM Sans').replace(/ /g,'+')}:wght@300;400;500&display=swap`;
   }
-  if (d.bannerUrl) {
-    $('banner-bg').style.backgroundImage = `url(${d.bannerUrl})`;
-    if (d.bannerOverlay) $('banner-ov').style.display = 'block';
-  }
-  if (d.bannerHeight) $('banner').style.minHeight = d.bannerHeight+'px';
+  // Банер тепер керується через applySettings — тут не чіпаємо
 }
 
 function renderCats() {
