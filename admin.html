@@ -1081,34 +1081,104 @@ window.__MQ_CFG = window.__MQ_CFG || {
 
     <!-- SETTINGS -->
     <div id="t-settings" class="tab-section">
-      <div class="topbar"><div><div class="page-title">Налаштування</div></div></div>
+      <div class="topbar">
+        <div><div class="page-title">⚙️ Налаштування закладу</div><div class="page-sub">Інформація відображається у публічному меню</div></div>
+        <button class="btn btn-accent btn-sm" onclick="saveSettings()">💾 Зберегти все</button>
+      </div>
       <div class="content">
+
+        <!-- ОСНОВНА ІНФОРМАЦІЯ -->
         <div class="settings-section">
-          <h3>Інформація про заклад</h3>
+          <h3>📋 Інформація про заклад</h3>
           <div class="grid-2">
-            <div class="field-row span2"><label class="field-label">Назва</label><input id="set-name" type="text" value="Temari Sushi" oninput="document.getElementById('sb-venue-name').textContent=this.value"/></div>
-            <div class="field-row"><label class="field-label">Слоган</label><input id="set-tag" type="text" value="Японська кухня · Тернопіль"/></div>
-            <div class="field-row"><label class="field-label">Телефон</label><input id="set-phone" type="text" value="098-700-44-22"/></div>
-            <div class="field-row"><label class="field-label">Адреса</label><input id="set-addr" type="text" value="вул. Руська, 12"/></div>
-            <div class="field-row"><label class="field-label">Місто</label><input id="set-city" type="text" value="Тернопіль"/></div>
+            <div class="field-row span2">
+              <label class="field-label">Назва закладу</label>
+              <input id="set-name" type="text" placeholder="Моє Меню" oninput="document.getElementById('sb-venue-name').textContent=this.value"/>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Слоган / кухня</label>
+              <input id="set-tag" type="text" placeholder="Японська кухня · Тернопіль"/>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Місто</label>
+              <input id="set-city" type="text" placeholder="Тернопіль"/>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Телефон</label>
+              <input id="set-phone" type="text" placeholder="+380 XX XXX XX XX"/>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Адреса</label>
+              <input id="set-addr" type="text" placeholder="вул. Руська, 12"/>
+            </div>
+            <div class="field-row span2">
+              <label class="field-label">Години роботи</label>
+              <input id="set-hours" type="text" placeholder="Пн-Нд: 10:00 — 22:00"/>
+            </div>
           </div>
-          <button class="btn btn-accent" onclick="notify('✅ Збережено!','ok')">Зберегти</button>
         </div>
+
+        <!-- ЛОГОТИП -->
         <div class="settings-section">
-          <h3>QR-посилання для клієнтів</h3>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:.75rem">Поділіться цим посиланням або роздрукуйте QR-код</p>
-          <div class="qr-url" onclick="this.select?.()">https://menoos.app/temari</div>
-          <button class="btn btn-outline btn-sm" style="margin-top:.75rem" onclick="notify('🔗 Посилання скопійовано!','ok')">📋 Копіювати</button>
-          <button class="btn btn-outline btn-sm" style="margin-top:.75rem;margin-left:.5rem" onclick="notify('QR-код завантажено!','ok')">⬇️ QR-код</button>
-        </div>
-        <div class="settings-section">
-          <h3>Поточний тариф</h3>
-          <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
-            <div style="background:#EDE9FE;border-radius:8px;padding:.625rem 1rem;font-size:13px;font-weight:600;color:#5B21B6">💎 Pro тариф</div>
-            <div style="font-size:13px;color:var(--muted)">500 страв · 50 категорій · 5000 замовлень/міс · Повний дизайн</div>
-            <button class="btn btn-outline btn-sm" onclick="notify('Зверніться до підтримки для зміни тарифу','ok')">Змінити тариф</button>
+          <h3>🖼️ Логотип закладу</h3>
+          <div style="display:grid;grid-template-columns:120px 1fr;gap:1.25rem;align-items:start">
+            <div>
+              <div id="logo-preview-wrap" style="width:100px;height:100px;border-radius:50%;background:var(--bg2);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:2.5rem;cursor:pointer;overflow:hidden;transition:border-color .15s" onclick="document.getElementById('logo-file').click()">
+                <img id="logo-preview-img" src="" style="display:none;width:100%;height:100%;object-fit:cover"/>
+                <span id="logo-preview-em">🍽️</span>
+              </div>
+              <input type="file" id="logo-file" accept="image/*" style="display:none" onchange="handleLogoFile(this)"/>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:.75rem">
+              <button class="btn btn-outline btn-sm" onclick="document.getElementById('logo-file').click()">📁 Завантажити фото</button>
+              <div>
+                <label class="field-label">або URL зображення</label>
+                <input id="set-logo-url" type="text" placeholder="https://..." oninput="previewLogoUrl(this.value)"/>
+              </div>
+              <div>
+                <label class="field-label">або Emoji (якщо без фото)</label>
+                <input id="set-logo-emoji" type="text" placeholder="🍣" maxlength="2" style="width:80px" oninput="previewLogoEmoji(this.value)"/>
+              </div>
+              <div id="logo-upload-status" style="font-size:12px;color:var(--muted)"></div>
+            </div>
           </div>
         </div>
+
+        <!-- БАНЕР -->
+        <div class="settings-section">
+          <h3>🌄 Банер меню</h3>
+          <div style="margin-bottom:.875rem">
+            <div id="banner-preview-wrap" style="width:100%;height:120px;border-radius:var(--radius);background:var(--accent);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;transition:all .15s" onclick="document.getElementById('banner-file').click()">
+              <img id="banner-preview-img" src="" style="display:none;width:100%;height:100%;object-fit:cover"/>
+              <div id="banner-placeholder" style="text-align:center;color:rgba(255,255,255,.7)">
+                <div style="font-size:1.5rem">📷</div>
+                <div style="font-size:12px;margin-top:.25rem">Натисніть щоб завантажити банер</div>
+              </div>
+            </div>
+            <input type="file" id="banner-file" accept="image/*" style="display:none" onchange="handleBannerFile(this)"/>
+          </div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.875rem">
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('banner-file').click()">📁 Завантажити банер</button>
+            <button class="btn btn-outline btn-sm" onclick="clearBanner()">✕ Видалити</button>
+          </div>
+          <div class="field-row">
+            <label class="field-label">або URL банеру</label>
+            <input id="set-banner-url" type="text" placeholder="https://..." oninput="previewBannerUrl(this.value)"/>
+          </div>
+          <div id="banner-upload-status" style="font-size:12px;color:var(--muted)"></div>
+        </div>
+
+        <!-- QR ПОСИЛАННЯ -->
+        <div class="settings-section">
+          <h3>📲 QR-посилання для клієнтів</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:.75rem">Поділіться цим посиланням або роздрукуйте QR-код і розмістіть на столах</p>
+          <div class="qr-url" id="venue-qr-url" onclick="copyMenuUrl()">mageqrrest.com/menu.html?v=demo</div>
+          <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
+            <button class="btn btn-outline btn-sm" onclick="copyMenuUrl()">📋 Копіювати</button>
+            <button class="btn btn-outline btn-sm" onclick="openMenuUrl()">👁️ Переглянути меню</button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1387,38 +1457,196 @@ function showToast(msg, type) {
   setTimeout(() => n.classList.remove('show'), 3000);
 }
 
-// ── НАЛАШТУВАННЯ ─────────────────────────────────────────
+// ── НАЛАШТУВАННЯ — повна реалізація ──────────────────────
+
+// Завантаження логотипу
+let logoFile = null;
+let bannerFile = null;
+
+window.handleLogoFile = function(input) {
+  const file = input.files[0]; if(!file) return;
+  if(file.size > 3*1024*1024){ notify('Логотип занадто великий (макс 3МБ)','err'); return; }
+  logoFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('logo-preview-img').src = e.target.result;
+    document.getElementById('logo-preview-img').style.display = 'block';
+    document.getElementById('logo-preview-em').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+};
+
+window.previewLogoUrl = function(url) {
+  if(!url) return;
+  document.getElementById('logo-preview-img').src = url;
+  document.getElementById('logo-preview-img').style.display = 'block';
+  document.getElementById('logo-preview-em').style.display = 'none';
+  logoFile = null;
+};
+
+window.previewLogoEmoji = function(emoji) {
+  if(!emoji) return;
+  document.getElementById('logo-preview-em').textContent = emoji;
+  document.getElementById('logo-preview-em').style.display = 'block';
+  document.getElementById('logo-preview-img').style.display = 'none';
+  logoFile = null;
+};
+
+// Завантаження банеру
+window.handleBannerFile = function(input) {
+  const file = input.files[0]; if(!file) return;
+  if(file.size > 5*1024*1024){ notify('Банер занадто великий (макс 5МБ)','err'); return; }
+  bannerFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('banner-preview-img').src = e.target.result;
+    document.getElementById('banner-preview-img').style.display = 'block';
+    document.getElementById('banner-placeholder').style.display = 'none';
+    document.getElementById('set-banner-url').value = '';
+  };
+  reader.readAsDataURL(file);
+};
+
+window.previewBannerUrl = function(url) {
+  if(!url) return;
+  document.getElementById('banner-preview-img').src = url;
+  document.getElementById('banner-preview-img').style.display = 'block';
+  document.getElementById('banner-placeholder').style.display = 'none';
+  bannerFile = null;
+};
+
+window.clearBanner = function() {
+  bannerFile = null;
+  document.getElementById('set-banner-url').value = '';
+  document.getElementById('banner-preview-img').src = '';
+  document.getElementById('banner-preview-img').style.display = 'none';
+  document.getElementById('banner-placeholder').style.display = 'flex';
+};
+
+// Завантаження файлу у Firebase Storage
+async function uploadSettingsFile(file, path, statusElId) {
+  const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+  const { getStorage, ref, uploadBytesResumable, getDownloadURL }
+    = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
+
+  const storage = getStorage(getApp());
+  const storageRef = ref(storage, path);
+  const statusEl = document.getElementById(statusElId);
+
+  return new Promise((resolve, reject) => {
+    const task = uploadBytesResumable(storageRef, file);
+    task.on('state_changed',
+      snap => {
+        const pct = Math.round(snap.bytesTransferred / snap.totalBytes * 100);
+        if(statusEl) statusEl.textContent = `Завантаження: ${pct}%`;
+      },
+      err => { if(statusEl) statusEl.textContent = 'Помилка: ' + err.message; reject(err); },
+      async () => {
+        const url = await getDownloadURL(task.snapshot.ref);
+        if(statusEl) statusEl.textContent = '✅ Завантажено';
+        setTimeout(() => { if(statusEl) statusEl.textContent = ''; }, 3000);
+        resolve(url);
+      }
+    );
+  });
+}
+
+// Завантажити поточні налаштування у форму
 async function loadSettings() {
   const { doc, getDoc } = window.__FS;
   try {
     const snap = await getDoc(doc(db, 'venues', venueId, 'settings', 'main'));
-    if (snap.exists()) {
-      const d = snap.data();
-      if (d.name) {
-        document.getElementById('set-name').value = d.name;
-        document.getElementById('sb-venue-name').textContent = d.name;
-      }
-      if (d.tagline) document.getElementById('set-tag').value  = d.tagline;
-      if (d.phone)   document.getElementById('set-phone').value = d.phone;
-      if (d.address) document.getElementById('set-addr').value  = d.address;
+    if(!snap.exists()) return;
+    const d = snap.data();
+
+    // Заповнюємо поля
+    if(d.name)    { document.getElementById('set-name').value  = d.name;  document.getElementById('sb-venue-name').textContent = d.name; }
+    if(d.tagline) document.getElementById('set-tag').value   = d.tagline;
+    if(d.city)    document.getElementById('set-city').value   = d.city;
+    if(d.phone)   document.getElementById('set-phone').value  = d.phone;
+    if(d.address) document.getElementById('set-addr').value   = d.address;
+    if(d.hours)   document.getElementById('set-hours')&&(document.getElementById('set-hours').value = d.hours);
+
+    // Логотип
+    if(d.logoUrl) {
+      document.getElementById('set-logo-url').value = d.logoUrl;
+      previewLogoUrl(d.logoUrl);
+    } else if(d.logoEmoji) {
+      document.getElementById('set-logo-emoji').value = d.logoEmoji;
+      previewLogoEmoji(d.logoEmoji);
     }
+
+    // Банер
+    if(d.bannerUrl) {
+      document.getElementById('set-banner-url').value = d.bannerUrl;
+      previewBannerUrl(d.bannerUrl);
+    }
+
+    // QR URL
+    const qrUrl = `mageqrrest.com/menu.html?v=${venueId}`;
+    document.getElementById('venue-qr-url') && (document.getElementById('venue-qr-url').textContent = qrUrl);
+
   } catch(e) { console.warn('loadSettings:', e.message); }
 }
 
-// Перезаписуємо saveSettings щоб збергіало в Firestore
+// Зберегти всі налаштування
 window.saveSettings = async function() {
   const { doc, setDoc } = window.__FS;
-  const data = {
-    name:    document.getElementById('set-name').value,
-    tagline: document.getElementById('set-tag').value,
-    phone:   document.getElementById('set-phone').value,
-    address: document.getElementById('set-addr').value,
-  };
+  notify('Зберігаємо...', 'ok');
+
+  let logoUrl  = document.getElementById('set-logo-url').value.trim();
+  let bannerUrl = document.getElementById('set-banner-url').value.trim();
+
   try {
+    // Завантажуємо файли якщо є
+    if(logoFile) {
+      logoUrl = await uploadSettingsFile(
+        logoFile,
+        `venues/${venueId}/settings/logo_${Date.now()}`,
+        'logo-upload-status'
+      );
+      document.getElementById('set-logo-url').value = logoUrl;
+      logoFile = null;
+    }
+    if(bannerFile) {
+      bannerUrl = await uploadSettingsFile(
+        bannerFile,
+        `venues/${venueId}/settings/banner_${Date.now()}`,
+        'banner-upload-status'
+      );
+      document.getElementById('set-banner-url').value = bannerUrl;
+      bannerFile = null;
+    }
+
+    const data = {
+      name:       document.getElementById('set-name').value.trim(),
+      tagline:    document.getElementById('set-tag').value.trim(),
+      city:       document.getElementById('set-city')?.value.trim() || '',
+      phone:      document.getElementById('set-phone').value.trim(),
+      address:    document.getElementById('set-addr').value.trim(),
+      hours:      document.getElementById('set-hours')?.value.trim() || '',
+      logoUrl:    logoUrl,
+      logoEmoji:  document.getElementById('set-logo-emoji').value.trim(),
+      bannerUrl:  bannerUrl,
+      updatedAt:  new Date().toISOString(),
+    };
+
     await setDoc(doc(db, 'venues', venueId, 'settings', 'main'), data);
-    document.getElementById('sb-venue-name').textContent = data.name || venueId;
-    notify('✅ Збережено!', 'ok');
+
+    // Оновлюємо sidebar
+    if(data.name) document.getElementById('sb-venue-name').textContent = data.name;
+    notify('✅ Налаштування збережено! Меню оновлено.', 'ok');
+
   } catch(e) { notify('Помилка: ' + e.message, 'err'); }
+};
+
+// QR URL утиліти
+window.copyMenuUrl = function() {
+  const url = `https://mageqrrest.com/menu.html?v=${venueId}`;
+  navigator.clipboard.writeText(url).then(() => notify('🔗 Посилання скопійовано!', 'ok'));
+};
+window.openMenuUrl = function() {
+  window.open(`https://mageqrrest.com/menu.html?v=${venueId}`, '_blank');
 };
 
 // ── КАТЕГОРІЇ ────────────────────────────────────────────
