@@ -53,6 +53,8 @@ button{cursor:pointer}
 .stat-lbl{font-size:11px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.04em}
 
 /* ORDERS */
+.order-card-new{border-color:var(--amber)!important;background:#FFFBEB}
+.order-card-new .order-num{color:var(--amber)}
 .order-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.625rem}
 .order-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.625rem;flex-wrap:wrap;gap:.5rem}
 .order-num{font-family:var(--font-head);font-size:.95rem;font-weight:600}
@@ -292,12 +294,12 @@ button{cursor:pointer}
 <script>
 // ⚠️ ЗАМІНІТЬ на свої ключі (такі самі як у login.html)
 window.__MQ_CFG = window.__MQ_CFG || {
-  apiKey:            "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-  authDomain:        "mageqrrest.firebaseapp.com",
-  projectId:         "mageqrrest",
-  storageBucket:     "mageqrrest.firebasestorage.app",
+  apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
+  authDomain: "mageqrrest.firebaseapp.com",
+  projectId: "mageqrrest",
+  storageBucket: "mageqrrest.firebasestorage.app",
   messagingSenderId: "207231972557",
-  appId:             "1:207231972557:web:f8234c22e6b32a0a2ee584"
+  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 </script>
 </head>
@@ -1616,31 +1618,58 @@ window.deleteItem = async function(id) {
 
 // ── ЗАМОВЛЕННЯ (real-time) ────────────────────────────────
 function subscribeOrders() {
-  const { collection, query, orderBy, onSnapshot } = window.__FS;
-  if (unsubOrders) unsubOrders(); // відписуємось від попереднього
+  const { collection, onSnapshot } = window.__FS;
+  if (unsubOrders) unsubOrders();
 
-  const q = query(
+  unsubOrders = onSnapshot(
     collection(db, 'venues', venueId, 'orders'),
-    orderBy('createdAt', 'desc')
-  );
+    snap => {
+      orders = snap.docs.map(d => {
+        const data = d.data();
+        return {
+          id: d.id,
+          ...data,
+          time: data.createdAt
+            ? new Date(data.createdAt.seconds * 1000)
+                .toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })
+            : '—',
+          dateMs: data.createdAt ? data.createdAt.seconds * 1000 : 0,
+        };
+      })
+      // Сортуємо на клієнті — найновіші зверху
+      .sort((a, b) => b.dateMs - a.dateMs);
 
-  unsubOrders = onSnapshot(q, snap => {
-    orders = snap.docs.map(d => {
-      const data = d.data();
-      return {
-        id: d.id,
-        ...data,
-        // Форматуємо час з Firestore Timestamp
-        time: data.createdAt
-          ? new Date(data.createdAt.seconds * 1000).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })
-          : '—',
-      };
-    });
-    renderOrders();
-    updateOrderBadge();
-  }, err => {
-    console.warn('subscribeOrders:', err.message);
-  });
+      renderOrders();
+      updateOrderBadge();
+      // Звуковий сигнал при новому замовленні
+      playNewOrderSound();
+    },
+    err => {
+      console.warn('subscribeOrders error:', err.message);
+      notify('Помилка підключення до замовлень: ' + err.message, 'err');
+    }
+  );
+}
+
+// Звуковий сигнал при новому замовленні
+let prevOrderCount = 0;
+function playNewOrderSound() {
+  const newCount = orders.filter(o => o.status === 'new' || !o.status).length;
+  if (newCount > prevOrderCount && prevOrderCount >= 0) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
+    } catch(e) {}
+  }
+  prevOrderCount = newCount;
 }
 
 function updateOrderBadge() {
@@ -1727,36 +1756,58 @@ function init(){
 
 // ── ORDERS ──
 function renderOrders(){
-  const f=document.getElementById('order-filter').value;
-  const list=f?orders.filter(o=>o.status===f):orders;
-  const newO=orders.filter(o=>o.status==='new');
-  const doneO=orders.filter(o=>o.status==='done');
-  document.getElementById('st-new-ord').textContent=newO.length;
-  document.getElementById('st-done-ord').textContent=doneO.length;
-  const rev=orders.filter(o=>o.status!=='cancel').reduce((s,o)=>s+o.total,0);
-  document.getElementById('st-today-rev').textContent=rev+'₴';
-  document.getElementById('st-avg').textContent=doneO.length?Math.round(doneO.reduce((s,o)=>s+o.total,0)/doneO.length)+'₴':'—';
-  const badge=document.getElementById('new-badge');
-  if(newO.length){badge.textContent=newO.length;badge.style.display='inline-block';}else badge.style.display='none';
-  const sl={new:'o-new',done:'o-done',cancel:'o-cancel'};
-  const st={new:'Нове',done:'Виконано',cancel:'Скасовано'};
-  document.getElementById('orders-wrap').innerHTML=list.length?list.map(o=>`
-    <div class="order-card">
+  const f = document.getElementById('order-filter').value;
+  const list = f ? orders.filter(o=>o.status===f) : orders;
+  const newO  = orders.filter(o=>o.status==='new'||!o.status);
+  const doneO = orders.filter(o=>o.status==='done');
+  const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+  const todayOrders = orders.filter(o=>o.dateMs >= todayStart.getTime());
+  const rev = todayOrders.filter(o=>o.status!=='cancel').reduce((s,o)=>s+(o.total||0),0);
+
+  document.getElementById('st-new-ord').textContent  = newO.length;
+  document.getElementById('st-done-ord').textContent = doneO.length;
+  document.getElementById('st-today-rev').textContent = rev+'₴';
+  const avg = doneO.length ? Math.round(doneO.reduce((s,o)=>s+(o.total||0),0)/doneO.length) : 0;
+  document.getElementById('st-avg')&&(document.getElementById('st-avg').textContent = avg?avg+'₴':'—');
+
+  const badge = document.getElementById('new-badge');
+  if(newO.length){badge.textContent=newO.length;badge.style.display='inline-block';}
+  else badge.style.display='none';
+
+  const sl = {new:'o-new',done:'o-done',cancel:'o-cancel'};
+  const st = {new:'🆕 Нове',done:'✅ Виконано',cancel:'❌ Скасовано'};
+
+  if(!list.length){
+    document.getElementById('orders-wrap').innerHTML=`<div class="empty"><i>🧾</i><div class="empty-text">Замовлень ще немає</div></div>`;
+    return;
+  }
+
+  document.getElementById('orders-wrap').innerHTML = list.map(o=>`
+    <div class="order-card${o.status==='new'||!o.status?' order-card-new':''}">
       <div class="order-top">
-        <div><span class="order-num">#${o.num}</span> <span style="font-size:12px;color:var(--muted)">${o.clientName}</span></div>
-        <div><span class="o-time">${o.time}</span> <span class="o-badge ${sl[o.status]}">${st[o.status]}</span></div>
+        <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+          <span class="order-num">#${o.num||o.id.slice(-4).toUpperCase()}</span>
+          ${o.clientName?`<span style="font-size:13px;color:var(--muted)">${o.clientName}</span>`:''}
+          ${o.tableId?`<span style="font-size:11px;background:#EEF2FF;color:#3730A3;padding:2px 8px;border-radius:10px">Стіл №${o.tableId}</span>`:''}
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <span class="o-time">${o.time}</span>
+          <span class="o-badge ${sl[o.status]||'o-new'}">${st[o.status]||'🆕 Нове'}</span>
+        </div>
       </div>
-      <div class="o-items">${o.items.map(i=>`${i.name} ×${i.qty}`).join(' · ')}</div>
+      <div class="o-items">${(o.items||[]).map(i=>`<b>${i.name}</b> ×${i.qty} — ${(i.price*i.qty)||''}грн`).join('<br/>')}</div>
       ${o.comment?`<div class="o-comment">💬 ${o.comment}</div>`:''}
-      <div class="o-total">${o.total} грн</div>
+      <div class="o-total">Разом: <b>${o.total} грн</b></div>
       <div class="o-actions">
-        ${o.status!=='done'?`<button class="btn btn-success btn-sm" onclick="setStatus('${o.id}','done')">✅ Виконано</button>`:''}
-        ${o.status==='new'?`<button class="btn btn-danger btn-sm" onclick="setStatus('${o.id}','cancel')">✕ Скасувати</button>`:''}
-        ${o.status!=='new'?`<button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','new')">↺ Відкрити</button>`:''}
+        ${(o.status==='new'||!o.status)?`
+          <button class="btn btn-success btn-sm" onclick="setStatus('${o.id}','done')">✅ Виконано</button>
+          <button class="btn btn-danger btn-sm" onclick="setStatus('${o.id}','cancel')">✕ Скасувати</button>
+        `:''}
+        ${o.status==='done'?`<button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','new')">↺ Повернути</button>`:''}
+        ${o.status==='cancel'?`<button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','new')">↺ Відкрити</button>`:''}
       </div>
-    </div>`).join(''):`<div class="empty"><i>🧾</i>Замовлень немає</div>`;
+    </div>`).join('');
 }
-function setStatus(id,s){const o=orders.find(x=>x.id===id);o.status=s;renderOrders();notify('Статус оновлено','ok');}
 window.setStatus=setStatus;
 
 // ── ITEMS ──
