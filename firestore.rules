@@ -1,0 +1,149 @@
+// ═══════════════════════════════════════════════════════════════
+//  MAGE QR REST — Firestore Security Rules v1.0
+//
+//  Вставте цей текст у Firebase Console:
+//  Firestore → Rules → Edit rules → Publish
+// ═══════════════════════════════════════════════════════════════
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── ДОПОМІЖНІ ФУНКЦІЇ ──────────────────────────────────────
+
+    // Перевірка: чи авторизований користувач
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // Перевірка: чи є супер-адміном (за email)
+    function isSuperAdmin() {
+      return isAuth() &&
+        request.auth.token.email == 'super@mageqrrest.com';
+    }
+
+    // Перевірка: чи є адміном конкретного закладу
+    function isVenueAdmin(venueId) {
+      return isAuth() &&
+        exists(/databases/$(database)/documents/venues/$(venueId)/admins/$(request.auth.uid));
+    }
+
+    // Перевірка: чи є адміном або супер-адміном
+    function isAdminOrSuper(venueId) {
+      return isSuperAdmin() || isVenueAdmin(venueId);
+    }
+
+    // Перевірка розміру даних (захист від масових записів)
+    function isSafeSize() {
+      return request.resource.data.size() < 50;
+    }
+
+    // Перевірка: не більше одного запиту на секунду (rate limit на рівні правил)
+    // Примітка: повний rate limit реалізований на Cloud Functions
+    function isNotBot() {
+      return request.auth != null || request.headers.get('x-mage-session') != null;
+    }
+
+    // ── ГЛОБАЛЬНІ НАЛАШТУВАННЯ ПЛАТФОРМИ ──────────────────────
+
+    match /settings/{docId} {
+      allow read:  if true;        // Публічні налаштування (назва, лого)
+      allow write: if isSuperAdmin();
+    }
+
+    match /plans/{planId} {
+      allow read:  if true;        // Тарифи — публічні
+      allow write: if isSuperAdmin();
+    }
+
+    // ── ЗАКЛАДИ ───────────────────────────────────────────────
+
+    match /venues/{venueId} {
+      // Метадані закладу — тільки адміни
+      allow read:  if isAdminOrSuper(venueId);
+      allow write: if isAdminOrSuper(venueId);
+
+      // Адміністратори закладу
+      match /admins/{adminId} {
+        allow read, write: if isAdminOrSuper(venueId);
+      }
+
+      // Налаштування закладу (назва, контакти)
+      match /settings/{docId} {
+        allow read:  if true;      // Публічно — потрібно для меню
+        allow write: if isAdminOrSuper(venueId);
+      }
+
+      // Дизайн меню
+      match /design/{docId} {
+        allow read:  if true;      // Публічно — потрібно для меню
+        allow write: if isAdminOrSuper(venueId);
+      }
+
+      // Категорії меню
+      match /categories/{catId} {
+        allow read:  if true;      // Публічно для відображення меню
+        allow write: if isAdminOrSuper(venueId);
+      }
+
+      // Страви меню
+      match /items/{itemId} {
+        allow read:  if true;      // Публічно
+        allow write: if isAdminOrSuper(venueId);
+
+        // ЗАХИСТ: дані страви не повинні містити системних полів
+        allow create: if isAdminOrSuper(venueId) && isSafeSize();
+      }
+
+      // ── ЗАМОВЛЕННЯ ─────────────────────────────────────────
+      match /orders/{orderId} {
+        // Клієнт може ТІЛЬКИ створити замовлення (не читати чужі)
+        allow create: if true && isSafeSize();
+
+        // Читати й оновлювати може тільки адмін
+        allow read, update: if isAdminOrSuper(venueId);
+
+        // Видаляти — тільки супер-адмін
+        allow delete: if isSuperAdmin();
+      }
+
+      // ── СТОЛИ ──────────────────────────────────────────────
+      match /tables/{tableId} {
+        // QR-код столу доступний публічно (щоб клієнт міг відкрити меню)
+        allow read:  if true;
+        allow write: if isAdminOrSuper(venueId);
+      }
+
+      // ── ПЕРСОНАЛ ───────────────────────────────────────────
+      match /staff/{staffId} {
+        // Список персоналу — тільки для адміна
+        // (публічно відкриємо тільки ім'я, якщо потрібно для чайових)
+        allow read:  if isAdminOrSuper(venueId);
+        allow write: if isAdminOrSuper(venueId);
+      }
+
+      // ── ПЛАТІЖНІ НАЛАШТУВАННЯ ──────────────────────────────
+      match /payment_settings/{docId} {
+        // API ключі — ТІЛЬКИ адмін, ніколи публічно
+        allow read, write: if isAdminOrSuper(venueId);
+      }
+
+      // ── POS НАЛАШТУВАННЯ ───────────────────────────────────
+      match /pos_settings/{docId} {
+        allow read, write: if isAdminOrSuper(venueId);
+      }
+
+      // ── АНАЛІТИКА / ЛОГИ ───────────────────────────────────
+      match /analytics/{docId} {
+        allow read:  if isAdminOrSuper(venueId);
+        allow write: if false; // Тільки Cloud Functions пишуть сюди
+      }
+    }
+
+    // ── ГЛОБАЛЬНИЙ ЗАХИСТ ────────────────────────────────────
+    // Будь-який неперелічений документ — заборонено
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

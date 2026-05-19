@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<title>Mage QR Rest</title>
+<!-- Забороняємо пошуковикам індексувати -->
+<meta name="googlebot" content="noindex, nofollow"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#0D0D0D;display:flex;align-items:center;justify-content:center;min-height:100vh;user-select:none}
+.loader{text-align:center}
+.logo{font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,#C1440E,#FF8C42);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px}
+.sub{font-size:12px;color:#555;margin-top:.4rem;letter-spacing:.1em;text-transform:uppercase}
+.spin{width:20px;height:20px;border:2px solid #222;border-top-color:#C1440E;border-radius:50%;animation:s .6s linear infinite;margin:1.2rem auto 0}
+@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<!-- HONEYPOT — приховані поля для ловлення ботів -->
+<div style="position:absolute;left:-9999px;top:-9999px;opacity:0;pointer-events:none" aria-hidden="true">
+  <form id="__hp"><input name="email" type="email"/><input name="phone" type="tel"/><input name="website" type="url"/></form>
+</div>
+
+<div class="loader">
+  <div class="logo">✦ Mage QR Rest</div>
+  <div class="sub">Platform</div>
+  <div class="spin"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  MAGE QR REST — ЗАХИСНИЙ РОУТЕР v1.0
+//  Рівень 1: перевірки до будь-якого рендерингу
+// ═══════════════════════════════════════════════
+
+(function() {
+  'use strict';
+
+  // --- 1. HONEYPOT ПЕРЕВІРКА ---
+  // Якщо бот заповнив приховані поля — блокуємо
+  const hp = document.getElementById('__hp');
+  if (hp) {
+    const inputs = hp.querySelectorAll('input');
+    for (const inp of inputs) {
+      if (inp.value !== '') {
+        document.body.innerHTML = '';
+        return;
+      }
+    }
+  }
+
+  // --- 2. BOT DETECTION ---
+  const botPatterns = [
+    /bot/i, /crawl/i, /spider/i, /scrape/i, /wget/i,
+    /curl/i, /python/i, /axios/i, /node-fetch/i,
+    /headless/i, /phantom/i, /selenium/i, /puppeteer/i,
+    /playwright/i, /httpclient/i, /java\//i, /go-http/i,
+    /ruby/i, /perl/i, /libwww/i, /mechanize/i
+  ];
+  const ua = navigator.userAgent;
+  for (const p of botPatterns) {
+    if (p.test(ua)) { document.body.innerHTML = ''; return; }
+  }
+
+  // --- 3. HEADLESS BROWSER DETECTION ---
+  const headlessChecks = [
+    () => navigator.webdriver === true,
+    () => !window.chrome && /Chrome/.test(ua),
+    () => navigator.languages === undefined || navigator.languages.length === 0,
+    () => typeof navigator.permissions === 'undefined',
+    () => window.outerWidth === 0 && window.outerHeight === 0,
+    () => /HeadlessChrome/.test(ua),
+  ];
+  if (headlessChecks.some(fn => { try { return fn(); } catch { return false; } })) {
+    document.body.innerHTML = '<p style="color:#333;font-family:sans-serif;padding:2rem">Access denied.</p>';
+    return;
+  }
+
+  // --- 4. RATE LIMITING (localStorage) ---
+  // Максимум 3 повних завантаження за 10 секунд
+  try {
+    const now = Date.now();
+    const key = '__mq_rl';
+    const raw = localStorage.getItem(key);
+    const hits = raw ? JSON.parse(raw).filter(t => now - t < 10000) : [];
+    hits.push(now);
+    localStorage.setItem(key, JSON.stringify(hits));
+    if (hits.length > 6) {
+      document.body.innerHTML = '<p style="color:#555;font-family:sans-serif;padding:2rem;text-align:center">Забагато запитів. Спробуйте через хвилину.</p>';
+      return;
+    }
+  } catch {}
+
+  // --- 5. РОУТИНГ ---
+  const params = new URLSearchParams(window.location.search);
+  const venue  = params.get('v');   // ?v=temari  → меню закладу
+  const table  = params.get('t');   // ?t=5        → конкретний стіл
+  const admin  = params.get('a');   // ?a=1        → адмін закладу
+  const hash   = window.location.hash; // #super  → супер-адмін
+
+  // Затримка 400мс перед редіректом (ускладнює автоматизацію)
+  const redirect = (url) => setTimeout(() => { window.location.replace(url); }, 400 + Math.random() * 200);
+
+  if (hash === '#super') {
+    redirect('superadmin.html');
+  } else if (venue && admin) {
+    redirect('admin.html?v=' + encodeURIComponent(venue));
+  } else if (venue) {
+    const dest = table
+      ? 'menu.html?v=' + encodeURIComponent(venue) + '&t=' + encodeURIComponent(table)
+      : 'menu.html?v=' + encodeURIComponent(venue);
+    redirect(dest);
+  } else {
+    // Нікуди — показуємо лендінг або логін
+    redirect('login.html');
+  }
+
+})();
+</script>
+</body>
+</html>

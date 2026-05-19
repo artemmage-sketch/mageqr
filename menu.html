@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>QR Меню</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ─── RESET & BASE ─── */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#C1440E;
+  --accent2:#E8A87C;
+  --bg:#FBF8F4;
+  --bg2:#F4EFE8;
+  --card:#FFFFFF;
+  --text:#1A1208;
+  --muted:#7A6E62;
+  --border:#E0D8CE;
+  --radius:14px;
+  --font-head:'Playfair Display',serif;
+  --font-body:'DM Sans',sans-serif;
+}
+html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
+h1,h2,h3{font-family:var(--font-head);font-weight:500}
+button{font-family:var(--font-body);cursor:pointer}
+input,select,textarea{font-family:var(--font-body);font-size:14px;border:1px solid var(--border);border-radius:8px;padding:9px 12px;width:100%;background:var(--card);color:var(--text);outline:none;transition:border .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+a{color:inherit;text-decoration:none}
+
+/* ─── SCREENS ─── */
+.screen{display:none;min-height:100vh}
+.screen.active{display:block}
+
+/* ─── LOADING ─── */
+#s-loading{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg)}
+.loader-logo{font-family:var(--font-head);font-size:2rem;color:var(--accent);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ─── LOGIN ─── */
+#s-login{background:var(--bg);display:flex;align-items:center;justify-content:center}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:2.5rem 2rem;width:100%;max-width:360px;margin:1rem}
+.login-logo{font-family:var(--font-head);font-size:1.7rem;color:var(--accent);margin-bottom:.25rem}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:2rem}
+.fl{display:flex;flex-direction:column;gap:.75rem}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;font-weight:500;width:100%;transition:opacity .15s}
+.btn-primary:hover{opacity:.88}
+.btn-secondary{background:transparent;color:var(--accent);border:1px solid var(--accent);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:500;transition:all .15s}
+.btn-secondary:hover{background:var(--accent);color:#fff}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;transition:all .15s}
+.btn-ghost:hover{border-color:var(--muted)}
+.err-msg{font-size:12px;color:#b00;display:none;margin-top:6px}
+.divider{text-align:center;font-size:12px;color:var(--muted);margin:.75rem 0;position:relative}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:var(--border)}
+.divider::before{left:0}.divider::after{right:0}
+
+/* ─── ADMIN ─── */
+#s-admin{background:var(--bg2)}
+.admin-shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+@media(max-width:700px){.admin-shell{grid-template-columns:1fr}}
+.sidebar{background:var(--card);border-right:1px solid var(--border);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:.25rem}
+.sidebar-logo{font-family:var(--font-head);font-size:1.2rem;color:var(--accent);padding:.5rem .75rem 1.25rem}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.6rem .75rem;border-radius:8px;font-size:14px;color:var(--muted);cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--bg2);color:var(--text)}
+.nav-item.active{background:var(--accent);color:#fff}
+.nav-icon{font-size:1rem;width:20px;text-align:center}
+.sidebar-spacer{flex:1}
+.sidebar-user{font-size:12px;color:var(--muted);padding:.5rem .75rem}
+.main-area{padding:2rem;overflow-y:auto}
+@media(max-width:700px){
+  .sidebar{flex-direction:row;border-right:none;border-bottom:1px solid var(--border);padding:.75rem;overflow-x:auto;position:sticky;top:0;z-index:10}
+  .sidebar-logo,.sidebar-spacer,.sidebar-user{display:none}
+  .nav-item span{display:none}
+  .main-area{padding:1rem}
+}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+.page-title{font-size:1.5rem;font-weight:500}
+.page-subtitle{font-size:13px;color:var(--muted);margin-top:2px}
+.tab-section{display:none}
+.tab-section.active{display:block}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.stat-val{font-family:var(--font-head);font-size:2rem;color:var(--accent)}
+.stat-lbl{font-size:12px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.05em}
+
+/* ITEMS TABLE */
+.items-grid{display:flex;flex-direction:column;gap:.75rem}
+.item-row{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;display:flex;align-items:center;gap:1rem}
+.item-emoji{font-size:1.8rem;width:52px;height:52px;background:var(--bg2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.item-body{flex:1;min-width:0}
+.item-name{font-weight:500;font-size:14px}
+.item-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.item-price{font-weight:500;color:var(--accent);white-space:nowrap}
+.item-btns{display:flex;gap:6px;flex-shrink:0}
+.icon-btn{background:none;border:1px solid var(--border);border-radius:7px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:all .15s}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+.icon-btn.danger:hover{border-color:#b00;color:#b00}
+
+/* ORDERS */
+.orders-list{display:flex;flex-direction:column;gap:.75rem}
+.order-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.order-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
+.order-num{font-family:var(--font-head);font-size:1.1rem}
+.order-time{font-size:12px;color:var(--muted)}
+.order-status{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+.status-new{background:#FEF3C7;color:#92400E}
+.status-done{background:#D1FAE5;color:#065F46}
+.status-cancel{background:#FEE2E2;color:#991B1B}
+.order-items{font-size:13px;color:var(--muted);margin-bottom:.75rem;line-height:1.8}
+.order-total{font-weight:500;font-size:14px}
+.order-actions{display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap}
+.order-comment{font-size:12px;color:var(--muted);font-style:italic;margin-top:.25rem}
+
+/* SETTINGS */
+.settings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;max-width:500px}
+.settings-card h3{font-size:1rem;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+.field-row{margin-bottom:1rem}
+.field-row label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{background:var(--card);border-radius:var(--radius);padding:1.75rem;width:100%;max-width:420px;transform:translateY(12px);transition:transform .2s;max-height:90vh;overflow-y:auto}
+.modal-overlay.open .modal-box{transform:translateY(0)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.modal-title{font-size:1.1rem;font-weight:500}
+.close-btn{background:none;border:none;font-size:1.2rem;color:var(--muted);cursor:pointer;padding:4px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.col-span-2{grid-column:span 2}
+
+/* ─── PUBLIC MENU ─── */
+#s-menu{background:var(--bg)}
+.menu-top{background:var(--card);border-bottom:1px solid var(--border);text-align:center;padding:1.75rem 1rem 1.25rem}
+.menu-name{font-family:var(--font-head);font-size:2rem;color:var(--accent)}
+.menu-tagline{font-size:13px;color:var(--muted);margin-top:.35rem}
+.menu-phone{font-size:13px;color:var(--muted);margin-top:.25rem}
+.cat-strip{background:var(--card);border-bottom:1px solid var(--border);padding:.75rem 1rem;display:flex;gap:.5rem;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:5}
+.cat-strip::-webkit-scrollbar{display:none}
+.cat-pill{padding:5px 16px;border-radius:20px;font-size:13px;border:1px solid var(--border);white-space:nowrap;cursor:pointer;background:var(--card);color:var(--muted);transition:all .15s;font-family:var(--font-body)}
+.cat-pill.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.menu-body{padding:1rem;max-width:600px;margin:0 auto}
+.cat-heading{font-family:var(--font-head);font-size:1.3rem;margin:1.5rem 0 .75rem;color:var(--text)}
+.dish-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);display:flex;gap:1rem;padding:1rem;margin-bottom:.75rem;transition:box-shadow .15s}
+.dish-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.dish-em{font-size:2rem;width:62px;height:62px;background:var(--bg2);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dish-body{flex:1;min-width:0}
+.dish-name{font-weight:500;font-size:15px}
+.dish-desc{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
+.dish-weight{font-size:11px;color:var(--muted);margin-top:3px}
+.dish-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.6rem}
+.dish-price{font-family:var(--font-head);font-size:1.1rem;color:var(--accent)}
+.add-btn{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .1s;line-height:1}
+.add-btn:active{transform:scale(.9)}
+.add-btn.added{background:#2D6A4F}
+
+/* CART */
+.cart-fab{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;border:none;border-radius:30px;padding:13px 28px;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.18);transition:all .2s;white-space:nowrap;font-family:var(--font-body)}
+.cart-fab.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(20px)}
+.cart-badge{background:rgba(255,255,255,.25);border-radius:12px;padding:2px 10px;font-size:13px}
+
+/* CART MODAL */
+.cart-list{display:flex;flex-direction:column;gap:.5rem;max-height:300px;overflow-y:auto;margin-bottom:1rem}
+.cart-row{display:flex;align-items:center;gap:.75rem;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.cart-row:last-child{border:none}
+.cart-em{font-size:1.3rem;width:36px;height:36px;background:var(--bg2);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cart-info{flex:1;min-width:0}
+.cart-iname{font-size:13px;font-weight:500}
+.cart-iprice{font-size:12px;color:var(--muted)}
+.qty-ctrl{display:flex;align-items:center;gap:.5rem}
+.qty-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.qty-btn:hover{border-color:var(--accent);color:var(--accent)}
+.qty-val{font-size:14px;font-weight:500;min-width:20px;text-align:center}
+.cart-total-row{display:flex;justify-content:space-between;padding:.75rem 0;font-weight:500;border-top:1px solid var(--border)}
+.comment-field{margin-bottom:1rem}
+.comment-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.badge-new{display:inline-block;background:#FEF3C7;color:#92400E;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;vertical-align:middle;margin-left:6px}
+
+/* toast */
+.toast{position:fixed;bottom:6rem;left:50%;transform:translateX(-50%);background:#1A1208;color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:200}
+.toast.show{opacity:1}
+
+/* empty */
+.empty{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-icon{font-size:3rem;margin-bottom:.75rem}
+.empty-text{font-size:14px}
+</style>
+</head>
+<body class="public-menu">
+<script src="anti-scraping.js"></script>
+
+<!-- LOADING -->
+<div id="s-loading" class="screen active">
+  <div class="loader-logo">🍣 Завантаження...</div>
+</div>
+
+<!-- LOGIN -->
+<div id="s-login" class="screen">
+  <div class="login-box">
+    <div class="login-logo" id="login-logo">Моє Меню</div>
+    <div class="login-sub">Панель управління</div>
+    <div class="fl">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="inp-email" placeholder="admin@myrestaurant.com" autocomplete="username"/>
+      </div>
+      <div class="field">
+        <label>Пароль</label>
+        <input type="password" id="inp-pass" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+      <div class="err-msg" id="login-err">Невірний email або пароль</div>
+      <button class="btn-primary" onclick="doLogin()">Увійти</button>
+      <div class="divider">або</div>
+      <button class="btn-secondary" onclick="showMenu()">Переглянути меню як гість →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="s-admin" class="screen">
+  <div class="admin-shell">
+    <div class="sidebar">
+      <div class="sidebar-logo" id="admin-logo">Моє Меню</div>
+      <button class="nav-item active" onclick="navTo(this,'tab-dashboard')">
+        <span class="nav-icon">📊</span><span>Дашборд</span>
+      </button>
+      <button class="nav-item" onclick="navTo(this,'tab-orders')">
+        <span class="nav-icon">🧾</span><span>Замовлення</span>
+        <span class="badge-new" id="new-orders-badge" style="display:none"></span>
+      </button>
+      <button class="nav-item" onclick="navTo(this,'tab-items')">
+        <span class="nav-icon">🍽️</span><span>Страви</span>
+      </button>
+      <button class="nav-item" onclick="navTo(this,'tab-cats')">
+        <span class="nav-icon">📂</span><span>Категорії</span>
+      </button>
+      <button class="nav-item" onclick="navTo(this,'tab-settings')">
+        <span class="nav-icon">⚙️</span><span>Налаштування</span>
+      </button>
+      <div class="sidebar-spacer"></div>
+      <button class="nav-item" onclick="showMenu()"><span class="nav-icon">👁️</span><span>Меню</span></button>
+      <button class="nav-item" onclick="doLogout()"><span class="nav-icon">🚪</span><span>Вийти</span></button>
+      <div class="sidebar-user" id="sidebar-user"></div>
+    </div>
+
+    <div class="main-area">
+      <!-- DASHBOARD -->
+      <div id="tab-dashboard" class="tab-section active">
+        <div class="page-header">
+          <div><div class="page-title">Дашборд</div><div class="page-subtitle">Загальна статистика</div></div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-val" id="st-orders">—</div><div class="stat-lbl">Замовлень сьогодні</div></div>
+          <div class="stat-card"><div class="stat-val" id="st-revenue">—</div><div class="stat-lbl">Виручка сьогодні</div></div>
+          <div class="stat-card"><div class="stat-val" id="st-new">—</div><div class="stat-lbl">Нові замовлення</div></div>
+          <div class="stat-card"><div class="stat-val" id="st-items">—</div><div class="stat-lbl">Позицій у меню</div></div>
+        </div>
+        <div class="page-header" style="margin-top:1.5rem">
+          <div class="page-title" style="font-size:1.1rem">Останні замовлення</div>
+        </div>
+        <div id="dash-orders" class="orders-list"></div>
+      </div>
+
+      <!-- ORDERS -->
+      <div id="tab-orders" class="tab-section">
+        <div class="page-header">
+          <div><div class="page-title">Замовлення</div><div class="page-subtitle">Усі замовлення з меню</div></div>
+          <button class="btn-ghost" onclick="loadOrders()">↺ Оновити</button>
+        </div>
+        <div class="orders-list" id="orders-list"></div>
+      </div>
+
+      <!-- ITEMS -->
+      <div id="tab-items" class="tab-section">
+        <div class="page-header">
+          <div><div class="page-title">Страви</div><div class="page-subtitle" id="items-sub"></div></div>
+          <button class="btn-primary" onclick="openItemModal()">+ Додати страву</button>
+        </div>
+        <div class="items-grid" id="items-grid"></div>
+      </div>
+
+      <!-- CATS -->
+      <div id="tab-cats" class="tab-section">
+        <div class="page-header">
+          <div><div class="page-title">Категорії</div></div>
+          <button class="btn-primary" onclick="openCatModal()">+ Додати категорію</button>
+        </div>
+        <div class="items-grid" id="cats-grid"></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div id="tab-settings" class="tab-section">
+        <div class="page-header"><div class="page-title">Налаштування</div></div>
+        <div class="settings-card">
+          <h3>Інформація про заклад</h3>
+          <div class="field-row"><label>Назва закладу</label><input id="set-name" type="text"/></div>
+          <div class="field-row"><label>Слоган / опис</label><input id="set-tag" type="text"/></div>
+          <div class="field-row"><label>Телефон</label><input id="set-phone" type="text"/></div>
+          <div class="field-row"><label>Адреса</label><input id="set-addr" type="text"/></div>
+          <button class="btn-primary" onclick="saveSettings()" style="width:auto;padding:10px 24px">Зберегти</button>
+        </div>
+        <br/>
+        <div class="settings-card">
+          <h3>QR-посилання на меню</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:.75rem">Надайте це посилання клієнтам або роздрукуйте QR-код.</p>
+          <input type="text" id="menu-url" readonly style="background:var(--bg2);cursor:pointer" onclick="this.select()"/>
+        </div>
+        <br/>
+        <div class="settings-card">
+          <h3>Зміна пароля</h3>
+          <div class="field-row"><label>Новий пароль</label><input id="set-newpass" type="password"/></div>
+          <button class="btn-secondary" onclick="changePass()" style="width:auto">Змінити пароль</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PUBLIC MENU -->
+<div id="s-menu" class="screen">
+  <div class="menu-top">
+    <div class="menu-name" id="m-name">Моє Меню</div>
+    <div class="menu-tagline" id="m-tagline"></div>
+    <div class="menu-phone" id="m-phone"></div>
+  </div>
+  <div class="cat-strip" id="m-cats"></div>
+  <div class="menu-body" id="m-body"></div>
+  <button class="cart-fab hidden" id="cart-fab" onclick="openCartModal()">
+    🛒 Кошик
+    <span class="cart-badge" id="cart-badge">0 грн</span>
+  </button>
+</div>
+
+<!-- ITEM MODAL -->
+<div class="modal-overlay" id="modal-item" onclick="closeModal('modal-item')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="item-modal-title">Нова страва</div>
+      <button class="close-btn" onclick="closeModal('modal-item')">✕</button>
+    </div>
+    <div class="modal-grid">
+      <div class="col-span-2 field-row"><label>Назва страви</label><input id="f-name" type="text" placeholder="Філадельфія класик"/></div>
+      <div class="col-span-2 field-row"><label>Опис</label><textarea id="f-desc" rows="2" placeholder="Короткий опис..."></textarea></div>
+      <div class="field-row"><label>Ціна (грн)</label><input id="f-price" type="number" placeholder="150"/></div>
+      <div class="field-row"><label>Emoji</label><input id="f-emoji" type="text" placeholder="🍣" maxlength="2"/></div>
+      <div class="field-row"><label>Вага/об'єм</label><input id="f-weight" type="text" placeholder="250 г"/></div>
+      <div class="field-row"><label>Категорія</label><select id="f-cat"></select></div>
+    </div>
+    <button class="btn-primary" onclick="saveItem()">Зберегти</button>
+  </div>
+</div>
+
+<!-- CAT MODAL -->
+<div class="modal-overlay" id="modal-cat" onclick="closeModal('modal-cat')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="cat-modal-title">Нова категорія</div>
+      <button class="close-btn" onclick="closeModal('modal-cat')">✕</button>
+    </div>
+    <div class="field-row"><label>Назва категорії</label><input id="fc-name" type="text" placeholder="Роли"/></div>
+    <div class="field-row"><label>Emoji (опціонально)</label><input id="fc-emoji" type="text" placeholder="🌀" maxlength="2"/></div>
+    <div class="field-row"><label>Порядок відображення</label><input id="fc-order" type="number" placeholder="1"/></div>
+    <button class="btn-primary" onclick="saveCat()">Зберегти</button>
+  </div>
+</div>
+
+<!-- CART MODAL -->
+<div class="modal-overlay" id="modal-cart" onclick="closeModal('modal-cart')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title">🛒 Ваш кошик</div>
+      <button class="close-btn" onclick="closeModal('modal-cart')">✕</button>
+    </div>
+    <div class="cart-list" id="cart-list"></div>
+    <div class="cart-total-row"><span>Разом:</span><span id="cart-total-val" style="color:var(--accent)"></span></div>
+    <div class="comment-field">
+      <label>Коментар до замовлення</label>
+      <textarea id="cart-comment" rows="2" placeholder="Алергія, побажання, пробор..."></textarea>
+    </div>
+    <div class="field-row"><label>Ваше ім'я / стіл / телефон</label><input id="cart-name" type="text" placeholder="Іванов Іван або стіл №5"/></div>
+    <button class="btn-primary" onclick="placeOrder()" id="order-btn">Замовити</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ══════════════════════════════════════════════
+   🔥 FIREBASE CONFIG — ЗАМІНІТЬ НА СВІЙ
+   ══════════════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+/* ══════════════════════════════════════════════ */
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ── STATE ──
+let allItems = [];
+let allCats = [];
+let allOrders = [];
+let settings = {};
+let cart = {};
+let activeCat = null;
+let editItemId = null;
+let editCatId = null;
+let unsubOrders = null;
+
+// ── DOM HELPERS ──
+const $ = id => document.getElementById(id);
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+function toast(msg,dur=2500){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),dur); }
+function openModal(id){ $(id).classList.add('open'); }
+function closeModal(id){ $(id).classList.remove('open'); }
+window.closeModal = closeModal;
+
+// ── AUTH ──
+onAuthStateChanged(auth, user => {
+  if(user){
+    $('sidebar-user').textContent = user.email;
+    show('s-admin');
+    initAdmin();
+  } else {
+    if(!$('s-menu').classList.contains('active')) show('s-login');
+  }
+  $('s-loading').classList.remove('active');
+});
+
+window.doLogin = async() => {
+  const email = $('inp-email').value.trim();
+  const pass = $('inp-pass').value;
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    $('login-err').style.display='none';
+  } catch(e){
+    $('login-err').style.display='block';
+  }
+};
+$('inp-pass').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+
+window.doLogout = async() => {
+  if(unsubOrders) unsubOrders();
+  await signOut(auth);
+  show('s-login');
+};
+
+// ── ADMIN INIT ──
+async function initAdmin(){
+  await loadSettings();
+  await loadCats();
+  await loadItems();
+  loadOrders();
+  updateDashboard();
+  $('menu-url').value = window.location.href.split('?')[0] + '?menu=1';
+}
+
+// ── SETTINGS ──
+async function loadSettings(){
+  const snap = await getDoc(doc(db,'settings','main'));
+  settings = snap.exists() ? snap.data() : {name:'Моє Меню',tagline:'',phone:'',address:''};
+  applySettings();
+}
+function applySettings(){
+  $('admin-logo').textContent = settings.name || 'Моє Меню';
+  $('login-logo').textContent = settings.name || 'Моє Меню';
+  $('set-name').value = settings.name||'';
+  $('set-tag').value = settings.tagline||'';
+  $('set-phone').value = settings.phone||'';
+  $('set-addr').value = settings.address||'';
+  document.title = (settings.name||'QR Меню');
+}
+window.saveSettings = async() => {
+  settings = {name:$('set-name').value, tagline:$('set-tag').value, phone:$('set-phone').value, address:$('set-addr').value};
+  await setDoc(doc(db,'settings','main'), settings);
+  applySettings();
+  toast('✅ Збережено!');
+};
+window.changePass = async() => {
+  const np = $('set-newpass').value;
+  if(!np || np.length < 6){ toast('Пароль мінімум 6 символів'); return; }
+  try { await updatePassword(auth.currentUser, np); toast('✅ Пароль змінено!'); $('set-newpass').value=''; }
+  catch(e){ toast('Помилка: ' + e.message); }
+};
+
+// ── CATEGORIES ──
+async function loadCats(){
+  const snap = await getDocs(query(collection(db,'categories'), orderBy('order')));
+  allCats = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderCatsAdmin();
+}
+function renderCatsAdmin(){
+  $('cats-grid').innerHTML = allCats.map(c=>`
+    <div class="item-row">
+      <div class="item-emoji">${c.emoji||'📂'}</div>
+      <div class="item-body"><div class="item-name">${c.name}</div><div class="item-meta">Порядок: ${c.order||0}</div></div>
+      <div class="item-btns">
+        <button class="icon-btn" onclick="openCatModal('${c.id}')">✏️</button>
+        <button class="icon-btn danger" onclick="deleteCat('${c.id}')">🗑️</button>
+      </div>
+    </div>`).join('') || '<div class="empty"><div class="empty-icon">📂</div><div class="empty-text">Немає категорій</div></div>';
+}
+window.openCatModal = (id=null) => {
+  editCatId = id;
+  if(id){
+    const c = allCats.find(x=>x.id===id);
+    $('cat-modal-title').textContent='Редагувати категорію';
+    $('fc-name').value=c.name||''; $('fc-emoji').value=c.emoji||''; $('fc-order').value=c.order||0;
+  } else {
+    $('cat-modal-title').textContent='Нова категорія';
+    ['fc-name','fc-emoji','fc-order'].forEach(f=>$(f).value='');
+  }
+  openModal('modal-cat');
+};
+window.saveCat = async() => {
+  const data={name:$('fc-name').value.trim(), emoji:$('fc-emoji').value||'📂', order:parseInt($('fc-order').value)||0};
+  if(!data.name){toast('Введіть назву');return;}
+  if(editCatId) await setDoc(doc(db,'categories',editCatId),data);
+  else await addDoc(collection(db,'categories'),data);
+  closeModal('modal-cat');
+  await loadCats();
+  toast('✅ Категорія збережена!');
+};
+window.deleteCat = async(id) => {
+  if(!confirm('Видалити категорію?')) return;
+  await deleteDoc(doc(db,'categories',id));
+  await loadCats();
+  toast('Видалено');
+};
+
+// ── ITEMS ──
+async function loadItems(){
+  const snap = await getDocs(collection(db,'items'));
+  allItems = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderItemsAdmin();
+}
+function renderItemsAdmin(){
+  $('items-sub').textContent = allItems.length + ' позицій';
+  $('st-items').textContent = allItems.length;
+  $('items-grid').innerHTML = allItems.map(it=>`
+    <div class="item-row">
+      <div class="item-emoji">${it.emoji||'🍽️'}</div>
+      <div class="item-body">
+        <div class="item-name">${it.name}</div>
+        <div class="item-meta">${it.category||''} · ${it.weight||''}</div>
+      </div>
+      <div class="item-price">${it.price} грн</div>
+      <div class="item-btns">
+        <button class="icon-btn" onclick="openItemModal('${it.id}')">✏️</button>
+        <button class="icon-btn danger" onclick="deleteItem('${it.id}')">🗑️</button>
+      </div>
+    </div>`).join('') || '<div class="empty"><div class="empty-icon">🍽️</div><div class="empty-text">Немає страв</div></div>';
+}
+window.openItemModal = (id=null) => {
+  editItemId = id;
+  const catSel = $('f-cat');
+  catSel.innerHTML = allCats.map(c=>`<option>${c.name}</option>`).join('');
+  if(id){
+    const it = allItems.find(x=>x.id===id);
+    $('item-modal-title').textContent='Редагувати страву';
+    $('f-name').value=it.name||''; $('f-desc').value=it.description||'';
+    $('f-price').value=it.price||''; $('f-emoji').value=it.emoji||'';
+    $('f-weight').value=it.weight||''; catSel.value=it.category||'';
+  } else {
+    $('item-modal-title').textContent='Нова страва';
+    ['f-name','f-desc','f-price','f-emoji','f-weight'].forEach(f=>$(f).value='');
+  }
+  openModal('modal-item');
+};
+window.saveItem = async() => {
+  const name=$('f-name').value.trim(); const price=parseFloat($('f-price').value);
+  if(!name||!price){toast('Заповніть назву та ціну');return;}
+  const data={name, description:$('f-desc').value, price, emoji:$('f-emoji').value||'🍽️', weight:$('f-weight').value, category:$('f-cat').value};
+  if(editItemId) await setDoc(doc(db,'items',editItemId),data);
+  else await addDoc(collection(db,'items'),data);
+  closeModal('modal-item');
+  await loadItems();
+  toast('✅ Страву збережено!');
+};
+window.deleteItem = async(id) => {
+  if(!confirm('Видалити страву?')) return;
+  await deleteDoc(doc(db,'items',id));
+  await loadItems();
+  toast('Видалено');
+};
+
+// ── ORDERS (realtime) ──
+window.loadOrders = () => {
+  if(unsubOrders) unsubOrders();
+  unsubOrders = onSnapshot(query(collection(db,'orders'),orderBy('createdAt','desc')), snap => {
+    allOrders = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderOrders();
+    updateDashboard();
+  });
+};
+function renderOrders(list, container='orders-list'){
+  const orders = list || allOrders;
+  $(container).innerHTML = orders.length ? orders.slice(0,50).map(o=>orderCard(o)).join('') :
+    '<div class="empty"><div class="empty-icon">🧾</div><div class="empty-text">Замовлень ще немає</div></div>';
+}
+function orderCard(o){
+  const time = o.createdAt ? new Date(o.createdAt.seconds*1000).toLocaleString('uk-UA',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'}) : '—';
+  const statusMap={new:'status-new',done:'status-done',cancel:'status-cancel'};
+  const statusLabel={new:'Новe',done:'Виконано',cancel:'Скасовано'};
+  const itemsList = (o.items||[]).map(i=>`${i.name} ×${i.qty}`).join(', ');
+  return `<div class="order-card">
+    <div class="order-head">
+      <div>
+        <span class="order-num">Замовлення #${o.num||o.id.slice(-4).toUpperCase()}</span>
+        ${o.clientName?`<span style="font-size:13px;color:var(--muted);margin-left:.5rem">${o.clientName}</span>`:''}
+      </div>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <span class="order-time">${time}</span>
+        <span class="order-status ${statusMap[o.status]||'status-new'}">${statusLabel[o.status]||'Нове'}</span>
+      </div>
+    </div>
+    <div class="order-items">${itemsList}</div>
+    ${o.comment?`<div class="order-comment">💬 ${o.comment}</div>`:''}
+    <div class="order-total">Разом: ${o.total} грн</div>
+    <div class="order-actions">
+      ${o.status!=='done'?`<button class="btn-secondary" style="font-size:12px;padding:5px 12px" onclick="updateOrderStatus('${o.id}','done')">✅ Виконано</button>`:''}
+      ${o.status!=='cancel'?`<button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="updateOrderStatus('${o.id}','cancel')">✕ Скасувати</button>`:''}
+      ${o.status!=='new'?`<button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="updateOrderStatus('${o.id}','new')">↺ Відкрити</button>`:''}
+    </div>
+  </div>`;
+}
+window.updateOrderStatus = async(id, status) => {
+  await updateDoc(doc(db,'orders',id),{status});
+};
+function updateDashboard(){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayOrders = allOrders.filter(o=>o.createdAt && o.createdAt.seconds*1000 >= today.getTime());
+  const newOrders = allOrders.filter(o=>o.status==='new'||!o.status);
+  $('st-orders').textContent = todayOrders.length;
+  $('st-revenue').textContent = todayOrders.reduce((s,o)=>s+(o.total||0),0) + ' грн';
+  $('st-new').textContent = newOrders.length;
+  const badge = $('new-orders-badge');
+  if(newOrders.length){ badge.textContent=newOrders.length; badge.style.display='inline-block'; }
+  else badge.style.display='none';
+  renderOrders(allOrders.slice(0,5),'dash-orders');
+}
+
+// ── NAV ──
+window.navTo = (btn, tab) => {
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));
+  $(tab).classList.add('active');
+};
+window.showAdmin = () => { show('s-admin'); };
+
+// ── PUBLIC MENU ──
+window.showMenu = async() => {
+  show('s-menu');
+  await loadPublicData();
+};
+async function loadPublicData(){
+  const [sSnap,cSnap,iSnap] = await Promise.all([
+    getDoc(doc(db,'settings','main')),
+    getDocs(query(collection(db,'categories'),orderBy('order'))),
+    getDocs(collection(db,'items'))
+  ]);
+  settings = sSnap.exists() ? sSnap.data() : {};
+  allCats = cSnap.docs.map(d=>({id:d.id,...d.data()}));
+  allItems = iSnap.docs.map(d=>({id:d.id,...d.data()}));
+  $('m-name').textContent = settings.name||'Моє Меню';
+  $('m-tagline').textContent = settings.tagline||'';
+  $('m-phone').textContent = settings.phone||'';
+  activeCat = allCats[0]?.name || null;
+  renderCatStrip();
+  renderDishes();
+}
+function renderCatStrip(){
+  $('m-cats').innerHTML = allCats.map(c=>`
+    <button class="cat-pill${c.name===activeCat?' active':''}" onclick="setActiveCat('${c.name}')">${c.emoji||''} ${c.name}</button>`).join('');
+}
+function renderDishes(){
+  const filtered = allItems.filter(i=>!activeCat||i.category===activeCat);
+  $('m-body').innerHTML = filtered.length ? filtered.map(it=>`
+    <div class="dish-card">
+      <div class="dish-em">${it.emoji||'🍽️'}</div>
+      <div class="dish-body">
+        <div class="dish-name">${it.name}</div>
+        <div class="dish-desc">${it.description||''}</div>
+        ${it.weight?`<div class="dish-weight">⚖️ ${it.weight}</div>`:''}
+        <div class="dish-footer">
+          <div class="dish-price">${it.price} грн</div>
+          <button class="add-btn" id="add-${it.id}" onclick="addToCart('${it.id}')">+</button>
+        </div>
+      </div>
+    </div>`).join('') : '<div class="empty"><div class="empty-icon">🍽️</div><div class="empty-text">Немає страв у цій категорії</div></div>';
+  updateCartUI();
+}
+window.setActiveCat = (name) => { activeCat=name; renderCatStrip(); renderDishes(); };
+
+// ── CART ──
+window.addToCart = (id) => {
+  cart[id] = (cart[id]||0) + 1;
+  const btn = $('add-'+id);
+  if(btn){ btn.classList.add('added'); btn.textContent='✓'; setTimeout(()=>{btn.classList.remove('added');btn.textContent='+';},700); }
+  updateCartUI();
+};
+function cartTotal(){ return Object.entries(cart).reduce((s,[id,q])=>{ const it=allItems.find(x=>x.id===id); return it?s+it.price*q:s; },0); }
+function cartCount(){ return Object.values(cart).reduce((a,b)=>a+b,0); }
+function updateCartUI(){
+  const total = cartTotal();
+  const fab = $('cart-fab');
+  if(cartCount()>0){ fab.classList.remove('hidden'); $('cart-badge').textContent = total+' грн'; }
+  else fab.classList.add('hidden');
+}
+window.openCartModal = () => {
+  const entries = Object.entries(cart).filter(([,q])=>q>0);
+  $('cart-list').innerHTML = entries.map(([id,q])=>{
+    const it = allItems.find(x=>x.id===id);
+    return `<div class="cart-row">
+      <div class="cart-em">${it.emoji||'🍽️'}</div>
+      <div class="cart-info"><div class="cart-iname">${it.name}</div><div class="cart-iprice">${it.price} грн × ${q}</div></div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="qtyChange('${id}',-1)">−</button>
+        <div class="qty-val">${q}</div>
+        <button class="qty-btn" onclick="qtyChange('${id}',1)">+</button>
+      </div>
+    </div>`;
+  }).join('') || '<div class="empty-text" style="padding:1rem;color:var(--muted)">Кошик порожній</div>';
+  $('cart-total-val').textContent = cartTotal() + ' грн';
+  openModal('modal-cart');
+};
+window.qtyChange = (id, delta) => {
+  cart[id] = Math.max(0, (cart[id]||0)+delta);
+  if(cart[id]===0) delete cart[id];
+  updateCartUI();
+  if(cartCount()>0) openCartModal();
+  else closeModal('modal-cart');
+};
+
+// ── PLACE ORDER ──
+window.placeOrder = async() => {
+  if(cartCount()===0){toast('Кошик порожній');return;}
+  const btn = $('order-btn');
+  btn.textContent='Відправляємо...'; btn.disabled=true;
+  const items = Object.entries(cart).map(([id,qty])=>{
+    const it = allItems.find(x=>x.id===id);
+    return {id, name:it.name, price:it.price, qty};
+  });
+  try {
+    await addDoc(collection(db,'orders'),{
+      items, total:cartTotal(),
+      comment:$('cart-comment').value,
+      clientName:$('cart-name').value,
+      status:'new',
+      num: Math.floor(Math.random()*9000)+1000,
+      createdAt:serverTimestamp()
+    });
+    cart={};
+    $('cart-comment').value=''; $('cart-name').value='';
+    closeModal('modal-cart');
+    updateCartUI();
+    toast('✅ Замовлення прийнято! Очікуйте.');
+  } catch(e){ toast('Помилка: '+e.message); }
+  btn.textContent='Замовити'; btn.disabled=false;
+};
+
+// ── AUTO-OPEN MENU ──
+if(new URLSearchParams(window.location.search).get('menu')==='1'){
+  loadPublicData().then(()=>show('s-menu'));
+}
+</script>
+</body>
+</html>

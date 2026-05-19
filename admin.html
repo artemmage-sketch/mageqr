@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mage QR Rest — Адмін закладу</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F6F3;--bg2:#EEECEA;--card:#FFFFFF;--border:#E2DDD8;--border2:#C8C2BB;
+  --text:#1C1916;--muted:#7A756F;--accent:#C1440E;--accent-soft:#FAECE7;
+  --green:#059669;--amber:#D97706;--red:#DC2626;
+  --font:'Inter',sans-serif;--font-head:'Space Grotesk',sans-serif;--radius:12px;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px}
+h2,h3{font-family:var(--font-head)}
+button,input,select,textarea{font-family:var(--font)}
+input,select,textarea{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;font-size:13px;outline:none;width:100%;transition:border .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button{cursor:pointer}
+
+/* LAYOUT */
+.shell{display:grid;grid-template-columns:200px 1fr;min-height:100vh}
+@media(max-width:700px){.shell{grid-template-columns:1fr}}
+.sidebar{background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.sb-brand{padding:1.25rem 1rem;border-bottom:1px solid var(--border)}
+.sb-brand-name{font-family:var(--font-head);font-size:1rem;font-weight:700;color:var(--accent)}
+.sb-venue{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-item{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;margin:1px .5rem;border-radius:8px;font-size:13px;color:var(--muted);background:none;border:none;width:calc(100%-1rem);text-align:left;cursor:pointer;transition:all .15s;width:calc(100% - 1rem)}
+.nav-item:hover{background:var(--bg2);color:var(--text)}
+.nav-item.active{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.nav-section{padding:.75rem .75rem .2rem;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.sb-bottom{margin-top:auto;padding:.75rem;border-top:1px solid var(--border);display:flex;gap:.5rem}
+.btn{border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:500;transition:all .15s;cursor:pointer}
+.btn-accent{background:var(--accent);color:#fff}.btn-accent:hover{opacity:.88}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--muted)}.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-ghost{background:transparent;border:none;color:var(--muted);padding:6px 10px}.btn-ghost:hover{color:var(--text)}
+.btn-danger{background:#FEF2F2;color:var(--red);border:1px solid #FECACA}.btn-danger:hover{background:#FEE2E2}
+.btn-success{background:#F0FDF4;color:var(--green);border:1px solid #BBF7D0}.btn-success:hover{background:#DCFCE7}
+.main{overflow-y:auto;background:var(--bg)}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:.875rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;position:sticky;top:0;z-index:20}
+.page-title{font-family:var(--font-head);font-size:1.05rem;font-weight:600}
+.page-sub{font-size:12px;color:var(--muted);margin-top:1px}
+.content{padding:1.5rem}
+.tab-section{display:none}.tab-section.active{display:block}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.875rem;margin-bottom:1.5rem}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem}
+.stat-val{font-family:var(--font-head);font-size:1.6rem;font-weight:700;color:var(--accent)}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.04em}
+
+/* ORDERS */
+.order-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.625rem}
+.order-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.625rem;flex-wrap:wrap;gap:.5rem}
+.order-num{font-family:var(--font-head);font-size:.95rem;font-weight:600}
+.o-time{font-size:11px;color:var(--muted)}
+.o-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+.o-new{background:#FEF3C7;color:#92400E}.o-done{background:#D1FAE5;color:#065F46}.o-cancel{background:#FEE2E2;color:#991B1B}
+.o-items{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:.5rem}
+.o-total{font-size:13px;font-weight:600}
+.o-comment{font-size:12px;color:var(--muted);font-style:italic;margin-top:.25rem}
+.o-actions{display:flex;gap:.375rem;margin-top:.625rem;flex-wrap:wrap}
+
+/* ITEMS */
+.items-list{display:flex;flex-direction:column;gap:.625rem}
+.item-row{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:.875rem 1rem;display:flex;align-items:center;gap:.875rem}
+.item-em{width:48px;height:48px;border-radius:8px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.item-body{flex:1;min-width:0}
+.item-name{font-weight:500;font-size:13px}
+.item-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.item-price{font-weight:600;color:var(--accent);white-space:nowrap;margin-right:.5rem}
+.item-btns{display:flex;gap:.375rem;flex-shrink:0}
+.icon-btn{background:none;border:1px solid var(--border);border-radius:7px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:.85rem;cursor:pointer;transition:all .15s}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+.icon-btn.del:hover{border-color:var(--red);color:var(--red)}
+
+/* CATS */
+.cat-row{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:.875rem 1rem;display:flex;align-items:center;gap:.875rem}
+.cat-order-badge{width:28px;height:28px;border-radius:6px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0}
+
+/* ════════════════════════════
+   DESIGN STUDIO
+   ════════════════════════════ */
+.design-studio{display:grid;grid-template-columns:1fr 380px;gap:1.25rem;align-items:start}
+@media(max-width:900px){.design-studio{grid-template-columns:1fr}}
+.ds-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.ds-panel-head{padding:.875rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ds-panel-title{font-family:var(--font-head);font-size:.9rem;font-weight:600}
+.ds-section{padding:1.1rem;border-bottom:1px solid var(--border)}
+.ds-section:last-child{border:none}
+.ds-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.625rem;display:block}
+.ds-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}
+.ds-row:last-child{margin:0}
+.color-input-wrap{display:flex;align-items:center;gap:.5rem}
+.color-swatch{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);cursor:pointer;flex-shrink:0;overflow:hidden;padding:0}
+.color-swatch input[type=color]{width:100%;height:100%;border:none;cursor:pointer;padding:0;background:none}
+.color-hex{flex:1}
+.font-preview{padding:.5rem .75rem;background:var(--bg2);border-radius:6px;font-size:13px;color:var(--muted);margin-top:.375rem}
+.palette-row{display:flex;gap:.375rem;flex-wrap:wrap;margin-bottom:.75rem}
+.palette-swatch{width:32px;height:32px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .15s}
+.palette-swatch:hover,.palette-swatch.active{border-color:var(--text);transform:scale(1.1)}
+.upload-area{border:1.5px dashed var(--border2);border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;transition:all .15s;background:var(--bg)}
+.upload-area:hover{border-color:var(--accent);background:var(--accent-soft)}
+.upload-icon{font-size:1.5rem;margin-bottom:.375rem}
+.upload-text{font-size:12px;color:var(--muted)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.toggle-label{font-size:13px}
+.toggle{width:40px;height:22px;background:var(--border2);border-radius:11px;cursor:pointer;position:relative;transition:background .2s;border:none}
+.toggle.on{background:var(--accent)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s}
+.toggle.on::after{transform:translateX(18px)}
+.range-row{display:flex;align-items:center;gap:.75rem}
+.range-row input[type=range]{flex:1;accent-color:var(--accent)}
+.range-val{font-size:12px;font-weight:500;min-width:40px;color:var(--accent)}
+
+/* PREVIEW PANEL */
+.preview-wrap{position:sticky;top:72px}
+.preview-device{background:var(--bg2);border-radius:var(--radius);padding:1rem;border:1px solid var(--border)}
+.device-frame{border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.12);width:100%;max-width:260px;margin:0 auto;aspect-ratio:9/16;position:relative;border:2px solid var(--border)}
+.preview-inner{width:100%;height:100%;overflow:hidden;position:relative}
+.pv-header{padding:1rem .875rem .625rem;text-align:center}
+.pv-banner{height:80px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.pv-logo{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto .375rem;font-weight:700}
+.pv-name{font-size:.9rem;font-weight:700;line-height:1.2}
+.pv-tag{font-size:.6rem;margin-top:.2rem;opacity:.7}
+.pv-cats{display:flex;gap:.25rem;padding:.375rem .625rem;overflow:hidden}
+.pv-pill{font-size:.55rem;padding:3px 8px;border-radius:10px;white-space:nowrap;font-weight:500}
+.pv-pill.active{color:#fff}
+.pv-body{padding:.5rem .625rem;display:flex;flex-direction:column;gap:.375rem}
+.pv-dish{display:flex;gap:.375rem;align-items:center;padding:.375rem;border-radius:6px}
+.pv-dish-em{width:28px;height:28px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.pv-dish-name{font-size:.55rem;font-weight:600;flex:1}
+.pv-dish-price{font-size:.55rem;font-weight:700}
+.preview-label{text-align:center;font-size:11px;color:var(--muted);margin-top:.75rem}
+.ds-save-bar{background:var(--card);border-top:1px solid var(--border);padding:.875rem 1.1rem;display:flex;align-items:center;justify-content:space-between}
+
+/* SETTINGS */
+.settings-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
+.settings-section h3{font-size:.95rem;font-family:var(--font-head);font-weight:600;margin-bottom:1rem;padding-bottom:.625rem;border-bottom:1px solid var(--border)}
+.field-row{margin-bottom:.875rem}
+.field-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;display:block}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.qr-url{background:var(--bg2);border-radius:8px;padding:.75rem 1rem;font-size:12px;color:var(--muted);font-family:monospace;word-break:break-all;cursor:pointer;border:1px solid var(--border)}
+
+/* PAYMENTS */
+.pay-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-bottom:1.25rem}
+.pay-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;transition:border-color .15s;position:relative}
+.pay-card.enabled{border-color:var(--green)}
+.pay-card-top{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.pay-logo{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;border:1px solid var(--border)}
+.pay-name{font-weight:600;font-size:14px;font-family:var(--font-head)}
+.pay-fee{font-size:11px;color:var(--muted);margin-top:2px}
+.pay-toggle-wrap{margin-left:auto}
+.pay-fields{display:flex;flex-direction:column;gap:.625rem}
+.pay-field-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;display:block}
+.pay-enabled-badge{position:absolute;top:.75rem;right:.75rem;background:#D1FAE5;color:#065F46;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;display:none}
+.pay-card.enabled .pay-enabled-badge{display:inline-block}
+.pay-mode-wrap{background:var(--bg2);border-radius:8px;padding:1rem;margin-bottom:1rem}
+.pay-mode-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:.625rem}
+.mode-option{display:flex;align-items:flex-start;gap:.625rem;padding:.625rem;border-radius:8px;cursor:pointer;transition:background .15s;margin-bottom:.25rem}
+.mode-option:hover{background:var(--card)}
+.mode-option.selected{background:var(--card);border:1px solid var(--accent)}
+.mode-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.mode-radio.on{border-color:var(--accent);background:var(--accent)}
+.mode-radio.on::after{content:'';width:5px;height:5px;border-radius:50%;background:#fff}
+.mode-text{}
+.mode-label{font-size:13px;font-weight:500}
+.mode-sub{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4}
+.pay-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.5rem}
+.pay-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;text-align:center}
+.pay-stat-val{font-family:var(--font-head);font-size:1.4rem;font-weight:700;color:var(--accent)}
+.pay-stat-lbl{font-size:11px;color:var(--muted);margin-top:3px}
+.test-badge{display:inline-flex;align-items:center;gap:4px;background:#FEF3C7;color:#92400E;font-size:11px;padding:3px 8px;border-radius:6px;font-weight:500;margin-bottom:.75rem}
+.webhook-box{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-family:monospace;font-size:11px;color:var(--muted);word-break:break-all;margin-top:.375rem}
+.copy-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;color:var(--muted);cursor:pointer;margin-top:.375rem;transition:all .15s}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+/* POS */
+.pos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-bottom:1.25rem}
+.pos-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;position:relative}
+.pos-card.connected{border-color:var(--green)}
+.pos-logo-row{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.pos-logo{width:44px;height:44px;border-radius:10px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;border:1px solid var(--border);flex-shrink:0}
+.pos-name{font-weight:600;font-size:14px;font-family:var(--font-head)}
+.pos-ver{font-size:11px;color:var(--muted);margin-top:1px}
+.pos-status{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+.pos-status.ok{background:#D1FAE5;color:#065F46}
+.pos-status.off{background:var(--bg2);color:var(--muted)}
+.pos-fields{display:flex;flex-direction:column;gap:.625rem;margin-bottom:.875rem}
+.pos-sync-log{background:var(--bg2);border-radius:8px;padding:.75rem;max-height:120px;overflow-y:auto;font-size:11px;font-family:monospace;color:var(--muted);line-height:1.8}
+.log-ok{color:var(--green)}.log-err{color:var(--red)}.log-info{color:var(--amber)}
+.sync-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.625rem}
+.sync-toggle-wrap{display:flex;align-items:center;gap:.5rem;font-size:12px;color:var(--muted)}
+
+/* TABLES & QR */
+.tables-toolbar{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.zone-tabs{display:flex;gap:.375rem;flex-wrap:wrap}
+.zone-tab{padding:5px 14px;border-radius:20px;font-size:12px;border:1px solid var(--border);cursor:pointer;background:var(--card);color:var(--muted);transition:all .15s;font-family:var(--font)}
+.zone-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.875rem;margin-bottom:1.5rem}
+.table-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:1rem;cursor:pointer;transition:all .18s;position:relative;text-align:center}
+.table-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.table-card.occupied{border-color:var(--amber);background:#FFFBEB}
+.table-card.ordered{border-color:#3B82F6;background:#EFF6FF}
+.table-card.paid{border-color:var(--green);background:#F0FDF4}
+.table-num{font-family:var(--font-head);font-size:1.8rem;font-weight:700;color:var(--text);line-height:1}
+.table-zone{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
+.table-status{font-size:11px;margin-top:.5rem;padding:2px 8px;border-radius:10px;font-weight:500;display:inline-block}
+.ts-free{background:var(--bg2);color:var(--muted)}
+.ts-occupied{background:#FEF3C7;color:#92400E}
+.ts-ordered{background:#DBEAFE;color:#1D4ED8}
+.ts-paid{background:#D1FAE5;color:#065F46}
+.table-amount{font-size:12px;font-weight:600;color:var(--accent);margin-top:.375rem}
+.table-qr-icon{position:absolute;top:.5rem;right:.5rem;font-size:.85rem;opacity:.4}
+.table-timer{font-size:10px;color:var(--muted);margin-top:.25rem}
+
+/* TABLE DETAIL MODAL */
+.table-detail{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@media(max-width:600px){.table-detail{grid-template-columns:1fr}}
+.td-section{background:var(--bg2);border-radius:10px;padding:1rem}
+.td-section-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.75rem}
+.qr-preview-wrap{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem;text-align:center;margin-bottom:.75rem}
+.qr-svg-mock{width:100px;height:100px;margin:0 auto;display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.qr-cell{background:var(--text);border-radius:1px}
+.qr-cell.w{background:transparent}
+.qr-url{font-size:10px;color:var(--muted);margin-top:.5rem;word-break:break-all;font-family:monospace}
+.order-line{display:flex;justify-content:space-between;align-items:center;padding:.375rem 0;border-bottom:1px solid var(--border);font-size:13px}
+.order-line:last-child{border:none}
+.split-row{display:flex;gap:.375rem;margin-top:.5rem;flex-wrap:wrap}
+.split-person{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.5rem .75rem;font-size:12px;text-align:center;cursor:pointer;transition:all .15s;flex:1;min-width:80px}
+.split-person:hover{border-color:var(--accent)}
+.split-person.selected{border-color:var(--accent);background:var(--accent-soft)}
+
+/* TIPS */
+.tips-section{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid #FDE68A;border-radius:10px;padding:1rem;margin-top:.75rem}
+.tips-title{font-size:12px;font-weight:700;color:#92400E;margin-bottom:.625rem;display:flex;align-items:center;gap:.4rem}
+.tips-presets{display:flex;gap:.375rem;margin-bottom:.625rem}
+.tips-btn{flex:1;padding:6px 4px;border-radius:8px;border:1px solid #FDE68A;background:#fff;font-size:12px;font-weight:600;color:#92400E;cursor:pointer;text-align:center;transition:all .15s}
+.tips-btn:hover,.tips-btn.active{background:#D97706;color:#fff;border-color:#D97706}
+.tips-custom{display:flex;gap:.375rem;align-items:center}
+.tips-custom input{flex:1;padding:6px 10px;font-size:12px;border:1px solid #FDE68A;border-radius:8px;background:#fff;color:var(--text);outline:none}
+.tips-custom input:focus{border-color:#D97706}
+.tips-who{font-size:11px;color:#92400E;margin-top:.5rem;display:flex;align-items:center;gap:.375rem}
+.tips-who select{font-size:11px;border:1px solid #FDE68A;border-radius:6px;padding:2px 6px;background:#fff;color:#92400E;flex:1}
+.tips-mono-badge{display:flex;align-items:center;gap:.375rem;font-size:10px;color:#65400E;background:#FEF3C7;border-radius:6px;padding:3px 7px;margin-top:.375rem}
+
+/* STAFF */
+.staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.625rem;margin-top:.625rem}
+.staff-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.75rem;text-align:center;cursor:pointer;transition:all .15s}
+.staff-card:hover{border-color:var(--accent)}
+.staff-card.selected{border-color:var(--accent);background:var(--accent-soft)}
+.staff-avatar{width:40px;height:40px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin:0 auto .375rem}
+.staff-name{font-size:12px;font-weight:500}
+.staff-role{font-size:10px;color:var(--muted)}
+.staff-tips-total{font-size:11px;color:var(--green);margin-top:2px;font-weight:600}
+
+/* QR PRINT */
+@media print{body *{visibility:hidden}.print-qr,.print-qr *{visibility:visible}.print-qr{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}}
+.sw{position:relative;display:inline-block;width:38px;height:21px;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0}
+.sw-slider{position:absolute;cursor:pointer;inset:0;background:var(--border2);border-radius:21px;transition:.2s}
+.sw-slider:before{position:absolute;content:'';height:15px;width:15px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+.sw-slider{background:var(--accent)}
+.sw input:checked+.sw-slider:before{transform:translateX(17px)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px)}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:1.5rem;width:100%;max-width:440px;transform:translateY(12px);transition:transform .2s;max-height:90vh;overflow-y:auto}
+.overlay.open .modal{transform:translateY(0)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.modal-title{font-family:var(--font-head);font-size:1rem;font-weight:600}
+.close-btn{background:var(--bg2);border:1px solid var(--border);color:var(--muted);border-radius:6px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.85rem}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.span2{grid-column:span 2}
+
+/* NOTIF */
+.notif{position:fixed;top:1rem;right:1rem;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:.75rem 1rem;font-size:13px;z-index:200;transform:translateX(120%);transition:transform .3s;box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.notif.show{transform:translateX(0)}
+.notif.ok{border-color:#BBF7D0;background:#F0FDF4}
+.notif.err{border-color:#FECACA;background:#FEF2F2}
+
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem;color:var(--muted)}
+.empty i{font-size:2rem;display:block;margin-bottom:.625rem;opacity:.4}
+
+/* PLAN LOCK */
+.plan-lock{display:flex;align-items:center;gap:.625rem;background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:.625rem .875rem;font-size:12px;color:#92400E;margin-bottom:.875rem}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-brand-name">Mage QR Rest</div>
+      <div class="sb-venue" id="sb-venue-name">Temari Sushi</div>
+    </div>
+    <div style="padding:.5rem 0;flex:1">
+      <div class="nav-section">Меню</div>
+      <button class="nav-item active" onclick="nav(this,'t-orders')">🧾 Замовлення<span id="new-badge" style="background:#EF4444;color:#fff;font-size:10px;border-radius:10px;padding:1px 7px;margin-left:auto;display:none"></span></button>
+      <button class="nav-item" onclick="nav(this,'t-items')">🍽️ Страви</button>
+      <button class="nav-item" onclick="nav(this,'t-cats')">📂 Категорії</button>
+      <div class="nav-section">Заклад</div>
+      <button class="nav-item" onclick="nav(this,'t-tables')">🪑 Столи та QR</button>
+      <button class="nav-item" onclick="nav(this,'t-design')">🎨 Дизайн меню</button>
+      <button class="nav-item" onclick="nav(this,'t-payments')">💳 Платежі</button>
+      <button class="nav-item" onclick="nav(this,'t-pos')">🖥️ POS-інтеграція</button>
+      <button class="nav-item" onclick="nav(this,'t-settings')">⚙️ Налаштування</button>
+    </div>
+    <div class="sb-bottom">
+      <button class="btn btn-outline btn-sm" style="flex:1" onclick="window.open('menu.html?v=temari','_blank')">👁 Переглянути</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- ORDERS -->
+    <div id="t-orders" class="tab-section active">
+      <div class="topbar">
+        <div><div class="page-title">Замовлення</div><div class="page-sub">Оновлюються автоматично</div></div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <select id="order-filter" style="width:130px" onchange="renderOrders()">
+            <option value="">Всі</option>
+            <option value="new">Нові</option>
+            <option value="done">Виконані</option>
+            <option value="cancel">Скасовані</option>
+          </select>
+          <button class="btn btn-outline btn-sm" onclick="renderOrders()">↺</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="stats-grid">
+          <div class="stat"><div class="stat-val" id="st-new-ord">—</div><div class="stat-lbl">Нових</div></div>
+          <div class="stat"><div class="stat-val" id="st-done-ord">—</div><div class="stat-lbl">Виконано</div></div>
+          <div class="stat"><div class="stat-val" id="st-today-rev">—</div><div class="stat-lbl">Виручка</div></div>
+          <div class="stat"><div class="stat-val" id="st-avg">—</div><div class="stat-lbl">Сер. чек</div></div>
+        </div>
+        <div id="orders-wrap"></div>
+      </div>
+    </div>
+
+    <!-- ITEMS -->
+    <div id="t-items" class="tab-section">
+      <div class="topbar">
+        <div><div class="page-title">Страви</div><div class="page-sub" id="items-count-sub"></div></div>
+        <button class="btn btn-accent btn-sm" onclick="openItemModal()">+ Додати</button>
+      </div>
+      <div class="content">
+        <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
+          <select id="item-cat-filter" style="width:160px" onchange="renderItems()"><option value="">Всі категорії</option></select>
+          <input type="text" id="item-search" placeholder="Пошук страви..." style="width:200px" oninput="renderItems()"/>
+        </div>
+        <div class="items-list" id="items-list"></div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div id="t-cats" class="tab-section">
+      <div class="topbar">
+        <div><div class="page-title">Категорії</div></div>
+        <button class="btn btn-accent btn-sm" onclick="openCatModal()">+ Додати</button>
+      </div>
+      <div class="content">
+        <div class="items-list" id="cats-list"></div>
+      </div>
+    </div>
+
+    <!-- TABLES & QR -->
+    <div id="t-tables" class="tab-section">
+      <div class="topbar">
+        <div><div class="page-title">🪑 Столи та QR-оплата</div><div class="page-sub">Управління залом, QR-коди, чайові</div></div>
+        <div style="display:flex;gap:.5rem">
+          <button class="btn btn-outline btn-sm" onclick="printAllQR()">🖨️ Друк всіх QR</button>
+          <button class="btn btn-accent btn-sm" onclick="openAddTable()">+ Додати стіл</button>
+        </div>
+      </div>
+      <div class="content">
+
+        <div class="stats-grid" style="margin-bottom:1.25rem">
+          <div class="stat"><div class="stat-val" id="st-tables-free">—</div><div class="stat-lbl">Вільних столів</div></div>
+          <div class="stat"><div class="stat-val" id="st-tables-occ">—</div><div class="stat-lbl">Зайнятих</div></div>
+          <div class="stat"><div class="stat-val" id="st-tables-rev">—</div><div class="stat-lbl">Виручка зали (сьогодні)</div></div>
+          <div class="stat"><div class="stat-val" id="st-tips-today">—</div><div class="stat-lbl">Чайові сьогодні</div></div>
+        </div>
+
+        <div class="tables-toolbar">
+          <div class="zone-tabs" id="zone-tabs">
+            <button class="zone-tab active" onclick="filterZone(this,'')">Всі зали</button>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="openAddZone()">+ Зал</button>
+          <div style="margin-left:auto;display:flex;gap:.5rem;align-items:center">
+            <span style="font-size:12px;color:var(--muted)">Автооновлення:</span>
+            <label class="sw"><input type="checkbox" id="auto-refresh" checked/><span class="sw-slider"></span></label>
+          </div>
+        </div>
+
+        <div class="tables-grid" id="tables-grid"></div>
+
+        <!-- TIPS STATS -->
+        <div class="settings-section">
+          <h3>💸 Чайові — статистика по персоналу</h3>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:1rem">Чайові зараховуються на картку monobank співробітника одразу після оплати (комісія 4%)</div>
+          <div class="staff-grid" id="staff-tips-grid"></div>
+        </div>
+
+        <!-- TIPS SETTINGS -->
+        <div class="settings-section" style="margin-top:1rem">
+          <h3>⚙️ Налаштування чайових</h3>
+          <div class="toggle-row" style="margin-bottom:.875rem">
+            <div>
+              <div style="font-size:13px;font-weight:500">Пропонувати чайові клієнтам</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Після успішної оплати клієнт побачить пропозицію залишити чайові</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="tips-enabled" checked/><span class="sw-slider"></span></label>
+          </div>
+          <div class="toggle-row" style="margin-bottom:.875rem">
+            <div>
+              <div style="font-size:13px;font-weight:500">Клієнт обирає офіціанта</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Показувати список персоналу з фото для вибору отримувача чайових</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="tips-choose-staff" checked/><span class="sw-slider"></span></label>
+          </div>
+          <div class="toggle-row" style="margin-bottom:.875rem">
+            <div>
+              <div style="font-size:13px;font-weight:500">Автоматично призначати по столу</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Якщо за столом закріплений офіціант — чайові йдуть автоматично йому</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="tips-auto-assign"/><span class="sw-slider"></span></label>
+          </div>
+          <div class="field-row">
+            <label class="field-label">Розміри чайових за замовчуванням (%)</label>
+            <div style="display:flex;gap:.5rem">
+              <input type="number" value="5" placeholder="%" style="width:70px"/>
+              <input type="number" value="10" placeholder="%" style="width:70px"/>
+              <input type="number" value="15" placeholder="%" style="width:70px"/>
+              <input type="number" value="20" placeholder="%" style="width:70px"/>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:.25rem">Клієнт бачить ці варіанти плюс поле "Довільна сума"</div>
+          </div>
+          <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:.75rem;font-size:12px;color:#92400E;margin-top:.75rem">
+            ⚠️ <strong>Чайові через Monobank:</strong> Додайте співробітників у кабінеті monobank acquiring → зверніться у підтримку mono → після підтвердження вкажіть <code>tipsEmployeeId</code> кожного офіціанта нижче. Мінімальна сума замовлення для показу чайових — 100 грн.
+          </div>
+        </div>
+
+        <!-- STAFF MANAGEMENT -->
+        <div class="settings-section" style="margin-top:1rem">
+          <h3>👨‍🍳 Персонал та Monobank ID</h3>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:1rem">Додайте офіціантів та вкажіть їх tipsEmployeeId з кабінету monobank для нарахування чайових</div>
+          <div id="staff-list"></div>
+          <button class="btn btn-outline btn-sm" style="margin-top:.75rem" onclick="openAddStaff()">+ Додати офіціанта</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DESIGN STUDIO -->
+    <div id="t-design" class="tab-section">
+      <div class="topbar">
+        <div><div class="page-title">🎨 Дизайн меню</div><div class="page-sub">Налаштуйте вигляд публічного меню</div></div>
+        <button class="btn btn-accent btn-sm" onclick="saveDesign()">💾 Зберегти дизайн</button>
+      </div>
+      <div class="content">
+        <div class="design-studio">
+          <!-- LEFT: CONTROLS -->
+          <div>
+            <!-- PALETTE PRESETS -->
+            <div class="ds-panel" style="margin-bottom:1rem">
+              <div class="ds-panel-head"><div class="ds-panel-title">🎨 Готові палітри</div></div>
+              <div class="ds-section">
+                <span class="ds-label">Оберіть готовий стиль</span>
+                <div class="palette-row" id="presets-row"></div>
+              </div>
+            </div>
+
+            <!-- COLORS -->
+            <div class="ds-panel" style="margin-bottom:1rem">
+              <div class="ds-panel-head"><div class="ds-panel-title">🌈 Кольори</div></div>
+              <div class="ds-section">
+                <div class="ds-row">
+                  <div style="flex:1"><span class="ds-label">Головний колір (акцент)</span>
+                    <div class="color-input-wrap">
+                      <label class="color-swatch"><input type="color" id="c-accent" value="#C1440E" oninput="livePreview()"/></label>
+                      <input class="color-hex" id="c-accent-hex" type="text" value="#C1440E" oninput="hexToColor('c-accent')"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="ds-row">
+                  <div style="flex:1"><span class="ds-label">Фон сторінки</span>
+                    <div class="color-input-wrap">
+                      <label class="color-swatch"><input type="color" id="c-bg" value="#FBF8F4" oninput="livePreview()"/></label>
+                      <input class="color-hex" id="c-bg-hex" type="text" value="#FBF8F4" oninput="hexToColor('c-bg')"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="ds-row">
+                  <div style="flex:1"><span class="ds-label">Колір карток</span>
+                    <div class="color-input-wrap">
+                      <label class="color-swatch"><input type="color" id="c-card" value="#FFFFFF" oninput="livePreview()"/></label>
+                      <input class="color-hex" id="c-card-hex" type="text" value="#FFFFFF" oninput="hexToColor('c-card')"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="ds-row">
+                  <div style="flex:1"><span class="ds-label">Колір тексту</span>
+                    <div class="color-input-wrap">
+                      <label class="color-swatch"><input type="color" id="c-text" value="#1A1208" oninput="livePreview()"/></label>
+                      <input class="color-hex" id="c-text-hex" type="text" value="#1A1208" oninput="hexToColor('c-text')"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TYPOGRAPHY -->
+            <div class="ds-panel" style="margin-bottom:1rem">
+              <div class="ds-panel-head"><div class="ds-panel-title">🔤 Шрифти</div></div>
+              <div class="ds-section">
+                <div class="field-row">
+                  <span class="ds-label">Шрифт заголовків</span>
+                  <select id="font-head" onchange="livePreview()">
+                    <option value="Playfair Display">Playfair Display — класичний</option>
+                    <option value="Space Grotesk">Space Grotesk — сучасний</option>
+                    <option value="Cormorant Garamond">Cormorant — елегантний</option>
+                    <option value="Unbounded">Unbounded — жирний</option>
+                    <option value="Montserrat">Montserrat — нейтральний</option>
+                    <option value="Raleway">Raleway — легкий</option>
+                    <option value="Nunito">Nunito — округлий</option>
+                  </select>
+                  <div class="font-preview" id="font-head-preview">Смачна Їжа</div>
+                </div>
+                <div class="field-row">
+                  <span class="ds-label">Шрифт тексту</span>
+                  <select id="font-body" onchange="livePreview()">
+                    <option value="DM Sans">DM Sans</option>
+                    <option value="Inter">Inter</option>
+                    <option value="Lato">Lato</option>
+                    <option value="Roboto">Roboto</option>
+                    <option value="Nunito Sans">Nunito Sans</option>
+                    <option value="Source Sans 3">Source Sans 3</option>
+                  </select>
+                </div>
+                <div class="field-row">
+                  <span class="ds-label">Розмір шрифту</span>
+                  <div class="range-row">
+                    <input type="range" id="font-size" min="13" max="18" value="15" oninput="livePreview();document.getElementById('font-size-val').textContent=this.value+'px'"/>
+                    <span class="range-val" id="font-size-val">15px</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- LOGO & BANNER -->
+            <div class="ds-panel" style="margin-bottom:1rem">
+              <div class="ds-panel-head"><div class="ds-panel-title">🖼️ Логотип та банер</div></div>
+              <div class="ds-section">
+                <span class="ds-label">Логотип (URL або emoji)</span>
+                <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
+                  <input id="logo-emoji" type="text" placeholder="🍣" maxlength="2" style="width:60px;text-align:center;font-size:1.3rem" oninput="livePreview()"/>
+                  <input id="logo-url" type="text" placeholder="https://... (URL зображення)" oninput="livePreview()"/>
+                </div>
+                <span class="ds-label">Банер-зображення (URL)</span>
+                <input id="banner-url" type="text" placeholder="https://... (широке фото закладу)" oninput="livePreview()" style="margin-bottom:.5rem"/>
+                <div style="display:flex;align-items:center;gap:.5rem;margin-top:.375rem">
+                  <span class="ds-label" style="margin:0">Висота банера</span>
+                  <div class="range-row" style="flex:1">
+                    <input type="range" id="banner-h" min="60" max="200" value="120" oninput="livePreview();document.getElementById('banner-h-val').textContent=this.value+'px'"/>
+                    <span class="range-val" id="banner-h-val">120px</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- BACKGROUND -->
+            <div class="ds-panel" style="margin-bottom:1rem">
+              <div class="ds-panel-head"><div class="ds-panel-title">🌄 Фон меню</div></div>
+              <div class="ds-section">
+                <div class="toggle-row">
+                  <span class="toggle-label">Фонове зображення</span>
+                  <button class="toggle" id="toggle-bgimg" onclick="this.classList.toggle('on');livePreview()"></button>
+                </div>
+                <input id="bg-img-url" type="text" placeholder="https://... (URL фону)" oninput="livePreview()" style="margin:.5rem 0"/>
+                <div class="toggle-row" style="margin-top:.5rem">
+                  <span class="toggle-label">Розмита підложка (blur)</span>
+                  <button class="toggle on" id="toggle-blur" onclick="this.classList.toggle('on');livePreview()"></button>
+                </div>
+                <div class="toggle-row" style="margin-top:.5rem">
+                  <span class="toggle-label">Темне затемнення</span>
+                  <button class="toggle" id="toggle-overlay" onclick="this.classList.toggle('on');livePreview()"></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- LAYOUT OPTIONS -->
+            <div class="ds-panel">
+              <div class="ds-panel-head"><div class="ds-panel-title">📐 Розмітка</div></div>
+              <div class="ds-section">
+                <div class="toggle-row">
+                  <span class="toggle-label">Показувати ціни</span>
+                  <button class="toggle on" id="toggle-prices" onclick="this.classList.toggle('on');livePreview()"></button>
+                </div>
+                <div class="toggle-row" style="margin-top:.5rem">
+                  <span class="toggle-label">Показувати описи</span>
+                  <button class="toggle on" id="toggle-desc" onclick="this.classList.toggle('on');livePreview()"></button>
+                </div>
+                <div class="toggle-row" style="margin-top:.5rem">
+                  <span class="toggle-label">Показувати вагу/об'єм</span>
+                  <button class="toggle on" id="toggle-weight" onclick="this.classList.toggle('on');livePreview()"></button>
+                </div>
+                <div class="field-row" style="margin-top:.75rem">
+                  <span class="ds-label">Заокруглення карток</span>
+                  <div class="range-row">
+                    <input type="range" id="card-radius" min="0" max="24" value="12" oninput="livePreview();document.getElementById('radius-val').textContent=this.value+'px'"/>
+                    <span class="range-val" id="radius-val">12px</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: PREVIEW -->
+          <div class="preview-wrap">
+            <div class="ds-panel">
+              <div class="ds-panel-head">
+                <div class="ds-panel-title">📱 Попередній перегляд</div>
+                <div style="font-size:11px;color:var(--muted)">Live</div>
+              </div>
+              <div style="padding:1rem">
+                <div class="device-frame" id="preview-frame">
+                  <div class="preview-inner" id="preview-inner">
+                    <div class="pv-banner" id="pv-banner">
+                      <div style="font-size:.7rem;color:rgba(255,255,255,.7)">Банер</div>
+                    </div>
+                    <div class="pv-header" id="pv-header">
+                      <div class="pv-logo" id="pv-logo">🍣</div>
+                      <div class="pv-name" id="pv-name">Temari Sushi</div>
+                      <div class="pv-tag" id="pv-tag">Японська кухня · Тернопіль</div>
+                    </div>
+                    <div class="pv-cats" id="pv-cats">
+                      <div class="pv-pill active" id="pv-pill1">Роли</div>
+                      <div class="pv-pill" id="pv-pill2">Нігірі</div>
+                      <div class="pv-pill" id="pv-pill3">Напої</div>
+                    </div>
+                    <div class="pv-body" id="pv-body">
+                      <div class="pv-dish" id="pv-dish1">
+                        <div class="pv-dish-em" id="pv-dem1">🌀</div>
+                        <div class="pv-dish-name" id="pv-dn1">Філадельфія</div>
+                        <div class="pv-dish-price" id="pv-dp1">189₴</div>
+                      </div>
+                      <div class="pv-dish" id="pv-dish2">
+                        <div class="pv-dish-em" id="pv-dem2">🍣</div>
+                        <div class="pv-dish-name" id="pv-dn2">Нігірі лосось</div>
+                        <div class="pv-dish-price" id="pv-dp2">89₴</div>
+                      </div>
+                      <div class="pv-dish" id="pv-dish3">
+                        <div class="pv-dish-em" id="pv-dem3">🎁</div>
+                        <div class="pv-dish-name" id="pv-dn3">Сет «Свято»</div>
+                        <div class="pv-dish-price" id="pv-dp3">699₴</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="preview-label">Публічне меню клієнта</div>
+              </div>
+              <div class="ds-save-bar">
+                <div style="font-size:12px;color:var(--muted)">Зміни не збережені</div>
+                <button class="btn btn-accent btn-sm" onclick="saveDesign()">💾 Зберегти</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div id="t-payments" class="tab-section">
+      <div class="topbar">
+        <div><div class="page-title">💳 Платежі</div><div class="page-sub">Налаштуйте способи оплати для клієнтів</div></div>
+        <div style="display:flex;gap:.5rem">
+          <button class="btn btn-outline btn-sm" onclick="notify('Тест-замовлення відправлено!','ok')">🧪 Тест оплати</button>
+          <button class="btn btn-accent btn-sm" onclick="savePayments()">💾 Зберегти</button>
+        </div>
+      </div>
+      <div class="content">
+
+        <div class="test-badge">🔶 Тестовий режим активний — реальні платежі не проводяться</div>
+
+        <div class="pay-stats">
+          <div class="pay-stat"><div class="pay-stat-val">₴48 290</div><div class="pay-stat-lbl">Оплачено онлайн (місяць)</div></div>
+          <div class="pay-stat"><div class="pay-stat-val">342</div><div class="pay-stat-lbl">Транзакцій</div></div>
+          <div class="pay-stat"><div class="pay-stat-val">96.4%</div><div class="pay-stat-lbl">Успішних платежів</div></div>
+        </div>
+
+        <!-- PAYMENT MODE -->
+        <div class="settings-section" style="margin-bottom:1rem">
+          <h3>Режим оплати</h3>
+          <div class="pay-mode-wrap">
+            <div class="pay-mode-title">Коли клієнт оплачує?</div>
+            <div class="mode-option selected" id="mode-instant" onclick="selectMode('instant')">
+              <div class="mode-radio on" id="radio-instant"></div>
+              <div class="mode-text">
+                <div class="mode-label">Одразу при замовленні</div>
+                <div class="mode-sub">Клієнт обирає страви → обирає провайдера → оплачує → замовлення йде в касу. Рекомендовано для доставки.</div>
+              </div>
+            </div>
+            <div class="mode-option" id="mode-after" onclick="selectMode('after')">
+              <div class="mode-radio" id="radio-after"></div>
+              <div class="mode-text">
+                <div class="mode-label">Після підтвердження закладом</div>
+                <div class="mode-sub">Клієнт замовляє → заклад підтверджує → клієнт отримує посилання на оплату. Підходить для залів.</div>
+              </div>
+            </div>
+            <div class="mode-option" id="mode-both" onclick="selectMode('both')">
+              <div class="mode-radio" id="radio-both"></div>
+              <div class="mode-text">
+                <div class="mode-label">Клієнт обирає сам</div>
+                <div class="mode-sub">Обидва варіанти доступні. Клієнт бачить кнопки "Оплатити онлайн" та "Оплатити при отриманні".</div>
+              </div>
+            </div>
+          </div>
+          <div class="toggle-row" style="margin-top:.75rem">
+            <div>
+              <div style="font-size:13px;font-weight:500">Дозволити оплату готівкою / при отриманні</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Клієнт може обрати "Оплата при отриманні" замість онлайн-оплати</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="allow-cash" checked/><span class="sw-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- PROVIDERS -->
+        <div class="settings-section" style="margin-bottom:1rem">
+          <h3>Платіжні провайдери</h3>
+          <div class="pay-grid">
+
+            <!-- LIQPAY -->
+            <div class="pay-card" id="card-liqpay">
+              <div class="pay-enabled-badge">✓ Активний</div>
+              <div class="pay-card-top">
+                <div class="pay-logo" style="background:#1CB253;color:#fff;font-size:1rem;font-weight:700;font-family:var(--font-head)">LP</div>
+                <div>
+                  <div class="pay-name">LiqPay</div>
+                  <div class="pay-fee">ПриватБанк · Комісія 2.75%</div>
+                </div>
+                <div class="pay-toggle-wrap">
+                  <label class="sw"><input type="checkbox" id="tog-liqpay" onchange="toggleProvider('liqpay',this.checked)"/><span class="sw-slider"></span></label>
+                </div>
+              </div>
+              <div class="pay-fields" id="fields-liqpay" style="display:none">
+                <div>
+                  <label class="pay-field-label">Public Key</label>
+                  <input type="text" placeholder="i000000000000000" id="liqpay-pub"/>
+                </div>
+                <div>
+                  <label class="pay-field-label">Private Key</label>
+                  <input type="password" placeholder="••••••••••••••••" id="liqpay-priv"/>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-top:.25rem">
+                  Отримайте ключі на <a href="https://liqpay.ua" target="_blank" style="color:var(--accent)">liqpay.ua</a> → Бізнес → API ключі
+                </div>
+                <div>
+                  <label class="pay-field-label">Webhook URL (скопіюйте в LiqPay)</label>
+                  <div class="webhook-box">https://us-central1-your-project.cloudfunctions.net/paymentWebhook?provider=liqpay&venue=temari</div>
+                  <button class="copy-btn" onclick="notify('Скопійовано!','ok')">📋 Копіювати</button>
+                </div>
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Visa/MC</span>
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Apple Pay</span>
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Google Pay</span>
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Privat24</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- MONOBANK -->
+            <div class="pay-card" id="card-mono">
+              <div class="pay-enabled-badge">✓ Активний</div>
+              <div class="pay-card-top">
+                <div class="pay-logo" style="background:#1A1A1A;color:#fff;font-size:1.3rem">⬛</div>
+                <div>
+                  <div class="pay-name">Monobank</div>
+                  <div class="pay-fee">Acquiring API · від 1.5%</div>
+                </div>
+                <div class="pay-toggle-wrap">
+                  <label class="sw"><input type="checkbox" id="tog-mono" onchange="toggleProvider('mono',this.checked)"/><span class="sw-slider"></span></label>
+                </div>
+              </div>
+              <div class="pay-fields" id="fields-mono" style="display:none">
+                <div>
+                  <label class="pay-field-label">Merchant Token</label>
+                  <input type="password" placeholder="••••••••••••••••" id="mono-token"/>
+                </div>
+                <div style="font-size:11px;color:var(--muted)">
+                  Токен → <a href="https://web.monobank.ua" target="_blank" style="color:var(--accent)">web.monobank.ua</a> → Еквайринг → Налаштування → API токен
+                </div>
+                <div>
+                  <label class="pay-field-label">Webhook URL</label>
+                  <div class="webhook-box">https://us-central1-your-project.cloudfunctions.net/paymentWebhook?provider=mono&venue=temari</div>
+                  <button class="copy-btn" onclick="notify('Скопійовано!','ok')">📋 Копіювати</button>
+                </div>
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Visa/MC</span>
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Apple Pay</span>
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Google Pay</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- WAYFORPAY -->
+            <div class="pay-card" id="card-wfp">
+              <div class="pay-enabled-badge">✓ Активний</div>
+              <div class="pay-card-top">
+                <div class="pay-logo" style="background:#005BAC;color:#fff;font-size:.8rem;font-weight:700;font-family:var(--font-head);letter-spacing:-.5px">WFP</div>
+                <div>
+                  <div class="pay-name">WayForPay</div>
+                  <div class="pay-fee">Merchant API · від 1.5%</div>
+                </div>
+                <div class="pay-toggle-wrap">
+                  <label class="sw"><input type="checkbox" id="tog-wfp" onchange="toggleProvider('wfp',this.checked)"/><span class="sw-slider"></span></label>
+                </div>
+              </div>
+              <div class="pay-fields" id="fields-wfp" style="display:none">
+                <div>
+                  <label class="pay-field-label">Merchant Account</label>
+                  <input type="text" placeholder="test_merch_n1" id="wfp-account"/>
+                </div>
+                <div>
+                  <label class="pay-field-label">Merchant Secret Key</label>
+                  <input type="password" placeholder="••••••••••••••••" id="wfp-secret"/>
+                </div>
+                <div>
+                  <label class="pay-field-label">Domain</label>
+                  <input type="text" placeholder="menoos.app" id="wfp-domain"/>
+                </div>
+                <div>
+                  <label class="pay-field-label">Service URL (webhook)</label>
+                  <div class="webhook-box">https://us-central1-your-project.cloudfunctions.net/paymentWebhook?provider=wfp&venue=temari</div>
+                  <button class="copy-btn" onclick="notify('Скопійовано!','ok')">📋 Копіювати</button>
+                </div>
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Visa/MC</span>
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Apple Pay</span>
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Google Pay</span>
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">ФОП рахунок</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- A-BANK -->
+            <div class="pay-card" id="card-abank">
+              <div class="pay-enabled-badge">✓ Активний</div>
+              <div class="pay-card-top">
+                <div class="pay-logo" style="background:#FF6B00;color:#fff;font-size:.85rem;font-weight:700;font-family:var(--font-head)">А</div>
+                <div>
+                  <div class="pay-name">А-Банк</div>
+                  <div class="pay-fee">Acquiring · інд. комісія</div>
+                </div>
+                <div class="pay-toggle-wrap">
+                  <label class="sw"><input type="checkbox" id="tog-abank" onchange="toggleProvider('abank',this.checked)"/><span class="sw-slider"></span></label>
+                </div>
+              </div>
+              <div class="pay-fields" id="fields-abank" style="display:none">
+                <div style="background:#FEF3C7;border-radius:8px;padding:.75rem;font-size:12px;color:#92400E;margin-bottom:.5rem">
+                  ⚠️ А-Банк підключається через індивідуальний договір. Зверніться до банку, підпишіть договір еквайрингу та отримайте credentials.
+                </div>
+                <div>
+                  <label class="pay-field-label">Merchant ID</label>
+                  <input type="text" placeholder="Отримайте від банку" id="abank-mid"/>
+                </div>
+                <div>
+                  <label class="pay-field-label">Secret Key</label>
+                  <input type="password" placeholder="••••••••••••••••" id="abank-secret"/>
+                </div>
+                <div>
+                  <label class="pay-field-label">API Endpoint (від банку)</label>
+                  <input type="text" placeholder="https://pay.a-bank.com.ua/api" id="abank-url"/>
+                </div>
+                <div>
+                  <label class="pay-field-label">Webhook URL</label>
+                  <div class="webhook-box">https://us-central1-your-project.cloudfunctions.net/paymentWebhook?provider=abank&venue=temari</div>
+                  <button class="copy-btn" onclick="notify('Скопійовано!','ok')">📋 Копіювати</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- RECEIPTS -->
+        <div class="settings-section">
+          <h3>Фіскалізація та чеки</h3>
+          <div class="toggle-row" style="margin-bottom:.875rem">
+            <div>
+              <div style="font-size:13px;font-weight:500">Надсилати email-квитанцію клієнту</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Після успішної оплати клієнт отримає PDF-квитанцію</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="send-receipt" checked/><span class="sw-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div style="font-size:13px;font-weight:500">Checkbox / ПРРО фіскалізація</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Автоматично пробивати фіскальний чек через ПРРО</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="fiscal"/><span class="sw-slider"></span></label>
+          </div>
+          <div id="fiscal-fields" style="display:none;margin-top:1rem">
+            <div class="field-row">
+              <label class="field-label">Checkbox API ключ</label>
+              <input type="password" placeholder="••••••••••••••••" id="checkbox-key"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POS INTEGRATION -->
+    <div id="t-pos" class="tab-section">
+      <div class="topbar">
+        <div><div class="page-title">🖥️ POS-інтеграція</div><div class="page-sub">Синхронізація замовлень з касовими системами</div></div>
+        <button class="btn btn-accent btn-sm" onclick="savePOS()">💾 Зберегти</button>
+      </div>
+      <div class="content">
+
+        <div class="pay-stats">
+          <div class="pay-stat"><div class="pay-stat-val">1 243</div><div class="pay-stat-lbl">Передано в POS (місяць)</div></div>
+          <div class="pay-stat"><div class="pay-stat-val">99.2%</div><div class="pay-stat-lbl">Успішних передач</div></div>
+          <div class="pay-stat"><div class="pay-stat-val">&lt;1s</div><div class="pay-stat-lbl">Середній час передачі</div></div>
+        </div>
+
+        <div class="settings-section" style="margin-bottom:1rem">
+          <h3>Налаштування синхронізації</h3>
+          <div class="sync-row">
+            <div>
+              <div style="font-size:13px;font-weight:500">Передавати замовлення в POS</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Одразу після підтвердження оплати або розміщення замовлення</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="pos-sync" checked/><span class="sw-slider"></span></label>
+          </div>
+          <div style="margin-top:1rem">
+            <label class="field-label">Передавати тільки оплачені замовлення</label>
+            <select id="pos-when">
+              <option value="paid">Тільки після підтвердження оплати</option>
+              <option value="placed">Одразу після розміщення (навіть без оплати)</option>
+              <option value="confirmed">Після підтвердження адміном</option>
+            </select>
+          </div>
+          <div style="margin-top:.875rem">
+            <label class="field-label">Коментар до замовлення в POS</label>
+            <select id="pos-comment-fmt">
+              <option>Mage QR Rest #{{order_id}} · {{payment_method}}</option>
+              <option>Онлайн-замовлення · стіл {{table}}</option>
+              <option>Доставка · {{client_name}}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pos-grid">
+
+          <!-- POSTER -->
+          <div class="pos-card" id="pos-card-poster">
+            <div class="pos-logo-row">
+              <div class="pos-logo" style="background:#FEECDC">🍽️</div>
+              <div>
+                <div class="pos-name">Poster POS</div>
+                <div class="pos-ver">joinposter.com · REST API v2</div>
+              </div>
+              <span class="pos-status off" id="poster-status">Не підключено</span>
+            </div>
+            <div class="pos-fields">
+              <div>
+                <label class="pay-field-label">Обліковий запис Poster</label>
+                <input type="text" placeholder="myrestaurant (частина URL)" id="poster-account"/>
+              </div>
+              <div>
+                <label class="pay-field-label">Access Token</label>
+                <input type="password" placeholder="••••••••••••••••" id="poster-token"/>
+              </div>
+              <div>
+                <label class="pay-field-label">Spot ID (торгова точка)</label>
+                <input type="number" placeholder="1" id="poster-spot"/>
+              </div>
+              <div>
+                <label class="pay-field-label">Tableservice ID (зал, якщо є)</label>
+                <input type="number" placeholder="0 = без залу" id="poster-table"/>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:.75rem;background:var(--bg2);padding:.625rem;border-radius:6px;line-height:1.6">
+              <strong>Як підключити:</strong> Poster Admin → Додатки → Маркет → Mage QR Rest → Встановити → Скопіювати токен
+            </div>
+            <div style="display:flex;gap:.5rem">
+              <button class="btn btn-outline btn-sm" onclick="testPOS('poster')">🧪 Тест-замовлення</button>
+              <button class="btn btn-accent btn-sm" onclick="connectPOS('poster')">Підключити</button>
+            </div>
+            <div style="margin-top:.875rem">
+              <div class="pay-field-label">Журнал синхронізації</div>
+              <div class="pos-sync-log" id="log-poster">
+                <div class="log-info">── Очікування підключення ──</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SYRVE -->
+          <div class="pos-card" id="pos-card-syrve">
+            <div class="pos-logo-row">
+              <div class="pos-logo" style="background:#E8F4FD">🖥️</div>
+              <div>
+                <div class="pos-name">Syrve (iiko)</div>
+                <div class="pos-ver">syrve.online · REST API v1</div>
+              </div>
+              <span class="pos-status off" id="syrve-status">Не підключено</span>
+            </div>
+            <div class="pos-fields">
+              <div>
+                <label class="pay-field-label">Syrve Server URL</label>
+                <input type="text" placeholder="https://myrestaurant.syrve.online" id="syrve-url"/>
+              </div>
+              <div>
+                <label class="pay-field-label">Логін</label>
+                <input type="text" placeholder="api_user" id="syrve-login"/>
+              </div>
+              <div>
+                <label class="pay-field-label">Пароль</label>
+                <input type="password" placeholder="••••••••" id="syrve-pass"/>
+              </div>
+              <div>
+                <label class="pay-field-label">Organization ID</label>
+                <input type="text" placeholder="UUID організації" id="syrve-org"/>
+              </div>
+              <div>
+                <label class="pay-field-label">Terminal Group ID</label>
+                <input type="text" placeholder="UUID терміналу" id="syrve-term"/>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:.75rem;background:var(--bg2);padding:.625rem;border-radius:6px;line-height:1.6">
+              <strong>Токен живе 1 год.</strong> Система автоматично оновлює його. Organization і Terminal ID знайдіть в Syrve Office → Ресторани → Загальні налаштування.
+            </div>
+            <div style="display:flex;gap:.5rem">
+              <button class="btn btn-outline btn-sm" onclick="testPOS('syrve')">🧪 Тест-замовлення</button>
+              <button class="btn btn-accent btn-sm" onclick="connectPOS('syrve')">Підключити</button>
+            </div>
+            <div style="margin-top:.875rem">
+              <div class="pay-field-label">Журнал синхронізації</div>
+              <div class="pos-sync-log" id="log-syrve">
+                <div class="log-info">── Очікування підключення ──</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRODUCT MAPPING -->
+        <div class="settings-section">
+          <h3>Прив'язка страв до POS-коди</h3>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">Зіставте страви меню з ID продуктів у вашій касовій системі. Без прив'язки замовлення передаються за назвою.</div>
+          <div id="mapping-table">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem">
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Страва в меню</div>
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Poster ID</div>
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Syrve UUID</div>
+            </div>
+            <div id="mapping-rows"></div>
+          </div>
+          <button class="btn btn-outline btn-sm" style="margin-top:.75rem" onclick="autoMapProducts()">⚡ Автоматично зіставити за назвою</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="t-settings" class="tab-section">
+      <div class="topbar"><div><div class="page-title">Налаштування</div></div></div>
+      <div class="content">
+        <div class="settings-section">
+          <h3>Інформація про заклад</h3>
+          <div class="grid-2">
+            <div class="field-row span2"><label class="field-label">Назва</label><input id="set-name" type="text" value="Temari Sushi" oninput="document.getElementById('sb-venue-name').textContent=this.value"/></div>
+            <div class="field-row"><label class="field-label">Слоган</label><input id="set-tag" type="text" value="Японська кухня · Тернопіль"/></div>
+            <div class="field-row"><label class="field-label">Телефон</label><input id="set-phone" type="text" value="098-700-44-22"/></div>
+            <div class="field-row"><label class="field-label">Адреса</label><input id="set-addr" type="text" value="вул. Руська, 12"/></div>
+            <div class="field-row"><label class="field-label">Місто</label><input id="set-city" type="text" value="Тернопіль"/></div>
+          </div>
+          <button class="btn btn-accent" onclick="notify('✅ Збережено!','ok')">Зберегти</button>
+        </div>
+        <div class="settings-section">
+          <h3>QR-посилання для клієнтів</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:.75rem">Поділіться цим посиланням або роздрукуйте QR-код</p>
+          <div class="qr-url" onclick="this.select?.()">https://menoos.app/temari</div>
+          <button class="btn btn-outline btn-sm" style="margin-top:.75rem" onclick="notify('🔗 Посилання скопійовано!','ok')">📋 Копіювати</button>
+          <button class="btn btn-outline btn-sm" style="margin-top:.75rem;margin-left:.5rem" onclick="notify('QR-код завантажено!','ok')">⬇️ QR-код</button>
+        </div>
+        <div class="settings-section">
+          <h3>Поточний тариф</h3>
+          <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+            <div style="background:#EDE9FE;border-radius:8px;padding:.625rem 1rem;font-size:13px;font-weight:600;color:#5B21B6">💎 Pro тариф</div>
+            <div style="font-size:13px;color:var(--muted)">500 страв · 50 категорій · 5000 замовлень/міс · Повний дизайн</div>
+            <button class="btn btn-outline btn-sm" onclick="notify('Зверніться до підтримки для зміни тарифу','ok')">Змінити тариф</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ITEM MODAL -->
+<div class="overlay" id="modal-item" onclick="closeModal('modal-item')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="item-modal-t">Нова страва</div>
+      <button class="close-btn" onclick="closeModal('modal-item')">✕</button>
+    </div>
+    <div class="modal-grid">
+      <div class="span2"><label class="field-label">Назва</label><input id="if-name" type="text" placeholder="Філадельфія класик"/></div>
+      <div class="span2"><label class="field-label">Опис</label><textarea id="if-desc" rows="2" placeholder="Свіжий лосось, вершковий сир..."></textarea></div>
+      <div><label class="field-label">Ціна (грн)</label><input id="if-price" type="number" placeholder="189"/></div>
+      <div><label class="field-label">Emoji</label><input id="if-emoji" type="text" placeholder="🌀" maxlength="2"/></div>
+      <div><label class="field-label">Вага</label><input id="if-weight" type="text" placeholder="250 г"/></div>
+      <div><label class="field-label">Категорія</label><select id="if-cat"></select></div>
+    </div>
+    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveItem()">Зберегти</button>
+  </div>
+</div>
+
+<!-- CAT MODAL -->
+<div class="overlay" id="modal-cat" onclick="closeModal('modal-cat')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="cat-modal-t">Нова категорія</div>
+      <button class="close-btn" onclick="closeModal('modal-cat')">✕</button>
+    </div>
+    <div class="modal-grid">
+      <div class="span2"><label class="field-label">Назва</label><input id="cf-name" type="text" placeholder="Роли"/></div>
+      <div><label class="field-label">Emoji</label><input id="cf-emoji" type="text" placeholder="🌀" maxlength="2"/></div>
+      <div><label class="field-label">Порядок</label><input id="cf-order" type="number" placeholder="1"/></div>
+    </div>
+    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveCat()">Зберегти</button>
+  </div>
+</div>
+
+<!-- TABLE DETAIL MODAL -->
+<div class="overlay" id="modal-table-detail" onclick="closeModal('modal-table-detail')">
+  <div class="modal" style="max-width:600px" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="table-detail-title">Стіл №5</div>
+      <button class="close-btn" onclick="closeModal('modal-table-detail')">✕</button>
+    </div>
+    <div class="table-detail">
+      <!-- LEFT: QR + info -->
+      <div>
+        <div class="td-section">
+          <div class="td-section-title">QR-код столу</div>
+          <div class="qr-preview-wrap">
+            <canvas id="table-qr-canvas" width="100" height="100" style="image-rendering:pixelated"></canvas>
+            <div class="qr-url" id="table-qr-url">menoos.app/temari?table=5</div>
+          </div>
+          <div style="display:flex;gap:.375rem">
+            <button class="btn btn-outline btn-sm" style="flex:1" onclick="downloadQR()">⬇️ PNG</button>
+            <button class="btn btn-outline btn-sm" style="flex:1" onclick="printQR()">🖨️ Друк</button>
+            <button class="btn btn-outline btn-sm" style="flex:1" onclick="notify('Скопійовано!','ok')">📋 URL</button>
+          </div>
+        </div>
+        <div class="td-section" style="margin-top:.75rem">
+          <div class="td-section-title">Призначений офіціант</div>
+          <select id="table-staff-assign" style="font-size:13px">
+            <option value="">— Не призначено —</option>
+          </select>
+          <div style="font-size:11px;color:var(--muted);margin-top:.375rem">Чайові підуть цьому офіціанту автоматично</div>
+        </div>
+      </div>
+      <!-- RIGHT: order + payment -->
+      <div>
+        <div class="td-section">
+          <div class="td-section-title">Поточне замовлення</div>
+          <div id="table-order-lines" style="margin-bottom:.75rem"></div>
+          <div style="display:flex;justify-content:space-between;font-weight:600;font-size:14px;padding-top:.5rem;border-top:1px solid var(--border)">
+            <span>Разом:</span><span id="table-order-total" style="color:var(--accent)">—</span>
+          </div>
+          <div style="margin-top:.75rem">
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.375rem">Розділити рахунок</div>
+            <div class="split-row" id="split-row"></div>
+          </div>
+        </div>
+        <div class="td-section" style="margin-top:.75rem">
+          <div class="td-section-title">Оплата</div>
+          <div style="display:flex;flex-direction:column;gap:.375rem;margin-bottom:.75rem">
+            <button class="btn btn-accent btn-sm" style="width:100%" onclick="sendPayLink()">💳 Надіслати посилання на оплату</button>
+            <button class="btn btn-outline btn-sm" style="width:100%" onclick="markPaid()">✅ Позначити як оплачено (готівка)</button>
+          </div>
+          <!-- TIPS UI -->
+          <div class="tips-section" id="tips-ui">
+            <div class="tips-title">🫰 Чайові</div>
+            <div class="tips-presets">
+              <button class="tips-btn" onclick="selectTip(this,'5')">5%</button>
+              <button class="tips-btn" onclick="selectTip(this,'10')">10%</button>
+              <button class="tips-btn active" onclick="selectTip(this,'15')">15%</button>
+              <button class="tips-btn" onclick="selectTip(this,'20')">20%</button>
+            </div>
+            <div class="tips-custom">
+              <span style="font-size:12px;color:#92400E">або</span>
+              <input type="number" id="tips-custom-val" placeholder="Довільна сума (грн)"/>
+            </div>
+            <div class="tips-who" style="margin-top:.5rem">
+              <span>Для:</span>
+              <select id="tips-staff-select" style="font-size:11px;border:1px solid #FDE68A;border-radius:6px;padding:2px 6px;background:#fff;color:#92400E;flex:1">
+                <option>Іван Петренко (офіціант)</option>
+                <option>Марія Коваль (офіціант)</option>
+                <option>Весь персонал рівно</option>
+              </select>
+            </div>
+            <div class="tips-mono-badge">
+              ⚫ Monobank: чайові зараховуються одразу на картку · комісія 4%
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-top:1rem">
+      <button class="btn btn-danger btn-sm" onclick="clearTable()">🗑️ Звільнити стіл</button>
+      <button class="btn btn-outline btn-sm" onclick="closeModal('modal-table-detail')">Закрити</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD TABLE MODAL -->
+<div class="overlay" id="modal-add-table" onclick="closeModal('modal-add-table')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title">Новий стіл</div>
+      <button class="close-btn" onclick="closeModal('modal-add-table')">✕</button>
+    </div>
+    <div class="modal-grid">
+      <div><label class="field-label">Номер столу</label><input id="at-num" type="number" placeholder="1"/></div>
+      <div><label class="field-label">Місць</label><input id="at-seats" type="number" placeholder="4"/></div>
+      <div class="span2"><label class="field-label">Зал / зона</label>
+        <select id="at-zone">
+          <option>Основний зал</option>
+          <option>Тераса</option>
+          <option>VIP-зал</option>
+          <option>Бар</option>
+        </select>
+      </div>
+      <div class="span2"><label class="field-label">Опис (необов'язково)</label><input id="at-desc" type="text" placeholder="Біля вікна, кутовий..."/></div>
+    </div>
+    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveTable()">Зберегти стіл</button>
+  </div>
+</div>
+
+<!-- ADD STAFF MODAL -->
+<div class="overlay" id="modal-add-staff" onclick="closeModal('modal-add-staff')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="staff-modal-title">Новий офіціант</div>
+      <button class="close-btn" onclick="closeModal('modal-add-staff')">✕</button>
+    </div>
+    <div class="modal-grid">
+      <div class="span2"><label class="field-label">Ім'я та прізвище</label><input id="sf-name" type="text" placeholder="Іван Петренко"/></div>
+      <div><label class="field-label">Роль</label>
+        <select id="sf-role">
+          <option>Офіціант</option><option>Бармен</option><option>Адміністратор</option>
+        </select>
+      </div>
+      <div><label class="field-label">Emoji / аватар</label><input id="sf-emoji" type="text" placeholder="👨‍🍳" maxlength="2"/></div>
+      <div class="span2">
+        <label class="field-label">Monobank tipsEmployeeId</label>
+        <input id="sf-mono-id" type="text" placeholder="Отримайте в кабінеті monobank acquiring"/>
+        <div style="font-size:11px;color:var(--muted);margin-top:.25rem">
+          monobank acquiring → Список співробітників → скопіювати ID. Без цього ID чайові через Monobank недоступні.
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveStaff()">Зберегти</button>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+// ── DATA ──
+let items=[
+  {id:'i1',name:'Філадельфія класик',desc:'Лосось, вершковий сир, авокадо',price:189,emoji:'🌀',weight:'250 г',category:'Роли'},
+  {id:'i2',name:'Каліфорнія',desc:'Краб, огірок, авокадо',price:169,emoji:'🌀',weight:'220 г',category:'Роли'},
+  {id:'i3',name:'Нігірі лосось',desc:'Свіжий лосось',price:89,emoji:'🍣',weight:'90 г',category:'Нігірі'},
+  {id:'i4',name:'Нігірі тунець',desc:'Тунець преміум',price:99,emoji:'🍣',weight:'90 г',category:'Нігірі'},
+  {id:'i5',name:'Сет «Свято»',desc:'32 шт асорті',price:699,emoji:'🎁',weight:'800 г',category:'Сети'},
+  {id:'i6',name:'Зелений чай',desc:'Японський матча',price:45,emoji:'🍵',weight:'300 мл',category:'Напої'},
+];
+let cats=[
+  {id:'c1',name:'Роли',emoji:'🌀',order:1},
+  {id:'c2',name:'Нігірі',emoji:'🍣',order:2},
+  {id:'c3',name:'Сети',emoji:'🎁',order:3},
+  {id:'c4',name:'Напої',emoji:'🍵',order:4},
+];
+let orders=[
+  {id:'o1',num:1042,items:[{name:'Філадельфія',qty:2},{name:'Нігірі лосось',qty:4}],total:568,status:'new',time:'14:23',clientName:'Іванов Іван',comment:'Без імбиру'},
+  {id:'o2',num:1041,items:[{name:'Сет «Свято»',qty:1},{name:'Зелений чай',qty:2}],total:789,status:'done',time:'13:55',clientName:'Стіл №3',comment:''},
+  {id:'o3',num:1040,items:[{name:'Каліфорнія',qty:3}],total:507,status:'new',time:'13:40',clientName:'Петренко',comment:'Гострий соус окремо'},
+  {id:'o4',num:1039,items:[{name:'Нігірі тунець',qty:5}],total:495,status:'cancel',time:'13:10',clientName:'Анонім',comment:''},
+];
+let editItemId=null, editCatId=null;
+
+// ── DESIGN STATE ──
+const PRESETS=[
+  {name:'Японський',accent:'#C1440E',bg:'#FBF8F4',card:'#FFFFFF',text:'#1A1208',head:'Playfair Display'},
+  {name:'Темний',accent:'#A78BFA',bg:'#0F0F1A',card:'#1A1A2E',text:'#E8E8FF',head:'Space Grotesk'},
+  {name:'Природний',accent:'#059669',bg:'#F0FAF5',card:'#FFFFFF',text:'#1A2E25',head:'Cormorant Garamond'},
+  {name:'Лофт',accent:'#D97706',bg:'#1C1917',card:'#292524',text:'#FEF3C7',head:'Unbounded'},
+  {name:'Пастель',accent:'#DB2777',bg:'#FDF2F8',card:'#FFFFFF',text:'#831843',head:'Raleway'},
+  {name:'Мінімал',accent:'#111827',bg:'#F9FAFB',card:'#FFFFFF',text:'#111827',head:'Montserrat'},
+];
+
+// ── INIT ──
+function init(){renderOrders();renderItems();renderCats();renderPresetsRow();}
+
+// ── ORDERS ──
+function renderOrders(){
+  const f=document.getElementById('order-filter').value;
+  const list=f?orders.filter(o=>o.status===f):orders;
+  const newO=orders.filter(o=>o.status==='new');
+  const doneO=orders.filter(o=>o.status==='done');
+  document.getElementById('st-new-ord').textContent=newO.length;
+  document.getElementById('st-done-ord').textContent=doneO.length;
+  const rev=orders.filter(o=>o.status!=='cancel').reduce((s,o)=>s+o.total,0);
+  document.getElementById('st-today-rev').textContent=rev+'₴';
+  document.getElementById('st-avg').textContent=doneO.length?Math.round(doneO.reduce((s,o)=>s+o.total,0)/doneO.length)+'₴':'—';
+  const badge=document.getElementById('new-badge');
+  if(newO.length){badge.textContent=newO.length;badge.style.display='inline-block';}else badge.style.display='none';
+  const sl={new:'o-new',done:'o-done',cancel:'o-cancel'};
+  const st={new:'Нове',done:'Виконано',cancel:'Скасовано'};
+  document.getElementById('orders-wrap').innerHTML=list.length?list.map(o=>`
+    <div class="order-card">
+      <div class="order-top">
+        <div><span class="order-num">#${o.num}</span> <span style="font-size:12px;color:var(--muted)">${o.clientName}</span></div>
+        <div><span class="o-time">${o.time}</span> <span class="o-badge ${sl[o.status]}">${st[o.status]}</span></div>
+      </div>
+      <div class="o-items">${o.items.map(i=>`${i.name} ×${i.qty}`).join(' · ')}</div>
+      ${o.comment?`<div class="o-comment">💬 ${o.comment}</div>`:''}
+      <div class="o-total">${o.total} грн</div>
+      <div class="o-actions">
+        ${o.status!=='done'?`<button class="btn btn-success btn-sm" onclick="setStatus('${o.id}','done')">✅ Виконано</button>`:''}
+        ${o.status==='new'?`<button class="btn btn-danger btn-sm" onclick="setStatus('${o.id}','cancel')">✕ Скасувати</button>`:''}
+        ${o.status!=='new'?`<button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','new')">↺ Відкрити</button>`:''}
+      </div>
+    </div>`).join(''):`<div class="empty"><i>🧾</i>Замовлень немає</div>`;
+}
+function setStatus(id,s){const o=orders.find(x=>x.id===id);o.status=s;renderOrders();notify('Статус оновлено','ok');}
+window.setStatus=setStatus;
+
+// ── ITEMS ──
+function renderItems(){
+  const cf=document.getElementById('item-cat-filter').value;
+  const q=document.getElementById('item-search').value.toLowerCase();
+  const list=items.filter(i=>(!cf||i.category===cf)&&(!q||i.name.toLowerCase().includes(q)));
+  document.getElementById('items-count-sub').textContent=items.length+' позицій';
+  const sel=document.getElementById('item-cat-filter');
+  const prev=sel.value;
+  sel.innerHTML='<option value="">Всі категорії</option>'+cats.map(c=>`<option${c.name===prev?' selected':''}>${c.name}</option>`).join('');
+  document.getElementById('items-list').innerHTML=list.length?list.map(i=>`
+    <div class="item-row">
+      <div class="item-em">${i.emoji||'🍽️'}</div>
+      <div class="item-body"><div class="item-name">${i.name}</div><div class="item-sub">${i.category} · ${i.weight||''}</div></div>
+      <span class="item-price">${i.price} грн</span>
+      <div class="item-btns">
+        <button class="icon-btn" onclick="openItemModal('${i.id}')">✏️</button>
+        <button class="icon-btn del" onclick="deleteItem('${i.id}')">🗑️</button>
+      </div>
+    </div>`).join(''):`<div class="empty"><i>🍽️</i>Немає страв</div>`;
+}
+function openItemModal(id=null){
+  editItemId=id;
+  document.getElementById('if-cat').innerHTML=cats.map(c=>`<option>${c.name}</option>`).join('');
+  if(id){const i=items.find(x=>x.id===id);document.getElementById('item-modal-t').textContent='Редагувати';document.getElementById('if-name').value=i.name;document.getElementById('if-desc').value=i.desc||'';document.getElementById('if-price').value=i.price;document.getElementById('if-emoji').value=i.emoji||'';document.getElementById('if-weight').value=i.weight||'';document.getElementById('if-cat').value=i.category;}
+  else{document.getElementById('item-modal-t').textContent='Нова страва';['if-name','if-desc','if-price','if-emoji','if-weight'].forEach(f=>document.getElementById(f).value='');}
+  openModal('modal-item');
+}
+function saveItem(){
+  const name=document.getElementById('if-name').value.trim();const price=parseFloat(document.getElementById('if-price').value);
+  if(!name||!price){notify('Заповніть назву та ціну','err');return;}
+  const d={name,desc:document.getElementById('if-desc').value,price,emoji:document.getElementById('if-emoji').value||'🍽️',weight:document.getElementById('if-weight').value,category:document.getElementById('if-cat').value};
+  if(editItemId)Object.assign(items.find(x=>x.id===editItemId),d);else{d.id='i'+Date.now();items.push(d);}
+  closeModal('modal-item');renderItems();notify('✅ Збережено!','ok');
+}
+function deleteItem(id){if(confirm('Видалити?')){items=items.filter(x=>x.id!==id);renderItems();notify('Видалено','ok');}}
+window.openItemModal=openItemModal;window.saveItem=saveItem;window.deleteItem=deleteItem;
+
+// ── CATS ──
+function renderCats(){
+  document.getElementById('cats-list').innerHTML=cats.map(c=>`
+    <div class="cat-row">
+      <div class="cat-order-badge">${c.order}</div>
+      <div style="font-size:1.2rem">${c.emoji||'📂'}</div>
+      <div class="item-body"><div class="item-name">${c.name}</div><div class="item-sub">${items.filter(i=>i.category===c.name).length} страв</div></div>
+      <div class="item-btns">
+        <button class="icon-btn" onclick="openCatModal('${c.id}')">✏️</button>
+        <button class="icon-btn del" onclick="deleteCat('${c.id}')">🗑️</button>
+      </div>
+    </div>`).join('')||`<div class="empty"><i>📂</i>Немає категорій</div>`;
+}
+function openCatModal(id=null){
+  editCatId=id;
+  if(id){const c=cats.find(x=>x.id===id);document.getElementById('cat-modal-t').textContent='Редагувати';document.getElementById('cf-name').value=c.name;document.getElementById('cf-emoji').value=c.emoji||'';document.getElementById('cf-order').value=c.order||'';}
+  else{document.getElementById('cat-modal-t').textContent='Нова категорія';['cf-name','cf-emoji','cf-order'].forEach(f=>document.getElementById(f).value='');}
+  openModal('modal-cat');
+}
+function saveCat(){
+  const name=document.getElementById('cf-name').value.trim();if(!name){notify('Введіть назву','err');return;}
+  const d={name,emoji:document.getElementById('cf-emoji').value||'📂',order:parseInt(document.getElementById('cf-order').value)||0};
+  if(editCatId)Object.assign(cats.find(x=>x.id===editCatId),d);else{d.id='c'+Date.now();cats.push(d);}
+  closeModal('modal-cat');renderCats();renderItems();notify('✅ Збережено!','ok');
+}
+function deleteCat(id){if(confirm('Видалити?')){cats=cats.filter(x=>x.id!==id);renderCats();}}
+window.openCatModal=openCatModal;window.saveCat=saveCat;window.deleteCat=deleteCat;
+
+// ── DESIGN STUDIO ──
+function renderPresetsRow(){
+  document.getElementById('presets-row').innerHTML=PRESETS.map((p,i)=>`
+    <div class="palette-swatch" style="background:linear-gradient(135deg,${p.accent} 50%,${p.bg} 50%)" title="${p.name}" onclick="applyPreset(${i})"></div>`).join('');
+}
+function applyPreset(i){
+  const p=PRESETS[i];
+  setColor('c-accent',p.accent);setColor('c-bg',p.bg);setColor('c-card',p.card);setColor('c-text',p.text);
+  document.getElementById('font-head').value=p.head;
+  livePreview();notify('✅ Палітру застосовано!','ok');
+}
+function setColor(id,val){document.getElementById(id).value=val;document.getElementById(id+'-hex').value=val;}
+function hexToColor(id){const hex=document.getElementById(id+'-hex').value;if(/^#[0-9A-F]{6}$/i.test(hex)){document.getElementById(id).value=hex;livePreview();}}
+window.hexToColor=hexToColor;
+
+function livePreview(){
+  const accent=document.getElementById('c-accent').value;
+  const bg=document.getElementById('c-bg').value;
+  const card=document.getElementById('c-card').value;
+  const text=document.getElementById('c-text').value;
+  const fh=document.getElementById('font-head').value;
+  const bannerH=document.getElementById('banner-h').value;
+  const bannerUrl=document.getElementById('banner-url').value;
+  const logoEmoji=document.getElementById('logo-emoji').value||'🍣';
+  const logoUrl=document.getElementById('logo-url').value;
+  const bgImg=document.getElementById('toggle-bgimg').classList.contains('on');
+  const bgImgUrl=document.getElementById('bg-img-url').value;
+  const showPrices=document.getElementById('toggle-prices').classList.contains('on');
+  const cardR=document.getElementById('card-radius').value;
+
+  // Sync hex fields
+  document.getElementById('c-accent-hex').value=accent;
+  document.getElementById('c-bg-hex').value=bg;
+  document.getElementById('c-card-hex').value=card;
+  document.getElementById('c-text-hex').value=text;
+
+  // Font preview
+  document.getElementById('font-head-preview').style.fontFamily=fh;
+
+  // Apply to preview
+  const pi=document.getElementById('preview-inner');
+  pi.style.background=bgImg&&bgImgUrl?`url(${bgImgUrl}) center/cover`:bg;
+  pi.style.color=text;
+
+  const banner=document.getElementById('pv-banner');
+  banner.style.height=bannerH+'px';
+  banner.style.background=bannerUrl?`url(${bannerUrl}) center/cover`:accent;
+  banner.innerHTML=bannerUrl?'':logoEmoji;
+
+  const logo=document.getElementById('pv-logo');
+  logo.style.background=accent;
+  logo.style.color='#fff';
+  logo.textContent=logoUrl?'':logoEmoji;
+
+  document.getElementById('pv-name').style.fontFamily=fh;
+  document.getElementById('pv-name').style.color=text;
+  document.getElementById('pv-tag').style.color=text+'99';
+
+  document.getElementById('pv-pill1').style.background=accent;
+  document.getElementById('pv-pill1').style.color='#fff';
+  ['pv-pill2','pv-pill3'].forEach(id=>{
+    document.getElementById(id).style.background=bg;
+    document.getElementById(id).style.color=text+'80';
+    document.getElementById(id).style.border=`1px solid ${text}20`;
+  });
+
+  ['pv-dish1','pv-dish2','pv-dish3'].forEach(id=>{
+    const d=document.getElementById(id);
+    d.style.background=card;
+    d.style.borderRadius=cardR+'px';
+    d.style.border=`1px solid ${text}15`;
+  });
+  ['pv-dem1','pv-dem2','pv-dem3'].forEach(id=>{document.getElementById(id).style.background=accent+'18';});
+  ['pv-dn1','pv-dn2','pv-dn3'].forEach(id=>{document.getElementById(id).style.color=text;document.getElementById(id).style.fontFamily=fh;});
+  ['pv-dp1','pv-dp2','pv-dp3'].forEach(id=>{document.getElementById(id).style.color=accent;document.getElementById(id).style.display=showPrices?'':'none';});
+}
+function saveDesign(){notify('✅ Дизайн збережено! Меню оновлено.','ok');}
+window.livePreview=livePreview;window.applyPreset=applyPreset;window.saveDesign=saveDesign;window.renderOrders=renderOrders;
+
+// ── UTILS ──
+function nav(btn,tab){
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));document.getElementById(tab).classList.add('active');
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function notify(msg,type='ok'){const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';setTimeout(()=>n.classList.remove('show'),2800);}
+window.closeModal=closeModal;window.nav=nav;window.notify=notify;
+
+// ── TABLES & QR ──
+let tables=[
+  {id:1,num:1,zone:'Основний зал',seats:4,status:'occupied',staffId:'s1',amount:568,startTime:'13:10',orders:[{name:'Філадельфія ×2',price:378},{name:'Зелений чай ×2',price:90},{name:'Нігірі лосось ×1',price:89}]},
+  {id:2,num:2,zone:'Основний зал',seats:2,status:'free',staffId:'',amount:0,startTime:'',orders:[]},
+  {id:3,num:3,zone:'Основний зал',seats:6,status:'ordered',staffId:'s2',amount:1240,startTime:'12:45',orders:[{name:'Сет «Свято» ×1',price:699},{name:'Спайсі лосось ×3',price:537}]},
+  {id:4,num:4,zone:'Основний зал',seats:4,status:'paid',staffId:'s1',amount:445,startTime:'12:00',orders:[{name:'Каліфорнія ×2',price:338},{name:'Матча ×1',price:75}]},
+  {id:5,num:5,zone:'Тераса',seats:4,status:'free',staffId:'',amount:0,startTime:'',orders:[]},
+  {id:6,num:6,zone:'Тераса',seats:2,status:'occupied',staffId:'s2',amount:179,startTime:'14:05',orders:[{name:'Дракон ×1',price:219}]},
+  {id:7,num:7,zone:'VIP-зал',seats:8,status:'free',staffId:'',amount:0,startTime:'',orders:[]},
+  {id:8,num:8,zone:'VIP-зал',seats:6,status:'ordered',staffId:'s1',amount:2100,startTime:'13:30',orders:[{name:'Сет «Свято» ×3',price:2097}]},
+];
+let staff=[
+  {id:'s1',name:'Іван Петренко',role:'Офіціант',emoji:'👨‍🍳',monoId:'emp_001',tipsToday:320},
+  {id:'s2',name:'Марія Коваль',role:'Офіціант',emoji:'👩‍🍳',monoId:'emp_002',tipsToday:180},
+  {id:'s3',name:'Олег Бондар',role:'Бармен',emoji:'🧑‍🍳',monoId:'',tipsToday:0},
+];
+let zones=['Основний зал','Тераса','VIP-зал'];
+let activeZone='';
+let selectedTable=null;
+let editStaffId=null;
+
+function renderTables(){
+  const filtered=activeZone?tables.filter(t=>t.zone===activeZone):tables;
+  const stMap={free:'ts-free',occupied:'ts-occupied',ordered:'ts-ordered',paid:'ts-paid'};
+  const stLabel={free:'Вільний',occupied:'Зайнятий',ordered:'Замовлено',paid:'Оплачено'};
+  document.getElementById('tables-grid').innerHTML=filtered.map(t=>`
+    <div class="table-card ${t.status}" onclick="openTableDetail(${t.id})">
+      <div class="table-qr-icon">⬛</div>
+      <div class="table-num">${t.num}</div>
+      <div class="table-zone">${t.zone} · ${t.seats} місць</div>
+      <div><span class="table-status ${stMap[t.status]}">${stLabel[t.status]}</span></div>
+      ${t.amount?`<div class="table-amount">₴${t.amount}</div>`:''}
+      ${t.startTime?`<div class="table-timer">⏱ з ${t.startTime}</div>`:''}
+    </div>`).join('');
+  document.getElementById('st-tables-free').textContent=tables.filter(t=>t.status==='free').length;
+  document.getElementById('st-tables-occ').textContent=tables.filter(t=>t.status!=='free').length;
+  document.getElementById('st-tables-rev').textContent='₴'+tables.filter(t=>t.status==='paid').reduce((s,t)=>s+t.amount,0);
+  document.getElementById('st-tips-today').textContent='₴'+staff.reduce((s,p)=>s+p.tipsToday,0);
+}
+function filterZone(btn,zone){
+  document.querySelectorAll('.zone-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');activeZone=zone;renderTables();
+}
+function renderZoneTabs(){
+  const wrap=document.getElementById('zone-tabs');
+  wrap.innerHTML=`<button class="zone-tab active" onclick="filterZone(this,'')">Всі зали</button>`
+    +zones.map(z=>`<button class="zone-tab" onclick="filterZone(this,'${z}')">${z}</button>`).join('');
+}
+window.filterZone=filterZone;
+
+// Draw QR mock on canvas
+function drawQRMock(canvas){
+  const ctx=canvas.getContext('2d');
+  const size=canvas.width;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);
+  ctx.fillStyle='#1C1916';
+  const pattern=[
+    [1,1,1,1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0,1],
+    [1,0,1,1,1,0,1,0,0,1,0,1,1,0,1,1,1,0,1],
+    [1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1],
+    [1,0,1,1,1,0,1,0,0,1,1,1,1,0,1,1,1,0,1],
+    [1,0,0,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1],
+    [0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0],
+    [1,1,0,1,1,0,1,1,0,1,1,0,1,0,1,1,0,1,1],
+    [0,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0],
+    [1,0,1,0,1,0,1,0,1,1,0,0,1,0,1,0,1,0,1],
+    [0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0],
+    [1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,0,0,1,1],
+    [1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0],
+    [1,0,1,1,1,0,1,0,1,0,1,1,1,0,0,1,0,1,1],
+    [1,0,1,1,1,0,1,0,0,1,0,0,1,0,1,0,1,0,0],
+    [1,0,1,1,1,0,1,0,1,0,1,0,0,1,0,1,0,1,1],
+    [1,0,0,0,0,0,1,0,0,1,1,0,1,0,1,0,0,0,0],
+    [1,1,1,1,1,1,1,0,1,0,0,1,0,1,0,1,1,0,1],
+  ];
+  const cell=size/pattern.length;
+  pattern.forEach((row,r)=>row.forEach((v,c)=>{
+    if(v){ctx.fillRect(Math.round(c*cell),Math.round(r*cell),Math.ceil(cell),Math.ceil(cell));}
+  }));
+}
+
+function openTableDetail(id){
+  selectedTable=tables.find(t=>t.id===id);
+  const t=selectedTable;
+  document.getElementById('table-detail-title').textContent=`Стіл №${t.num} — ${t.zone}`;
+  const url=`menoos.app/temari?table=${t.num}`;
+  document.getElementById('table-qr-url').textContent=url;
+  const canvas=document.getElementById('table-qr-canvas');
+  drawQRMock(canvas);
+  document.getElementById('table-order-lines').innerHTML=t.orders.length
+    ?t.orders.map(o=>`<div class="order-line"><span>${o.name}</span><span style="font-weight:500">₴${o.price}</span></div>`).join('')
+    :'<div style="font-size:13px;color:var(--muted);text-align:center;padding:.75rem">Замовлень немає</div>';
+  document.getElementById('table-order-total').textContent=t.amount?'₴'+t.amount:'—';
+  const splits=[2,3,4];
+  document.getElementById('split-row').innerHTML=splits.map(n=>`
+    <div class="split-person" onclick="selectSplit(this,${n},${t.amount})">
+      <div style="font-size:1.1rem">👤×${n}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">${t.amount?'≈₴'+Math.ceil(t.amount/n)+'/ос.':''}</div>
+    </div>`).join('');
+  const staffSel=document.getElementById('table-staff-assign');
+  staffSel.innerHTML='<option value="">— Не призначено —</option>'
+    +staff.map(s=>`<option value="${s.id}"${s.id===t.staffId?' selected':''}>${s.emoji} ${s.name}</option>`).join('');
+  const tipsSel=document.getElementById('tips-staff-select');
+  const assigned=staff.find(s=>s.id===t.staffId);
+  tipsSel.innerHTML=(assigned?`<option>${assigned.emoji} ${assigned.name} (призначений)</option>`:'')
+    +staff.map(s=>s.id!==t.staffId?`<option>${s.emoji} ${s.name}</option>`:'').join('')
+    +'<option>Весь персонал рівно</option>';
+  openModal('modal-table-detail');
+}
+window.openTableDetail=openTableDetail;
+
+function selectSplit(el,n,total){
+  document.querySelectorAll('.split-person').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  notify(`Рахунок розділено на ${n}: ≈₴${Math.ceil(total/n)} з особи`,'ok');
+}
+window.selectSplit=selectSplit;
+
+function selectTip(btn,pct){
+  document.querySelectorAll('.tips-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tips-custom-val').value='';
+  if(selectedTable&&selectedTable.amount){
+    const tipAmt=Math.round(selectedTable.amount*parseInt(pct)/100);
+    notify(`Чайові ${pct}% = ₴${tipAmt}`,'ok');
+  }
+}
+window.selectTip=selectTip;
+
+function sendPayLink(){closeModal('modal-table-detail');notify('💳 Посилання на оплату надіслано клієнту','ok');}
+function markPaid(){if(selectedTable){selectedTable.status='paid';closeModal('modal-table-detail');renderTables();notify('✅ Стіл позначено як оплачений','ok');}}
+function clearTable(){if(selectedTable){selectedTable.status='free';selectedTable.orders=[];selectedTable.amount=0;selectedTable.startTime='';closeModal('modal-table-detail');renderTables();notify('Стіл звільнено','ok');}}
+function downloadQR(){notify('⬇️ QR-код завантажується...','ok');}
+function printQR(){notify('🖨️ Відправлено на друк','ok');}
+function printAllQR(){notify('🖨️ Всі QR-коди відправлені на друк','ok');}
+window.sendPayLink=sendPayLink;window.markPaid=markPaid;window.clearTable=clearTable;window.downloadQR=downloadQR;window.printQR=printQR;window.printAllQR=printAllQR;
+
+// ADD TABLE
+function openAddTable(){['at-num','at-desc'].forEach(f=>document.getElementById(f).value='');document.getElementById('at-seats').value='4';openModal('modal-add-table');}
+function saveTable(){
+  const num=parseInt(document.getElementById('at-num').value);
+  if(!num){notify('Введіть номер столу','err');return;}
+  tables.push({id:Date.now(),num,zone:document.getElementById('at-zone').value,seats:parseInt(document.getElementById('at-seats').value)||4,status:'free',staffId:'',amount:0,startTime:'',orders:[]});
+  closeModal('modal-add-table');renderTables();renderZoneTabs();notify('✅ Стіл додано!','ok');
+}
+function openAddZone(){const z=prompt('Назва нового залу:');if(z&&!zones.includes(z)){zones.push(z);renderZoneTabs();notify('Зал додано','ok');}}
+window.openAddTable=openAddTable;window.saveTable=saveTable;window.openAddZone=openAddZone;
+
+// STAFF
+function renderStaff(){
+  document.getElementById('staff-list').innerHTML=staff.map(s=>`
+    <div class="item-row" style="margin-bottom:.5rem">
+      <div class="item-em">${s.emoji||'👤'}</div>
+      <div class="item-body">
+        <div class="item-name">${s.name}</div>
+        <div class="item-sub">${s.role} · Mono ID: ${s.monoId||'<span style="color:var(--amber)">не вказано</span>'}</div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--green);margin-right:.5rem">₴${s.tipsToday}</div>
+      <div class="item-btns">
+        <button class="icon-btn" onclick="openEditStaff('${s.id}')">✏️</button>
+        <button class="icon-btn del" onclick="deleteStaff('${s.id}')">🗑️</button>
+      </div>
+    </div>`).join('')||'<div style="color:var(--muted);font-size:13px">Персонал не додано</div>';
+  document.getElementById('staff-tips-grid').innerHTML=staff.map(s=>`
+    <div class="staff-card">
+      <div class="staff-avatar">${s.emoji||'👤'}</div>
+      <div class="staff-name">${s.name}</div>
+      <div class="staff-role">${s.role}</div>
+      <div class="staff-tips-total">₴${s.tipsToday} чайових</div>
+      ${!s.monoId?'<div style="font-size:10px;color:var(--amber);margin-top:2px">⚠️ Без Mono ID</div>':''}
+    </div>`).join('');
+}
+function openAddStaff(){editStaffId=null;document.getElementById('staff-modal-title').textContent='Новий офіціант';['sf-name','sf-mono-id'].forEach(f=>document.getElementById(f).value='');document.getElementById('sf-emoji').value='';openModal('modal-add-staff');}
+function openEditStaff(id){
+  editStaffId=id;const s=staff.find(x=>x.id===id);
+  document.getElementById('staff-modal-title').textContent='Редагувати: '+s.name;
+  document.getElementById('sf-name').value=s.name;
+  document.getElementById('sf-emoji').value=s.emoji||'';
+  document.getElementById('sf-role').value=s.role;
+  document.getElementById('sf-mono-id').value=s.monoId||'';
+  openModal('modal-add-staff');
+}
+function saveStaff(){
+  const name=document.getElementById('sf-name').value.trim();
+  if(!name){notify('Введіть ім\'я','err');return;}
+  const data={name,emoji:document.getElementById('sf-emoji').value||'👤',role:document.getElementById('sf-role').value,monoId:document.getElementById('sf-mono-id').value.trim(),tipsToday:0};
+  if(editStaffId){Object.assign(staff.find(s=>s.id===editStaffId),data);}
+  else{data.id='s'+Date.now();staff.push(data);}
+  closeModal('modal-add-staff');renderStaff();notify('✅ Збережено!','ok');
+}
+function deleteStaff(id){if(confirm('Видалити?')){staff=staff.filter(s=>s.id!==id);renderStaff();}}
+window.openAddStaff=openAddStaff;window.openEditStaff=openEditStaff;window.saveStaff=saveStaff;window.deleteStaff=deleteStaff;
+
+renderZoneTabs();renderTables();renderStaff();
+function selectMode(m){
+  ['instant','after','both'].forEach(id=>{
+    document.getElementById('mode-'+id).classList.toggle('selected',id===m);
+    const r=document.getElementById('radio-'+id);
+    r.classList.toggle('on',id===m);
+    r.classList.toggle('off',id!==m);
+  });
+}
+function toggleProvider(id,on){
+  const card=document.getElementById('card-'+id);
+  const fields=document.getElementById('fields-'+id);
+  card.classList.toggle('enabled',on);
+  fields.style.display=on?'flex':'none';
+}
+function savePayments(){notify('✅ Налаштування платежів збережено!','ok');}
+
+document.getElementById('fiscal').addEventListener('change',function(){
+  document.getElementById('fiscal-fields').style.display=this.checked?'block':'none';
+});
+
+// ── POS ──
+function connectPOS(sys){
+  const statusEl=document.getElementById(sys+'-status');
+  const cardEl=document.getElementById('pos-card-'+sys);
+  const logEl=document.getElementById('log-'+sys);
+  statusEl.textContent='Підключення...';
+  statusEl.className='pos-status off';
+  setTimeout(()=>{
+    statusEl.textContent='✓ Підключено';
+    statusEl.className='pos-status ok';
+    cardEl.classList.add('connected');
+    const now=new Date().toLocaleTimeString('uk-UA');
+    logEl.innerHTML=`<div class="log-ok">[${now}] ✓ Підключення успішне</div>`
+      +`<div class="log-ok">[${now}] ✓ Авторизація пройдена</div>`
+      +`<div class="log-info">[${now}] ℹ Готово до синхронізації</div>`;
+    notify(`✅ ${sys==='poster'?'Poster':'Syrve'} підключено!`,'ok');
+  },1200);
+}
+function testPOS(sys){
+  const logEl=document.getElementById('log-'+sys);
+  const now=new Date().toLocaleTimeString('uk-UA');
+  logEl.innerHTML=`<div class="log-info">[${now}] → Відправка тест-замовлення...</div>`;
+  setTimeout(()=>{
+    logEl.innerHTML+=`<div class="log-ok">[${now}] ✓ Замовлення прийнято (#TEST-001)</div>`
+      +`<div class="log-ok">[${now}] ✓ Відповідь: 200 OK</div>`;
+    notify('✅ Тест-замовлення успішне!','ok');
+  },900);
+}
+function savePOS(){notify('✅ POS-налаштування збережено!','ok');}
+function autoMapProducts(){
+  renderMappingRows();
+  notify('⚡ Зіставлення виконано за назвою','ok');
+}
+function renderMappingRows(){
+  document.getElementById('mapping-rows').innerHTML=items.map(it=>`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.375rem;align-items:center">
+      <div style="font-size:13px;display:flex;align-items:center;gap:.375rem">${it.emoji} ${it.name}</div>
+      <input type="text" placeholder="напр. 42" style="padding:5px 8px;font-size:12px" value="${Math.floor(Math.random()*900)+100}"/>
+      <input type="text" placeholder="UUID" style="padding:5px 8px;font-size:12px" value=""/>
+    </div>`).join('');
+}
+renderMappingRows();
+init();
+</script>
+</body>
+</html>

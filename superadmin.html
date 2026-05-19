@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mage QR Rest — Платформа</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0A0F;
+  --bg2:#111118;
+  --bg3:#1A1A26;
+  --card:#16161F;
+  --border:#2A2A3A;
+  --border2:#3A3A50;
+  --accent:#6C63FF;
+  --accent2:#A78BFA;
+  --green:#10B981;
+  --amber:#F59E0B;
+  --red:#EF4444;
+  --text:#F0F0FF;
+  --muted:#8888AA;
+  --font:'Inter',sans-serif;
+  --font-head:'Space Grotesk',sans-serif;
+  --radius:12px;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px}
+h1,h2,h3{font-family:var(--font-head)}
+button,input,select{font-family:var(--font)}
+input,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;font-size:13px;outline:none;width:100%}
+input:focus,select:focus{border-color:var(--accent)}
+button{cursor:pointer}
+
+/* LAYOUT */
+.shell{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:0;display:flex;flex-direction:column}
+.sb-logo{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem}
+.sb-logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.sb-logo-text{font-family:var(--font-head);font-size:1.1rem;font-weight:700;color:var(--text)}
+.sb-logo-badge{font-size:10px;background:var(--bg3);color:var(--muted);border:1px solid var(--border);border-radius:4px;padding:1px 6px;margin-left:auto}
+.sb-section{padding:.75rem .75rem .25rem;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.nav-btn{display:flex;align-items:center;gap:.65rem;padding:.6rem .75rem;margin:1px .5rem;border-radius:8px;font-size:13px;color:var(--muted);background:none;border:none;width:calc(100% - 1rem);text-align:left;transition:all .15s}
+.nav-btn:hover{background:var(--bg3);color:var(--text)}
+.nav-btn.active{background:rgba(108,99,255,.15);color:var(--accent2);border:1px solid rgba(108,99,255,.2)}
+.nav-icon{width:18px;text-align:center;font-size:.95rem}
+.sb-bottom{margin-top:auto;padding:1rem;border-top:1px solid var(--border)}
+.sb-user{display:flex;align-items:center;gap:.6rem}
+.sb-avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;flex-shrink:0}
+.sb-uname{font-size:12px;color:var(--muted)}
+.sb-logout{background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;margin-left:auto;padding:4px 8px;border-radius:6px}
+.sb-logout:hover{color:var(--red)}
+
+.main{overflow-y:auto}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:.875rem 1.75rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.topbar-title{font-family:var(--font-head);font-size:1.1rem;font-weight:600}
+.topbar-sub{font-size:12px;color:var(--muted);margin-top:1px}
+.topbar-actions{display:flex;gap:.75rem;align-items:center}
+.btn{border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:500;transition:all .15s}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:#5a52e0}
+.btn-outline{background:transparent;border:1px solid var(--border2);color:var(--muted)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent2)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-danger{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.btn-danger:hover{background:rgba(239,68,68,.2)}
+.btn-success{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+.btn-success:hover{background:rgba(16,185,129,.2)}
+
+.content{padding:1.75rem}
+.tab-section{display:none}
+.tab-section.active{display:block}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;opacity:.06;transform:translate(20px,-20px)}
+.stat-card.purple::before{background:var(--accent)}
+.stat-card.green::before{background:var(--green)}
+.stat-card.amber::before{background:var(--amber)}
+.stat-card.red::before{background:var(--red)}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.stat-val{font-family:var(--font-head);font-size:1.8rem;font-weight:700;line-height:1}
+.stat-val.purple{color:var(--accent2)}
+.stat-val.green{color:var(--green)}
+.stat-val.amber{color:var(--amber)}
+.stat-val.red{color:var(--red)}
+.stat-delta{font-size:11px;color:var(--muted);margin-top:.4rem}
+.delta-up{color:var(--green)}
+.delta-down{color:var(--red)}
+
+/* TABLE */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.table-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.table-title{font-family:var(--font-head);font-size:.95rem;font-weight:600}
+.search-wrap{position:relative}
+.search-wrap input{padding-left:30px;width:220px}
+.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem}
+table{width:100%;border-collapse:collapse}
+th{padding:.7rem 1rem;text-align:left;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);font-weight:500}
+td{padding:.85rem 1rem;font-size:13px;border-bottom:1px solid rgba(255,255,255,.03)}
+tr:last-child td{border:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+.venue-name{font-weight:500;color:var(--text)}
+.venue-slug{font-size:11px;color:var(--muted);margin-top:2px}
+.plan-badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+.plan-free{background:rgba(136,136,170,.12);color:var(--muted)}
+.plan-starter{background:rgba(245,158,11,.12);color:var(--amber)}
+.plan-pro{background:rgba(108,99,255,.15);color:var(--accent2)}
+.plan-enterprise{background:rgba(16,185,129,.12);color:var(--green)}
+.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px}
+.dot-active{background:var(--green)}
+.dot-inactive{background:var(--muted)}
+.dot-blocked{background:var(--red)}
+.action-btns{display:flex;gap:.4rem}
+.pagination{padding:.875rem 1.25rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.page-info{font-size:12px;color:var(--muted)}
+.page-btns{display:flex;gap:.4rem}
+.page-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer}
+.page-btn:hover{border-color:var(--accent);color:var(--accent2)}
+.page-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* PLAN CARDS */
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+.plan-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;position:relative}
+.plan-card.featured{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+.plan-featured-badge{position:absolute;top:-1px;right:1.25rem;background:var(--accent);color:#fff;font-size:10px;padding:3px 10px;border-radius:0 0 8px 8px;font-weight:600;letter-spacing:.04em}
+.plan-name{font-family:var(--font-head);font-size:1rem;font-weight:700;margin-bottom:.25rem}
+.plan-price{font-family:var(--font-head);font-size:1.75rem;font-weight:700;margin:.75rem 0 .25rem}
+.plan-price span{font-size:13px;font-weight:400;color:var(--muted)}
+.plan-features{list-style:none;margin:1rem 0;display:flex;flex-direction:column;gap:.4rem}
+.plan-features li{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:.5rem}
+.plan-features li::before{content:'✓';color:var(--green);font-size:.85rem}
+.plan-edit-btn{width:100%;padding:8px;background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:8px;font-size:13px;cursor:pointer;margin-top:.5rem;transition:all .15s}
+.plan-edit-btn:hover{border-color:var(--accent);color:var(--accent2)}
+
+/* CHARTS */
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:1rem;margin-bottom:1.5rem}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.chart-title{font-family:var(--font-head);font-size:.9rem;font-weight:600;margin-bottom:1rem}
+.chart-subtitle{font-size:11px;color:var(--muted);font-weight:400;margin-left:.5rem}
+.mini-bar-chart{display:flex;align-items:flex-end;gap:4px;height:80px}
+.bar{flex:1;background:var(--accent);border-radius:4px 4px 0 0;opacity:.7;transition:opacity .2s;min-width:0}
+.bar:hover{opacity:1}
+.bar-labels{display:flex;gap:4px;margin-top:4px}
+.bar-label{flex:1;text-align:center;font-size:9px;color:var(--muted);min-width:0}
+.donut-wrap{display:flex;align-items:center;justify-content:center;gap:1.5rem}
+.donut-svg{}
+.donut-legend{display:flex;flex-direction:column;gap:.4rem}
+.legend-item{display:flex;align-items:center;gap:.4rem;font-size:12px;color:var(--muted)}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px)}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:1.75rem;width:100%;max-width:480px;transform:translateY(16px);transition:transform .2s;max-height:90vh;overflow-y:auto}
+.overlay.open .modal{transform:translateY(0)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.modal-title{font-family:var(--font-head);font-size:1.05rem;font-weight:600}
+.close-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);border-radius:6px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem}
+.field-group{margin-bottom:1rem}
+.field-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:block}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+
+/* NOTIFICATION */
+.notif{position:fixed;top:1rem;right:1rem;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:.875rem 1.25rem;font-size:13px;z-index:200;transform:translateX(120%);transition:transform .3s;max-width:300px}
+.notif.show{transform:translateX(0)}
+.notif.success{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)}
+.notif.error{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)}
+
+/* ACTIVITY */
+.activity-list{display:flex;flex-direction:column;gap:0}
+.activity-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.03)}
+.activity-item:last-child{border:none}
+.act-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.act-green{background:rgba(16,185,129,.12)}
+.act-purple{background:rgba(108,99,255,.12)}
+.act-amber{background:rgba(245,158,11,.12)}
+.act-red{background:rgba(239,68,68,.12)}
+.act-text{font-size:12px;line-height:1.4;flex:1}
+.act-time{font-size:11px;color:var(--muted);margin-top:2px}
+.act-name{font-weight:500;color:var(--text)}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:3rem;color:var(--muted)}
+.empty-icon{font-size:2.5rem;margin-bottom:.75rem;opacity:.5}
+
+/* LOGIN */
+#s-login{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg)}
+.login-wrap{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:2.5rem;width:100%;max-width:380px}
+.login-logo{font-family:var(--font-head);font-size:1.5rem;font-weight:700;margin-bottom:.25rem}
+.login-logo span{color:var(--accent2)}
+.login-sub{font-size:12px;color:var(--muted);margin-bottom:2rem}
+.login-err{font-size:12px;color:var(--red);margin-top:.5rem;display:none}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="s-login">
+  <div class="login-wrap">
+    <div class="login-logo">Menu<span>OS</span></div>
+    <div class="login-sub">Супер-адміністратор платформи</div>
+    <div class="field-group"><label class="field-label">Email</label><input id="li-email" type="email" placeholder="superadmin@menoos.app"/></div>
+    <div class="field-group"><label class="field-label">Пароль</label><input id="li-pass" type="password" placeholder="••••••••"/></div>
+    <div class="login-err" id="li-err">Невірний email або пароль</div>
+    <button class="btn btn-accent" style="width:100%;margin-top:1rem" onclick="doLogin()">Увійти</button>
+    <div style="font-size:11px;color:var(--muted);margin-top:.75rem;text-align:center">Демо: superadmin@menoos.app / admin123</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="s-app" style="display:none">
+<div class="shell">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">🍽️</div>
+      <div class="sb-logo-text">Mage QR Rest</div>
+      <div class="sb-logo-badge">SUPER</div>
+    </div>
+    <div class="sb-section">Головне</div>
+    <button class="nav-btn active" onclick="nav(this,'t-overview')"><span class="nav-icon">📊</span> Огляд</button>
+    <button class="nav-btn" onclick="nav(this,'t-venues')"><span class="nav-icon">🏪</span> Заклади</button>
+    <button class="nav-btn" onclick="nav(this,'t-activity')"><span class="nav-icon">⚡</span> Активність</button>
+    <div class="sb-section">Бізнес</div>
+    <button class="nav-btn" onclick="nav(this,'t-plans')"><span class="nav-icon">💎</span> Тарифи</button>
+    <button class="nav-btn" onclick="nav(this,'t-revenue')"><span class="nav-icon">💰</span> Доходи</button>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-avatar">SA</div>
+        <div class="sb-uname">superadmin</div>
+        <button class="sb-logout" onclick="doLogout()">вийти</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- OVERVIEW -->
+    <div id="t-overview" class="tab-section active">
+      <div class="topbar"><div><div class="topbar-title">Огляд платформи</div><div class="topbar-sub" id="overview-date"></div></div></div>
+      <div class="content">
+        <div class="stats-row">
+          <div class="stat-card purple"><div class="stat-label">Всього закладів</div><div class="stat-val purple" id="st-total">—</div><div class="stat-delta"><span class="delta-up">↑ 8</span> за місяць</div></div>
+          <div class="stat-card green"><div class="stat-label">Активних сьогодні</div><div class="stat-val green" id="st-active">—</div><div class="stat-delta"><span class="delta-up">↑ 12%</span> vs минулий тиждень</div></div>
+          <div class="stat-card amber"><div class="stat-label">Замовлень сьогодні</div><div class="stat-val amber" id="st-orders">—</div><div class="stat-delta"><span class="delta-up">↑ 34</span> нових</div></div>
+          <div class="stat-card red"><div class="stat-label">Дохід (місяць)</div><div class="stat-val red" id="st-rev">—</div><div class="stat-delta"><span class="delta-up">↑ 23%</span> vs попередній</div></div>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-title">Нові реєстрації <span class="chart-subtitle">останні 12 тижнів</span></div>
+            <div class="mini-bar-chart" id="reg-chart"></div>
+            <div class="bar-labels" id="reg-labels"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Розподіл по тарифах</div>
+            <div class="donut-wrap">
+              <svg class="donut-svg" width="90" height="90" viewBox="0 0 90 90">
+                <circle cx="45" cy="45" r="35" fill="none" stroke="#2A2A3A" stroke-width="12"/>
+                <circle cx="45" cy="45" r="35" fill="none" stroke="#6C63FF" stroke-width="12" stroke-dasharray="110 110" stroke-dashoffset="27" transform="rotate(-90 45 45)"/>
+                <circle cx="45" cy="45" r="35" fill="none" stroke="#F59E0B" stroke-width="12" stroke-dasharray="55 165" stroke-dashoffset="-83" transform="rotate(-90 45 45)"/>
+                <circle cx="45" cy="45" r="35" fill="none" stroke="#10B981" stroke-width="12" stroke-dasharray="20 200" stroke-dashoffset="-138" transform="rotate(-90 45 45)"/>
+              </svg>
+              <div class="donut-legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#6C63FF"></div>Free — 50%</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div>Starter — 25%</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#10B981"></div>Pro — 16%</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#2A2A3A"></div>Ent — 9%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title">Остання активність</div></div>
+          <div class="activity-list" id="activity-mini"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VENUES -->
+    <div id="t-venues" class="tab-section">
+      <div class="topbar">
+        <div><div class="topbar-title">Заклади</div><div class="topbar-sub" id="venues-sub"></div></div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm" onclick="exportVenues()">⬇ Експорт</button>
+          <button class="btn btn-accent btn-sm" onclick="openAddVenue()">+ Додати заклад</button>
+        </div>
+      </div>
+      <div class="content" style="padding-top:.75rem">
+        <div class="table-wrap">
+          <div class="table-header">
+            <div class="table-title">Всі заклади</div>
+            <div style="display:flex;gap:.75rem;align-items:center">
+              <select id="filter-plan" style="width:130px" onchange="filterVenues()">
+                <option value="">Всі тарифи</option>
+                <option value="free">Free</option>
+                <option value="starter">Starter</option>
+                <option value="pro">Pro</option>
+                <option value="enterprise">Enterprise</option>
+              </select>
+              <select id="filter-status" style="width:130px" onchange="filterVenues()">
+                <option value="">Всі статуси</option>
+                <option value="active">Активні</option>
+                <option value="inactive">Неактивні</option>
+                <option value="blocked">Заблоковані</option>
+              </select>
+              <div class="search-wrap">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-venues" placeholder="Пошук закладу..." oninput="filterVenues()"/>
+              </div>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Заклад</th>
+                <th>Власник</th>
+                <th>Тариф</th>
+                <th>Статус</th>
+                <th>Замовлень</th>
+                <th>Дата реєстрації</th>
+                <th>Дії</th>
+              </tr>
+            </thead>
+            <tbody id="venues-tbody"></tbody>
+          </table>
+          <div class="pagination">
+            <div class="page-info" id="page-info">Показано 1–10 з 0</div>
+            <div class="page-btns" id="page-btns"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVITY -->
+    <div id="t-activity" class="tab-section">
+      <div class="topbar"><div><div class="topbar-title">Активність платформи</div></div></div>
+      <div class="content">
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title">Журнал подій</div></div>
+          <div class="activity-list" id="activity-full"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLANS -->
+    <div id="t-plans" class="tab-section">
+      <div class="topbar"><div><div class="topbar-title">Управління тарифами</div></div></div>
+      <div class="content">
+        <div class="plans-grid" id="plans-grid"></div>
+        <div class="table-wrap">
+          <div class="table-header"><div class="table-title">Заклади по тарифах</div></div>
+          <table>
+            <thead><tr><th>Заклад</th><th>Поточний тариф</th><th>Дата оновлення</th><th>Дії</th></tr></thead>
+            <tbody id="plan-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUE -->
+    <div id="t-revenue" class="tab-section">
+      <div class="topbar"><div><div class="topbar-title">Доходи платформи</div></div></div>
+      <div class="content">
+        <div class="stats-row">
+          <div class="stat-card purple"><div class="stat-label">MRR</div><div class="stat-val purple">₴48 200</div><div class="stat-delta"><span class="delta-up">↑ 18%</span> vs минулий місяць</div></div>
+          <div class="stat-card green"><div class="stat-label">ARR (прогноз)</div><div class="stat-val green">₴578K</div><div class="stat-delta">Прогноз на рік</div></div>
+          <div class="stat-card amber"><div class="stat-label">ARPU</div><div class="stat-val amber">₴482</div><div class="stat-delta">Середній дохід/заклад</div></div>
+          <div class="stat-card red"><div class="stat-label">Churn rate</div><div class="stat-val red">2.4%</div><div class="stat-delta"><span class="delta-up">↓ 0.3%</span> покращення</div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Доходи по місяцях</div>
+          <div class="mini-bar-chart" id="rev-chart" style="height:120px"></div>
+          <div class="bar-labels" id="rev-labels"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ADD VENUE MODAL -->
+<div class="overlay" id="modal-venue" onclick="closeModal('modal-venue')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="venue-modal-title">Новий заклад</div>
+      <button class="close-btn" onclick="closeModal('modal-venue')">✕</button>
+    </div>
+    <div class="grid-2">
+      <div class="field-group" style="grid-column:span 2"><label class="field-label">Назва закладу</label><input id="vf-name" type="text" placeholder="Temari Sushi"/></div>
+      <div class="field-group"><label class="field-label">Slug (URL)</label><input id="vf-slug" type="text" placeholder="temari"/></div>
+      <div class="field-group"><label class="field-label">Місто</label><input id="vf-city" type="text" placeholder="Тернопіль"/></div>
+      <div class="field-group" style="grid-column:span 2"><label class="field-label">Email власника</label><input id="vf-email" type="email" placeholder="owner@restaurant.ua"/></div>
+      <div class="field-group"><label class="field-label">Тариф</label>
+        <select id="vf-plan">
+          <option value="free">Free</option>
+          <option value="starter">Starter</option>
+          <option value="pro">Pro</option>
+          <option value="enterprise">Enterprise</option>
+        </select>
+      </div>
+      <div class="field-group"><label class="field-label">Статус</label>
+        <select id="vf-status">
+          <option value="active">Активний</option>
+          <option value="inactive">Неактивний</option>
+          <option value="blocked">Заблокований</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-accent" style="width:100%" onclick="saveVenue()">Зберегти заклад</button>
+  </div>
+</div>
+
+<!-- PLAN MODAL -->
+<div class="overlay" id="modal-plan" onclick="closeModal('modal-plan')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="plan-modal-title">Редагувати тариф</div>
+      <button class="close-btn" onclick="closeModal('modal-plan')">✕</button>
+    </div>
+    <div class="field-group"><label class="field-label">Назва тарифу</label><input id="pf-name" type="text"/></div>
+    <div class="grid-2">
+      <div class="field-group"><label class="field-label">Ціна (грн/міс)</label><input id="pf-price" type="number"/></div>
+      <div class="field-group"><label class="field-label">Макс. страв</label><input id="pf-items" type="number"/></div>
+      <div class="field-group"><label class="field-label">Макс. категорій</label><input id="pf-cats" type="number"/></div>
+      <div class="field-group"><label class="field-label">Макс. замовлень/міс</label><input id="pf-orders" type="number"/></div>
+    </div>
+    <div class="field-group"><label class="field-label">Кастомний дизайн</label>
+      <select id="pf-design"><option value="0">Не доступно</option><option value="1">Кольори + шрифт</option><option value="2">Повна кастомізація</option></select>
+    </div>
+    <button class="btn btn-accent" style="width:100%" onclick="savePlan()">Зберегти тариф</button>
+  </div>
+</div>
+
+<!-- CHANGE PLAN MODAL -->
+<div class="overlay" id="modal-chplan" onclick="closeModal('modal-chplan')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title">Змінити тариф закладу</div>
+      <button class="close-btn" onclick="closeModal('modal-chplan')">✕</button>
+    </div>
+    <div style="margin-bottom:1rem;font-size:13px;color:var(--muted)" id="chplan-venue-name"></div>
+    <div class="field-group"><label class="field-label">Новий тариф</label>
+      <select id="chplan-select">
+        <option value="free">Free</option>
+        <option value="starter">Starter</option>
+        <option value="pro">Pro</option>
+        <option value="enterprise">Enterprise</option>
+      </select>
+    </div>
+    <div class="field-group"><label class="field-label">Причина зміни</label><input id="chplan-reason" type="text" placeholder="Оновлення, знижка, тест..."/></div>
+    <button class="btn btn-accent" style="width:100%" onclick="applyPlanChange()">Застосувати</button>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+const DEMO_CREDS = {email:'superadmin@menoos.app', pass:'admin123'};
+let allVenues = [], editVenueId=null, editPlanKey=null, chplanVenueId=null;
+let currentPage=1, pageSize=10;
+
+// ── AUTH ──
+function doLogin(){
+  const e=document.getElementById('li-email').value.trim();
+  const p=document.getElementById('li-pass').value;
+  if(e===DEMO_CREDS.email&&p===DEMO_CREDS.pass){
+    document.getElementById('s-login').style.display='none';
+    document.getElementById('s-app').style.display='block';
+    init();
+  } else { document.getElementById('li-err').style.display='block'; }
+}
+document.getElementById('li-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+function doLogout(){document.getElementById('s-app').style.display='none';document.getElementById('s-login').style.display='flex';}
+
+// ── INIT ──
+function init(){
+  document.getElementById('overview-date').textContent = new Date().toLocaleDateString('uk-UA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  generateVenues();
+  renderStats();
+  renderCharts();
+  renderActivity();
+  renderPlans();
+  renderVenues();
+  renderPlanTable();
+}
+
+// ── DATA ──
+const VENUES_RAW=[
+  {name:'Temari Sushi',slug:'temari',city:'Тернопіль',email:'temari@ua.com',plan:'pro',status:'active',orders:1243,reg:'2024-03-12'},
+  {name:'Pizza Roma',slug:'pizza-roma',city:'Київ',email:'roma@pizza.ua',plan:'starter',status:'active',orders:892,reg:'2024-01-08'},
+  {name:'Бургер Хаус',slug:'burger-house',city:'Львів',email:'info@burgerhouse.ua',plan:'free',status:'active',orders:234,reg:'2024-05-20'},
+  {name:'Суші Пан',slug:'sushi-pan',city:'Харків',email:'sushi@pan.ua',plan:'pro',status:'active',orders:1891,reg:'2023-11-15'},
+  {name:'Кав\'ярня Прага',slug:'praga-cafe',city:'Дніпро',email:'praga@cafe.ua',plan:'starter',status:'active',orders:445,reg:'2024-02-28'},
+  {name:'Ресторан Мисливець',slug:'myslivets',city:'Одеса',email:'hunt@rest.ua',plan:'enterprise',status:'active',orders:3210,reg:'2023-09-05'},
+  {name:'Піцерія Везувій',slug:'vesuviy',city:'Запоріжжя',email:'vez@pizza.ua',plan:'free',status:'inactive',orders:12,reg:'2024-06-01'},
+  {name:'Кухня Мами',slug:'mamas-kitchen',city:'Полтава',email:'mama@kitchen.ua',plan:'starter',status:'active',orders:567,reg:'2024-04-10'},
+  {name:'Шашлик Плюс',slug:'shashlyk',city:'Чернівці',email:'grill@plus.ua',plan:'free',status:'active',orders:89,reg:'2024-07-15'},
+  {name:'Японський Сад',slug:'japan-garden',city:'Вінниця',email:'japan@garden.ua',plan:'pro',status:'active',orders:978,reg:'2024-01-30'},
+  {name:'Морська Зірка',slug:'sea-star',city:'Миколаїв',email:'sea@star.ua',plan:'starter',status:'blocked',orders:0,reg:'2024-05-05'},
+  {name:'Карпати Гриль',slug:'karpaty',city:'Ужгород',email:'karpaty@grill.ua',plan:'free',status:'active',orders:156,reg:'2024-08-01'},
+];
+const PLANS_DATA={
+  free:{name:'Free',price:0,items:20,cats:5,orders:100,design:0,color:'#8888AA'},
+  starter:{name:'Starter',price:299,items:80,cats:15,orders:500,design:1,color:'#F59E0B'},
+  pro:{name:'Pro',price:699,items:500,cats:50,orders:5000,design:2,color:'#6C63FF'},
+  enterprise:{name:'Enterprise',price:1999,items:999999,cats:999,orders:999999,design:2,color:'#10B981'},
+};
+
+function generateVenues(){
+  allVenues = VENUES_RAW.map((v,i)=>({...v,id:'v'+i}));
+}
+
+// ── STATS ──
+function renderStats(){
+  document.getElementById('st-total').textContent = allVenues.length;
+  document.getElementById('st-active').textContent = allVenues.filter(v=>v.status==='active').length;
+  document.getElementById('st-orders').textContent = allVenues.reduce((s,v)=>s+v.orders,0).toLocaleString();
+  const rev = allVenues.reduce((s,v)=>s+(PLANS_DATA[v.plan]?.price||0),0);
+  document.getElementById('st-rev').textContent = '₴'+rev.toLocaleString();
+}
+
+// ── CHARTS ──
+function renderCharts(){
+  const regs=[2,3,1,4,5,3,6,8,5,9,7,8];
+  const labels=['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'];
+  const max=Math.max(...regs);
+  document.getElementById('reg-chart').innerHTML=regs.map((v,i)=>
+    `<div class="bar" style="height:${Math.round(v/max*100)}%;background:${i===regs.length-1?'#A78BFA':'#6C63FF'}" title="${v} реєстрацій"></div>`).join('');
+  document.getElementById('reg-labels').innerHTML=labels.map(l=>`<div class="bar-label">${l}</div>`).join('');
+
+  const revs=[18000,22000,19000,25000,28000,32000,29000,35000,38000,42000,44000,48000];
+  const maxR=Math.max(...revs);
+  const months=['С','Ж','Л','Кв','Тр','Чр','Лп','Ср','Вр','Жв','Лс','Гр'];
+  document.getElementById('rev-chart').innerHTML=revs.map((v,i)=>
+    `<div class="bar" style="height:${Math.round(v/maxR*100)}%;background:${i===revs.length-1?'#34D399':'#10B981'}" title="₴${v.toLocaleString()}"></div>`).join('');
+  document.getElementById('rev-labels').innerHTML=months.map(m=>`<div class="bar-label">${m}</div>`).join('');
+}
+
+// ── ACTIVITY ──
+const ACTIVITIES=[
+  {icon:'🏪',cls:'act-purple',text:'<span class="act-name">Pizza Roma</span> зареєструвався на платформі',time:'5 хв тому'},
+  {icon:'⬆️',cls:'act-green',text:'<span class="act-name">Temari Sushi</span> оновив тариф до Pro',time:'23 хв тому'},
+  {icon:'🧾',cls:'act-amber',text:'<span class="act-name">Суші Пан</span> отримав 45 замовлень за годину',time:'1 год тому'},
+  {icon:'🚫',cls:'act-red',text:'<span class="act-name">Морська Зірка</span> заблокований за несплату',time:'2 год тому'},
+  {icon:'🎨',cls:'act-purple',text:'<span class="act-name">Японський Сад</span> оновив дизайн меню',time:'3 год тому'},
+  {icon:'💎',cls:'act-green',text:'<span class="act-name">Мисливець</span> продовжив Enterprise на рік',time:'5 год тому'},
+  {icon:'🏪',cls:'act-purple',text:'<span class="act-name">Карпати Гриль</span> зареєструвався на платформі',time:'7 год тому'},
+  {icon:'⚠️',cls:'act-amber',text:'<span class="act-name">Везувій</span> досягнув ліміту Free тарифу',time:'8 год тому'},
+];
+function renderActivity(){
+  const html=ACTIVITIES.map(a=>`<div class="activity-item"><div class="act-icon ${a.cls}">${a.icon}</div><div class="act-text">${a.text}<div class="act-time">${a.time}</div></div></div>`).join('');
+  document.getElementById('activity-mini').innerHTML=html;
+  document.getElementById('activity-full').innerHTML=html+html;
+}
+
+// ── VENUES TABLE ──
+function filterVenues(){
+  const plan=document.getElementById('filter-plan').value;
+  const status=document.getElementById('filter-status').value;
+  const q=document.getElementById('search-venues').value.toLowerCase();
+  currentPage=1;
+  const filtered=allVenues.filter(v=>
+    (!plan||v.plan===plan)&&
+    (!status||v.status===status)&&
+    (!q||v.name.toLowerCase().includes(q)||v.city.toLowerCase().includes(q)||v.email.toLowerCase().includes(q))
+  );
+  renderVenuesTable(filtered);
+}
+function renderVenues(){
+  document.getElementById('venues-sub').textContent=allVenues.length+' закладів зареєстровано';
+  renderVenuesTable(allVenues);
+  renderPlanTable();
+}
+function renderVenuesTable(list){
+  const total=list.length;
+  const start=(currentPage-1)*pageSize;
+  const page=list.slice(start,start+pageSize);
+  const statusLabel={active:'active',inactive:'inactive',blocked:'blocked'};
+  const statusDot={active:'dot-active',inactive:'dot-inactive',blocked:'dot-blocked'};
+  const statusText={active:'Активний',inactive:'Неактивний',blocked:'Заблоковано'};
+  document.getElementById('venues-tbody').innerHTML=page.map(v=>`
+    <tr>
+      <td><div class="venue-name">${v.name}</div><div class="venue-slug">/${v.slug}</div></td>
+      <td style="color:var(--muted)">${v.email}</td>
+      <td><span class="plan-badge plan-${v.plan}">${PLANS_DATA[v.plan]?.name||v.plan}</span></td>
+      <td><span class="status-dot ${statusDot[v.status]}"></span>${statusText[v.status]}</td>
+      <td>${v.orders.toLocaleString()}</td>
+      <td style="color:var(--muted)">${v.reg}</td>
+      <td>
+        <div class="action-btns">
+          <button class="btn btn-sm btn-outline" onclick="openEditVenue('${v.id}')">✏️</button>
+          <button class="btn btn-sm btn-success" onclick="openChangePlan('${v.id}')">💎</button>
+          <button class="btn btn-sm btn-danger" onclick="toggleBlock('${v.id}')">${v.status==='blocked'?'🔓':'🔒'}</button>
+        </div>
+      </td>
+    </tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Нічого не знайдено</td></tr>`;
+  document.getElementById('page-info').textContent=`Показано ${start+1}–${Math.min(start+pageSize,total)} з ${total}`;
+  const totalPages=Math.ceil(total/pageSize);
+  document.getElementById('page-btns').innerHTML=Array.from({length:totalPages},(_,i)=>
+    `<button class="page-btn${currentPage===i+1?' active':''}" onclick="goPage(${i+1})">${i+1}</button>`).join('');
+}
+function goPage(p){currentPage=p;filterVenues();}
+
+// ── VENUE MODAL ──
+function openAddVenue(){editVenueId=null;document.getElementById('venue-modal-title').textContent='Новий заклад';['vf-name','vf-slug','vf-city','vf-email'].forEach(id=>document.getElementById(id).value='');document.getElementById('vf-plan').value='free';document.getElementById('vf-status').value='active';openModal('modal-venue');}
+function openEditVenue(id){
+  editVenueId=id;
+  const v=allVenues.find(x=>x.id===id);
+  document.getElementById('venue-modal-title').textContent='Редагувати заклад';
+  document.getElementById('vf-name').value=v.name;
+  document.getElementById('vf-slug').value=v.slug;
+  document.getElementById('vf-city').value=v.city;
+  document.getElementById('vf-email').value=v.email;
+  document.getElementById('vf-plan').value=v.plan;
+  document.getElementById('vf-status').value=v.status;
+  openModal('modal-venue');
+}
+function saveVenue(){
+  const data={name:document.getElementById('vf-name').value.trim(),slug:document.getElementById('vf-slug').value.trim(),city:document.getElementById('vf-city').value.trim(),email:document.getElementById('vf-email').value.trim(),plan:document.getElementById('vf-plan').value,status:document.getElementById('vf-status').value,orders:0,reg:new Date().toISOString().slice(0,10)};
+  if(!data.name||!data.slug){notify('Заповніть назву та slug','error');return;}
+  if(editVenueId){Object.assign(allVenues.find(v=>v.id===editVenueId),data);}
+  else{data.id='v'+Date.now();allVenues.push(data);}
+  closeModal('modal-venue');renderVenues();renderStats();notify('✅ Заклад збережено!','success');
+}
+function toggleBlock(id){
+  const v=allVenues.find(x=>x.id===id);
+  v.status=v.status==='blocked'?'active':'blocked';
+  renderVenues();notify(v.status==='blocked'?'🔒 Заклад заблоковано':'🔓 Заклад розблоковано','success');
+}
+function exportVenues(){notify('📊 CSV-файл готується до завантаження','success');}
+window.openAddVenue=openAddVenue;window.openEditVenue=openEditVenue;window.saveVenue=saveVenue;window.toggleBlock=toggleBlock;window.exportVenues=exportVenues;window.goPage=goPage;window.filterVenues=filterVenues;
+
+// ── PLANS ──
+function renderPlans(){
+  document.getElementById('plans-grid').innerHTML=Object.entries(PLANS_DATA).map(([key,p])=>`
+    <div class="plan-card${key==='pro'?' featured':''}">
+      ${key==='pro'?'<div class="plan-featured-badge">ПОПУЛЯРНИЙ</div>':''}
+      <div class="plan-name" style="color:${p.color}">${p.name}</div>
+      <div class="plan-price">${p.price?'₴'+p.price:'Безкоштовно'}<span>${p.price?' /місяць':''}</span></div>
+      <ul class="plan-features">
+        <li>${p.items===999999?'Необмежено':p.items} страв</li>
+        <li>${p.cats===999?'Необмежено':p.cats} категорій</li>
+        <li>${p.orders===999999?'Необмежено':p.orders} замовлень/міс</li>
+        <li>${['Немає','Кольори+шрифт','Повна кастомізація'][p.design]}</li>
+      </ul>
+      <button class="plan-edit-btn" onclick="openPlanModal('${key}')">✏️ Редагувати тариф</button>
+    </div>`).join('');
+}
+function openPlanModal(key){
+  editPlanKey=key;
+  const p=PLANS_DATA[key];
+  document.getElementById('plan-modal-title').textContent='Тариф: '+p.name;
+  document.getElementById('pf-name').value=p.name;
+  document.getElementById('pf-price').value=p.price;
+  document.getElementById('pf-items').value=p.items===999999?'':p.items;
+  document.getElementById('pf-cats').value=p.cats===999?'':p.cats;
+  document.getElementById('pf-orders').value=p.orders===999999?'':p.orders;
+  document.getElementById('pf-design').value=p.design;
+  openModal('modal-plan');
+}
+function savePlan(){
+  if(!editPlanKey)return;
+  PLANS_DATA[editPlanKey]={...PLANS_DATA[editPlanKey],name:document.getElementById('pf-name').value,price:parseInt(document.getElementById('pf-price').value)||0,items:parseInt(document.getElementById('pf-items').value)||999999,cats:parseInt(document.getElementById('pf-cats').value)||999,orders:parseInt(document.getElementById('pf-orders').value)||999999,design:parseInt(document.getElementById('pf-design').value)};
+  closeModal('modal-plan');renderPlans();notify('✅ Тариф оновлено!','success');
+}
+function renderPlanTable(){
+  document.getElementById('plan-table').innerHTML=allVenues.map(v=>`
+    <tr><td>${v.name}</td><td><span class="plan-badge plan-${v.plan}">${PLANS_DATA[v.plan]?.name||v.plan}</span></td><td style="color:var(--muted)">${v.reg}</td><td><button class="btn btn-sm btn-success" onclick="openChangePlan('${v.id}')">Змінити тариф</button></td></tr>`).join('');
+}
+function openChangePlan(id){chplanVenueId=id;const v=allVenues.find(x=>x.id===id);document.getElementById('chplan-venue-name').textContent='Заклад: '+v.name;document.getElementById('chplan-select').value=v.plan;document.getElementById('chplan-reason').value='';openModal('modal-chplan');}
+function applyPlanChange(){if(!chplanVenueId)return;const v=allVenues.find(x=>x.id===chplanVenueId);v.plan=document.getElementById('chplan-select').value;closeModal('modal-chplan');renderVenues();renderStats();renderPlans();notify('✅ Тариф змінено!','success');}
+window.openPlanModal=openPlanModal;window.savePlan=savePlan;window.openChangePlan=openChangePlan;window.applyPlanChange=applyPlanChange;
+
+// ── UTILS ──
+function nav(btn,tab){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));document.getElementById(tab).classList.add('active');
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function notify(msg,type='success'){const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';setTimeout(()=>n.classList.remove('show'),3000);}
+window.closeModal=closeModal;window.nav=nav;window.doLogout=doLogout;
+</script>
+</body>
+</html>

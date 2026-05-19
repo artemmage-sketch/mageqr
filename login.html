@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Mage QR Rest — Вхід</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0A0A;--card:#111;--border:#1E1E1E;--border2:#2A2A2A;
+  --accent:#C1440E;--accent2:#FF6B35;--text:#F0EDE8;--muted:#555;
+  --font:'Outfit',sans-serif;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text)}
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;position:relative;overflow:hidden}
+
+/* Декоративний фон */
+body::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(193,68,14,.12),transparent);
+  pointer-events:none
+}
+
+.card{
+  background:var(--card);border:1px solid var(--border2);
+  border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:380px;
+  position:relative;z-index:1;
+}
+.brand{text-align:center;margin-bottom:2rem}
+.brand-logo{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-size:1.4rem;font-weight:700;color:var(--text);letter-spacing:-.5px
+}
+.brand-logo span{color:var(--accent)}
+.brand-sub{font-size:11px;color:var(--muted);margin-top:.375rem;letter-spacing:.12em;text-transform:uppercase}
+
+.tabs{display:flex;gap:.375rem;background:#0D0D0D;border-radius:10px;padding:3px;margin-bottom:1.5rem}
+.tab{flex:1;padding:7px;border-radius:8px;font-size:13px;font-weight:500;border:none;cursor:pointer;background:transparent;color:var(--muted);transition:all .2s;font-family:var(--font)}
+.tab.active{background:var(--border2);color:var(--text)}
+
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.375rem}
+.field input{
+  width:100%;background:#0D0D0D;border:1px solid var(--border2);
+  color:var(--text);border-radius:10px;padding:10px 14px;font-size:14px;
+  outline:none;font-family:var(--font);transition:border .15s
+}
+.field input:focus{border-color:var(--accent)}
+.field input::placeholder{color:#333}
+
+.err{font-size:12px;color:#EF4444;margin-top:.5rem;display:none;padding:.5rem .75rem;background:rgba(239,68,68,.08);border-radius:8px;border:1px solid rgba(239,68,68,.2)}
+.err.show{display:block}
+
+.btn-primary{
+  width:100%;padding:11px;background:var(--accent);color:#fff;
+  border:none;border-radius:10px;font-size:14px;font-weight:600;
+  cursor:pointer;font-family:var(--font);transition:all .2s;margin-top:.375rem;
+  position:relative;overflow:hidden
+}
+.btn-primary:hover{background:var(--accent2)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary .spinner{display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;margin:0 auto}
+.btn-primary.loading span{display:none}
+.btn-primary.loading .spinner{display:block}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+.divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;color:var(--muted);font-size:11px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+.link{color:var(--accent);font-size:12px;text-align:center;margin-top:1rem;cursor:pointer}
+.link:hover{text-decoration:underline}
+
+/* Лічильник спроб */
+.attempts-bar{height:2px;background:var(--border);border-radius:1px;margin-top:.75rem;overflow:hidden}
+.attempts-fill{height:100%;background:var(--accent);border-radius:1px;transition:width .3s}
+
+.locked-msg{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:.875rem;font-size:13px;color:#FCA5A5;text-align:center;display:none}
+.locked-msg.show{display:block}
+.locked-countdown{font-weight:700;font-size:1.1rem;color:#EF4444}
+
+.footer{text-align:center;margin-top:1.5rem;font-size:11px;color:var(--muted)}
+</style>
+</head>
+<body>
+<script src="anti-scraping.js"></script>
+
+<!-- HONEYPOT -->
+<div style="position:absolute;left:-9999px;opacity:0" aria-hidden="true">
+  <input type="text" name="username_fake" tabindex="-1" autocomplete="off"/>
+  <input type="text" name="company_fake" tabindex="-1" autocomplete="off"/>
+</div>
+
+<div class="card">
+  <div class="brand">
+    <div class="brand-logo">✦ Mage <span>QR</span> Rest</div>
+    <div class="brand-sub">Платформа управління рестораном</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('venue')">Заклад</button>
+    <button class="tab" onclick="switchTab('super')">Платформа</button>
+  </div>
+
+  <!-- VENUE LOGIN -->
+  <div id="tab-venue">
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="v-email" placeholder="admin@myrestaurant.ua" autocomplete="username"/>
+    </div>
+    <div class="field">
+      <label>Пароль</label>
+      <input type="password" id="v-pass" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <!-- HONEYPOT приховане поле — боти заповнять його -->
+    <input type="text" name="website" style="position:absolute;left:-9999px;opacity:0" tabindex="-1" id="hp-website" autocomplete="off"/>
+
+    <div class="err" id="v-err">Невірний email або пароль</div>
+    <div class="attempts-bar"><div class="attempts-fill" id="attempts-fill" style="width:0%"></div></div>
+
+    <div class="locked-msg" id="locked-msg">
+      🔒 Забагато невдалих спроб.<br/>Спробуйте через <span class="locked-countdown" id="countdown">60</span> с.
+    </div>
+
+    <button class="btn-primary" id="v-btn" onclick="doVenueLogin()">
+      <span>Увійти</span>
+      <div class="spinner"></div>
+    </button>
+  </div>
+
+  <!-- SUPER LOGIN -->
+  <div id="tab-super" style="display:none">
+    <div class="field">
+      <label>Системний email</label>
+      <input type="email" id="s-email" placeholder="superadmin@mageqrrest.com"/>
+    </div>
+    <div class="field">
+      <label>Системний пароль</label>
+      <input type="password" id="s-pass" placeholder="••••••••"/>
+    </div>
+    <div class="err" id="s-err">Доступ заборонено</div>
+    <button class="btn-primary" id="s-btn" onclick="doSuperLogin()">
+      <span>Системний вхід</span>
+      <div class="spinner"></div>
+    </button>
+  </div>
+
+  <div class="footer">
+    ✦ Mage QR Rest · Захищена платформа<br/>
+    <span style="color:#2A2A2A">v1.0.0</span>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  BRUTE-FORCE PROTECTION
+// ═══════════════════════════════════════════════
+const MAX_ATTEMPTS = 5;
+const LOCK_SECONDS = 60;
+let attempts = 0;
+let locked = false;
+let lockTimer = null;
+
+function isHoneypotFilled() {
+  return document.getElementById('hp-website').value !== '';
+}
+
+function setLoading(btnId, on) {
+  const btn = document.getElementById(btnId);
+  btn.classList.toggle('loading', on);
+  btn.disabled = on;
+}
+
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg || el.textContent;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+function incrementAttempts() {
+  attempts++;
+  const pct = Math.min((attempts / MAX_ATTEMPTS) * 100, 100);
+  document.getElementById('attempts-fill').style.width = pct + '%';
+  document.getElementById('attempts-fill').style.background =
+    attempts >= MAX_ATTEMPTS ? '#EF4444' : attempts >= 3 ? '#F59E0B' : '#C1440E';
+
+  if (attempts >= MAX_ATTEMPTS) startLock();
+}
+
+function startLock() {
+  locked = true;
+  let remaining = LOCK_SECONDS;
+  document.getElementById('locked-msg').classList.add('show');
+  document.getElementById('v-btn').disabled = true;
+  document.getElementById('countdown').textContent = remaining;
+
+  // Зберігаємо час блокування
+  localStorage.setItem('__mq_lock', Date.now() + LOCK_SECONDS * 1000);
+
+  lockTimer = setInterval(() => {
+    remaining--;
+    document.getElementById('countdown').textContent = remaining;
+    if (remaining <= 0) {
+      clearInterval(lockTimer);
+      locked = false;
+      attempts = 0;
+      document.getElementById('locked-msg').classList.remove('show');
+      document.getElementById('v-btn').disabled = false;
+      document.getElementById('attempts-fill').style.width = '0%';
+      localStorage.removeItem('__mq_lock');
+    }
+  }, 1000);
+}
+
+// Перевіряємо чи є активне блокування при завантаженні
+(function checkExistingLock() {
+  const lockUntil = parseInt(localStorage.getItem('__mq_lock') || '0');
+  const now = Date.now();
+  if (lockUntil > now) {
+    const remaining = Math.ceil((lockUntil - now) / 1000);
+    attempts = MAX_ATTEMPTS;
+    document.getElementById('attempts-fill').style.width = '100%';
+    document.getElementById('countdown').textContent = remaining;
+    startLockFromRemaining(remaining);
+  }
+})();
+
+function startLockFromRemaining(remaining) {
+  locked = true;
+  document.getElementById('locked-msg').classList.add('show');
+  document.getElementById('v-btn').disabled = true;
+  lockTimer = setInterval(() => {
+    remaining--;
+    document.getElementById('countdown').textContent = remaining;
+    if (remaining <= 0) {
+      clearInterval(lockTimer);
+      locked = false;
+      attempts = 0;
+      document.getElementById('locked-msg').classList.remove('show');
+      document.getElementById('v-btn').disabled = false;
+      document.getElementById('attempts-fill').style.width = '0%';
+      localStorage.removeItem('__mq_lock');
+    }
+  }, 1000);
+}
+
+// ─── ВХІД ЗАКЛАДУ ────────────────────────────────────────────
+async function doVenueLogin() {
+  if (locked) return;
+  if (isHoneypotFilled()) { document.body.innerHTML = ''; return; } // бот
+
+  const email = document.getElementById('v-email').value.trim();
+  const pass  = document.getElementById('v-pass').value;
+
+  if (!email || !pass) { showErr('v-err', 'Заповніть усі поля'); return; }
+
+  setLoading('v-btn', true);
+
+  // Штучна затримка 600-900мс (ускладнює brute-force)
+  await new Promise(r => setTimeout(r, 600 + Math.random() * 300));
+
+  try {
+    // ── FIREBASE AUTH (підключити після налаштування Firebase) ──
+    // const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    // const userCred = await signInWithEmailAndPassword(auth, email, pass);
+    // window.location.replace('admin.html');
+
+    // ── DEMO MODE (видалити після підключення Firebase) ──
+    if (email === 'demo@mageqrrest.com' && pass === 'demo1234') {
+      sessionStorage.setItem('__mq_auth', '1');
+      sessionStorage.setItem('__mq_venue', 'demo');
+      window.location.replace('admin.html');
+    } else {
+      incrementAttempts();
+      showErr('v-err', attempts >= 3
+        ? `Невірні дані. Залишилось спроб: ${MAX_ATTEMPTS - attempts}`
+        : 'Невірний email або пароль');
+    }
+  } catch (e) {
+    incrementAttempts();
+    showErr('v-err', 'Помилка входу. Спробуйте ще раз.');
+  } finally {
+    setLoading('v-btn', false);
+  }
+}
+
+// ─── ВХІД СУПЕР-АДМІНА ───────────────────────────────────────
+async function doSuperLogin() {
+  const email = document.getElementById('s-email').value.trim();
+  const pass  = document.getElementById('s-pass').value;
+  if (!email || !pass) { showErr('s-err', 'Заповніть усі поля'); return; }
+
+  setLoading('s-btn', true);
+  await new Promise(r => setTimeout(r, 700 + Math.random() * 400));
+
+  try {
+    // ── DEMO ──
+    if (email === 'super@mageqrrest.com' && pass === 'super1234') {
+      sessionStorage.setItem('__mq_super', '1');
+      window.location.replace('superadmin.html');
+    } else {
+      showErr('s-err', 'Доступ заборонено');
+    }
+  } finally {
+    setLoading('s-btn', false);
+  }
+}
+
+// ─── TAB SWITCH ──────────────────────────────────────────────
+function switchTab(t) {
+  document.getElementById('tab-venue').style.display = t === 'venue' ? '' : 'none';
+  document.getElementById('tab-super').style.display = t === 'super' ? '' : 'none';
+  document.querySelectorAll('.tab').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && t === 'venue') || (i === 1 && t === 'super'));
+  });
+}
+
+// Enter → submit
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const active = document.getElementById('tab-super').style.display === 'none' ? 'venue' : 'super';
+  active === 'venue' ? doVenueLogin() : doSuperLogin();
+});
+</script>
+</body>
+</html>
