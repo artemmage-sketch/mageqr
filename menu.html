@@ -56,10 +56,21 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .sh-handle{width:36px;height:3px;background:var(--border);border-radius:2px;margin:10px auto}
 .det-img{width:100%;max-height:380px;object-fit:contain;background:#f5f0eb}
 .det-body{padding:1rem}
-.det-name{font-family:var(--font-head);font-size:1.3rem;margin-bottom:.375rem}
+.det-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.5rem;gap:.5rem}
+.det-name{font-family:var(--font-head);font-size:1.3rem;line-height:1.2;flex:1}
+.det-close{width:32px;height:32px;border-radius:50%;background:var(--bg2);border:none;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted)}
+.det-meta{display:flex;align-items:center;gap:.75rem;margin-bottom:.625rem;flex-wrap:wrap}
+.det-weight{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:.25rem}
 .det-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:.875rem}
+.det-allergens{margin-bottom:.875rem}
+.det-allergens-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.375rem}
+.allergen-tag{display:inline-flex;align-items:center;gap:.25rem;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--muted);margin:.2rem .2rem 0 0}
+.allergen-tag.warn{background:#FEF3C7;border-color:#FDE68A;color:#92400E}
 .det-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:.875rem}
 .det-price{font-family:var(--font-head);font-size:1.4rem;color:var(--accent);font-weight:600}
+/* Алергени в списку страв */
+.dish-allergens{display:flex;gap:.25rem;flex-wrap:wrap;margin-top:.375rem}
+.a-chip{font-size:10px;padding:1px 7px;border-radius:10px;background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
 .qty-ctrl{display:flex;align-items:center;gap:.625rem}
 .qty-btn{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:none;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text)}
 .qty-val{font-size:15px;font-weight:600;min-width:22px;text-align:center}
@@ -144,8 +155,18 @@ window.__MQ_CFG = {
     <div class="sh-handle"></div>
     <img id="det-img" src="" alt="" style="display:none" class="det-img"/>
     <div class="det-body">
-      <div class="det-name" id="det-name"></div>
+      <div class="det-header">
+        <div class="det-name" id="det-name"></div>
+        <button class="det-close" onclick="$('det-ov').classList.remove('open')">✕</button>
+      </div>
+      <div class="det-meta">
+        <div class="det-weight" id="det-weight" style="display:none">⚖️ <span id="det-weight-val"></span></div>
+      </div>
       <div class="det-desc" id="det-desc"></div>
+      <div class="det-allergens" id="det-allergens" style="display:none">
+        <div class="det-allergens-title">⚠️ Алергени</div>
+        <div id="det-allergens-list"></div>
+      </div>
       <div class="det-foot">
         <div class="det-price" id="det-price"></div>
         <div class="qty-ctrl">
@@ -208,6 +229,23 @@ let allItems = [], allCats = [], activeCat = null;
 let cart = {}, detItem = null, detQty = 1, design = {};
 
 const $ = id => document.getElementById(id);
+
+// Іконки алергенів (EU стандарт)
+const ALLERGEN_ICONS = {
+  'Глютен': '🌾', 'Пшениця': '🌾',
+  'Молоко': '🥛', 'Лактоза': '🥛',
+  'Яйця': '🥚',
+  'Горіхи': '🥜', 'Арахіс': '🥜',
+  'Риба': '🐟',
+  'Молюски': '🦐', 'Ракоподібні': '🦞',
+  'Соя': '🫘',
+  'Селера': '🥬',
+  'Гірчиця': '🌶️',
+  'Кунжут': '🌰',
+  'Сірчистий ангідрид': '⚗️',
+  'Люпин': '🌸',
+  'Молюски': '🦑',
+};
 
 async function init() {
   try {
@@ -324,6 +362,7 @@ function renderMenu() {
         <div class="dish-name">${it.name}</div>
         ${design.showDesc!==false&&it.desc?`<div class="dish-desc">${it.desc}</div>`:''}
         ${design.showWeight!==false&&it.weight?`<div class="dish-weight">⚖️ ${it.weight}</div>`:''}
+        ${it.allergens&&it.allergens.length?`<div class="dish-allergens">${it.allergens.slice(0,4).map(a=>`<span class="a-chip">${ALLERGEN_ICONS[a]||''}${a}</span>`).join('')}</div>`:''}`
         <div class="dish-footer">
           ${design.showPrices!==false?`<div class="dish-price">${it.price} грн</div>`:'<div></div>'}
           <button class="add-btn${cart[it.id]?' added':''}" id="ab-${it.id}" onclick="event.stopPropagation();qAdd('${it.id}')">${cart[it.id]?'✓':'+'}</button>
@@ -336,12 +375,39 @@ function renderMenu() {
 window.openDet = id => {
   detItem = allItems.find(x=>x.id===id); if(!detItem) return;
   detQty = cart[id]||1;
+
+  // Фото
   const img=$('det-img');
-  if(detItem.photoUrl){img.src=detItem.photoUrl;img.style.display='block';}else img.style.display='none';
+  if(detItem.photoUrl){img.src=detItem.photoUrl;img.alt=detItem.name;img.style.display='block';}
+  else img.style.display='none';
+
+  // Основна інфо
   $('det-name').textContent  = detItem.name;
   $('det-desc').textContent  = detItem.desc||'';
   $('det-price').textContent = detItem.price+' грн';
   $('det-qty').textContent   = detQty;
+
+  // Вага / об'єм
+  const weightEl = $('det-weight');
+  if(detItem.weight){
+    $('det-weight-val').textContent = detItem.weight;
+    weightEl.style.display='flex';
+  } else {
+    weightEl.style.display='none';
+  }
+
+  // Алергени
+  const allergEl = $('det-allergens');
+  const allergList = $('det-allergens-list');
+  if(detItem.allergens && detItem.allergens.length){
+    allergList.innerHTML = detItem.allergens.map(a=>
+      `<span class="allergen-tag warn">${ALLERGEN_ICONS[a]||'⚠️'} ${a}</span>`
+    ).join('');
+    allergEl.style.display='block';
+  } else {
+    allergEl.style.display='none';
+  }
+
   $('det-ov').classList.add('open');
 };
 window.dQty = d => { detQty=Math.max(1,detQty+d); $('det-qty').textContent=detQty; };
