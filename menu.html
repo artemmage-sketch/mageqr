@@ -362,7 +362,7 @@ function renderMenu() {
         <div class="dish-name">${it.name}</div>
         ${design.showDesc!==false&&it.desc?`<div class="dish-desc">${it.desc}</div>`:''}
         ${design.showWeight!==false&&it.weight?`<div class="dish-weight">⚖️ ${it.weight}</div>`:''}
-        ${it.allergens&&it.allergens.length?`<div class="dish-allergens">${it.allergens.slice(0,4).map(a=>`<span class="a-chip">${ALLERGEN_ICONS[a]||''}${a}</span>`).join('')}</div>`:''}`
+        ${it.allergens&&it.allergens.length?`<div class="dish-allergens">${it.allergens.slice(0,4).map(a=>`<span class="a-chip">${ALLERGEN_ICONS[a]||''}${a}</span>`).join('')}</div>`:''}
         <div class="dish-footer">
           ${design.showPrices!==false?`<div class="dish-price">${it.price} грн</div>`:'<div></div>'}
           <button class="add-btn${cart[it.id]?' added':''}" id="ab-${it.id}" onclick="event.stopPropagation();qAdd('${it.id}')">${cart[it.id]?'✓':'+'}</button>
