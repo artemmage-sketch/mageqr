@@ -190,7 +190,7 @@ window.__MQ_CFG = {
 <script type="module">
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getFirestore, collection, doc, getDoc, getDocs,
-         addDoc, query, orderBy, serverTimestamp }
+         addDoc, serverTimestamp }
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const cfg = window.__MQ_CFG;
@@ -211,7 +211,7 @@ async function init() {
     const [sSnap, dSnap, cSnap, iSnap] = await Promise.all([
       getDoc(doc(db,'venues',venueId,'settings','main')),
       getDoc(doc(db,'venues',venueId,'design','main')),
-      getDocs(query(collection(db,'venues',venueId,'categories'), orderBy('order'))),
+      getDocs(collection(db,'venues',venueId,'categories')),
       getDocs(collection(db,'venues',venueId,'items')),
     ]);
 
@@ -219,7 +219,7 @@ async function init() {
     design = dSnap.exists() ? dSnap.data() : {};
     applyDesign(design);
 
-    allCats  = cSnap.docs.map(d=>({id:d.id,...d.data()}));
+    allCats  = cSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
     allItems = iSnap.docs.map(d=>({id:d.id,...d.data()}));
 
     if (tableId) $('venue-tag').textContent += ` · Стіл №${tableId}`;
