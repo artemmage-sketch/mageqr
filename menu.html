@@ -56,9 +56,9 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .sh-handle{width:36px;height:3px;background:var(--border);border-radius:2px;margin:10px auto}
 .det-img{width:100%;max-height:380px;object-fit:contain;background:#f5f0eb}
 .det-body{padding:1rem}
-.det-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.5rem;gap:.5rem}
-.det-name{font-family:var(--font-head);font-size:1.3rem;line-height:1.2;flex:1}
-.det-close{width:32px;height:32px;border-radius:50%;background:var(--bg2);border:none;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted)}
+.det-name{font-family:var(--font-head);font-size:1.3rem;line-height:1.2;margin-bottom:.375rem}
+.det-img-wrap{position:relative}
+.det-close{position:absolute;top:.625rem;right:.625rem;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);border:none;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;z-index:2;backdrop-filter:blur(4px)}
 .det-meta{display:flex;align-items:center;gap:.75rem;margin-bottom:.625rem;flex-wrap:wrap}
 .det-weight{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:.25rem}
 .det-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:.875rem}
@@ -153,12 +153,12 @@ window.__MQ_CFG = {
 <div class="overlay" id="det-ov" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="sheet">
     <div class="sh-handle"></div>
-    <img id="det-img" src="" alt="" style="display:none" class="det-img"/>
+    <div class="det-img-wrap">
+      <img id="det-img" src="" alt="" style="display:none" class="det-img"/>
+      <button class="det-close" id="det-close-btn" style="display:none" onclick="document.getElementById('det-ov').classList.remove('open')">✕</button>
+    </div>
     <div class="det-body">
-      <div class="det-header">
-        <div class="det-name" id="det-name"></div>
-        <button class="det-close" onclick="$('det-ov').classList.remove('open')">✕</button>
-      </div>
+      <div class="det-name" id="det-name"></div>
       <div class="det-meta">
         <div class="det-weight" id="det-weight" style="display:none">⚖️ <span id="det-weight-val"></span></div>
       </div>
@@ -231,6 +231,15 @@ let cart = {}, detItem = null, detQty = 1, design = {};
 const $ = id => document.getElementById(id);
 
 // Іконки алергенів (EU стандарт)
+// Нормалізація ваги — якщо тільки цифра, додаємо "г"
+function fmtWeight(w) {
+  if(!w) return '';
+  w = String(w).trim();
+  // Якщо рядок складається тільки з цифр (і крапки/коми) — додаємо "г"
+  if(/^[\d.,]+$/.test(w)) return w + ' г';
+  return w;
+}
+
 const ALLERGEN_ICONS = {
   'Глютен': '🌾', 'Пшениця': '🌾',
   'Молоко': '🥛', 'Лактоза': '🥛',
@@ -361,7 +370,7 @@ function renderMenu() {
       <div class="dish-body">
         <div class="dish-name">${it.name}</div>
         ${design.showDesc!==false&&it.desc?`<div class="dish-desc">${it.desc}</div>`:''}
-        ${design.showWeight!==false&&it.weight?`<div class="dish-weight">⚖️ ${it.weight}</div>`:''}
+        ${design.showWeight!==false&&it.weight?`<div class="dish-weight">⚖️ ${fmtWeight(it.weight)}</div>`:''}
         ${it.allergens&&it.allergens.length?`<div class="dish-allergens">${it.allergens.slice(0,4).map(a=>`<span class="a-chip">${ALLERGEN_ICONS[a]||''}${a}</span>`).join('')}</div>`:''}
         <div class="dish-footer">
           ${design.showPrices!==false?`<div class="dish-price">${it.price} грн</div>`:'<div></div>'}
@@ -376,10 +385,16 @@ window.openDet = id => {
   detItem = allItems.find(x=>x.id===id); if(!detItem) return;
   detQty = cart[id]||1;
 
-  // Фото
+  // Фото + хрестик поверх фото
   const img=$('det-img');
-  if(detItem.photoUrl){img.src=detItem.photoUrl;img.alt=detItem.name;img.style.display='block';}
-  else img.style.display='none';
+  const closeBtn=document.getElementById('det-close-btn');
+  if(detItem.photoUrl){
+    img.src=detItem.photoUrl;img.alt=detItem.name;img.style.display='block';
+    closeBtn.style.display='flex';
+  } else {
+    img.style.display='none';
+    closeBtn.style.display='none';
+  }
 
   // Основна інфо
   $('det-name').textContent  = detItem.name;
@@ -390,7 +405,7 @@ window.openDet = id => {
   // Вага / об'єм
   const weightEl = $('det-weight');
   if(detItem.weight){
-    $('det-weight-val').textContent = detItem.weight;
+    $('det-weight-val').textContent = fmtWeight(detItem.weight);
     weightEl.style.display='flex';
   } else {
     weightEl.style.display='none';
