@@ -104,7 +104,7 @@ window.__MQ_CFG = {
   appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 // Cloud Functions URL (після деплою)
-window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
+window.__CF_URL = 'https://createvenue-c4jiqzwnga-uc.a.run.app';
 </script>
 
 <div class="header">
@@ -400,7 +400,7 @@ window.doRegister = async function() {
   const pass  = document.getElementById('r-pass').value;
 
   try {
-    const res = await fetch(`${window.__CF_URL}/createVenue`, {
+    const res = await fetch(window.__CF_URL, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ name, slug, city, phone, email, password: pass }),
