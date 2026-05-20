@@ -2,6 +2,7 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8"/>
+<meta name="robots" content="noindex,nofollow"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Mage QR Rest — Платформа</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
@@ -195,6 +196,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 </style>
 </head>
 <body>
+<script src="anti-scraping.js"></script>
 
 <!-- LOGIN -->
 <div id="s-login">
@@ -457,7 +459,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 <div class="notif" id="notif"></div>
 
-<script>
+<script type="module">
 // ═══════════════════════════════════════════════════════════
 //  MAGE QR REST — Супер-адмін з Firebase v2.0
 // ═══════════════════════════════════════════════════════════
@@ -546,7 +548,7 @@ window.doLogout = async function() {
 };
 
 document.getElementById('li-pass').addEventListener('keydown', e => {
-  if(e.key==='Enter') doLogin();
+  if(e.key==='Enter') window.doLogin();
 });
 
 // ── INIT ──────────────────────────────────────────────────
@@ -774,8 +776,7 @@ window.openChangePlan = function(id) {
 window.exportVenues = function() {
   const rows = [['ID','Назва','Місто','Тариф','Статус','Замовлень','Дата']];
   allVenues.forEach(v=>rows.push([v.id,v.name,v.city,v.plan,v.status,v.orders,v.reg]));
-  const csv = rows.map(r=>r.map(x=>`"${x||''}"`).join(',')).join('
-');
+  const csv = rows.map(r=>r.map(x=>'"'+(x||'')+'"').join(',')).join('\n');
   const a = document.createElement('a');
   a.href='data:text/csv;charset=utf-8,%EF%BB%BF'+encodeURIComponent(csv);
   a.download='venues.csv'; a.click();
