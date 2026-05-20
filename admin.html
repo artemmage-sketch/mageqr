@@ -321,7 +321,7 @@ button{cursor:pointer}
 <script>
 // ⚠️ ЗАМІНІТЬ на свої ключі (такі самі як у login.html)
 window.__MQ_CFG = window.__MQ_CFG || {
-  apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
+ apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
   authDomain: "mageqrrest.firebaseapp.com",
   projectId: "mageqrrest",
   storageBucket: "mageqrrest.firebasestorage.app",
@@ -351,6 +351,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       <button class="nav-item" onclick="nav(this,'t-design')">🎨 Дизайн меню</button>
       <button class="nav-item" onclick="nav(this,'t-payments')">💳 Платежі</button>
       <button class="nav-item" onclick="nav(this,'t-pos')">🖥️ POS-інтеграція</button>
+      <button class="nav-item" onclick="nav(this,'t-billing')">💳 Підписка та білінг</button>
       <button class="nav-item" onclick="nav(this,'t-settings')">⚙️ Налаштування</button>
     </div>
     <div class="sb-bottom">
@@ -1326,6 +1327,92 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     </div>
   </div>
 </div>
+
+    <!-- BILLING -->
+    <div id="t-billing" class="tab-section">
+      <div class="topbar">
+        <div><div class="page-title">💳 Підписка та білінг</div><div class="page-sub">Управління тарифом і оплатою</div></div>
+        <button class="btn btn-accent btn-sm" id="btn-subscribe" onclick="openSubscribe()">💳 Прив'язати картку</button>
+      </div>
+      <div class="content">
+
+        <!-- ПОТОЧНИЙ ТАРИФ -->
+        <div class="billing-hero" id="billing-hero">
+          <div class="bh-plan">Поточний тариф</div>
+          <div class="bh-name" id="bh-plan-name">Trial</div>
+          <div class="bh-price" id="bh-plan-price">Пробний період</div>
+        </div>
+
+        <!-- ТАЙМЕР TRIAL -->
+        <div class="trial-timer" id="trial-timer" style="display:none">
+          <div class="timer-icon">⏳</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:baseline;gap:.375rem">
+              <div class="timer-days" id="trial-days">14</div>
+              <div style="font-size:13px;color:var(--muted)">днів залишилось</div>
+            </div>
+            <div class="timer-label">до закінчення пробного періоду</div>
+            <div class="timer-bar">
+              <div class="timer-fill" id="trial-fill" style="width:100%"></div>
+            </div>
+          </div>
+          <button class="btn btn-accent btn-sm" onclick="openSubscribe()">Оплатити зараз</button>
+        </div>
+
+        <!-- КАРТКА -->
+        <div class="card-bind-section">
+          <h3>💳 Спосіб оплати</h3>
+          <div class="card-preview empty" id="card-preview">
+            <div style="font-size:2rem">💳</div>
+            <div style="font-size:13px">Картка не прив'язана</div>
+            <div style="font-size:11px;color:var(--muted)">Прив'яжіть картку для автоматичних списань</div>
+          </div>
+          <div id="card-actions">
+            <button class="btn btn-accent" style="width:100%" onclick="openSubscribe()">
+              💳 Прив'язати картку та оплатити
+            </button>
+            <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:.5rem">
+              🔒 Безпечно через Monobank · Картка зберігається у зашифрованому вигляді
+            </div>
+          </div>
+          <div id="card-bound-actions" style="display:none">
+            <div style="display:flex;gap:.5rem">
+              <button class="btn btn-outline btn-sm" style="flex:1" onclick="changeCard()">🔄 Змінити картку</button>
+              <button class="btn btn-danger btn-sm" style="flex:1" onclick="removeCard()">✕ Відв'язати</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- НАСТУПНЕ СПИСАННЯ -->
+        <div class="settings-section" id="next-billing-wrap" style="display:none">
+          <h3>📅 Наступне списання</h3>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem">
+            <div>
+              <div style="font-size:1.1rem;font-weight:600" id="next-billing-date">—</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px" id="next-billing-amount">—</div>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="cancelSubscription()">Скасувати підписку</button>
+          </div>
+        </div>
+
+        <!-- ЗМІНА ТАРИФУ -->
+        <div class="settings-section">
+          <h3>🚀 Оберіть тариф</h3>
+          <div class="plan-compare" id="billing-plans"></div>
+        </div>
+
+        <!-- ІСТОРІЯ ПЛАТЕЖІВ -->
+        <div class="settings-section">
+          <h3>🧾 Історія платежів</h3>
+          <div class="billing-history" id="billing-history">
+            <div style="padding:1.5rem;text-align:center;color:var(--muted);font-size:13px">
+              Платежів ще немає
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
 
 <!-- ITEM MODAL -->
 <div class="overlay" id="modal-item" onclick="closeModal('modal-item')">
@@ -2752,6 +2839,147 @@ window.paySubscription = async function(){
   } catch(e){ notify('Помилка: '+e.message,'err'); }
   finally{ btn.textContent='💳 Оплатити через Monobank'; btn.disabled=false; }
 };
+
+// ── БІЛІНГ ───────────────────────────────────────────────
+const PLANS_BILLING = {
+  free:       { name:'Free',       price:0,    color:'#8888AA' },
+  trial:      { name:'Trial',      price:0,    color:'#C1440E' },
+  starter:    { name:'Starter',    price:299,  color:'#F59E0B' },
+  pro:        { name:'Pro',        price:699,  color:'#6C63FF' },
+  enterprise: { name:'Enterprise', price:1999, color:'#10B981' },
+};
+
+async function loadBilling() {
+  if(!db || !window.__FS) return;
+  const { doc, getDoc, collection, getDocs } = window.__FS;
+  try {
+    const venueSnap = await getDoc(doc(db,'venues',venueId));
+    if(!venueSnap.exists()) return;
+    const vd = venueSnap.data();
+    const plan = vd.plan || 'trial';
+    const planData = PLANS_BILLING[plan] || PLANS_BILLING.trial;
+
+    document.getElementById('bh-plan-name').textContent = planData.name;
+    document.getElementById('billing-hero').style.background =
+      `linear-gradient(135deg,${planData.color},${planData.color}99)`;
+
+    if(plan === 'trial' && vd.trialEndsAt) {
+      const trialEnd = vd.trialEndsAt.seconds * 1000;
+      const daysLeft = Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000));
+      const pct = Math.round(daysLeft / 14 * 100);
+      document.getElementById('trial-timer').style.display = 'flex';
+      document.getElementById('trial-days').textContent = daysLeft;
+      document.getElementById('trial-fill').style.width = pct + '%';
+      document.getElementById('trial-fill').style.background =
+        daysLeft <= 3 ? 'var(--red)' : daysLeft <= 7 ? 'var(--amber)' : 'var(--green)';
+      document.getElementById('bh-plan-price').textContent =
+        `Залишилось ${daysLeft} днів · Після закінчення — Free тариф`;
+    } else {
+      document.getElementById('bh-plan-price').textContent =
+        plan === 'free' ? 'Безкоштовно' : `₴${planData.price}/місяць`;
+    }
+
+    if(vd.recToken) showBoundCard(vd.cardMask||'**** **** **** ????', vd.cardExpiry||'');
+
+    if(vd.planEndsAt && plan !== 'trial' && plan !== 'free') {
+      const nextDate = new Date(vd.planEndsAt.seconds * 1000);
+      document.getElementById('next-billing-wrap').style.display = 'block';
+      document.getElementById('next-billing-date').textContent =
+        nextDate.toLocaleDateString('uk-UA',{day:'numeric',month:'long',year:'numeric'});
+      document.getElementById('next-billing-amount').textContent = `Буде списано ₴${planData.price}`;
+    }
+
+    renderBillingPlans(plan);
+
+    const paymSnap = await getDocs(collection(db,'payments'));
+    const payments = paymSnap.docs.map(d=>({id:d.id,...d.data()}))
+      .filter(p=>p.venueId===venueId)
+      .sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    if(payments.length) {
+      document.getElementById('billing-history').innerHTML = payments.map(p=>`
+        <div class="bh-row">
+          <div class="bh-status ${p.status==='success'?'bh-paid':p.status==='pending'?'bh-pending':'bh-failed'}"></div>
+          <div style="flex:1">
+            <div style="font-weight:500">${PLANS_BILLING[p.plan]?.name||p.plan} тариф</div>
+            <div style="font-size:11px;color:var(--muted)">${p.createdAt?new Date(p.createdAt.seconds*1000).toLocaleDateString('uk-UA'):''}</div>
+          </div>
+          <div style="font-weight:600">₴${(p.amount/100)||0}</div>
+          <div style="font-size:11px;margin-left:.5rem;color:${p.status==='success'?'var(--green)':p.status==='pending'?'var(--amber)':'var(--red)'}">
+            ${p.status==='success'?'Оплачено':p.status==='pending'?'Очікує':'Помилка'}</div>
+        </div>`).join('');
+    }
+  } catch(e){ console.warn('loadBilling:',e.message); }
+}
+
+function showBoundCard(mask,expiry){
+  document.getElementById('card-preview').innerHTML=`
+    <div class="card-preview-chip"></div>
+    <div class="card-preview-num">${mask}</div>
+    <div class="card-preview-info"><span>КАРТКА ПРИВʼЯЗАНА</span><span>${expiry}</span></div>`;
+  document.getElementById('card-preview').classList.remove('empty');
+  document.getElementById('card-actions').style.display='none';
+  document.getElementById('card-bound-actions').style.display='block';
+  document.getElementById('btn-subscribe').textContent='🔄 Змінити картку';
+}
+
+function renderBillingPlans(currentPlan){
+  const plans=[
+    {key:'starter',name:'Starter',price:299,features:['80 страв','500 замовлень/міс','Кольори+шрифт']},
+    {key:'pro',name:'Pro',price:699,features:['500 страв','5000 замовлень/міс','Повний дизайн','Фото+банер'],popular:true},
+    {key:'enterprise',name:'Enterprise',price:1999,features:['Необмежено','POS інтеграція','Власний домен']},
+  ];
+  document.getElementById('billing-plans').innerHTML=plans.map(p=>`
+    <div class="plan-tile${p.key===currentPlan?' current':''}">
+      ${p.popular?'<div class="plan-tile-badge">ПОПУЛЯРНИЙ</div>':''}
+      <div class="plan-tile-name">${p.name}</div>
+      <div class="plan-tile-price">₴${p.price}<span style="font-size:12px;font-weight:400;color:var(--muted)">/міс</span></div>
+      <div class="plan-tile-feat">${p.features.join('<br/>')}</div>
+      ${p.key!==currentPlan?`<button class="btn btn-outline btn-sm" style="width:100%;margin-top:.75rem" onclick="subscribePlan('${p.key}')">
+        ${currentPlan==='trial'||currentPlan==='free'?'Обрати':'Перейти'}</button>`
+      :'<div style="text-align:center;font-size:12px;color:var(--accent);margin-top:.75rem;font-weight:500">✓ Поточний тариф</div>'}
+    </div>`).join('');
+}
+
+window.openSubscribe = async function(){ await subscribePlan(null); };
+
+window.subscribePlan = async function(plan){
+  if(!plan){ notify('Оберіть тариф нижче','ok'); return; }
+  notify('Створюємо рахунок...','ok');
+  try {
+    const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser.getIdToken();
+    const res = await fetch(`${window.__CF_URL}/createMonoInvoice`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({venueId,plan}),
+    });
+    const data = await res.json();
+    if(!res.ok){ notify('Помилка: '+(data.error||''),'err'); return; }
+    window.open(data.pageUrl,'_blank');
+    notify('✅ Відкрито сторінку оплати Monobank','ok');
+  } catch(e){ notify('Помилка: '+e.message,'err'); }
+};
+
+window.changeCard  = async function(){ await subscribePlan('pro'); };
+window.removeCard  = async function(){
+  if(!confirm('Відв\'язати картку?')) return;
+  const { doc, updateDoc } = window.__FS;
+  try {
+    await updateDoc(doc(db,'venues',venueId),{recToken:null,cardMask:null});
+    document.getElementById('card-preview').className='card-preview empty';
+    document.getElementById('card-preview').innerHTML='<div style="font-size:2rem">💳</div><div style="font-size:13px">Картка не прив\'язана</div>';
+    document.getElementById('card-actions').style.display='block';
+    document.getElementById('card-bound-actions').style.display='none';
+    notify('Картку відв\'язано','ok');
+  } catch(e){notify('Помилка: '+e.message,'err');}
+};
+window.cancelSubscription = async function(){
+  if(!confirm('Скасувати підписку?')) return;
+  notify('Підписку скасовано. Діє до кінця оплаченого periodу.','ok');
+};
+
+const _origNav = window.nav;
+window.nav = function(btn,tab){ _origNav(btn,tab); if(tab==='t-billing') loadBilling(); };
 
 init();
 </script>
