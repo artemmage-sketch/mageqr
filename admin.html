@@ -1215,10 +1215,13 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
     <!-- BILLING -->
     <div id="t-billing" class="tab-section">
-      <div class="topbar">
-        <div><div class="page-title">💳 Підписка та білінг</div><div class="page-sub" id="billing-sub">Завантаження...</div></div>
-      </div>
-      <div class="content">
+      <div class="content" style="padding-top:1.5rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
+          <div>
+            <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:600">💳 Підписка та білінг</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px" id="billing-sub">Завантаження...</div>
+          </div>
+        </div>
 
         <!-- РЯД 1: Таймер + Картка -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
@@ -1564,16 +1567,10 @@ async function initFirebase() {
       return;
     }
 
-    // Визначаємо venueId — шукаємо заклад де adminUid = user.uid
-    const cachedVenue = sessionStorage.getItem('__mq_venue');
-    // Скидаємо кеш якщо він містить старе значення з email
-    const emailSlug = deriveVenueFromEmail(user.email);
-    if (cachedVenue && cachedVenue !== 'demo' && cachedVenue !== emailSlug) {
-      venueId = cachedVenue;
-    } else {
-      venueId = await findVenueByUid(user.uid) || emailSlug;
-      sessionStorage.setItem('__mq_venue', venueId);
-    }
+    // Завжди визначаємо venueId заново по uid — не покладаємось на кеш
+    sessionStorage.removeItem('__mq_venue');
+    venueId = await findVenueByUid(user.uid) || deriveVenueFromEmail(user.email);
+    sessionStorage.setItem('__mq_venue', venueId);
     document.getElementById('sb-venue-name').textContent = venueId;
 
     // Завантажуємо всі дані
@@ -2416,6 +2413,8 @@ window.livePreview=livePreview;window.applyPreset=applyPreset;window.saveDesign=
 function nav(btn,tab){
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
   document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));document.getElementById(tab).classList.add('active');
+  // Скидаємо скрол вгору при переключенні вкладок
+  document.querySelector('.main').scrollTop = 0;
 }
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
