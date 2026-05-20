@@ -199,13 +199,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
 <!-- LOGIN -->
 <div id="s-login">
   <div class="login-wrap">
-    <div class="login-logo">Menu<span>OS</span></div>
+    <div class="login-logo">✦ Mage <span>QR</span> Rest</div>
     <div class="login-sub">Супер-адміністратор платформи</div>
-    <div class="field-group"><label class="field-label">Email</label><input id="li-email" type="email" placeholder="superadmin@menoos.app"/></div>
+    <div class="field-group"><label class="field-label">Email</label><input id="li-email" type="email" placeholder="super@mageqrrest.com"/></div>
     <div class="field-group"><label class="field-label">Пароль</label><input id="li-pass" type="password" placeholder="••••••••"/></div>
     <div class="login-err" id="li-err">Невірний email або пароль</div>
     <button class="btn btn-accent" style="width:100%;margin-top:1rem" onclick="doLogin()">Увійти</button>
-    <div style="font-size:11px;color:var(--muted);margin-top:.75rem;text-align:center">Демо: superadmin@menoos.app / admin123</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:.75rem;text-align:center">Тільки для авторизованих адміністраторів платформи</div>
   </div>
 </div>
 
@@ -458,182 +458,339 @@ tr:hover td{background:rgba(255,255,255,.02)}
 <div class="notif" id="notif"></div>
 
 <script>
-const DEMO_CREDS = {email:'superadmin@menoos.app', pass:'admin123'};
+// ═══════════════════════════════════════════════════════════
+//  MAGE QR REST — Супер-адмін з Firebase v2.0
+// ═══════════════════════════════════════════════════════════
+
+// Firebase Config
+window.__MQ_CFG = window.__MQ_CFG || {
+  apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
+  authDomain: "mageqrrest.firebaseapp.com",
+  projectId: "mageqrrest",
+  storageBucket: "mageqrrest.firebasestorage.app",
+  messagingSenderId: "207231972557",
+  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+};
+
+const SUPER_EMAIL = 'super@mageqrrest.com'; // Email супер-адміна
+
+let db = null, auth = null;
 let allVenues = [], editVenueId=null, editPlanKey=null, chplanVenueId=null;
 let currentPage=1, pageSize=10;
 
-// ── AUTH ──
-function doLogin(){
-  const e=document.getElementById('li-email').value.trim();
-  const p=document.getElementById('li-pass').value;
-  if(e===DEMO_CREDS.email&&p===DEMO_CREDS.pass){
-    document.getElementById('s-login').style.display='none';
-    document.getElementById('s-app').style.display='block';
-    init();
-  } else { document.getElementById('li-err').style.display='block'; }
-}
-document.getElementById('li-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-function doLogout(){document.getElementById('s-app').style.display='none';document.getElementById('s-login').style.display='flex';}
+// ── FIREBASE INIT ──────────────────────────────────────────
+async function initFirebase() {
+  const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+  const { getFirestore, collection, doc, getDoc, getDocs, setDoc,
+          addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy }
+    = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+  const { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+    = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
 
-// ── INIT ──
-function init(){
-  document.getElementById('overview-date').textContent = new Date().toLocaleDateString('uk-UA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  generateVenues();
+  const app = getApps().length ? getApps()[0] : initializeApp(window.__MQ_CFG);
+  db   = getFirestore(app);
+  auth = getAuth(app);
+
+  window.__FS = { collection, doc, getDoc, getDocs, setDoc, addDoc,
+                  updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy };
+
+  // Слухаємо стан авторизації
+  onAuthStateChanged(auth, user => {
+    if (user && user.email === SUPER_EMAIL) {
+      document.getElementById('s-login').style.display = 'none';
+      document.getElementById('s-app').style.display   = 'block';
+      init();
+    } else if (user && user.email !== SUPER_EMAIL) {
+      // Авторизований але не супер-адмін
+      showLoginErr('Цей акаунт не має прав супер-адміна');
+      signOut(auth);
+    }
+  });
+}
+
+// ── AUTH ──────────────────────────────────────────────────
+window.doLogin = async function() {
+  const email = document.getElementById('li-email').value.trim();
+  const pass  = document.getElementById('li-pass').value;
+  if(!email||!pass){ showLoginErr('Заповніть усі поля'); return; }
+
+  const btn = document.querySelector('#s-login .btn-accent');
+  btn.textContent = 'Вхід...'; btn.disabled = true;
+
+  try {
+    const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    const msgs = {
+      'auth/invalid-credential': 'Невірний email або пароль',
+      'auth/too-many-requests':  'Забагато спроб. Зачекайте.',
+    };
+    showLoginErr(msgs[e.code] || 'Помилка входу: ' + e.message);
+  } finally {
+    btn.textContent = 'Увійти'; btn.disabled = false;
+  }
+};
+
+function showLoginErr(msg) {
+  const el = document.getElementById('li-err');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display='none', 4000);
+}
+
+window.doLogout = async function() {
+  const { signOut } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+  await signOut(auth);
+  document.getElementById('s-app').style.display   = 'none';
+  document.getElementById('s-login').style.display = 'flex';
+};
+
+document.getElementById('li-pass').addEventListener('keydown', e => {
+  if(e.key==='Enter') doLogin();
+});
+
+// ── INIT ──────────────────────────────────────────────────
+async function init() {
+  document.getElementById('overview-date').textContent =
+    new Date().toLocaleDateString('uk-UA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  await loadVenues();
   renderStats();
   renderCharts();
   renderActivity();
   renderPlans();
-  renderVenues();
-  renderPlanTable();
 }
 
-// ── DATA ──
-const VENUES_RAW=[
-  {name:'Temari Sushi',slug:'temari',city:'Тернопіль',email:'temari@ua.com',plan:'pro',status:'active',orders:1243,reg:'2024-03-12'},
-  {name:'Pizza Roma',slug:'pizza-roma',city:'Київ',email:'roma@pizza.ua',plan:'starter',status:'active',orders:892,reg:'2024-01-08'},
-  {name:'Бургер Хаус',slug:'burger-house',city:'Львів',email:'info@burgerhouse.ua',plan:'free',status:'active',orders:234,reg:'2024-05-20'},
-  {name:'Суші Пан',slug:'sushi-pan',city:'Харків',email:'sushi@pan.ua',plan:'pro',status:'active',orders:1891,reg:'2023-11-15'},
-  {name:'Кав\'ярня Прага',slug:'praga-cafe',city:'Дніпро',email:'praga@cafe.ua',plan:'starter',status:'active',orders:445,reg:'2024-02-28'},
-  {name:'Ресторан Мисливець',slug:'myslivets',city:'Одеса',email:'hunt@rest.ua',plan:'enterprise',status:'active',orders:3210,reg:'2023-09-05'},
-  {name:'Піцерія Везувій',slug:'vesuviy',city:'Запоріжжя',email:'vez@pizza.ua',plan:'free',status:'inactive',orders:12,reg:'2024-06-01'},
-  {name:'Кухня Мами',slug:'mamas-kitchen',city:'Полтава',email:'mama@kitchen.ua',plan:'starter',status:'active',orders:567,reg:'2024-04-10'},
-  {name:'Шашлик Плюс',slug:'shashlyk',city:'Чернівці',email:'grill@plus.ua',plan:'free',status:'active',orders:89,reg:'2024-07-15'},
-  {name:'Японський Сад',slug:'japan-garden',city:'Вінниця',email:'japan@garden.ua',plan:'pro',status:'active',orders:978,reg:'2024-01-30'},
-  {name:'Морська Зірка',slug:'sea-star',city:'Миколаїв',email:'sea@star.ua',plan:'starter',status:'blocked',orders:0,reg:'2024-05-05'},
-  {name:'Карпати Гриль',slug:'karpaty',city:'Ужгород',email:'karpaty@grill.ua',plan:'free',status:'active',orders:156,reg:'2024-08-01'},
-];
-const PLANS_DATA={
-  free:{name:'Free',price:0,items:20,cats:5,orders:100,design:0,color:'#8888AA'},
-  starter:{name:'Starter',price:299,items:80,cats:15,orders:500,design:1,color:'#F59E0B'},
-  pro:{name:'Pro',price:699,items:500,cats:50,orders:5000,design:2,color:'#6C63FF'},
-  enterprise:{name:'Enterprise',price:1999,items:999999,cats:999,orders:999999,design:2,color:'#10B981'},
+// ── VENUES — ЗАВАНТАЖЕННЯ З FIRESTORE ────────────────────
+async function loadVenues() {
+  const { collection, getDocs } = window.__FS;
+  try {
+    const snap = await getDocs(collection(db, 'venues'));
+    const loaded = [];
+
+    for(const d of snap.docs) {
+      const venueId = d.id;
+      // Завантажуємо settings кожного закладу
+      try {
+        const { doc, getDoc } = window.__FS;
+        const settSnap = await getDoc(doc(db, 'venues', venueId, 'settings', 'main'));
+        const sett = settSnap.exists() ? settSnap.data() : {};
+
+        // Рахуємо замовлення
+        const ordSnap = await getDocs(collection(db, 'venues', venueId, 'orders'));
+        const orders = ordSnap.size;
+
+        loaded.push({
+          id:      venueId,
+          name:    sett.name    || venueId,
+          city:    sett.city    || '—',
+          phone:   sett.phone   || '',
+          address: sett.address || '',
+          slug:    venueId,
+          plan:    d.data()?.plan    || 'free',
+          status:  d.data()?.status  || 'active',
+          orders,
+          reg:     d.data()?.createdAt
+            ? new Date(d.data().createdAt.seconds*1000).toISOString().slice(0,10)
+            : '—',
+        });
+      } catch(e) {
+        loaded.push({ id:venueId, name:venueId, slug:venueId,
+                      plan:'free', status:'active', orders:0, reg:'—', city:'—' });
+      }
+    }
+
+    allVenues = loaded;
+    renderVenues();
+    renderPlanTable();
+  } catch(e) {
+    console.error('loadVenues:', e.message);
+    notify('Помилка завантаження закладів: ' + e.message, 'error');
+  }
+}
+
+// ── SAVE VENUE ─────────────────────────────────────────────
+window.saveVenue = async function() {
+  const { doc, setDoc, serverTimestamp } = window.__FS;
+  const name   = document.getElementById('vf-name').value.trim();
+  const slug   = document.getElementById('vf-slug').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
+  const city   = document.getElementById('vf-city').value.trim();
+  const email  = document.getElementById('vf-email').value.trim();
+  const plan   = document.getElementById('vf-plan').value;
+  const status = document.getElementById('vf-status').value;
+
+  if(!name||!slug){ notify('Заповніть назву та slug','error'); return; }
+
+  try {
+    const venueId = editVenueId || slug;
+
+    // Зберігаємо метадані закладу
+    await setDoc(doc(db,'venues',venueId), {
+      plan, status,
+      adminEmail: email,
+      createdAt: editVenueId ? undefined : serverTimestamp(),
+    }, { merge: true });
+
+    // Зберігаємо налаштування закладу
+    await setDoc(doc(db,'venues',venueId,'settings','main'), {
+      name, city, phone: '', address: '',
+    }, { merge: true });
+
+    closeModal('modal-venue');
+    await loadVenues();
+    notify('✅ Заклад збережено!', 'success');
+  } catch(e) { notify('Помилка: ' + e.message, 'error'); }
 };
 
-function generateVenues(){
-  allVenues = VENUES_RAW.map((v,i)=>({...v,id:'v'+i}));
-}
+// ── TOGGLE BLOCK ───────────────────────────────────────────
+window.toggleBlock = async function(id) {
+  const { doc, updateDoc } = window.__FS;
+  const v = allVenues.find(x=>x.id===id);
+  if(!v) return;
+  const newStatus = v.status==='blocked' ? 'active' : 'blocked';
+  try {
+    await updateDoc(doc(db,'venues',id), { status: newStatus });
+    await loadVenues();
+    notify(newStatus==='blocked' ? '🔒 Заклад заблоковано' : '🔓 Розблоковано', 'success');
+  } catch(e) { notify('Помилка: '+e.message, 'error'); }
+};
 
-// ── STATS ──
+// ── CHANGE PLAN ────────────────────────────────────────────
+window.applyPlanChange = async function() {
+  if(!chplanVenueId) return;
+  const { doc, updateDoc } = window.__FS;
+  const newPlan = document.getElementById('chplan-select').value;
+  try {
+    await updateDoc(doc(db,'venues',chplanVenueId), { plan: newPlan });
+    await loadVenues();
+    closeModal('modal-chplan');
+    notify('✅ Тариф змінено!', 'success');
+  } catch(e) { notify('Помилка: '+e.message, 'error'); }
+};
+
+// ── STATS ──────────────────────────────────────────────────
 function renderStats(){
-  document.getElementById('st-total').textContent = allVenues.length;
-  document.getElementById('st-active').textContent = allVenues.filter(v=>v.status==='active').length;
-  document.getElementById('st-orders').textContent = allVenues.reduce((s,v)=>s+v.orders,0).toLocaleString();
+  document.getElementById('st-total').textContent    = allVenues.length;
+  document.getElementById('st-active').textContent   = allVenues.filter(v=>v.status==='active').length;
+  document.getElementById('st-orders').textContent   = allVenues.reduce((s,v)=>s+(v.orders||0),0).toLocaleString();
   const rev = allVenues.reduce((s,v)=>s+(PLANS_DATA[v.plan]?.price||0),0);
-  document.getElementById('st-rev').textContent = '₴'+rev.toLocaleString();
+  document.getElementById('st-rev').textContent      = '₴'+rev.toLocaleString();
+  document.getElementById('st-items').textContent    = allVenues.length;
 }
 
-// ── CHARTS ──
-function renderCharts(){
-  const regs=[2,3,1,4,5,3,6,8,5,9,7,8];
-  const labels=['T1','T2','T3','T4','T5','T6','T7','T8','T9','T10','T11','T12'];
-  const max=Math.max(...regs);
-  document.getElementById('reg-chart').innerHTML=regs.map((v,i)=>
-    `<div class="bar" style="height:${Math.round(v/max*100)}%;background:${i===regs.length-1?'#A78BFA':'#6C63FF'}" title="${v} реєстрацій"></div>`).join('');
-  document.getElementById('reg-labels').innerHTML=labels.map(l=>`<div class="bar-label">${l}</div>`).join('');
-
-  const revs=[18000,22000,19000,25000,28000,32000,29000,35000,38000,42000,44000,48000];
-  const maxR=Math.max(...revs);
-  const months=['С','Ж','Л','Кв','Тр','Чр','Лп','Ср','Вр','Жв','Лс','Гр'];
-  document.getElementById('rev-chart').innerHTML=revs.map((v,i)=>
-    `<div class="bar" style="height:${Math.round(v/maxR*100)}%;background:${i===revs.length-1?'#34D399':'#10B981'}" title="₴${v.toLocaleString()}"></div>`).join('');
-  document.getElementById('rev-labels').innerHTML=months.map(m=>`<div class="bar-label">${m}</div>`).join('');
-}
-
-// ── ACTIVITY ──
-const ACTIVITIES=[
-  {icon:'🏪',cls:'act-purple',text:'<span class="act-name">Pizza Roma</span> зареєструвався на платформі',time:'5 хв тому'},
-  {icon:'⬆️',cls:'act-green',text:'<span class="act-name">Temari Sushi</span> оновив тариф до Pro',time:'23 хв тому'},
-  {icon:'🧾',cls:'act-amber',text:'<span class="act-name">Суші Пан</span> отримав 45 замовлень за годину',time:'1 год тому'},
-  {icon:'🚫',cls:'act-red',text:'<span class="act-name">Морська Зірка</span> заблокований за несплату',time:'2 год тому'},
-  {icon:'🎨',cls:'act-purple',text:'<span class="act-name">Японський Сад</span> оновив дизайн меню',time:'3 год тому'},
-  {icon:'💎',cls:'act-green',text:'<span class="act-name">Мисливець</span> продовжив Enterprise на рік',time:'5 год тому'},
-  {icon:'🏪',cls:'act-purple',text:'<span class="act-name">Карпати Гриль</span> зареєструвався на платформі',time:'7 год тому'},
-  {icon:'⚠️',cls:'act-amber',text:'<span class="act-name">Везувій</span> досягнув ліміту Free тарифу',time:'8 год тому'},
-];
-function renderActivity(){
-  const html=ACTIVITIES.map(a=>`<div class="activity-item"><div class="act-icon ${a.cls}">${a.icon}</div><div class="act-text">${a.text}<div class="act-time">${a.time}</div></div></div>`).join('');
-  document.getElementById('activity-mini').innerHTML=html;
-  document.getElementById('activity-full').innerHTML=html+html;
-}
-
-// ── VENUES TABLE ──
+// ── VENUES TABLE ───────────────────────────────────────────
 function filterVenues(){
-  const plan=document.getElementById('filter-plan').value;
-  const status=document.getElementById('filter-status').value;
-  const q=document.getElementById('search-venues').value.toLowerCase();
-  currentPage=1;
-  const filtered=allVenues.filter(v=>
-    (!plan||v.plan===plan)&&
-    (!status||v.status===status)&&
-    (!q||v.name.toLowerCase().includes(q)||v.city.toLowerCase().includes(q)||v.email.toLowerCase().includes(q))
+  const plan   = document.getElementById('filter-plan')?.value   || '';
+  const status = document.getElementById('filter-status')?.value || '';
+  const q      = document.getElementById('search-venues')?.value.toLowerCase() || '';
+  currentPage  = 1;
+  const filtered = allVenues.filter(v=>
+    (!plan   || v.plan===plan) &&
+    (!status || v.status===status) &&
+    (!q      || v.name.toLowerCase().includes(q) || (v.city||'').toLowerCase().includes(q))
   );
   renderVenuesTable(filtered);
 }
+window.filterVenues = filterVenues;
+
 function renderVenues(){
-  document.getElementById('venues-sub').textContent=allVenues.length+' закладів зареєстровано';
+  const sub = document.getElementById('venues-sub');
+  if(sub) sub.textContent = allVenues.length+' закладів';
   renderVenuesTable(allVenues);
-  renderPlanTable();
 }
+
 function renderVenuesTable(list){
   const total=list.length;
   const start=(currentPage-1)*pageSize;
   const page=list.slice(start,start+pageSize);
-  const statusLabel={active:'active',inactive:'inactive',blocked:'blocked'};
   const statusDot={active:'dot-active',inactive:'dot-inactive',blocked:'dot-blocked'};
   const statusText={active:'Активний',inactive:'Неактивний',blocked:'Заблоковано'};
-  document.getElementById('venues-tbody').innerHTML=page.map(v=>`
+
+  document.getElementById('venues-tbody').innerHTML = page.length ? page.map(v=>`
     <tr>
-      <td><div class="venue-name">${v.name}</div><div class="venue-slug">/${v.slug}</div></td>
-      <td style="color:var(--muted)">${v.email}</td>
+      <td>
+        <div class="venue-name">${v.name}</div>
+        <div class="venue-slug">/${v.slug}</div>
+      </td>
+      <td style="color:var(--muted)">${v.city||'—'}</td>
       <td><span class="plan-badge plan-${v.plan}">${PLANS_DATA[v.plan]?.name||v.plan}</span></td>
-      <td><span class="status-dot ${statusDot[v.status]}"></span>${statusText[v.status]}</td>
-      <td>${v.orders.toLocaleString()}</td>
-      <td style="color:var(--muted)">${v.reg}</td>
+      <td><span class="status-dot ${statusDot[v.status]||'dot-inactive'}"></span>${statusText[v.status]||'—'}</td>
+      <td>${(v.orders||0).toLocaleString()}</td>
+      <td style="color:var(--muted)">${v.reg||'—'}</td>
       <td>
         <div class="action-btns">
-          <button class="btn btn-sm btn-outline" onclick="openEditVenue('${v.id}')">✏️</button>
-          <button class="btn btn-sm btn-success" onclick="openChangePlan('${v.id}')">💎</button>
-          <button class="btn btn-sm btn-danger" onclick="toggleBlock('${v.id}')">${v.status==='blocked'?'🔓':'🔒'}</button>
+          <button class="btn btn-sm btn-outline" onclick="openEditVenue('${v.id}')" title="Редагувати">✏️</button>
+          <button class="btn btn-sm btn-success" onclick="openChangePlan('${v.id}')" title="Тариф">💎</button>
+          <button class="btn btn-sm" style="font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--muted)" onclick="openVenueMenu('${v.id}')" title="Меню">👁</button>
+          <button class="btn btn-sm btn-danger" onclick="toggleBlock('${v.id}')" title="${v.status==='blocked'?'Розблокувати':'Заблокувати'}">${v.status==='blocked'?'🔓':'🔒'}</button>
         </div>
       </td>
-    </tr>`).join('') || `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Нічого не знайдено</td></tr>`;
-  document.getElementById('page-info').textContent=`Показано ${start+1}–${Math.min(start+pageSize,total)} з ${total}`;
-  const totalPages=Math.ceil(total/pageSize);
-  document.getElementById('page-btns').innerHTML=Array.from({length:totalPages},(_,i)=>
+    </tr>`).join('')
+  : `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Закладів не знайдено</td></tr>`;
+
+  document.getElementById('page-info').textContent = `Показано ${Math.min(start+1,total)}–${Math.min(start+pageSize,total)} з ${total}`;
+  const totalPages = Math.ceil(total/pageSize)||1;
+  document.getElementById('page-btns').innerHTML = Array.from({length:totalPages},(_,i)=>
     `<button class="page-btn${currentPage===i+1?' active':''}" onclick="goPage(${i+1})">${i+1}</button>`).join('');
 }
-function goPage(p){currentPage=p;filterVenues();}
 
-// ── VENUE MODAL ──
-function openAddVenue(){editVenueId=null;document.getElementById('venue-modal-title').textContent='Новий заклад';['vf-name','vf-slug','vf-city','vf-email'].forEach(id=>document.getElementById(id).value='');document.getElementById('vf-plan').value='free';document.getElementById('vf-status').value='active';openModal('modal-venue');}
-function openEditVenue(id){
+window.goPage = p => { currentPage=p; filterVenues(); };
+
+window.openVenueMenu = id => {
+  window.open(`https://mageqrrest.com/menu.html?v=${id}`,'_blank');
+};
+
+// ── VENUE MODAL ────────────────────────────────────────────
+window.openAddVenue = function() {
+  editVenueId=null;
+  document.getElementById('venue-modal-title').textContent='Новий заклад';
+  ['vf-name','vf-slug','vf-city','vf-email'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('vf-plan').value='free';
+  document.getElementById('vf-status').value='active';
+  openModal('modal-venue');
+};
+
+window.openEditVenue = function(id) {
   editVenueId=id;
   const v=allVenues.find(x=>x.id===id);
   document.getElementById('venue-modal-title').textContent='Редагувати заклад';
-  document.getElementById('vf-name').value=v.name;
-  document.getElementById('vf-slug').value=v.slug;
-  document.getElementById('vf-city').value=v.city;
-  document.getElementById('vf-email').value=v.email;
-  document.getElementById('vf-plan').value=v.plan;
-  document.getElementById('vf-status').value=v.status;
+  document.getElementById('vf-name').value  = v.name||'';
+  document.getElementById('vf-slug').value  = v.slug||id;
+  document.getElementById('vf-city').value  = v.city||'';
+  document.getElementById('vf-email').value = v.adminEmail||'';
+  document.getElementById('vf-plan').value  = v.plan||'free';
+  document.getElementById('vf-status').value= v.status||'active';
   openModal('modal-venue');
-}
-function saveVenue(){
-  const data={name:document.getElementById('vf-name').value.trim(),slug:document.getElementById('vf-slug').value.trim(),city:document.getElementById('vf-city').value.trim(),email:document.getElementById('vf-email').value.trim(),plan:document.getElementById('vf-plan').value,status:document.getElementById('vf-status').value,orders:0,reg:new Date().toISOString().slice(0,10)};
-  if(!data.name||!data.slug){notify('Заповніть назву та slug','error');return;}
-  if(editVenueId){Object.assign(allVenues.find(v=>v.id===editVenueId),data);}
-  else{data.id='v'+Date.now();allVenues.push(data);}
-  closeModal('modal-venue');renderVenues();renderStats();notify('✅ Заклад збережено!','success');
-}
-function toggleBlock(id){
-  const v=allVenues.find(x=>x.id===id);
-  v.status=v.status==='blocked'?'active':'blocked';
-  renderVenues();notify(v.status==='blocked'?'🔒 Заклад заблоковано':'🔓 Заклад розблоковано','success');
-}
-function exportVenues(){notify('📊 CSV-файл готується до завантаження','success');}
-window.openAddVenue=openAddVenue;window.openEditVenue=openEditVenue;window.saveVenue=saveVenue;window.toggleBlock=toggleBlock;window.exportVenues=exportVenues;window.goPage=goPage;window.filterVenues=filterVenues;
+};
 
-// ── PLANS ──
+window.openChangePlan = function(id) {
+  chplanVenueId=id;
+  const v=allVenues.find(x=>x.id===id);
+  document.getElementById('chplan-venue-name').textContent='Заклад: '+v.name;
+  document.getElementById('chplan-select').value=v.plan||'free';
+  document.getElementById('chplan-reason').value='';
+  openModal('modal-chplan');
+};
+
+window.exportVenues = function() {
+  const rows = [['ID','Назва','Місто','Тариф','Статус','Замовлень','Дата']];
+  allVenues.forEach(v=>rows.push([v.id,v.name,v.city,v.plan,v.status,v.orders,v.reg]));
+  const csv = rows.map(r=>r.map(x=>`"${x||''}"`).join(',')).join('
+');
+  const a = document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,%EF%BB%BF'+encodeURIComponent(csv);
+  a.download='venues.csv'; a.click();
+  notify('📊 CSV завантажується...','success');
+};
+window.exportVenues=window.exportVenues;
+
+// ── PLANS ──────────────────────────────────────────────────
+const PLANS_DATA={
+  free:      {name:'Free',      price:0,    items:20,  cats:5,  orders:100,   design:0, color:'#8888AA'},
+  starter:   {name:'Starter',   price:299,  items:80,  cats:15, orders:500,   design:1, color:'#F59E0B'},
+  pro:       {name:'Pro',       price:699,  items:500, cats:50, orders:5000,  design:2, color:'#6C63FF'},
+  enterprise:{name:'Enterprise',price:1999, items:999999,cats:999,orders:999999,design:2,color:'#10B981'},
+};
+
 function renderPlans(){
   document.getElementById('plans-grid').innerHTML=Object.entries(PLANS_DATA).map(([key,p])=>`
     <div class="plan-card${key==='pro'?' featured':''}">
@@ -649,7 +806,8 @@ function renderPlans(){
       <button class="plan-edit-btn" onclick="openPlanModal('${key}')">✏️ Редагувати тариф</button>
     </div>`).join('');
 }
-function openPlanModal(key){
+
+window.openPlanModal = function(key){
   editPlanKey=key;
   const p=PLANS_DATA[key];
   document.getElementById('plan-modal-title').textContent='Тариф: '+p.name;
@@ -660,29 +818,89 @@ function openPlanModal(key){
   document.getElementById('pf-orders').value=p.orders===999999?'':p.orders;
   document.getElementById('pf-design').value=p.design;
   openModal('modal-plan');
-}
-function savePlan(){
+};
+
+window.savePlan = function(){
   if(!editPlanKey)return;
-  PLANS_DATA[editPlanKey]={...PLANS_DATA[editPlanKey],name:document.getElementById('pf-name').value,price:parseInt(document.getElementById('pf-price').value)||0,items:parseInt(document.getElementById('pf-items').value)||999999,cats:parseInt(document.getElementById('pf-cats').value)||999,orders:parseInt(document.getElementById('pf-orders').value)||999999,design:parseInt(document.getElementById('pf-design').value)};
-  closeModal('modal-plan');renderPlans();notify('✅ Тариф оновлено!','success');
-}
+  PLANS_DATA[editPlanKey]={
+    ...PLANS_DATA[editPlanKey],
+    name:   document.getElementById('pf-name').value,
+    price:  parseInt(document.getElementById('pf-price').value)||0,
+    items:  parseInt(document.getElementById('pf-items').value)||999999,
+    cats:   parseInt(document.getElementById('pf-cats').value)||999,
+    orders: parseInt(document.getElementById('pf-orders').value)||999999,
+    design: parseInt(document.getElementById('pf-design').value),
+  };
+  closeModal('modal-plan');
+  renderPlans();
+  notify('✅ Тариф оновлено!','success');
+};
+
 function renderPlanTable(){
   document.getElementById('plan-table').innerHTML=allVenues.map(v=>`
-    <tr><td>${v.name}</td><td><span class="plan-badge plan-${v.plan}">${PLANS_DATA[v.plan]?.name||v.plan}</span></td><td style="color:var(--muted)">${v.reg}</td><td><button class="btn btn-sm btn-success" onclick="openChangePlan('${v.id}')">Змінити тариф</button></td></tr>`).join('');
+    <tr>
+      <td>${v.name}</td>
+      <td><span class="plan-badge plan-${v.plan}">${PLANS_DATA[v.plan]?.name||v.plan}</span></td>
+      <td style="color:var(--muted)">${v.reg||'—'}</td>
+      <td><button class="btn btn-sm btn-success" onclick="openChangePlan('${v.id}')">Змінити тариф</button></td>
+    </tr>`).join('');
 }
-function openChangePlan(id){chplanVenueId=id;const v=allVenues.find(x=>x.id===id);document.getElementById('chplan-venue-name').textContent='Заклад: '+v.name;document.getElementById('chplan-select').value=v.plan;document.getElementById('chplan-reason').value='';openModal('modal-chplan');}
-function applyPlanChange(){if(!chplanVenueId)return;const v=allVenues.find(x=>x.id===chplanVenueId);v.plan=document.getElementById('chplan-select').value;closeModal('modal-chplan');renderVenues();renderStats();renderPlans();notify('✅ Тариф змінено!','success');}
-window.openPlanModal=openPlanModal;window.savePlan=savePlan;window.openChangePlan=openChangePlan;window.applyPlanChange=applyPlanChange;
 
-// ── UTILS ──
-function nav(btn,tab){
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-  document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));document.getElementById(tab).classList.add('active');
+// ── CHARTS ─────────────────────────────────────────────────
+function renderCharts(){
+  const regs=[1,2,1,3,2,4,5,3,6,7,5,allVenues.length];
+  const labels=['С','Ж','Л','Кв','Тр','Чр','Лп','Ср','Вр','Жв','Лс','Гр'];
+  const max=Math.max(...regs,1);
+  document.getElementById('reg-chart').innerHTML=regs.map((v,i)=>
+    `<div class="bar" style="height:${Math.round(v/max*100)}%;background:${i===regs.length-1?'#A78BFA':'#6C63FF'}" title="${v}"></div>`).join('');
+  document.getElementById('reg-labels').innerHTML=labels.map(l=>`<div class="bar-label">${l}</div>`).join('');
+
+  const revs=[0,0,0,0,0,0,0,0,0,0,0,allVenues.reduce((s,v)=>s+(PLANS_DATA[v.plan]?.price||0),0)];
+  const maxR=Math.max(...revs,1);
+  document.getElementById('rev-chart').innerHTML=revs.map((v,i)=>
+    `<div class="bar" style="height:${Math.round(v/maxR*100)}%;background:${i===revs.length-1?'#34D399':'#10B981'}" title="₴${v}"></div>`).join('');
+  document.getElementById('rev-labels').innerHTML=labels.map(l=>`<div class="bar-label">${l}</div>`).join('');
 }
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-function notify(msg,type='success'){const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';setTimeout(()=>n.classList.remove('show'),3000);}
-window.closeModal=closeModal;window.nav=nav;window.doLogout=doLogout;
+
+// ── ACTIVITY ───────────────────────────────────────────────
+function renderActivity(){
+  const acts = allVenues.slice(0,5).map(v=>({
+    icon:'🏪',cls:'act-purple',
+    text:`<span class="act-name">${v.name}</span> — заклад зареєстровано`,
+    time: v.reg||'—'
+  }));
+  if(!acts.length) acts.push({icon:'ℹ️',cls:'act-purple',text:'Закладів ще немає',time:''});
+  const html=acts.map(a=>`
+    <div class="activity-item">
+      <div class="act-icon ${a.cls}">${a.icon}</div>
+      <div class="act-text">${a.text}<div class="act-time">${a.time}</div></div>
+    </div>`).join('');
+  document.getElementById('activity-mini').innerHTML=html;
+  document.getElementById('activity-full').innerHTML=html;
+}
+
+// ── NAV ─────────────────────────────────────────────────────
+window.nav = function(btn, tab){
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+};
+
+// ── MODAL ───────────────────────────────────────────────────
+window.openModal  = id => document.getElementById(id).classList.add('open');
+window.closeModal = id => document.getElementById(id).classList.remove('open');
+
+// ── NOTIFY ──────────────────────────────────────────────────
+window.notify = function(msg, type='success'){
+  const n=document.getElementById('notif');
+  n.textContent=msg;
+  n.className='notif '+(type==='error'?'error':'success')+' show';
+  setTimeout(()=>n.classList.remove('show'),3000);
+};
+
+// ── СТАРТ ────────────────────────────────────────────────────
+initFirebase();
 </script>
 </body>
 </html>
