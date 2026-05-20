@@ -1237,7 +1237,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
               <div id="trial-fill" style="height:100%;background:var(--amber);border-radius:4px;width:100%;transition:width .5s"></div>
             </div>
             <div style="font-size:12px;color:#92400E" id="trial-end-date"></div>
-            <button class="btn btn-accent btn-sm" style="margin-top:.875rem;width:100%" onclick="openPlanSelect()">
+            <button class="btn btn-accent btn-sm" style="margin-top:.875rem;width:100%" onclick="bindCard()">
               🚀 Обрати тариф і оплатити
             </button>
           </div>
@@ -1253,11 +1253,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
                 <div style="font-size:13px;font-weight:500">Картка не прив'язана</div>
                 <div style="font-size:11px;color:var(--muted);margin-top:.25rem">Для автоматичних щомісячних списань</div>
               </div>
-              <button class="btn btn-accent" style="width:100%" onclick="openPlanSelect()">
+              <button class="btn btn-accent" style="width:100%" onclick="bindCard()">
                 💳 Прив'язати картку
               </button>
               <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:.5rem">
-                🔒 Безпечно через Monobank
+                🔒 Безпечно через Monobank · Картка зберігається у зашифрованому вигляді
               </div>
             </div>
 
@@ -2902,6 +2902,12 @@ function renderBillingPlanCards(currentPlan){
 
 window.openPlanSelect = function(){
   document.getElementById('plan-select-section').scrollIntoView({behavior:'smooth'});
+};
+
+// Прив'язати картку — показати вибір тарифу і проскролити
+window.bindCard = function(){
+  document.getElementById('plan-select-section').scrollIntoView({behavior:'smooth'});
+  notify('Оберіть тариф для прив\u2019язки картки 👇','ok');
 };
 
 window.subscribePlan = async function(plan){
