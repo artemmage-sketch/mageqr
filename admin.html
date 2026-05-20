@@ -21,9 +21,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 button{cursor:pointer}
 
 /* LAYOUT */
-.shell{display:grid;grid-template-columns:200px 1fr;min-height:100vh}
+.shell{display:grid;grid-template-columns:200px 1fr;height:100vh;overflow:hidden}
 @media(max-width:700px){.shell{grid-template-columns:1fr}}
-.sidebar{background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.sidebar{background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
 .sb-brand{padding:1.25rem 1rem;border-bottom:1px solid var(--border)}
 .sb-brand-name{font-family:var(--font-head);font-size:1rem;font-weight:700;color:var(--accent)}
 .sb-venue{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1108,111 +1108,6 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       </div>
     </div>
 
-    <!-- SETTINGS -->
-    <div id="t-settings" class="tab-section">
-      <div class="topbar">
-        <div><div class="page-title">⚙️ Налаштування закладу</div><div class="page-sub">Інформація відображається у публічному меню</div></div>
-        <button class="btn btn-accent btn-sm" onclick="saveSettings()">💾 Зберегти все</button>
-      </div>
-      <div class="content">
-
-        <!-- ОСНОВНА ІНФОРМАЦІЯ -->
-        <div class="settings-section">
-          <h3>📋 Інформація про заклад</h3>
-          <div class="grid-2">
-            <div class="field-row span2">
-              <label class="field-label">Назва закладу</label>
-              <input id="set-name" type="text" placeholder="Моє Меню" oninput="document.getElementById('sb-venue-name').textContent=this.value"/>
-            </div>
-            <div class="field-row">
-              <label class="field-label">Слоган / кухня</label>
-              <input id="set-tag" type="text" placeholder="Японська кухня · Тернопіль"/>
-            </div>
-            <div class="field-row">
-              <label class="field-label">Місто</label>
-              <input id="set-city" type="text" placeholder="Тернопіль"/>
-            </div>
-            <div class="field-row">
-              <label class="field-label">Телефон</label>
-              <input id="set-phone" type="text" placeholder="+380 XX XXX XX XX"/>
-            </div>
-            <div class="field-row">
-              <label class="field-label">Адреса</label>
-              <input id="set-addr" type="text" placeholder="вул. Руська, 12"/>
-            </div>
-            <div class="field-row span2">
-              <label class="field-label">Години роботи</label>
-              <input id="set-hours" type="text" placeholder="Пн-Нд: 10:00 — 22:00"/>
-            </div>
-          </div>
-        </div>
-
-        <!-- ЛОГОТИП -->
-        <div class="settings-section">
-          <h3>🖼️ Логотип закладу</h3>
-          <div style="display:grid;grid-template-columns:120px 1fr;gap:1.25rem;align-items:start">
-            <div>
-              <div id="logo-preview-wrap" style="width:100px;height:100px;border-radius:50%;background:var(--bg2);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:2.5rem;cursor:pointer;overflow:hidden;transition:border-color .15s" onclick="document.getElementById('logo-file').click()">
-                <img id="logo-preview-img" src="" style="display:none;width:100%;height:100%;object-fit:cover"/>
-                <span id="logo-preview-em">🍽️</span>
-              </div>
-              <input type="file" id="logo-file" accept="image/*" style="display:none" onchange="handleLogoFile(this)"/>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:.75rem">
-              <button class="btn btn-outline btn-sm" onclick="document.getElementById('logo-file').click()">📁 Завантажити фото</button>
-              <div>
-                <label class="field-label">або URL зображення</label>
-                <input id="set-logo-url" type="text" placeholder="https://..." oninput="previewLogoUrl(this.value)"/>
-              </div>
-              <div>
-                <label class="field-label">або Emoji (якщо без фото)</label>
-                <input id="set-logo-emoji" type="text" placeholder="🍣" maxlength="2" style="width:80px" oninput="previewLogoEmoji(this.value)"/>
-              </div>
-              <div id="logo-upload-status" style="font-size:12px;color:var(--muted)"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- БАНЕР -->
-        <div class="settings-section">
-          <h3>🌄 Банер меню</h3>
-          <div style="margin-bottom:.875rem">
-            <div id="banner-preview-wrap" style="width:100%;height:120px;border-radius:var(--radius);background:var(--accent);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;transition:all .15s" onclick="document.getElementById('banner-file').click()">
-              <img id="banner-preview-img" src="" style="display:none;width:100%;height:100%;object-fit:cover"/>
-              <div id="banner-placeholder" style="text-align:center;color:rgba(255,255,255,.7)">
-                <div style="font-size:1.5rem">📷</div>
-                <div style="font-size:12px;margin-top:.25rem">Натисніть щоб завантажити банер</div>
-              </div>
-            </div>
-            <input type="file" id="banner-file" accept="image/*" style="display:none" onchange="handleBannerFile(this)"/>
-          </div>
-          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.875rem">
-            <button class="btn btn-outline btn-sm" onclick="document.getElementById('banner-file').click()">📁 Завантажити банер</button>
-            <button class="btn btn-outline btn-sm" onclick="clearBanner()">✕ Видалити</button>
-          </div>
-          <div class="field-row">
-            <label class="field-label">або URL банеру</label>
-            <input id="set-banner-url" type="text" placeholder="https://..." oninput="previewBannerUrl(this.value)"/>
-          </div>
-          <div id="banner-upload-status" style="font-size:12px;color:var(--muted)"></div>
-        </div>
-
-        <!-- QR ПОСИЛАННЯ -->
-        <div class="settings-section">
-          <h3>📲 QR-посилання для клієнтів</h3>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:.75rem">Поділіться цим посиланням або роздрукуйте QR-код і розмістіть на столах</p>
-          <div class="qr-url" id="venue-qr-url" onclick="copyMenuUrl()">mageqrrest.com/menu.html?v=demo</div>
-          <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
-            <button class="btn btn-outline btn-sm" onclick="copyMenuUrl()">📋 Копіювати</button>
-            <button class="btn btn-outline btn-sm" onclick="openMenuUrl()">👁️ Переглянути меню</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
     <!-- BILLING -->
     <div id="t-billing" class="tab-section">
       <div class="content" style="padding-top:1.5rem">
@@ -1318,6 +1213,114 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       </div>
     </div>
 
+  </div>
+</div>
+
+    <!-- SETTINGS -->
+    <div id="t-settings" class="tab-section">
+      <div class="topbar">
+        <div><div class="page-title">⚙️ Налаштування закладу</div><div class="page-sub">Інформація відображається у публічному меню</div></div>
+        <button class="btn btn-accent btn-sm" onclick="saveSettings()">💾 Зберегти все</button>
+      </div>
+      <div class="content">
+
+        <!-- ОСНОВНА ІНФОРМАЦІЯ -->
+        <div class="settings-section">
+          <h3>📋 Інформація про заклад</h3>
+          <div class="grid-2">
+            <div class="field-row span2">
+              <label class="field-label">Назва закладу</label>
+              <input id="set-name" type="text" placeholder="Моє Меню" oninput="document.getElementById('sb-venue-name').textContent=this.value"/>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Слоган / кухня</label>
+              <input id="set-tag" type="text" placeholder="Японська кухня · Тернопіль"/>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Місто</label>
+              <input id="set-city" type="text" placeholder="Тернопіль"/>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Телефон</label>
+              <input id="set-phone" type="text" placeholder="+380 XX XXX XX XX"/>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Адреса</label>
+              <input id="set-addr" type="text" placeholder="вул. Руська, 12"/>
+            </div>
+            <div class="field-row span2">
+              <label class="field-label">Години роботи</label>
+              <input id="set-hours" type="text" placeholder="Пн-Нд: 10:00 — 22:00"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- ЛОГОТИП -->
+        <div class="settings-section">
+          <h3>🖼️ Логотип закладу</h3>
+          <div style="display:grid;grid-template-columns:120px 1fr;gap:1.25rem;align-items:start">
+            <div>
+              <div id="logo-preview-wrap" style="width:100px;height:100px;border-radius:50%;background:var(--bg2);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:2.5rem;cursor:pointer;overflow:hidden;transition:border-color .15s" onclick="document.getElementById('logo-file').click()">
+                <img id="logo-preview-img" src="" style="display:none;width:100%;height:100%;object-fit:cover"/>
+                <span id="logo-preview-em">🍽️</span>
+              </div>
+              <input type="file" id="logo-file" accept="image/*" style="display:none" onchange="handleLogoFile(this)"/>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:.75rem">
+              <button class="btn btn-outline btn-sm" onclick="document.getElementById('logo-file').click()">📁 Завантажити фото</button>
+              <div>
+                <label class="field-label">або URL зображення</label>
+                <input id="set-logo-url" type="text" placeholder="https://..." oninput="previewLogoUrl(this.value)"/>
+              </div>
+              <div>
+                <label class="field-label">або Emoji (якщо без фото)</label>
+                <input id="set-logo-emoji" type="text" placeholder="🍣" maxlength="2" style="width:80px" oninput="previewLogoEmoji(this.value)"/>
+              </div>
+              <div id="logo-upload-status" style="font-size:12px;color:var(--muted)"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- БАНЕР -->
+        <div class="settings-section">
+          <h3>🌄 Банер меню</h3>
+          <div style="margin-bottom:.875rem">
+            <div id="banner-preview-wrap" style="width:100%;height:120px;border-radius:var(--radius);background:var(--accent);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;transition:all .15s" onclick="document.getElementById('banner-file').click()">
+              <img id="banner-preview-img" src="" style="display:none;width:100%;height:100%;object-fit:cover"/>
+              <div id="banner-placeholder" style="text-align:center;color:rgba(255,255,255,.7)">
+                <div style="font-size:1.5rem">📷</div>
+                <div style="font-size:12px;margin-top:.25rem">Натисніть щоб завантажити банер</div>
+              </div>
+            </div>
+            <input type="file" id="banner-file" accept="image/*" style="display:none" onchange="handleBannerFile(this)"/>
+          </div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.875rem">
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('banner-file').click()">📁 Завантажити банер</button>
+            <button class="btn btn-outline btn-sm" onclick="clearBanner()">✕ Видалити</button>
+          </div>
+          <div class="field-row">
+            <label class="field-label">або URL банеру</label>
+            <input id="set-banner-url" type="text" placeholder="https://..." oninput="previewBannerUrl(this.value)"/>
+          </div>
+          <div id="banner-upload-status" style="font-size:12px;color:var(--muted)"></div>
+        </div>
+
+        <!-- QR ПОСИЛАННЯ -->
+        <div class="settings-section">
+          <h3>📲 QR-посилання для клієнтів</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:.75rem">Поділіться цим посиланням або роздрукуйте QR-код і розмістіть на столах</p>
+          <div class="qr-url" id="venue-qr-url" onclick="copyMenuUrl()">mageqrrest.com/menu.html?v=demo</div>
+          <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
+            <button class="btn btn-outline btn-sm" onclick="copyMenuUrl()">📋 Копіювати</button>
+            <button class="btn btn-outline btn-sm" onclick="openMenuUrl()">👁️ Переглянути меню</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+</div>
+
 <!-- ITEM MODAL -->
 <div class="overlay" id="modal-item" onclick="closeModal('modal-item')">
   <div class="modal" onclick="event.stopPropagation()">
@@ -1326,7 +1329,6 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       <button class="close-btn" onclick="closeModal('modal-item')">✕</button>
     </div>
     <div class="modal-grid">
-      <!-- ФОТО СТРАВИ -->
       <div class="span2">
         <label class="field-label">Фото страви</label>
         <div class="photo-upload-wrap" id="photo-wrap" onclick="document.getElementById('if-photo').click()">
@@ -1352,13 +1354,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
         <div style="font-size:11px;color:var(--muted);margin-top:.375rem">або вставте URL зображення:</div>
         <input id="if-photo-url-input" type="text" placeholder="https://..." style="margin-top:.25rem;font-size:12px" oninput="setPhotoFromUrl(this.value)"/>
       </div>
-
       <div class="span2"><label class="field-label">Назва страви</label><input id="if-name" type="text" placeholder="Філадельфія класик"/></div>
       <div class="span2"><label class="field-label">Опис</label><textarea id="if-desc" rows="2" placeholder="Свіжий лосось, вершковий сир..."></textarea></div>
       <div><label class="field-label">Ціна (грн)</label><input id="if-price" type="number" placeholder="189"/></div>
-      <div><label class="field-label">Вага / об'єм</label><input id="if-weight" type="text" placeholder="250 г"/></div>
+      <div><label class="field-label">Вага / обєм</label><input id="if-weight" type="text" placeholder="250 г"/></div>
       <div><label class="field-label">Категорія</label><select id="if-cat"></select></div>
-      <div><label class="field-label">Артикул / код</label><input id="if-sku" type="text" placeholder="необов'язково"/></div>
+      <div><label class="field-label">Артикул / код</label><input id="if-sku" type="text" placeholder="необовязково"/></div>
       <div class="span2">
         <label class="field-label">Алергени (оберіть всі що є)</label>
         <div id="allergen-checkboxes" style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.375rem"></div>
@@ -1384,835 +1385,127 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
   </div>
 </div>
 
-<!-- TABLE DETAIL MODAL -->
-<div class="overlay" id="modal-table-detail" onclick="closeModal('modal-table-detail')">
-  <div class="modal" style="max-width:600px" onclick="event.stopPropagation()">
-    <div class="modal-head">
-      <div class="modal-title" id="table-detail-title">Стіл №5</div>
-      <button class="close-btn" onclick="closeModal('modal-table-detail')">✕</button>
-    </div>
-    <div class="table-detail">
-      <!-- LEFT: QR + info -->
-      <div>
-        <div class="td-section">
-          <div class="td-section-title">QR-код столу</div>
-          <div class="qr-preview-wrap">
-            <canvas id="table-qr-canvas" width="100" height="100" style="image-rendering:pixelated"></canvas>
-            <div class="qr-url" id="table-qr-url">mageqrrest.com/temari?table=5</div>
-          </div>
-          <div style="display:flex;gap:.375rem">
-            <button class="btn btn-outline btn-sm" style="flex:1" onclick="downloadQR()">⬇️ PNG</button>
-            <button class="btn btn-outline btn-sm" style="flex:1" onclick="printQR()">🖨️ Друк</button>
-            <button class="btn btn-outline btn-sm" style="flex:1" onclick="notify('Скопійовано!','ok')">📋 URL</button>
-          </div>
-        </div>
-        <div class="td-section" style="margin-top:.75rem">
-          <div class="td-section-title">Призначений офіціант</div>
-          <select id="table-staff-assign" style="font-size:13px">
-            <option value="">— Не призначено —</option>
-          </select>
-          <div style="font-size:11px;color:var(--muted);margin-top:.375rem">Чайові підуть цьому офіціанту автоматично</div>
-        </div>
-      </div>
-      <!-- RIGHT: order + payment -->
-      <div>
-        <div class="td-section">
-          <div class="td-section-title">Поточне замовлення</div>
-          <div id="table-order-lines" style="margin-bottom:.75rem"></div>
-          <div style="display:flex;justify-content:space-between;font-weight:600;font-size:14px;padding-top:.5rem;border-top:1px solid var(--border)">
-            <span>Разом:</span><span id="table-order-total" style="color:var(--accent)">—</span>
-          </div>
-          <div style="margin-top:.75rem">
-            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.375rem">Розділити рахунок</div>
-            <div class="split-row" id="split-row"></div>
-          </div>
-        </div>
-        <div class="td-section" style="margin-top:.75rem">
-          <div class="td-section-title">Оплата</div>
-          <div style="display:flex;flex-direction:column;gap:.375rem;margin-bottom:.75rem">
-            <button class="btn btn-accent btn-sm" style="width:100%" onclick="sendPayLink()">💳 Надіслати посилання на оплату</button>
-            <button class="btn btn-outline btn-sm" style="width:100%" onclick="markPaid()">✅ Позначити як оплачено (готівка)</button>
-          </div>
-          <!-- TIPS UI -->
-          <div class="tips-section" id="tips-ui">
-            <div class="tips-title">🫰 Чайові</div>
-            <div class="tips-presets">
-              <button class="tips-btn" onclick="selectTip(this,'5')">5%</button>
-              <button class="tips-btn" onclick="selectTip(this,'10')">10%</button>
-              <button class="tips-btn active" onclick="selectTip(this,'15')">15%</button>
-              <button class="tips-btn" onclick="selectTip(this,'20')">20%</button>
-            </div>
-            <div class="tips-custom">
-              <span style="font-size:12px;color:#92400E">або</span>
-              <input type="number" id="tips-custom-val" placeholder="Довільна сума (грн)"/>
-            </div>
-            <div class="tips-who" style="margin-top:.5rem">
-              <span>Для:</span>
-              <select id="tips-staff-select" style="font-size:11px;border:1px solid #FDE68A;border-radius:6px;padding:2px 6px;background:#fff;color:#92400E;flex:1">
-                <option>Іван Петренко (офіціант)</option>
-                <option>Марія Коваль (офіціант)</option>
-                <option>Весь персонал рівно</option>
-              </select>
-            </div>
-            <div class="tips-mono-badge">
-              ⚫ Monobank: чайові зараховуються одразу на картку · комісія 4%
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div style="display:flex;gap:.5rem;margin-top:1rem">
-      <button class="btn btn-danger btn-sm" onclick="clearTable()">🗑️ Звільнити стіл</button>
-      <button class="btn btn-outline btn-sm" onclick="closeModal('modal-table-detail')">Закрити</button>
-    </div>
-  </div>
-</div>
-
-<!-- ADD TABLE MODAL -->
-<div class="overlay" id="modal-add-table" onclick="closeModal('modal-add-table')">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-head">
-      <div class="modal-title">Новий стіл</div>
-      <button class="close-btn" onclick="closeModal('modal-add-table')">✕</button>
-    </div>
-    <div class="modal-grid">
-      <div><label class="field-label">Номер столу</label><input id="at-num" type="number" placeholder="1"/></div>
-      <div><label class="field-label">Місць</label><input id="at-seats" type="number" placeholder="4"/></div>
-      <div class="span2"><label class="field-label">Зал / зона</label>
-        <select id="at-zone">
-          <option>Основний зал</option>
-          <option>Тераса</option>
-          <option>VIP-зал</option>
-          <option>Бар</option>
-        </select>
-      </div>
-      <div class="span2"><label class="field-label">Опис (необов'язково)</label><input id="at-desc" type="text" placeholder="Біля вікна, кутовий..."/></div>
-    </div>
-    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveTable()">Зберегти стіл</button>
-  </div>
-</div>
-
-<!-- ADD STAFF MODAL -->
-<div class="overlay" id="modal-add-staff" onclick="closeModal('modal-add-staff')">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modal-head">
-      <div class="modal-title" id="staff-modal-title">Новий офіціант</div>
-      <button class="close-btn" onclick="closeModal('modal-add-staff')">✕</button>
-    </div>
-    <div class="modal-grid">
-      <div class="span2"><label class="field-label">Ім'я та прізвище</label><input id="sf-name" type="text" placeholder="Іван Петренко"/></div>
-      <div><label class="field-label">Роль</label>
-        <select id="sf-role">
-          <option>Офіціант</option><option>Бармен</option><option>Адміністратор</option>
-        </select>
-      </div>
-      <div><label class="field-label">Emoji / аватар</label><input id="sf-emoji" type="text" placeholder="👨‍🍳" maxlength="2"/></div>
-      <div class="span2">
-        <label class="field-label">Monobank tipsEmployeeId</label>
-        <input id="sf-mono-id" type="text" placeholder="Отримайте в кабінеті monobank acquiring"/>
-        <div style="font-size:11px;color:var(--muted);margin-top:.25rem">
-          monobank acquiring → Список співробітників → скопіювати ID. Без цього ID чайові через Monobank недоступні.
-        </div>
-      </div>
-    </div>
-    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveStaff()">Зберегти</button>
-  </div>
-</div>
-
 <div class="notif" id="notif"></div>
 
 <script>
-// ── DATA ──
-// ═══════════════════════════════════════════════════════════
-//  FIRESTORE — реальні дані з бази
-// ═══════════════════════════════════════════════════════════
-let db = null;
-let auth = null;
-let venueId = 'demo'; // за замовчуванням; оновлюється після входу
-let unsubOrders = null; // слухач замовлень в реальному часі
+// ── КОНФІГ ──
+window.__MQ_CFG = window.__MQ_CFG || {
+  apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
+  authDomain: "mageqrrest.firebaseapp.com",
+  projectId: "mageqrrest",
+  storageBucket: "mageqrrest.firebasestorage.app",
+  messagingSenderId: "207231972557",
+  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+};
+window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
-let items   = [];
-let cats    = [];
-let orders  = [];
-let editItemId = null, editCatId = null;
+// ── СТАН ──
+let db=null, auth=null;
+let venueId='demo', unsubOrders=null;
+let items=[], cats=[], orders=[];
+let editItemId=null, editCatId=null;
 
-// ── ІНІЦІАЛІЗАЦІЯ FIREBASE ────────────────────────────────
+// ── FIREBASE ──
 async function initFirebase() {
-  const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-  const { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc,
-          deleteDoc, updateDoc, onSnapshot, query, orderBy, where,
-          serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-  const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+  const {initializeApp,getApps} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+  const {getFirestore,collection,doc,getDoc,getDocs,addDoc,setDoc,
+         deleteDoc,updateDoc,onSnapshot,query,orderBy,where,serverTimestamp}
+    = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+  const {getAuth,onAuthStateChanged} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
 
-  // Конфіг вбудований (той самий що в login.html)
-  const firebaseConfig = window.__MQ_CFG;
-  if (!firebaseConfig || firebaseConfig.apiKey === 'ЗАМІНІТЬ_НА_СВІЙ_API_KEY') {
-    showToast('⚠️ Firebase не налаштований! Перевірте __MQ_CFG', 'err');
-    return;
-  }
-
-  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  const app = getApps().length ? getApps()[0] : initializeApp(window.__MQ_CFG);
   db   = getFirestore(app);
   auth = getAuth(app);
+  window.__FS = {collection,doc,getDoc,getDocs,addDoc,setDoc,
+                 deleteDoc,updateDoc,onSnapshot,query,orderBy,where,serverTimestamp};
 
-  // Зберігаємо функції Firestore глобально
-  window.__FS = { collection, doc, getDoc, getDocs, addDoc, setDoc,
-                  deleteDoc, updateDoc, onSnapshot, query, orderBy, where, serverTimestamp };
-
-  // Перевіряємо авторизацію
   onAuthStateChanged(auth, async user => {
-    if (!user) {
-      // Не авторизований — повертаємо на login
-      window.location.replace('login.html');
-      return;
-    }
-
-    // Завжди визначаємо venueId заново по uid — не покладаємось на кеш
+    if (!user) { window.location.replace('login.html'); return; }
     sessionStorage.removeItem('__mq_venue');
     venueId = await findVenueByUid(user.uid) || deriveVenueFromEmail(user.email);
     sessionStorage.setItem('__mq_venue', venueId);
     document.getElementById('sb-venue-name').textContent = venueId;
-
-    // Завантажуємо всі дані
     await Promise.all([loadSettings(), loadCats(), loadItems()]);
-    subscribeOrders(); // real-time слухач замовлень
-    loadSubscription(); // дані підписки
+    subscribeOrders();
     renderMappingRows();
     renderPresetsRow();
     loadDesignSettings();
-    // Завантажуємо білінг одразу після визначення venueId
     setTimeout(() => loadBilling(), 500);
   });
 }
 
 function deriveVenueFromEmail(email) {
-  return (email || 'demo').split('@')[0].replace(/[^a-z0-9_-]/gi, '').toLowerCase() || 'demo';
+  return (email||'demo').split('@')[0].replace(/[^a-z0-9_-]/gi,'').toLowerCase()||'demo';
 }
 
-// Шукаємо заклад де adminUid = uid (або поле adminEmail = email)
 async function findVenueByUid(uid) {
-  const { collection, getDocs, query, where } = window.__FS;
+  const {collection,getDocs,query,where} = window.__FS;
   try {
-    // Спочатку шукаємо по adminUid у головному документі
-    const snap = await getDocs(
-      query(collection(db, 'venues'), where('adminUid', '==', uid))
-    );
+    const snap = await getDocs(query(collection(db,'venues'),where('adminUid','==',uid)));
     if (!snap.empty) return snap.docs[0].id;
-
-    // Якщо не знайшли — шукаємо через підколекцію admins
-    const allVenues = await getDocs(collection(db, 'venues'));
-    for (const vDoc of allVenues.docs) {
-      const { getDoc, doc } = window.__FS;
-      const adminSnap = await getDoc(doc(db, 'venues', vDoc.id, 'admins', uid));
-      if (adminSnap.exists()) return vDoc.id;
+    const all = await getDocs(collection(db,'venues'));
+    for (const vDoc of all.docs) {
+      const {getDoc,doc} = window.__FS;
+      const a = await getDoc(doc(db,'venues',vDoc.id,'admins',uid));
+      if (a.exists()) return vDoc.id;
     }
     return null;
-  } catch(e) {
-    console.warn('findVenueByUid:', e.message);
-    return null;
-  }
+  } catch(e) { console.warn('findVenueByUid:',e.message); return null; }
 }
 
-function showToast(msg, type) {
-  const n = document.getElementById('notif');
-  if (!n) return;
-  n.textContent = msg;
-  n.className = 'notif ' + (type === 'err' ? 'err' : 'ok') + ' show';
-  setTimeout(() => n.classList.remove('show'), 3000);
-}
-
-// ── НАЛАШТУВАННЯ — повна реалізація ──────────────────────
-
-// Завантаження логотипу
-let logoFile = null;
-let bannerFile = null;
-
-window.handleLogoFile = function(input) {
-  const file = input.files[0]; if(!file) return;
-  if(file.size > 3*1024*1024){ notify('Логотип занадто великий (макс 3МБ)','err'); return; }
-  logoFile = file;
-  const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('logo-preview-img').src = e.target.result;
-    document.getElementById('logo-preview-img').style.display = 'block';
-    document.getElementById('logo-preview-em').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
-};
-
-window.previewLogoUrl = function(url) {
-  if(!url) return;
-  document.getElementById('logo-preview-img').src = url;
-  document.getElementById('logo-preview-img').style.display = 'block';
-  document.getElementById('logo-preview-em').style.display = 'none';
-  logoFile = null;
-};
-
-window.previewLogoEmoji = function(emoji) {
-  if(!emoji) return;
-  document.getElementById('logo-preview-em').textContent = emoji;
-  document.getElementById('logo-preview-em').style.display = 'block';
-  document.getElementById('logo-preview-img').style.display = 'none';
-  logoFile = null;
-};
-
-// Завантаження банеру
-window.handleBannerFile = function(input) {
-  const file = input.files[0]; if(!file) return;
-  if(file.size > 5*1024*1024){ notify('Банер занадто великий (макс 5МБ)','err'); return; }
-  bannerFile = file;
-  const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('banner-preview-img').src = e.target.result;
-    document.getElementById('banner-preview-img').style.display = 'block';
-    document.getElementById('banner-placeholder').style.display = 'none';
-    document.getElementById('set-banner-url').value = '';
-  };
-  reader.readAsDataURL(file);
-};
-
-window.previewBannerUrl = function(url) {
-  if(!url) return;
-  document.getElementById('banner-preview-img').src = url;
-  document.getElementById('banner-preview-img').style.display = 'block';
-  document.getElementById('banner-placeholder').style.display = 'none';
-  bannerFile = null;
-};
-
-window.clearBanner = function() {
-  bannerFile = null;
-  document.getElementById('set-banner-url').value = '';
-  document.getElementById('banner-preview-img').src = '';
-  document.getElementById('banner-preview-img').style.display = 'none';
-  document.getElementById('banner-placeholder').style.display = 'flex';
-};
-
-// Завантаження файлу у Firebase Storage
-async function uploadSettingsFile(file, path, statusElId) {
-  const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-  const { getStorage, ref, uploadBytesResumable, getDownloadURL }
-    = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
-
-  const storage = getStorage(getApp());
-  const storageRef = ref(storage, path);
-  const statusEl = document.getElementById(statusElId);
-
-  return new Promise((resolve, reject) => {
-    const task = uploadBytesResumable(storageRef, file);
-    task.on('state_changed',
-      snap => {
-        const pct = Math.round(snap.bytesTransferred / snap.totalBytes * 100);
-        if(statusEl) statusEl.textContent = `Завантаження: ${pct}%`;
-      },
-      err => { if(statusEl) statusEl.textContent = 'Помилка: ' + err.message; reject(err); },
-      async () => {
-        const url = await getDownloadURL(task.snapshot.ref);
-        if(statusEl) statusEl.textContent = '✅ Завантажено';
-        setTimeout(() => { if(statusEl) statusEl.textContent = ''; }, 3000);
-        resolve(url);
-      }
-    );
-  });
-}
-
-// Завантажити поточні налаштування у форму
-async function loadSettings() {
-  const { doc, getDoc } = window.__FS;
-  try {
-    const snap = await getDoc(doc(db, 'venues', venueId, 'settings', 'main'));
-    if(!snap.exists()) return;
-    const d = snap.data();
-
-    // Заповнюємо поля
-    if(d.name)    { document.getElementById('set-name').value  = d.name;  document.getElementById('sb-venue-name').textContent = d.name; }
-    if(d.tagline) document.getElementById('set-tag').value   = d.tagline;
-    if(d.city)    document.getElementById('set-city').value   = d.city;
-    if(d.phone)   document.getElementById('set-phone').value  = d.phone;
-    if(d.address) document.getElementById('set-addr').value   = d.address;
-    if(d.hours)   document.getElementById('set-hours')&&(document.getElementById('set-hours').value = d.hours);
-
-    // Логотип
-    if(d.logoUrl) {
-      document.getElementById('set-logo-url').value = d.logoUrl;
-      previewLogoUrl(d.logoUrl);
-    } else if(d.logoEmoji) {
-      document.getElementById('set-logo-emoji').value = d.logoEmoji;
-      previewLogoEmoji(d.logoEmoji);
-    }
-
-    // Банер
-    if(d.bannerUrl) {
-      document.getElementById('set-banner-url').value = d.bannerUrl;
-      previewBannerUrl(d.bannerUrl);
-    }
-
-    // QR URL
-    const qrUrl = `mageqrrest.com/menu.html?v=${venueId}`;
-    document.getElementById('venue-qr-url') && (document.getElementById('venue-qr-url').textContent = qrUrl);
-
-  } catch(e) { console.warn('loadSettings:', e.message); }
-}
-
-// Зберегти всі налаштування
-window.saveSettings = async function() {
-  const { doc, setDoc } = window.__FS;
-  notify('Зберігаємо...', 'ok');
-
-  let logoUrl  = document.getElementById('set-logo-url').value.trim();
-  let bannerUrl = document.getElementById('set-banner-url').value.trim();
-
-  try {
-    // Завантажуємо файли якщо є
-    if(logoFile) {
-      logoUrl = await uploadSettingsFile(
-        logoFile,
-        `venues/${venueId}/settings/logo_${Date.now()}`,
-        'logo-upload-status'
-      );
-      document.getElementById('set-logo-url').value = logoUrl;
-      logoFile = null;
-    }
-    if(bannerFile) {
-      bannerUrl = await uploadSettingsFile(
-        bannerFile,
-        `venues/${venueId}/settings/banner_${Date.now()}`,
-        'banner-upload-status'
-      );
-      document.getElementById('set-banner-url').value = bannerUrl;
-      bannerFile = null;
-    }
-
-    const data = {
-      name:       document.getElementById('set-name').value.trim(),
-      tagline:    document.getElementById('set-tag').value.trim(),
-      city:       document.getElementById('set-city')?.value.trim() || '',
-      phone:      document.getElementById('set-phone').value.trim(),
-      address:    document.getElementById('set-addr').value.trim(),
-      hours:      document.getElementById('set-hours')?.value.trim() || '',
-      logoUrl:    logoUrl,
-      logoEmoji:  document.getElementById('set-logo-emoji').value.trim(),
-      bannerUrl:  bannerUrl,
-      updatedAt:  new Date().toISOString(),
-    };
-
-    await setDoc(doc(db, 'venues', venueId, 'settings', 'main'), data);
-
-    // Оновлюємо sidebar
-    if(data.name) document.getElementById('sb-venue-name').textContent = data.name;
-    notify('✅ Налаштування збережено! Меню оновлено.', 'ok');
-
-  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
-};
-
-// QR URL утиліти
-window.copyMenuUrl = function() {
-  const url = `https://mageqrrest.com/menu.html?v=${venueId}`;
-  navigator.clipboard.writeText(url).then(() => notify('🔗 Посилання скопійовано!', 'ok'));
-};
-window.openMenuUrl = function() {
-  window.open(`https://mageqrrest.com/menu.html?v=${venueId}`, '_blank');
-};
-
-// ── КАТЕГОРІЇ ────────────────────────────────────────────
-async function loadCats() {
-  const { collection, getDocs, query, orderBy } = window.__FS;
-  try {
-    const snap = await getDocs(query(
-      collection(db, 'venues', venueId, 'categories'),
-      orderBy('order')
-    ));
-    cats = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderCats();
-    renderItems(); // оновлюємо фільтр категорій у стравах
-  } catch(e) { console.warn('loadCats:', e.message); }
-}
-
-window.saveCat = async function() {
-  const { collection, doc, addDoc, setDoc } = window.__FS;
-  const name = document.getElementById('cf-name').value.trim();
-  if (!name) { notify('Введіть назву', 'err'); return; }
-  const data = {
-    name,
-    emoji: document.getElementById('cf-emoji').value || '📂',
-    order: parseInt(document.getElementById('cf-order').value) || 0,
-  };
-  try {
-    if (editCatId) {
-      await setDoc(doc(db, 'venues', venueId, 'categories', editCatId), data);
-    } else {
-      await addDoc(collection(db, 'venues', venueId, 'categories'), data);
-    }
-    closeModal('modal-cat');
-    await loadCats();
-    notify('✅ Категорію збережено!', 'ok');
-  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
-};
-
-window.deleteCat = async function(id) {
-  const { doc, deleteDoc } = window.__FS;
-  if (!confirm('Видалити категорію?')) return;
-  try {
-    await deleteDoc(doc(db, 'venues', venueId, 'categories', id));
-    await loadCats();
-    notify('Видалено', 'ok');
-  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
-};
-
-// ── СТРАВИ ───────────────────────────────────────────────
-async function loadItems() {
-  const { collection, getDocs } = window.__FS;
-  try {
-    const snap = await getDocs(collection(db, 'venues', venueId, 'items'));
-    items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderItems();
-    document.getElementById('items-count-sub').textContent = items.length + ' позицій';
-    document.getElementById('st-items') && (document.getElementById('st-items').textContent = items.length);
-  } catch(e) { console.warn('loadItems:', e.message); }
-}
-
-
-// ── FIREBASE STORAGE — завантаження фото страв ──────────
-async function getStorage() {
-  const { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject }
-    = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
-  const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-  return { storage: getStorage(getApp()), ref, uploadBytesResumable, getDownloadURL, deleteObject };
-}
-
-let currentPhotoFile = null;
-
-function handlePhotoSelect(input) {
-  const file = input.files[0];
-  if (!file) return;
-
-  // Перевірка розміру (5 МБ)
-  if (file.size > 5 * 1024 * 1024) {
-    notify('Фото занадто велике. Максимум 5 МБ.', 'err');
-    return;
-  }
-  currentPhotoFile = file;
-
-  // Показуємо превʼю локально
-  const reader = new FileReader();
-  reader.onload = e => showPhotoPreview(e.target.result);
-  reader.readAsDataURL(file);
-}
-
-function showPhotoPreview(src) {
-  document.getElementById('photo-preview').src = src;
-  document.getElementById('photo-preview').style.display = 'block';
-  document.getElementById('photo-placeholder').style.display = 'none';
-  document.getElementById('photo-progress').style.display = 'none';
-  document.getElementById('photo-wrap').classList.add('has-photo');
-  document.getElementById('photo-clear-btn').style.display = 'inline-flex';
-}
-
-function clearPhoto() {
-  currentPhotoFile = null;
-  document.getElementById('if-photo-url').value = '';
-  document.getElementById('if-photo-url-input').value = '';
-  document.getElementById('photo-preview').src = '';
-  document.getElementById('photo-preview').style.display = 'none';
-  document.getElementById('photo-placeholder').style.display = 'flex';
-  document.getElementById('photo-wrap').classList.remove('has-photo');
-  document.getElementById('photo-clear-btn').style.display = 'none';
-  document.getElementById('if-photo').value = '';
-}
-
-function setPhotoFromUrl(url) {
-  if (!url) return;
-  document.getElementById('if-photo-url').value = url;
-  showPhotoPreview(url);
-  currentPhotoFile = null; // URL замість файлу
-}
-
-async function uploadPhotoAndGetUrl() {
-  // Якщо вже є URL (вставлений вручну) — повертаємо його
-  const manualUrl = document.getElementById('if-photo-url').value.trim();
-  if (manualUrl && !currentPhotoFile) return manualUrl;
-
-  // Якщо немає файлу — нема фото
-  if (!currentPhotoFile) return '';
-
-  // Завантажуємо у Firebase Storage
-  try {
-    const { storage, ref, uploadBytesResumable, getDownloadURL } = await getStorage();
-    const path = `venues/${venueId}/items/${Date.now()}_${currentPhotoFile.name.replace(/[^a-z0-9.]/gi,'_')}`;
-    const storageRef = ref(storage, path);
-
-    // Показуємо прогрес-бар
-    document.getElementById('photo-progress').style.display = 'block';
-    document.getElementById('photo-placeholder').style.display = 'none';
-
-    return await new Promise((resolve, reject) => {
-      const task = uploadBytesResumable(storageRef, currentPhotoFile);
-      task.on('state_changed',
-        snap => {
-          const pct = Math.round(snap.bytesTransferred / snap.totalBytes * 100);
-          document.getElementById('photo-progress-bar').style.width = pct + '%';
-        },
-        err => reject(err),
-        async () => {
-          const url = await getDownloadURL(task.snapshot.ref);
-          document.getElementById('photo-progress').style.display = 'none';
-          resolve(url);
-        }
-      );
-    });
-  } catch(e) {
-    notify('Помилка завантаження фото: ' + e.message, 'err');
-    return '';
-  }
-}
-window.handlePhotoSelect = handlePhotoSelect;
-window.clearPhoto = clearPhoto;
-window.setPhotoFromUrl = setPhotoFromUrl;
-// ── АЛЕРГЕНИ ─────────────────────────────────────────────
-const ALLERGENS_LIST = [
-  {id:'gluten',    icon:'🌾', name:'Глютен'},
-  {id:'milk',      icon:'🥛', name:'Молоко'},
-  {id:'eggs',      icon:'🥚', name:'Яйця'},
-  {id:'nuts',      icon:'🥜', name:'Горіхи'},
-  {id:'fish',      icon:'🐟', name:'Риба'},
-  {id:'seafood',   icon:'🦐', name:'Морепродукти'},
-  {id:'soy',       icon:'🫘', name:'Соя'},
-  {id:'celery',    icon:'🥬', name:'Селера'},
-  {id:'mustard',   icon:'🌶️', name:'Гірчиця'},
-  {id:'sesame',    icon:'🌰', name:'Кунжут'},
-  {id:'sulphites', icon:'⚗️', name:'Сульфіти'},
-  {id:'lupin',     icon:'🌸', name:'Люпин'},
-  {id:'peanuts',   icon:'🥜', name:'Арахіс'},
-];
-
-function renderAllergenCheckboxes(selected=[]) {
-  const wrap = document.getElementById('allergen-checkboxes');
-  if(!wrap) return;
-  wrap.innerHTML = ALLERGENS_LIST.map(a => `
-    <label class="allergen-cb${selected.includes(a.name)?' selected':''}" onclick="toggleAllergen(this,'${a.name}')">
-      <input type="checkbox" value="${a.name}"${selected.includes(a.name)?' checked':''}/>
-      ${a.icon} ${a.name}
-    </label>`).join('');
-}
-
-window.toggleAllergen = function(el, name) {
-  el.classList.toggle('selected');
-  const inp = el.querySelector('input');
-  inp.checked = !inp.checked;
-};
-
-function getSelectedAllergens() {
-  return Array.from(document.querySelectorAll('#allergen-checkboxes input:checked')).map(i=>i.value);
-}
-
-window.saveItem = async function() {
-  const { collection, doc, addDoc, setDoc } = window.__FS;
-  const name  = document.getElementById('if-name').value.trim();
-  const price = parseFloat(document.getElementById('if-price').value);
-  if (!name || !price) { notify('Заповніть назву та ціну', 'err'); return; }
-  // Завантажуємо фото якщо є
-  notify('Збереження...', 'ok');
-  const photoUrl = await uploadPhotoAndGetUrl();
-
-  const data = {
-    name,
-    desc:      document.getElementById('if-desc').value,
-    price,
-    photoUrl:  photoUrl || '',
-    weight:    document.getElementById('if-weight').value,
-    category:  document.getElementById('if-cat').value,
-    sku:       document.getElementById('if-sku')?.value || '',
-    allergens: getSelectedAllergens(),
-    updatedAt: new Date().toISOString(),
-  };
-  try {
-    if (editItemId) {
-      await setDoc(doc(db, 'venues', venueId, 'items', editItemId), data);
-    } else {
-      await addDoc(collection(db, 'venues', venueId, 'items'), data);
-    }
-    closeModal('modal-item');
-    await loadItems();
-    notify('✅ Страву збережено!', 'ok');
-  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
-};
-
-window.deleteItem = async function(id) {
-  const { doc, deleteDoc } = window.__FS;
-  if (!confirm('Видалити страву?')) return;
-  try {
-    await deleteDoc(doc(db, 'venues', venueId, 'items', id));
-    await loadItems();
-    notify('Видалено', 'ok');
-  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
-};
-
-// ── ЗАМОВЛЕННЯ (real-time) ────────────────────────────────
+// ── ЗАМОВЛЕННЯ ──
 function subscribeOrders() {
-  const { collection, onSnapshot } = window.__FS;
+  const {collection,onSnapshot} = window.__FS;
   if (unsubOrders) unsubOrders();
-
-  unsubOrders = onSnapshot(
-    collection(db, 'venues', venueId, 'orders'),
-    snap => {
-      orders = snap.docs.map(d => {
-        const data = d.data();
-        return {
-          id: d.id,
-          ...data,
-          time: data.createdAt
-            ? new Date(data.createdAt.seconds * 1000)
-                .toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })
-            : '—',
-          dateMs: data.createdAt ? data.createdAt.seconds * 1000 : 0,
-        };
-      })
-      // Сортуємо на клієнті — найновіші зверху
-      .sort((a, b) => b.dateMs - a.dateMs);
-
-      renderOrders();
-      updateOrderBadge();
-      // Звуковий сигнал при новому замовленні
-      playNewOrderSound();
-    },
-    err => {
-      console.warn('subscribeOrders error:', err.message);
-      notify('Помилка підключення до замовлень: ' + err.message, 'err');
-    }
-  );
+  unsubOrders = onSnapshot(collection(db,'venues',venueId,'orders'), snap => {
+    orders = snap.docs.map(d => {
+      const data = d.data();
+      return {...data, id:d.id,
+        time: data.createdAt ? new Date(data.createdAt.seconds*1000).toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'}) : '—',
+        dateMs: data.createdAt ? data.createdAt.seconds*1000 : 0};
+    }).sort((a,b)=>b.dateMs-a.dateMs);
+    renderOrders();
+    updateOrderBadge();
+    playNewOrderSound();
+  }, err => { console.warn('subscribeOrders:',err.message); });
 }
 
-// Звуковий сигнал при новому замовленні
-let prevOrderCount = 0;
-function playNewOrderSound() {
-  const newCount = orders.filter(o => o.status === 'new' || !o.status).length;
-  if (newCount > prevOrderCount && prevOrderCount >= 0) {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.frequency.setValueAtTime(880, ctx.currentTime);
-      osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.3, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.4);
-    } catch(e) {}
+let prevOrderCount=0;
+function playNewOrderSound(){
+  const n=orders.filter(o=>o.status==='new'||!o.status).length;
+  if(n>prevOrderCount&&prevOrderCount>=0){
+    try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator();const g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.setValueAtTime(880,ctx.currentTime);o.frequency.setValueAtTime(1100,ctx.currentTime+0.1);g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.4);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.4);}catch(e){}
   }
-  prevOrderCount = newCount;
+  prevOrderCount=n;
+}
+function updateOrderBadge(){
+  const n=orders.filter(o=>o.status==='new'||!o.status).length;
+  const b=document.getElementById('new-badge');
+  if(b){b.textContent=n||'';b.style.display=n?'inline-block':'none';}
 }
 
-function updateOrderBadge() {
-  const newCount = orders.filter(o => o.status === 'new' || !o.status).length;
-  const badge = document.getElementById('new-badge');
-  if (badge) {
-    badge.textContent = newCount || '';
-    badge.style.display = newCount ? 'inline-block' : 'none';
-  }
-}
-
-window.setStatus = async function(id, status) {
-  const { doc, updateDoc } = window.__FS;
-  try {
-    await updateDoc(doc(db, 'venues', venueId, 'orders', id), { status });
-    // Не потрібно renderOrders() — onSnapshot оновить автоматично
-  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
+window.setStatus = async function(id,status){
+  const {doc,updateDoc}=window.__FS;
+  try{await updateDoc(doc(db,'venues',venueId,'orders',id),{status});}
+  catch(e){notify('Помилка: '+e.message,'err');}
 };
 
-// ── ДИЗАЙН — зберігаємо в Firestore ──────────────────────
-async function loadDesignSettings() {
-  if (!db || !window.__FS) return;
-  const { doc, getDoc } = window.__FS;
-  try {
-    const snap = await getDoc(doc(db, 'venues', venueId, 'design', 'main'));
-    if (!snap.exists()) return;
-    const d = snap.data();
-    // Відновлюємо кольори
-    if (d.accent) { document.getElementById('c-accent').value = d.accent; document.getElementById('c-accent-hex').value = d.accent; }
-    if (d.bg)     { document.getElementById('c-bg').value     = d.bg;     document.getElementById('c-bg-hex').value     = d.bg; }
-    if (d.card)   { document.getElementById('c-card').value   = d.card;   document.getElementById('c-card-hex').value   = d.card; }
-    if (d.text)   { document.getElementById('c-text').value   = d.text;   document.getElementById('c-text-hex').value   = d.text; }
-    if (d.fontHead)   document.getElementById('font-head').value = d.fontHead;
-    if (d.bannerUrl)  document.getElementById('banner-url').value = d.bannerUrl;
-    if (d.logoEmoji)  document.getElementById('logo-emoji').value = d.logoEmoji;
-    if (d.cardRadius) document.getElementById('card-radius').value = d.cardRadius;
-    livePreview();
-  } catch(e) { console.warn('loadDesignSettings:', e.message); }
-}
-
-window.saveDesign = async function() {
-  if (!db || !window.__FS) { notify('Firebase не підключено', 'err'); return; }
-  const { doc, setDoc } = window.__FS;
-  const data = {
-    accent:     document.getElementById('c-accent').value,
-    bg:         document.getElementById('c-bg').value,
-    card:       document.getElementById('c-card').value,
-    text:       document.getElementById('c-text').value,
-    fontHead:   document.getElementById('font-head').value,
-    fontBody:   document.getElementById('font-body').value,
-    bannerUrl:  document.getElementById('banner-url').value,
-    logoEmoji:  document.getElementById('logo-emoji').value,
-    logoUrl:    document.getElementById('logo-url').value,
-    cardRadius: document.getElementById('card-radius').value,
-    fontSize:   document.getElementById('font-size').value,
-    showPrices: document.getElementById('toggle-prices').classList.contains('on'),
-    showDesc:   document.getElementById('toggle-desc').classList.contains('on'),
-    showWeight: document.getElementById('toggle-weight').classList.contains('on'),
-    updatedAt:  new Date().toISOString(),
-  };
-  try {
-    await setDoc(doc(db, 'venues', venueId, 'design', 'main'), data);
-    notify('✅ Дизайн збережено! Меню оновлено.', 'ok');
-  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
-};
-
-let editItemId_orig = null, editCatId_orig = null;
-
-// ── DESIGN STATE ──
-const PRESETS=[
-  {name:'Японський',accent:'#C1440E',bg:'#FBF8F4',card:'#FFFFFF',text:'#1A1208',head:'Playfair Display'},
-  {name:'Темний',accent:'#A78BFA',bg:'#0F0F1A',card:'#1A1A2E',text:'#E8E8FF',head:'Space Grotesk'},
-  {name:'Природний',accent:'#059669',bg:'#F0FAF5',card:'#FFFFFF',text:'#1A2E25',head:'Cormorant Garamond'},
-  {name:'Лофт',accent:'#D97706',bg:'#1C1917',card:'#292524',text:'#FEF3C7',head:'Unbounded'},
-  {name:'Пастель',accent:'#DB2777',bg:'#FDF2F8',card:'#FFFFFF',text:'#831843',head:'Raleway'},
-  {name:'Мінімал',accent:'#111827',bg:'#F9FAFB',card:'#FFFFFF',text:'#111827',head:'Montserrat'},
-];
-
-// ── INIT ──
-function init(){
-  // Запускаємо Firebase — він сам завантажить дані після авторизації
-  initFirebase();
-}
-
-// ── ORDERS ──
 function renderOrders(){
-  const f = document.getElementById('order-filter').value;
-  const list = f ? orders.filter(o=>o.status===f) : orders;
-  const newO  = orders.filter(o=>o.status==='new'||!o.status);
-  const doneO = orders.filter(o=>o.status==='done');
-  const todayStart = new Date(); todayStart.setHours(0,0,0,0);
-  const todayOrders = orders.filter(o=>o.dateMs >= todayStart.getTime());
-  const rev = todayOrders.filter(o=>o.status!=='cancel').reduce((s,o)=>s+(o.total||0),0);
-
-  document.getElementById('st-new-ord').textContent  = newO.length;
-  document.getElementById('st-done-ord').textContent = doneO.length;
-  document.getElementById('st-today-rev').textContent = rev+'₴';
-  const avg = doneO.length ? Math.round(doneO.reduce((s,o)=>s+(o.total||0),0)/doneO.length) : 0;
-  document.getElementById('st-avg')&&(document.getElementById('st-avg').textContent = avg?avg+'₴':'—');
-
-  const badge = document.getElementById('new-badge');
-  if(newO.length){badge.textContent=newO.length;badge.style.display='inline-block';}
-  else badge.style.display='none';
-
-  const sl = {new:'o-new',done:'o-done',cancel:'o-cancel'};
-  const st = {new:'🆕 Нове',done:'✅ Виконано',cancel:'❌ Скасовано'};
-
-  if(!list.length){
-    document.getElementById('orders-wrap').innerHTML=`<div class="empty"><i>🧾</i><div class="empty-text">Замовлень ще немає</div></div>`;
-    return;
-  }
-
-  document.getElementById('orders-wrap').innerHTML = list.map(o=>`
+  const f=document.getElementById('order-filter').value;
+  const list=f?orders.filter(o=>o.status===f):orders;
+  const newO=orders.filter(o=>o.status==='new'||!o.status);
+  const doneO=orders.filter(o=>o.status==='done');
+  const todayStart=new Date();todayStart.setHours(0,0,0,0);
+  const todayOrders=orders.filter(o=>o.dateMs>=todayStart.getTime());
+  const rev=todayOrders.filter(o=>o.status!=='cancel').reduce((s,o)=>s+(o.total||0),0);
+  document.getElementById('st-new-ord').textContent=newO.length;
+  document.getElementById('st-done-ord').textContent=doneO.length;
+  document.getElementById('st-today-rev').textContent=rev+'₴';
+  const avg=doneO.length?Math.round(doneO.reduce((s,o)=>s+(o.total||0),0)/doneO.length):0;
+  document.getElementById('st-avg')&&(document.getElementById('st-avg').textContent=avg?avg+'₴':'—');
+  updateOrderBadge();
+  if(!list.length){document.getElementById('orders-wrap').innerHTML='<div class="empty"><i>🧾</i><div>Замовлень ще немає</div></div>';return;}
+  document.getElementById('orders-wrap').innerHTML=list.map(o=>`
     <div class="order-card${o.status==='new'||!o.status?' order-card-new':''}">
       <div class="order-top">
         <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
@@ -2222,25 +1515,163 @@ function renderOrders(){
         </div>
         <div style="display:flex;align-items:center;gap:.5rem">
           <span class="o-time">${o.time}</span>
-          <span class="o-badge ${sl[o.status]||'o-new'}">${st[o.status]||'🆕 Нове'}</span>
+          <span class="o-badge ${{new:'o-new',done:'o-done',cancel:'o-cancel'}[o.status]||'o-new'}">${{new:'🆕 Нове',done:'✅ Виконано',cancel:'❌ Скасовано'}[o.status]||'🆕 Нове'}</span>
         </div>
       </div>
-      <div class="o-items">${(o.items||[]).map(i=>`<b>${i.name}</b> ×${i.qty} — ${(i.price*i.qty)||''}грн`).join('<br/>')}</div>
+      <div class="o-items">${(o.items||[]).map(i=>`<b>${i.name}</b> ×${i.qty} — ${i.price*i.qty}грн`).join('<br/>')}</div>
       ${o.comment?`<div class="o-comment">💬 ${o.comment}</div>`:''}
       <div class="o-total">Разом: <b>${o.total} грн</b></div>
       <div class="o-actions">
         ${(o.status==='new'||!o.status)?`
           <button class="btn btn-success btn-sm" onclick="setStatus('${o.id}','done')">✅ Виконано</button>
-          <button class="btn btn-danger btn-sm" onclick="setStatus('${o.id}','cancel')">✕ Скасувати</button>
-        `:''}
+          <button class="btn btn-danger btn-sm" onclick="setStatus('${o.id}','cancel')">✕ Скасувати</button>`:''}
         ${o.status==='done'?`<button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','new')">↺ Повернути</button>`:''}
         ${o.status==='cancel'?`<button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','new')">↺ Відкрити</button>`:''}
       </div>
     </div>`).join('');
 }
-window.setStatus=setStatus;
+window.renderOrders=renderOrders;
 
-// ── ITEMS ──
+// ── КАТЕГОРІЇ ──
+async function loadCats(){
+  const {collection,getDocs}=window.__FS;
+  try{const snap=await getDocs(collection(db,'venues',venueId,'categories'));
+  cats=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
+  renderCats();renderItems();}catch(e){console.warn('loadCats:',e.message);}
+}
+window.saveCat=async function(){
+  const {collection,doc,addDoc,setDoc}=window.__FS;
+  const name=document.getElementById('cf-name').value.trim();
+  if(!name){notify('Введіть назву','err');return;}
+  const data={name,emoji:document.getElementById('cf-emoji').value||'📂',order:parseInt(document.getElementById('cf-order').value)||0};
+  try{
+    if(editCatId)await setDoc(doc(db,'venues',venueId,'categories',editCatId),data);
+    else await addDoc(collection(db,'venues',venueId,'categories'),data);
+    closeModal('modal-cat');await loadCats();notify('✅ Категорію збережено!','ok');
+  }catch(e){notify('Помилка: '+e.message,'err');}
+};
+window.deleteCat=async function(id){
+  const {doc,deleteDoc}=window.__FS;
+  if(!confirm('Видалити категорію?'))return;
+  try{await deleteDoc(doc(db,'venues',venueId,'categories',id));await loadCats();notify('Видалено','ok');}
+  catch(e){notify('Помилка: '+e.message,'err');}
+};
+
+// ── СТРАВИ ──
+async function loadItems(){
+  const {collection,getDocs}=window.__FS;
+  try{const snap=await getDocs(collection(db,'venues',venueId,'items'));
+  items=snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderItems();
+  document.getElementById('items-count-sub').textContent=items.length+' позицій';}
+  catch(e){console.warn('loadItems:',e.message);}
+}
+
+// ── ФОТО ──
+let currentPhotoFile=null;
+function handlePhotoSelect(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){notify('Фото занадто велике. Макс 5 МБ.','err');return;}
+  currentPhotoFile=file;
+  const reader=new FileReader();
+  reader.onload=e=>showPhotoPreview(e.target.result);
+  reader.readAsDataURL(file);
+}
+function showPhotoPreview(src){
+  document.getElementById('photo-preview').src=src;
+  document.getElementById('photo-preview').style.display='block';
+  document.getElementById('photo-placeholder').style.display='none';
+  document.getElementById('photo-progress').style.display='none';
+  document.getElementById('photo-wrap').classList.add('has-photo');
+  document.getElementById('photo-clear-btn').style.display='inline-flex';
+}
+function clearPhoto(){
+  currentPhotoFile=null;
+  document.getElementById('if-photo-url').value='';
+  document.getElementById('if-photo-url-input').value='';
+  document.getElementById('photo-preview').src='';
+  document.getElementById('photo-preview').style.display='none';
+  document.getElementById('photo-placeholder').style.display='flex';
+  document.getElementById('photo-wrap').classList.remove('has-photo');
+  document.getElementById('photo-clear-btn').style.display='none';
+  document.getElementById('if-photo').value='';
+}
+function setPhotoFromUrl(url){
+  if(!url)return;
+  document.getElementById('if-photo-url').value=url;
+  showPhotoPreview(url);
+  currentPhotoFile=null;
+}
+async function uploadPhotoAndGetUrl(){
+  const manualUrl=document.getElementById('if-photo-url').value.trim();
+  if(manualUrl&&!currentPhotoFile)return manualUrl;
+  if(!currentPhotoFile)return '';
+  try{
+    const {getStorage,ref,uploadBytesResumable,getDownloadURL}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
+    const {getApp}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+    const storage=getStorage(getApp());
+    const path=`venues/${venueId}/items/${Date.now()}_${currentPhotoFile.name.replace(/[^a-z0-9.]/gi,'_')}`;
+    const storageRef=ref(storage,path);
+    document.getElementById('photo-progress').style.display='block';
+    document.getElementById('photo-placeholder').style.display='none';
+    return await new Promise((resolve,reject)=>{
+      const task=uploadBytesResumable(storageRef,currentPhotoFile);
+      task.on('state_changed',
+        snap=>{const pct=Math.round(snap.bytesTransferred/snap.totalBytes*100);document.getElementById('photo-progress-bar').style.width=pct+'%';},
+        err=>reject(err),
+        async()=>{const url=await getDownloadURL(task.snapshot.ref);document.getElementById('photo-progress').style.display='none';resolve(url);}
+      );
+    });
+  }catch(e){notify('Помилка завантаження фото: '+e.message,'err');return '';}
+}
+window.handlePhotoSelect=handlePhotoSelect;window.clearPhoto=clearPhoto;window.setPhotoFromUrl=setPhotoFromUrl;
+
+// ── АЛЕРГЕНИ ──
+const ALLERGENS_LIST=[
+  {id:'gluten',icon:'🌾',name:'Глютен'},{id:'milk',icon:'🥛',name:'Молоко'},
+  {id:'eggs',icon:'🥚',name:'Яйця'},{id:'nuts',icon:'🥜',name:'Горіхи'},
+  {id:'fish',icon:'🐟',name:'Риба'},{id:'seafood',icon:'🦐',name:'Морепродукти'},
+  {id:'soy',icon:'🫘',name:'Соя'},{id:'celery',icon:'🥬',name:'Селера'},
+  {id:'mustard',icon:'🌶️',name:'Гірчиця'},{id:'sesame',icon:'🌰',name:'Кунжут'},
+  {id:'sulphites',icon:'⚗️',name:'Сульфіти'},{id:'lupin',icon:'🌸',name:'Люпин'},
+  {id:'peanuts',icon:'🥜',name:'Арахіс'},
+];
+function renderAllergenCheckboxes(selected=[]){
+  const wrap=document.getElementById('allergen-checkboxes');if(!wrap)return;
+  wrap.innerHTML=ALLERGENS_LIST.map(a=>`
+    <label class="allergen-cb${selected.includes(a.name)?' selected':''}" onclick="toggleAllergen(this,'${a.name}')">
+      <input type="checkbox" value="${a.name}"${selected.includes(a.name)?' checked':''}/>
+      ${a.icon} ${a.name}
+    </label>`).join('');
+}
+window.toggleAllergen=function(el,name){el.classList.toggle('selected');el.querySelector('input').checked=!el.querySelector('input').checked;};
+function getSelectedAllergens(){return Array.from(document.querySelectorAll('#allergen-checkboxes input:checked')).map(i=>i.value);}
+
+window.saveItem=async function(){
+  const {collection,doc,addDoc,setDoc}=window.__FS;
+  const name=document.getElementById('if-name').value.trim();
+  const price=parseFloat(document.getElementById('if-price').value);
+  if(!name||!price){notify('Заповніть назву та ціну','err');return;}
+  notify('Збереження...','ok');
+  const photoUrl=await uploadPhotoAndGetUrl();
+  const data={name,desc:document.getElementById('if-desc').value,price,photoUrl:photoUrl||'',
+    weight:document.getElementById('if-weight').value,category:document.getElementById('if-cat').value,
+    sku:document.getElementById('if-sku')?.value||'',allergens:getSelectedAllergens(),updatedAt:new Date().toISOString()};
+  try{
+    if(editItemId)await setDoc(doc(db,'venues',venueId,'items',editItemId),data);
+    else await addDoc(collection(db,'venues',venueId,'items'),data);
+    closeModal('modal-item');await loadItems();notify('✅ Страву збережено!','ok');
+  }catch(e){notify('Помилка: '+e.message,'err');}
+};
+
+window.deleteItem=async function(id){
+  const {doc,deleteDoc}=window.__FS;
+  if(!confirm('Видалити страву?'))return;
+  try{await deleteDoc(doc(db,'venues',venueId,'items',id));await loadItems();notify('Видалено','ok');}
+  catch(e){notify('Помилка: '+e.message,'err');}
+};
+
+// ── РЕНДЕР ──
 function renderItems(){
   const cf=document.getElementById('item-cat-filter').value;
   const q=document.getElementById('item-search').value.toLowerCase();
@@ -2252,18 +1683,17 @@ function renderItems(){
   document.getElementById('items-list').innerHTML=list.length?list.map(i=>`
     <div class="item-row">
       <div class="item-em" style="overflow:hidden;padding:0">
-        ${i.photoUrl
-          ? `<img src="${i.photoUrl}" alt="${i.name}" style="width:100%;height:100%;object-fit:cover;border-radius:8px"/>`
-          : `<span style="font-size:1.5rem">🍽️</span>`}
+        ${i.photoUrl?`<img src="${i.photoUrl}" alt="${i.name}" style="width:100%;height:100%;object-fit:cover;border-radius:8px"/>`:`<span style="font-size:1.5rem">🍽️</span>`}
       </div>
-      <div class="item-body"><div class="item-name">${i.name}</div><div class="item-sub">${i.category} · ${i.weight||''}</div></div>
+      <div class="item-body"><div class="item-name">${i.name}</div><div class="item-sub">${i.category||''} · ${i.weight||''}</div></div>
       <span class="item-price">${i.price} грн</span>
       <div class="item-btns">
         <button class="icon-btn" onclick="openItemModal('${i.id}')">✏️</button>
         <button class="icon-btn del" onclick="deleteItem('${i.id}')">🗑️</button>
       </div>
-    </div>`).join(''):`<div class="empty"><i>🍽️</i>Немає страв</div>`;
+    </div>`).join(''):'<div class="empty"><i>🍽️</i>Немає страв</div>';
 }
+
 function openItemModal(id=null){
   editItemId=id;
   document.getElementById('if-cat').innerHTML=cats.map(c=>`<option>${c.name}</option>`).join('');
@@ -2277,32 +1707,17 @@ function openItemModal(id=null){
     document.getElementById('if-sku')&&(document.getElementById('if-sku').value=i.sku||'');
     document.getElementById('if-cat').value=i.category||'';
     renderAllergenCheckboxes(i.allergens||[]);
-    if(i.photoUrl){
-      document.getElementById('if-photo-url').value=i.photoUrl;
-      document.getElementById('if-photo-url-input').value=i.photoUrl;
-      showPhotoPreview(i.photoUrl);
-    } else { clearPhoto(); }
-  } else {
+    if(i.photoUrl){document.getElementById('if-photo-url').value=i.photoUrl;document.getElementById('if-photo-url-input').value=i.photoUrl;showPhotoPreview(i.photoUrl);}else clearPhoto();
+  }else{
     document.getElementById('item-modal-t').textContent='Нова страва';
     ['if-name','if-desc','if-price','if-weight'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('if-sku')&&(document.getElementById('if-sku').value='');
-    renderAllergenCheckboxes([]);
-    clearPhoto();
-    currentPhotoFile=null;
+    renderAllergenCheckboxes([]);clearPhoto();currentPhotoFile=null;
   }
   openModal('modal-item');
 }
-function saveItem(){
-  const name=document.getElementById('if-name').value.trim();const price=parseFloat(document.getElementById('if-price').value);
-  if(!name||!price){notify('Заповніть назву та ціну','err');return;}
-  const d={name,desc:document.getElementById('if-desc').value,price,emoji:document.getElementById('if-emoji').value||'🍽️',weight:document.getElementById('if-weight').value,category:document.getElementById('if-cat').value};
-  if(editItemId)Object.assign(items.find(x=>x.id===editItemId),d);else{d.id='i'+Date.now();items.push(d);}
-  closeModal('modal-item');renderItems();notify('✅ Збережено!','ok');
-}
-function deleteItem(id){if(confirm('Видалити?')){items=items.filter(x=>x.id!==id);renderItems();notify('Видалено','ok');}}
-window.openItemModal=openItemModal;window.saveItem=saveItem;window.deleteItem=deleteItem;
+window.openItemModal=openItemModal;
 
-// ── CATS ──
 function renderCats(){
   document.getElementById('cats-list').innerHTML=cats.map(c=>`
     <div class="cat-row">
@@ -2313,7 +1728,7 @@ function renderCats(){
         <button class="icon-btn" onclick="openCatModal('${c.id}')">✏️</button>
         <button class="icon-btn del" onclick="deleteCat('${c.id}')">🗑️</button>
       </div>
-    </div>`).join('')||`<div class="empty"><i>📂</i>Немає категорій</div>`;
+    </div>`).join('')||'<div class="empty"><i>📂</i>Немає категорій</div>';
 }
 function openCatModal(id=null){
   editCatId=id;
@@ -2321,558 +1736,184 @@ function openCatModal(id=null){
   else{document.getElementById('cat-modal-t').textContent='Нова категорія';['cf-name','cf-emoji','cf-order'].forEach(f=>document.getElementById(f).value='');}
   openModal('modal-cat');
 }
-function saveCat(){
-  const name=document.getElementById('cf-name').value.trim();if(!name){notify('Введіть назву','err');return;}
-  const d={name,emoji:document.getElementById('cf-emoji').value||'📂',order:parseInt(document.getElementById('cf-order').value)||0};
-  if(editCatId)Object.assign(cats.find(x=>x.id===editCatId),d);else{d.id='c'+Date.now();cats.push(d);}
-  closeModal('modal-cat');renderCats();renderItems();notify('✅ Збережено!','ok');
-}
-function deleteCat(id){if(confirm('Видалити?')){cats=cats.filter(x=>x.id!==id);renderCats();}}
-window.openCatModal=openCatModal;window.saveCat=saveCat;window.deleteCat=deleteCat;
+window.openCatModal=openCatModal;
 
-// ── DESIGN STUDIO ──
-function renderPresetsRow(){
-  document.getElementById('presets-row').innerHTML=PRESETS.map((p,i)=>`
-    <div class="palette-swatch" style="background:linear-gradient(135deg,${p.accent} 50%,${p.bg} 50%)" title="${p.name}" onclick="applyPreset(${i})"></div>`).join('');
+// ── НАЛАШТУВАННЯ ──
+let logoFile=null,bannerFile=null;
+window.handleLogoFile=function(input){const file=input.files[0];if(!file)return;logoFile=file;const r=new FileReader();r.onload=e=>{document.getElementById('logo-preview-img').src=e.target.result;document.getElementById('logo-preview-img').style.display='block';document.getElementById('logo-preview-em').style.display='none';};r.readAsDataURL(file);};
+window.previewLogoUrl=function(url){if(!url)return;document.getElementById('logo-preview-img').src=url;document.getElementById('logo-preview-img').style.display='block';document.getElementById('logo-preview-em').style.display='none';logoFile=null;};
+window.previewLogoEmoji=function(emoji){if(!emoji)return;document.getElementById('logo-preview-em').textContent=emoji;document.getElementById('logo-preview-em').style.display='block';document.getElementById('logo-preview-img').style.display='none';logoFile=null;};
+window.handleBannerFile=function(input){const file=input.files[0];if(!file)return;bannerFile=file;const r=new FileReader();r.onload=e=>{document.getElementById('banner-preview-img').src=e.target.result;document.getElementById('banner-preview-img').style.display='block';document.getElementById('banner-placeholder').style.display='none';document.getElementById('set-banner-url').value='';};r.readAsDataURL(file);};
+window.previewBannerUrl=function(url){if(!url)return;document.getElementById('banner-preview-img').src=url;document.getElementById('banner-preview-img').style.display='block';document.getElementById('banner-placeholder').style.display='none';bannerFile=null;};
+window.clearBanner=function(){bannerFile=null;document.getElementById('set-banner-url').value='';document.getElementById('banner-preview-img').src='';document.getElementById('banner-preview-img').style.display='none';document.getElementById('banner-placeholder').style.display='flex';};
+
+async function uploadSettingsFile(file,path,statusElId){
+  const {getStorage,ref,uploadBytesResumable,getDownloadURL}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
+  const {getApp}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+  const storage=getStorage(getApp());
+  const storageRef=ref(storage,path);
+  const statusEl=document.getElementById(statusElId);
+  return new Promise((resolve,reject)=>{
+    const task=uploadBytesResumable(storageRef,file);
+    task.on('state_changed',snap=>{const pct=Math.round(snap.bytesTransferred/snap.totalBytes*100);if(statusEl)statusEl.textContent=`Завантаження: ${pct}%`;},
+      err=>{if(statusEl)statusEl.textContent='Помилка: '+err.message;reject(err);},
+      async()=>{const url=await getDownloadURL(task.snapshot.ref);if(statusEl)statusEl.textContent='✅ Завантажено';setTimeout(()=>{if(statusEl)statusEl.textContent='';},3000);resolve(url);});
+  });
 }
-function applyPreset(i){
-  const p=PRESETS[i];
-  setColor('c-accent',p.accent);setColor('c-bg',p.bg);setColor('c-card',p.card);setColor('c-text',p.text);
-  document.getElementById('font-head').value=p.head;
-  livePreview();notify('✅ Палітру застосовано!','ok');
+
+async function loadSettings(){
+  const {doc,getDoc}=window.__FS;
+  try{
+    const snap=await getDoc(doc(db,'venues',venueId,'settings','main'));
+    if(!snap.exists())return;
+    const d=snap.data();
+    if(d.name){document.getElementById('set-name').value=d.name;document.getElementById('sb-venue-name').textContent=d.name;}
+    if(d.tagline)document.getElementById('set-tag').value=d.tagline;
+    if(d.city)document.getElementById('set-city').value=d.city;
+    if(d.phone)document.getElementById('set-phone').value=d.phone;
+    if(d.address)document.getElementById('set-addr').value=d.address;
+    if(d.hours)document.getElementById('set-hours')&&(document.getElementById('set-hours').value=d.hours);
+    if(d.logoUrl){document.getElementById('set-logo-url').value=d.logoUrl;window.previewLogoUrl(d.logoUrl);}
+    else if(d.logoEmoji){document.getElementById('set-logo-emoji').value=d.logoEmoji;window.previewLogoEmoji(d.logoEmoji);}
+    if(d.bannerUrl){document.getElementById('set-banner-url').value=d.bannerUrl;window.previewBannerUrl(d.bannerUrl);}
+    const qrUrl=`mageqrrest.com/menu.html?v=${venueId}`;
+    document.getElementById('venue-qr-url')&&(document.getElementById('venue-qr-url').textContent=qrUrl);
+  }catch(e){console.warn('loadSettings:',e.message);}
 }
+
+window.saveSettings=async function(){
+  const {doc,setDoc}=window.__FS;
+  notify('Зберігаємо...','ok');
+  let logoUrl=document.getElementById('set-logo-url').value.trim();
+  let bannerUrl=document.getElementById('set-banner-url').value.trim();
+  try{
+    if(logoFile){logoUrl=await uploadSettingsFile(logoFile,`venues/${venueId}/settings/logo_${Date.now()}`,'logo-upload-status');document.getElementById('set-logo-url').value=logoUrl;logoFile=null;}
+    if(bannerFile){bannerUrl=await uploadSettingsFile(bannerFile,`venues/${venueId}/settings/banner_${Date.now()}`,'banner-upload-status');document.getElementById('set-banner-url').value=bannerUrl;bannerFile=null;}
+    const data={name:document.getElementById('set-name').value.trim(),tagline:document.getElementById('set-tag').value.trim(),city:document.getElementById('set-city')?.value.trim()||'',phone:document.getElementById('set-phone').value.trim(),address:document.getElementById('set-addr').value.trim(),hours:document.getElementById('set-hours')?.value.trim()||'',logoUrl,logoEmoji:document.getElementById('set-logo-emoji').value.trim(),bannerUrl,updatedAt:new Date().toISOString()};
+    await setDoc(doc(db,'venues',venueId,'settings','main'),data);
+    if(data.name)document.getElementById('sb-venue-name').textContent=data.name;
+    notify('✅ Налаштування збережено!','ok');
+  }catch(e){notify('Помилка: '+e.message,'err');}
+};
+window.copyMenuUrl=function(){const url=`https://mageqrrest.com/menu.html?v=${venueId}`;navigator.clipboard.writeText(url).then(()=>notify('🔗 Посилання скопійовано!','ok'));};
+window.openMenuUrl=function(){window.open(`https://mageqrrest.com/menu.html?v=${venueId}`,'_blank');};
+
+// ── ДИЗАЙН ──
+const PRESETS=[
+  {name:'Японський',accent:'#C1440E',bg:'#FBF8F4',card:'#FFFFFF',text:'#1A1208',head:'Playfair Display'},
+  {name:'Темний',accent:'#A78BFA',bg:'#0F0F1A',card:'#1A1A2E',text:'#E8E8FF',head:'Space Grotesk'},
+  {name:'Природний',accent:'#059669',bg:'#F0FAF5',card:'#FFFFFF',text:'#1A2E25',head:'Cormorant Garamond'},
+  {name:'Лофт',accent:'#D97706',bg:'#1C1917',card:'#292524',text:'#FEF3C7',head:'Unbounded'},
+  {name:'Пастель',accent:'#DB2777',bg:'#FDF2F8',card:'#FFFFFF',text:'#831843',head:'Raleway'},
+  {name:'Мінімал',accent:'#111827',bg:'#F9FAFB',card:'#FFFFFF',text:'#111827',head:'Montserrat'},
+];
+function renderPresetsRow(){document.getElementById('presets-row').innerHTML=PRESETS.map((p,i)=>`<div class="palette-swatch" style="background:linear-gradient(135deg,${p.accent} 50%,${p.bg} 50%)" title="${p.name}" onclick="applyPreset(${i})"></div>`).join('');}
+window.applyPreset=function(i){const p=PRESETS[i];setColor('c-accent',p.accent);setColor('c-bg',p.bg);setColor('c-card',p.card);setColor('c-text',p.text);document.getElementById('font-head').value=p.head;livePreview();notify('✅ Палітру застосовано!','ok');};
 function setColor(id,val){document.getElementById(id).value=val;document.getElementById(id+'-hex').value=val;}
-function hexToColor(id){const hex=document.getElementById(id+'-hex').value;if(/^#[0-9A-F]{6}$/i.test(hex)){document.getElementById(id).value=hex;livePreview();}}
-window.hexToColor=hexToColor;
+window.hexToColor=function(id){const hex=document.getElementById(id+'-hex').value;if(/^#[0-9A-F]{6}$/i.test(hex)){document.getElementById(id).value=hex;livePreview();}};
 
 function livePreview(){
-  const accent=document.getElementById('c-accent').value;
-  const bg=document.getElementById('c-bg').value;
-  const card=document.getElementById('c-card').value;
-  const text=document.getElementById('c-text').value;
-  const fh=document.getElementById('font-head').value;
-  const bannerH=document.getElementById('banner-h').value;
-  const bannerUrl=document.getElementById('banner-url').value;
-  const logoEmoji=document.getElementById('logo-emoji').value||'🍣';
-  const logoUrl=document.getElementById('logo-url').value;
-  const bgImg=document.getElementById('toggle-bgimg').classList.contains('on');
-  const bgImgUrl=document.getElementById('bg-img-url').value;
-  const showPrices=document.getElementById('toggle-prices').classList.contains('on');
-  const cardR=document.getElementById('card-radius').value;
-
-  // Sync hex fields
-  document.getElementById('c-accent-hex').value=accent;
-  document.getElementById('c-bg-hex').value=bg;
-  document.getElementById('c-card-hex').value=card;
-  document.getElementById('c-text-hex').value=text;
-
-  // Font preview
+  const accent=document.getElementById('c-accent').value,bg=document.getElementById('c-bg').value,card=document.getElementById('c-card').value,text=document.getElementById('c-text').value;
+  const fh=document.getElementById('font-head').value,bannerH=document.getElementById('banner-h').value;
+  const bannerUrl=document.getElementById('banner-url').value,logoEmoji=document.getElementById('logo-emoji').value||'🍣';
+  const showPrices=document.getElementById('toggle-prices').classList.contains('on'),cardR=document.getElementById('card-radius').value;
+  document.getElementById('c-accent-hex').value=accent;document.getElementById('c-bg-hex').value=bg;document.getElementById('c-card-hex').value=card;document.getElementById('c-text-hex').value=text;
   document.getElementById('font-head-preview').style.fontFamily=fh;
-
-  // Apply to preview
-  const pi=document.getElementById('preview-inner');
-  pi.style.background=bgImg&&bgImgUrl?`url(${bgImgUrl}) center/cover`:bg;
-  pi.style.color=text;
-
-  const banner=document.getElementById('pv-banner');
-  banner.style.height=bannerH+'px';
-  banner.style.background=bannerUrl?`url(${bannerUrl}) center/cover`:accent;
-  banner.innerHTML=bannerUrl?'':logoEmoji;
-
-  const logo=document.getElementById('pv-logo');
-  logo.style.background=accent;
-  logo.style.color='#fff';
-  logo.textContent=logoUrl?'':logoEmoji;
-
-  document.getElementById('pv-name').style.fontFamily=fh;
-  document.getElementById('pv-name').style.color=text;
-  document.getElementById('pv-tag').style.color=text+'99';
-
-  document.getElementById('pv-pill1').style.background=accent;
-  document.getElementById('pv-pill1').style.color='#fff';
-  ['pv-pill2','pv-pill3'].forEach(id=>{
-    document.getElementById(id).style.background=bg;
-    document.getElementById(id).style.color=text+'80';
-    document.getElementById(id).style.border=`1px solid ${text}20`;
-  });
-
-  ['pv-dish1','pv-dish2','pv-dish3'].forEach(id=>{
-    const d=document.getElementById(id);
-    d.style.background=card;
-    d.style.borderRadius=cardR+'px';
-    d.style.border=`1px solid ${text}15`;
-  });
+  const pi=document.getElementById('preview-inner');pi.style.background=bg;pi.style.color=text;
+  const banner=document.getElementById('pv-banner');banner.style.height=bannerH+'px';banner.style.background=bannerUrl?`url(${bannerUrl}) center/cover`:accent;banner.innerHTML=bannerUrl?'':logoEmoji;
+  const logo=document.getElementById('pv-logo');logo.style.background=accent;logo.style.color='#fff';logo.textContent=logoEmoji;
+  document.getElementById('pv-name').style.fontFamily=fh;document.getElementById('pv-name').style.color=text;document.getElementById('pv-tag').style.color=text+'99';
+  document.getElementById('pv-pill1').style.background=accent;document.getElementById('pv-pill1').style.color='#fff';
+  ['pv-pill2','pv-pill3'].forEach(id=>{const e=document.getElementById(id);e.style.background=bg;e.style.color=text+'80';e.style.border=`1px solid ${text}20`;});
+  ['pv-dish1','pv-dish2','pv-dish3'].forEach(id=>{const d=document.getElementById(id);d.style.background=card;d.style.borderRadius=cardR+'px';d.style.border=`1px solid ${text}15`;});
   ['pv-dem1','pv-dem2','pv-dem3'].forEach(id=>{document.getElementById(id).style.background=accent+'18';});
-  ['pv-dn1','pv-dn2','pv-dn3'].forEach(id=>{document.getElementById(id).style.color=text;document.getElementById(id).style.fontFamily=fh;});
+  ['pv-dn1','pv-dn2','pv-dn3'].forEach(id=>{const e=document.getElementById(id);e.style.color=text;e.style.fontFamily=fh;});
   ['pv-dp1','pv-dp2','pv-dp3'].forEach(id=>{document.getElementById(id).style.color=accent;document.getElementById(id).style.display=showPrices?'':'none';});
 }
-function saveDesign(){notify('✅ Дизайн збережено! Меню оновлено.','ok');}
-window.livePreview=livePreview;window.applyPreset=applyPreset;window.saveDesign=saveDesign;window.renderOrders=renderOrders;
+window.livePreview=livePreview;
 
-// ── UTILS ──
-function nav(btn,tab){
-  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-  document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));document.getElementById(tab).classList.add('active');
-  // Скидаємо скрол вгору при переключенні вкладок
-  document.querySelector('.main').scrollTop = 0;
-}
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-function notify(msg,type='ok'){const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';setTimeout(()=>n.classList.remove('show'),2800);}
-window.closeModal=closeModal;window.nav=nav;window.notify=notify;
-
-// ── TABLES & QR ──
-let tables=[
-  {id:1,num:1,zone:'Основний зал',seats:4,status:'occupied',staffId:'s1',amount:568,startTime:'13:10',orders:[{name:'Філадельфія ×2',price:378},{name:'Зелений чай ×2',price:90},{name:'Нігірі лосось ×1',price:89}]},
-  {id:2,num:2,zone:'Основний зал',seats:2,status:'free',staffId:'',amount:0,startTime:'',orders:[]},
-  {id:3,num:3,zone:'Основний зал',seats:6,status:'ordered',staffId:'s2',amount:1240,startTime:'12:45',orders:[{name:'Сет «Свято» ×1',price:699},{name:'Спайсі лосось ×3',price:537}]},
-  {id:4,num:4,zone:'Основний зал',seats:4,status:'paid',staffId:'s1',amount:445,startTime:'12:00',orders:[{name:'Каліфорнія ×2',price:338},{name:'Матча ×1',price:75}]},
-  {id:5,num:5,zone:'Тераса',seats:4,status:'free',staffId:'',amount:0,startTime:'',orders:[]},
-  {id:6,num:6,zone:'Тераса',seats:2,status:'occupied',staffId:'s2',amount:179,startTime:'14:05',orders:[{name:'Дракон ×1',price:219}]},
-  {id:7,num:7,zone:'VIP-зал',seats:8,status:'free',staffId:'',amount:0,startTime:'',orders:[]},
-  {id:8,num:8,zone:'VIP-зал',seats:6,status:'ordered',staffId:'s1',amount:2100,startTime:'13:30',orders:[{name:'Сет «Свято» ×3',price:2097}]},
-];
-let staff=[
-  {id:'s1',name:'Іван Петренко',role:'Офіціант',emoji:'👨‍🍳',monoId:'emp_001',tipsToday:320},
-  {id:'s2',name:'Марія Коваль',role:'Офіціант',emoji:'👩‍🍳',monoId:'emp_002',tipsToday:180},
-  {id:'s3',name:'Олег Бондар',role:'Бармен',emoji:'🧑‍🍳',monoId:'',tipsToday:0},
-];
-let zones=['Основний зал','Тераса','VIP-зал'];
-let activeZone='';
-let selectedTable=null;
-let editStaffId=null;
-
-function renderTables(){
-  const filtered=activeZone?tables.filter(t=>t.zone===activeZone):tables;
-  const stMap={free:'ts-free',occupied:'ts-occupied',ordered:'ts-ordered',paid:'ts-paid'};
-  const stLabel={free:'Вільний',occupied:'Зайнятий',ordered:'Замовлено',paid:'Оплачено'};
-  document.getElementById('tables-grid').innerHTML=filtered.map(t=>`
-    <div class="table-card ${t.status}" onclick="openTableDetail(${t.id})">
-      <div class="table-qr-icon">⬛</div>
-      <div class="table-num">${t.num}</div>
-      <div class="table-zone">${t.zone} · ${t.seats} місць</div>
-      <div><span class="table-status ${stMap[t.status]}">${stLabel[t.status]}</span></div>
-      ${t.amount?`<div class="table-amount">₴${t.amount}</div>`:''}
-      ${t.startTime?`<div class="table-timer">⏱ з ${t.startTime}</div>`:''}
-    </div>`).join('');
-  document.getElementById('st-tables-free').textContent=tables.filter(t=>t.status==='free').length;
-  document.getElementById('st-tables-occ').textContent=tables.filter(t=>t.status!=='free').length;
-  document.getElementById('st-tables-rev').textContent='₴'+tables.filter(t=>t.status==='paid').reduce((s,t)=>s+t.amount,0);
-  document.getElementById('st-tips-today').textContent='₴'+staff.reduce((s,p)=>s+p.tipsToday,0);
-}
-function filterZone(btn,zone){
-  document.querySelectorAll('.zone-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');activeZone=zone;renderTables();
-}
-function renderZoneTabs(){
-  const wrap=document.getElementById('zone-tabs');
-  wrap.innerHTML=`<button class="zone-tab active" onclick="filterZone(this,'')">Всі зали</button>`
-    +zones.map(z=>`<button class="zone-tab" onclick="filterZone(this,'${z}')">${z}</button>`).join('');
-}
-window.filterZone=filterZone;
-
-// Draw QR mock on canvas
-function drawQRMock(canvas){
-  const ctx=canvas.getContext('2d');
-  const size=canvas.width;
-  ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);
-  ctx.fillStyle='#1C1916';
-  const pattern=[
-    [1,1,1,1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1],
-    [1,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0,1],
-    [1,0,1,1,1,0,1,0,0,1,0,1,1,0,1,1,1,0,1],
-    [1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1],
-    [1,0,1,1,1,0,1,0,0,1,1,1,1,0,1,1,1,0,1],
-    [1,0,0,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,1],
-    [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1],
-    [0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0],
-    [1,1,0,1,1,0,1,1,0,1,1,0,1,0,1,1,0,1,1],
-    [0,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0],
-    [1,0,1,0,1,0,1,0,1,1,0,0,1,0,1,0,1,0,1],
-    [0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0],
-    [1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,0,0,1,1],
-    [1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0],
-    [1,0,1,1,1,0,1,0,1,0,1,1,1,0,0,1,0,1,1],
-    [1,0,1,1,1,0,1,0,0,1,0,0,1,0,1,0,1,0,0],
-    [1,0,1,1,1,0,1,0,1,0,1,0,0,1,0,1,0,1,1],
-    [1,0,0,0,0,0,1,0,0,1,1,0,1,0,1,0,0,0,0],
-    [1,1,1,1,1,1,1,0,1,0,0,1,0,1,0,1,1,0,1],
-  ];
-  const cell=size/pattern.length;
-  pattern.forEach((row,r)=>row.forEach((v,c)=>{
-    if(v){ctx.fillRect(Math.round(c*cell),Math.round(r*cell),Math.ceil(cell),Math.ceil(cell));}
-  }));
+async function loadDesignSettings(){
+  if(!db||!window.__FS)return;
+  const {doc,getDoc}=window.__FS;
+  try{
+    const snap=await getDoc(doc(db,'venues',venueId,'design','main'));
+    if(!snap.exists())return;
+    const d=snap.data();
+    if(d.accent){document.getElementById('c-accent').value=d.accent;document.getElementById('c-accent-hex').value=d.accent;}
+    if(d.bg){document.getElementById('c-bg').value=d.bg;document.getElementById('c-bg-hex').value=d.bg;}
+    if(d.card){document.getElementById('c-card').value=d.card;document.getElementById('c-card-hex').value=d.card;}
+    if(d.text){document.getElementById('c-text').value=d.text;document.getElementById('c-text-hex').value=d.text;}
+    if(d.fontHead)document.getElementById('font-head').value=d.fontHead;
+    if(d.bannerUrl)document.getElementById('banner-url').value=d.bannerUrl;
+    if(d.logoEmoji)document.getElementById('logo-emoji').value=d.logoEmoji;
+    if(d.cardRadius)document.getElementById('card-radius').value=d.cardRadius;
+    livePreview();
+  }catch(e){console.warn('loadDesignSettings:',e.message);}
 }
 
-function openTableDetail(id){
-  selectedTable=tables.find(t=>t.id===id);
-  const t=selectedTable;
-  document.getElementById('table-detail-title').textContent=`Стіл №${t.num} — ${t.zone}`;
-  const url=`mageqrrest.com/temari?table=${t.num}`;
-  document.getElementById('table-qr-url').textContent=url;
-  const canvas=document.getElementById('table-qr-canvas');
-  drawQRMock(canvas);
-  document.getElementById('table-order-lines').innerHTML=t.orders.length
-    ?t.orders.map(o=>`<div class="order-line"><span>${o.name}</span><span style="font-weight:500">₴${o.price}</span></div>`).join('')
-    :'<div style="font-size:13px;color:var(--muted);text-align:center;padding:.75rem">Замовлень немає</div>';
-  document.getElementById('table-order-total').textContent=t.amount?'₴'+t.amount:'—';
-  const splits=[2,3,4];
-  document.getElementById('split-row').innerHTML=splits.map(n=>`
-    <div class="split-person" onclick="selectSplit(this,${n},${t.amount})">
-      <div style="font-size:1.1rem">👤×${n}</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:2px">${t.amount?'≈₴'+Math.ceil(t.amount/n)+'/ос.':''}</div>
-    </div>`).join('');
-  const staffSel=document.getElementById('table-staff-assign');
-  staffSel.innerHTML='<option value="">— Не призначено —</option>'
-    +staff.map(s=>`<option value="${s.id}"${s.id===t.staffId?' selected':''}>${s.emoji} ${s.name}</option>`).join('');
-  const tipsSel=document.getElementById('tips-staff-select');
-  const assigned=staff.find(s=>s.id===t.staffId);
-  tipsSel.innerHTML=(assigned?`<option>${assigned.emoji} ${assigned.name} (призначений)</option>`:'')
-    +staff.map(s=>s.id!==t.staffId?`<option>${s.emoji} ${s.name}</option>`:'').join('')
-    +'<option>Весь персонал рівно</option>';
-  openModal('modal-table-detail');
-}
-window.openTableDetail=openTableDetail;
-
-function selectSplit(el,n,total){
-  document.querySelectorAll('.split-person').forEach(e=>e.classList.remove('selected'));
-  el.classList.add('selected');
-  notify(`Рахунок розділено на ${n}: ≈₴${Math.ceil(total/n)} з особи`,'ok');
-}
-window.selectSplit=selectSplit;
-
-function selectTip(btn,pct){
-  document.querySelectorAll('.tips-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tips-custom-val').value='';
-  if(selectedTable&&selectedTable.amount){
-    const tipAmt=Math.round(selectedTable.amount*parseInt(pct)/100);
-    notify(`Чайові ${pct}% = ₴${tipAmt}`,'ok');
-  }
-}
-window.selectTip=selectTip;
-
-function sendPayLink(){closeModal('modal-table-detail');notify('💳 Посилання на оплату надіслано клієнту','ok');}
-function markPaid(){if(selectedTable){selectedTable.status='paid';closeModal('modal-table-detail');renderTables();notify('✅ Стіл позначено як оплачений','ok');}}
-function clearTable(){if(selectedTable){selectedTable.status='free';selectedTable.orders=[];selectedTable.amount=0;selectedTable.startTime='';closeModal('modal-table-detail');renderTables();notify('Стіл звільнено','ok');}}
-function downloadQR(){notify('⬇️ QR-код завантажується...','ok');}
-function printQR(){notify('🖨️ Відправлено на друк','ok');}
-function printAllQR(){notify('🖨️ Всі QR-коди відправлені на друк','ok');}
-window.sendPayLink=sendPayLink;window.markPaid=markPaid;window.clearTable=clearTable;window.downloadQR=downloadQR;window.printQR=printQR;window.printAllQR=printAllQR;
-
-// ADD TABLE
-function openAddTable(){['at-num','at-desc'].forEach(f=>document.getElementById(f).value='');document.getElementById('at-seats').value='4';openModal('modal-add-table');}
-function saveTable(){
-  const num=parseInt(document.getElementById('at-num').value);
-  if(!num){notify('Введіть номер столу','err');return;}
-  tables.push({id:Date.now(),num,zone:document.getElementById('at-zone').value,seats:parseInt(document.getElementById('at-seats').value)||4,status:'free',staffId:'',amount:0,startTime:'',orders:[]});
-  closeModal('modal-add-table');renderTables();renderZoneTabs();notify('✅ Стіл додано!','ok');
-}
-function openAddZone(){const z=prompt('Назва нового залу:');if(z&&!zones.includes(z)){zones.push(z);renderZoneTabs();notify('Зал додано','ok');}}
-window.openAddTable=openAddTable;window.saveTable=saveTable;window.openAddZone=openAddZone;
-
-// STAFF
-function renderStaff(){
-  document.getElementById('staff-list').innerHTML=staff.map(s=>`
-    <div class="item-row" style="margin-bottom:.5rem">
-      <div class="item-em">${s.emoji||'👤'}</div>
-      <div class="item-body">
-        <div class="item-name">${s.name}</div>
-        <div class="item-sub">${s.role} · Mono ID: ${s.monoId||'<span style="color:var(--amber)">не вказано</span>'}</div>
-      </div>
-      <div style="font-size:12px;font-weight:600;color:var(--green);margin-right:.5rem">₴${s.tipsToday}</div>
-      <div class="item-btns">
-        <button class="icon-btn" onclick="openEditStaff('${s.id}')">✏️</button>
-        <button class="icon-btn del" onclick="deleteStaff('${s.id}')">🗑️</button>
-      </div>
-    </div>`).join('')||'<div style="color:var(--muted);font-size:13px">Персонал не додано</div>';
-  document.getElementById('staff-tips-grid').innerHTML=staff.map(s=>`
-    <div class="staff-card">
-      <div class="staff-avatar">${s.emoji||'👤'}</div>
-      <div class="staff-name">${s.name}</div>
-      <div class="staff-role">${s.role}</div>
-      <div class="staff-tips-total">₴${s.tipsToday} чайових</div>
-      ${!s.monoId?'<div style="font-size:10px;color:var(--amber);margin-top:2px">⚠️ Без Mono ID</div>':''}
-    </div>`).join('');
-}
-function openAddStaff(){editStaffId=null;document.getElementById('staff-modal-title').textContent='Новий офіціант';['sf-name','sf-mono-id'].forEach(f=>document.getElementById(f).value='');document.getElementById('sf-emoji').value='';openModal('modal-add-staff');}
-function openEditStaff(id){
-  editStaffId=id;const s=staff.find(x=>x.id===id);
-  document.getElementById('staff-modal-title').textContent='Редагувати: '+s.name;
-  document.getElementById('sf-name').value=s.name;
-  document.getElementById('sf-emoji').value=s.emoji||'';
-  document.getElementById('sf-role').value=s.role;
-  document.getElementById('sf-mono-id').value=s.monoId||'';
-  openModal('modal-add-staff');
-}
-function saveStaff(){
-  const name=document.getElementById('sf-name').value.trim();
-  if(!name){notify('Введіть ім\'я','err');return;}
-  const data={name,emoji:document.getElementById('sf-emoji').value||'👤',role:document.getElementById('sf-role').value,monoId:document.getElementById('sf-mono-id').value.trim(),tipsToday:0};
-  if(editStaffId){Object.assign(staff.find(s=>s.id===editStaffId),data);}
-  else{data.id='s'+Date.now();staff.push(data);}
-  closeModal('modal-add-staff');renderStaff();notify('✅ Збережено!','ok');
-}
-function deleteStaff(id){if(confirm('Видалити?')){staff=staff.filter(s=>s.id!==id);renderStaff();}}
-window.openAddStaff=openAddStaff;window.openEditStaff=openEditStaff;window.saveStaff=saveStaff;window.deleteStaff=deleteStaff;
-
-renderZoneTabs();renderTables();renderStaff();
-function selectMode(m){
-  ['instant','after','both'].forEach(id=>{
-    document.getElementById('mode-'+id).classList.toggle('selected',id===m);
-    const r=document.getElementById('radio-'+id);
-    r.classList.toggle('on',id===m);
-    r.classList.toggle('off',id!==m);
-  });
-}
-function toggleProvider(id,on){
-  const card=document.getElementById('card-'+id);
-  const fields=document.getElementById('fields-'+id);
-  card.classList.toggle('enabled',on);
-  fields.style.display=on?'flex':'none';
-}
-function savePayments(){notify('✅ Налаштування платежів збережено!','ok');}
-
-document.getElementById('fiscal').addEventListener('change',function(){
-  document.getElementById('fiscal-fields').style.display=this.checked?'block':'none';
-});
-
-// ── POS ──
-function connectPOS(sys){
-  const statusEl=document.getElementById(sys+'-status');
-  const cardEl=document.getElementById('pos-card-'+sys);
-  const logEl=document.getElementById('log-'+sys);
-  statusEl.textContent='Підключення...';
-  statusEl.className='pos-status off';
-  setTimeout(()=>{
-    statusEl.textContent='✓ Підключено';
-    statusEl.className='pos-status ok';
-    cardEl.classList.add('connected');
-    const now=new Date().toLocaleTimeString('uk-UA');
-    logEl.innerHTML=`<div class="log-ok">[${now}] ✓ Підключення успішне</div>`
-      +`<div class="log-ok">[${now}] ✓ Авторизація пройдена</div>`
-      +`<div class="log-info">[${now}] ℹ Готово до синхронізації</div>`;
-    notify(`✅ ${sys==='poster'?'Poster':'Syrve'} підключено!`,'ok');
-  },1200);
-}
-function testPOS(sys){
-  const logEl=document.getElementById('log-'+sys);
-  const now=new Date().toLocaleTimeString('uk-UA');
-  logEl.innerHTML=`<div class="log-info">[${now}] → Відправка тест-замовлення...</div>`;
-  setTimeout(()=>{
-    logEl.innerHTML+=`<div class="log-ok">[${now}] ✓ Замовлення прийнято (#TEST-001)</div>`
-      +`<div class="log-ok">[${now}] ✓ Відповідь: 200 OK</div>`;
-    notify('✅ Тест-замовлення успішне!','ok');
-  },900);
-}
-function savePOS(){notify('✅ POS-налаштування збережено!','ok');}
-function autoMapProducts(){
-  renderMappingRows();
-  notify('⚡ Зіставлення виконано за назвою','ok');
-}
-function renderMappingRows(){
-  document.getElementById('mapping-rows').innerHTML=items.map(it=>`
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.375rem;align-items:center">
-      <div style="font-size:13px;display:flex;align-items:center;gap:.375rem">${it.emoji} ${it.name}</div>
-      <input type="text" placeholder="напр. 42" style="padding:5px 8px;font-size:12px" value="${Math.floor(Math.random()*900)+100}"/>
-      <input type="text" placeholder="UUID" style="padding:5px 8px;font-size:12px" value=""/>
-    </div>`).join('');
-}
-renderMappingRows();
-
-// ── ПІДПИСКА ─────────────────────────────────────────────
-const PLAN_LIMITS = {
-  free:       {name:'Free',       price:0,    items:20,   cats:5,   orders:100},
-  trial:      {name:'Trial',      price:0,    items:500,  cats:50,  orders:5000},
-  starter:    {name:'Starter',    price:299,  items:80,   cats:15,  orders:500},
-  pro:        {name:'Pro',        price:699,  items:500,  cats:50,  orders:5000},
-  enterprise: {name:'Enterprise', price:1999, items:99999,cats:999, orders:99999},
-};
-let selectedUpgradePlan = null;
-
-async function loadSubscription() {
-  if(!db||!window.__FS) return;
-  const {doc,getDoc} = window.__FS;
-  try {
-    const venueDoc = await getDoc(doc(db,'venues',venueId));
-    if(!venueDoc.exists()) return;
-    const data = venueDoc.data();
-    const plan = data.plan||'free';
-    const pi = PLAN_LIMITS[plan]||PLAN_LIMITS.free;
-    const isTrial = plan==='trial';
-    document.getElementById('sub-plan-name').textContent = pi.name+' тариф';
-    document.getElementById('sub-plan-desc').textContent = isTrial
-      ? 'Пробний період — всі функції Pro доступні безкоштовно'
-      : `Тариф ${pi.name} — активний`;
-    let daysLeft=0, expiresDate='—';
-    const endAt = isTrial ? data.trialEndsAt : data.planEndsAt;
-    if(endAt){
-      const endMs=endAt.seconds*1000;
-      daysLeft=Math.max(0,Math.ceil((endMs-Date.now())/86400000));
-      expiresDate=new Date(endMs).toLocaleDateString('uk-UA');
-      if(daysLeft<=3){
-        document.getElementById('sub-warning').style.display='block';
-        document.getElementById('sub-hero').style.background='linear-gradient(135deg,#D97706,#F59E0B)';
-      }
-    }
-    document.getElementById('sub-days-left').textContent=daysLeft;
-    document.getElementById('sub-trial-badge').style.display=isTrial?'inline-flex':'none';
-    document.getElementById('sc-plan').textContent=pi.name;
-    document.getElementById('sc-plan-sub').textContent=pi.price?pi.price+' грн/міс':'Безкоштовно';
-    document.getElementById('sc-expires').textContent=expiresDate;
-    document.getElementById('sc-next-payment').textContent=plan==='free'?'—':expiresDate;
-    document.getElementById('sc-next-amount').textContent=pi.price?pi.price+' грн':'Безкоштовно';
-    const now=new Date(); now.setDate(1); now.setHours(0,0,0,0);
-    const ordersMonth=orders.filter(o=>o.dateMs>=now.getTime()).length;
-    document.getElementById('sc-usage').textContent=ordersMonth;
-    function setBar(bId,tId,cur,max){
-      const pct=max>=99999?5:Math.min(100,Math.round(cur/max*100));
-      const bar=document.getElementById(bId);
-      if(!bar) return;
-      bar.style.width=pct+'%';
-      bar.className='usage-fill'+(pct>=90?' danger':pct>=70?' warn':'');
-      document.getElementById(tId).textContent=max>=99999?`${cur} / ∞`:`${cur} / ${max}`;
-    }
-    setBar('usage-items-bar','usage-items-text',items.length,pi.items);
-    setBar('usage-orders-bar','usage-orders-text',ordersMonth,pi.orders);
-    setBar('usage-cats-bar','usage-cats-text',cats.length,pi.cats);
-    document.querySelectorAll('.plan-tile').forEach(t=>t.classList.remove('current'));
-    document.getElementById(`pt-${isTrial?'pro':plan}`)?.classList.add('current');
-  } catch(e){ console.warn('loadSubscription:',e.message); }
-}
-
-window.selectPlanUpgrade = function(plan){
-  selectedUpgradePlan=plan;
-  document.querySelectorAll('.plan-tile').forEach(t=>t.classList.remove('current'));
-  document.getElementById(`pt-${plan}`)?.classList.add('current');
-  const btn=document.getElementById('pay-btn');
-  if(plan==='free'){btn.style.display='none';return;}
-  const p=PLAN_LIMITS[plan];
-  btn.style.display='block';
-  btn.textContent=`💳 Оплатити ${p.name} — ${p.price} грн/міс через Monobank`;
+window.saveDesign=async function(){
+  if(!db||!window.__FS){notify('Firebase не підключено','err');return;}
+  const {doc,setDoc}=window.__FS;
+  const data={accent:document.getElementById('c-accent').value,bg:document.getElementById('c-bg').value,card:document.getElementById('c-card').value,text:document.getElementById('c-text').value,fontHead:document.getElementById('font-head').value,fontBody:document.getElementById('font-body').value,bannerUrl:document.getElementById('banner-url').value,logoEmoji:document.getElementById('logo-emoji').value,logoUrl:document.getElementById('logo-url').value,cardRadius:document.getElementById('card-radius').value,fontSize:document.getElementById('font-size').value,showPrices:document.getElementById('toggle-prices').classList.contains('on'),showDesc:document.getElementById('toggle-desc').classList.contains('on'),showWeight:document.getElementById('toggle-weight').classList.contains('on'),updatedAt:new Date().toISOString()};
+  try{await setDoc(doc(db,'venues',venueId,'design','main'),data);notify('✅ Дизайн збережено!','ok');}
+  catch(e){notify('Помилка: '+e.message,'err');}
 };
 
-window.paySubscription = async function(){
-  if(!selectedUpgradePlan||selectedUpgradePlan==='free') return;
-  const btn=document.getElementById('pay-btn');
-  btn.textContent='⏳ Створюємо рахунок...'; btn.disabled=true;
-  try {
-    const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
-    const token=await getAuth().currentUser?.getIdToken();
-    const res=await fetch(`${window.__CF_URL}/createMonoInvoice`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},
-      body:JSON.stringify({venueId,plan:selectedUpgradePlan}),
-    });
-    const data=await res.json();
-    if(data.pageUrl){window.open(data.pageUrl,'_blank');notify('💳 Відкриваємо Monobank...','ok');}
-    else notify('Помилка: '+(data.error||'Невідома'),'err');
-  } catch(e){ notify('Помилка: '+e.message,'err'); }
-  finally{ btn.textContent='💳 Оплатити через Monobank'; btn.disabled=false; }
-};
+// ── BILLING ──
+const PLANS_BILLING={free:{name:'Free',price:0,color:'#8888AA'},trial:{name:'Trial',price:0,color:'#C1440E'},starter:{name:'Starter',price:299,color:'#F59E0B'},pro:{name:'Pro',price:699,color:'#6C63FF'},enterprise:{name:'Enterprise',price:1999,color:'#10B981'}};
 
-// ── БІЛІНГ ───────────────────────────────────────────────
-const PLANS_BILLING = {
-  free:       { name:'Free',       price:0,    color:'#8888AA' },
-  trial:      { name:'Trial',      price:0,    color:'#C1440E' },
-  starter:    { name:'Starter',    price:299,  color:'#F59E0B' },
-  pro:        { name:'Pro',        price:699,  color:'#6C63FF' },
-  enterprise: { name:'Enterprise', price:1999, color:'#10B981' },
-};
-
-async function loadBilling() {
-  if(!db || !window.__FS) return;
-  const { doc, getDoc, collection, getDocs } = window.__FS;
-  try {
-    const venueSnap = await getDoc(doc(db,'venues',venueId));
-    if(!venueSnap.exists()) return;
-    const vd = venueSnap.data();
-    const plan = vd.plan || 'trial';
-    const planData = PLANS_BILLING[plan] || PLANS_BILLING.trial;
-
-    // ── Підзаголовок ──
-    document.getElementById('billing-sub').textContent = `Тариф: ${planData.name}`;
-
-    // ── Поточний тариф ──
-    document.getElementById('cur-plan-name').textContent = planData.name;
-    document.getElementById('cur-plan-name').style.color = planData.color;
-    document.getElementById('cur-plan-desc').textContent =
-      plan==='trial' ? 'Пробний період' :
-      plan==='free'  ? 'Безкоштовно' : `₴${planData.price}/місяць`;
-
-    // ── Trial таймер ──
-    if(plan === 'trial' && vd.trialEndsAt) {
-      const trialEnd = vd.trialEndsAt.seconds * 1000;
-      const daysLeft = Math.max(0, Math.ceil((trialEnd - Date.now()) / 86400000));
-      const pct = Math.round(daysLeft / 14 * 100);
-      document.getElementById('trial-days-big').textContent = daysLeft;
-      document.getElementById('trial-days-label').textContent =
-        daysLeft === 0 ? 'Пробний період закінчився!' : 'днів залишилось';
-      document.getElementById('trial-fill').style.width = pct + '%';
-      document.getElementById('trial-fill').style.background =
-        daysLeft <= 3 ? 'var(--red)' : daysLeft <= 7 ? 'var(--amber)' : 'var(--green)';
-      const endDate = new Date(trialEnd);
-      document.getElementById('trial-end-date').textContent =
-        `Пробний період закінчується: ${endDate.toLocaleDateString('uk-UA',{day:'numeric',month:'long'})}`;
-      document.getElementById('trial-block').style.display = 'block';
-    } else {
-      // Не trial — ховаємо таймер
-      document.getElementById('trial-block').style.display = 'none';
+async function loadBilling(){
+  if(!db||!window.__FS)return;
+  const {doc,getDoc,collection,getDocs}=window.__FS;
+  try{
+    const venueSnap=await getDoc(doc(db,'venues',venueId));
+    if(!venueSnap.exists())return;
+    const vd=venueSnap.data();
+    const plan=vd.plan||'trial';
+    const planData=PLANS_BILLING[plan]||PLANS_BILLING.trial;
+    document.getElementById('billing-sub').textContent=`Тариф: ${planData.name}`;
+    document.getElementById('cur-plan-name').textContent=planData.name;
+    document.getElementById('cur-plan-name').style.color=planData.color;
+    document.getElementById('cur-plan-desc').textContent=plan==='trial'?'Пробний період':plan==='free'?'Безкоштовно':`₴${planData.price}/місяць`;
+    if(plan==='trial'&&vd.trialEndsAt){
+      const trialEnd=vd.trialEndsAt.seconds*1000;
+      const daysLeft=Math.max(0,Math.ceil((trialEnd-Date.now())/86400000));
+      const pct=Math.round(daysLeft/14*100);
+      document.getElementById('trial-days-big').textContent=daysLeft;
+      document.getElementById('trial-days-label').textContent=daysLeft===0?'Пробний період закінчився!':'днів залишилось';
+      document.getElementById('trial-fill').style.width=pct+'%';
+      document.getElementById('trial-fill').style.background=daysLeft<=3?'var(--red)':daysLeft<=7?'var(--amber)':'var(--green)';
+      const endDate=new Date(trialEnd);
+      document.getElementById('trial-end-date').textContent=`Пробний період закінчується: ${endDate.toLocaleDateString('uk-UA',{day:'numeric',month:'long'})}`;
+      document.getElementById('trial-block').style.display='block';
+    }else{document.getElementById('trial-block').style.display='none';}
+    if(vd.recToken){
+      document.getElementById('no-card-block').style.display='none';
+      document.getElementById('has-card-block').style.display='block';
+      document.getElementById('card-num-display').textContent=vd.cardMask||'**** **** **** ????';
+      document.getElementById('card-exp-display').textContent=vd.cardExpiry||'';
     }
-
-    // ── Картка ──
-    if(vd.recToken) {
-      document.getElementById('no-card-block').style.display = 'none';
-      document.getElementById('has-card-block').style.display = 'block';
-      document.getElementById('card-num-display').textContent = vd.cardMask || '**** **** **** ????';
-      document.getElementById('card-exp-display').textContent = vd.cardExpiry || '';
+    if(vd.planEndsAt&&plan!=='trial'&&plan!=='free'){
+      const nextDate=new Date(vd.planEndsAt.seconds*1000);
+      document.getElementById('next-charge-date').textContent=nextDate.toLocaleDateString('uk-UA',{day:'numeric',month:'long',year:'numeric'});
+      document.getElementById('next-charge-amount').textContent=`Буде списано ₴${planData.price}`;
+    }else if(plan==='trial'){
+      document.getElementById('next-charge-date').textContent='—';
+      document.getElementById('next-charge-amount').textContent='Після закінчення trial → Free';
+    }else{
+      document.getElementById('next-charge-date').textContent='—';
+      document.getElementById('next-charge-amount').textContent='Тільки після оплати тарифу';
     }
-
-    // ── Наступне списання ──
-    if(vd.planEndsAt && plan !== 'trial' && plan !== 'free') {
-      const nextDate = new Date(vd.planEndsAt.seconds * 1000);
-      document.getElementById('next-charge-date').textContent =
-        nextDate.toLocaleDateString('uk-UA',{day:'numeric',month:'long',year:'numeric'});
-      document.getElementById('next-charge-amount').textContent = `Буде списано ₴${planData.price}`;
-    } else if(plan === 'trial') {
-      document.getElementById('next-charge-date').textContent = '—';
-      document.getElementById('next-charge-amount').textContent = 'Після закінчення trial → Free';
-    } else {
-      document.getElementById('next-charge-date').textContent = '—';
-      document.getElementById('next-charge-amount').textContent = 'Тільки після оплати тарифу';
-    }
-
-    // ── Використання ──
-    const itemsSnap = await getDocs(collection(db,'venues',venueId,'items'));
-    const ordSnap   = await getDocs(collection(db,'venues',venueId,'orders'));
-    const limits = {free:{items:20,orders:100},trial:{items:500,orders:5000},
-                    starter:{items:80,orders:500},pro:{items:500,orders:5000},enterprise:{items:99999,orders:99999}};
-    const lim = limits[plan]||limits.free;
-    document.getElementById('usage-info').innerHTML =
-      `Страв: <b>${itemsSnap.size}/${lim.items}</b><br/>Замовлень: <b>${ordSnap.size}/${lim.orders}</b>`;
-
-    // ── Плани ──
+    const itemsSnap=await getDocs(collection(db,'venues',venueId,'items'));
+    const ordSnap=await getDocs(collection(db,'venues',venueId,'orders'));
+    const limits={free:{items:20,orders:100},trial:{items:500,orders:5000},starter:{items:80,orders:500},pro:{items:500,orders:5000},enterprise:{items:99999,orders:99999}};
+    const lim=limits[plan]||limits.free;
+    document.getElementById('usage-info').innerHTML=`Страв: <b>${itemsSnap.size}/${lim.items}</b><br/>Замовлень: <b>${ordSnap.size}/${lim.orders}</b>`;
     renderBillingPlanCards(plan);
-
-    // ── Історія платежів ──
-    const paymSnap = await getDocs(collection(db,'payments'));
-    const payments = paymSnap.docs.map(d=>({id:d.id,...d.data()}))
-      .filter(p=>p.venueId===venueId)
-      .sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-    if(payments.length) {
-      document.getElementById('billing-history-wrap').innerHTML = payments.map(p=>`
-        <div class="bh-row">
-          <div class="bh-status ${p.status==='success'?'bh-paid':p.status==='pending'?'bh-pending':'bh-failed'}"></div>
-          <div style="flex:1">
-            <div style="font-weight:500">${PLANS_BILLING[p.plan]?.name||p.plan} тариф</div>
-            <div style="font-size:11px;color:var(--muted)">${p.createdAt?new Date(p.createdAt.seconds*1000).toLocaleDateString('uk-UA'):''}</div>
-          </div>
-          <div style="font-weight:600">₴${(p.amount/100)||0}</div>
-          <div style="font-size:11px;margin-left:.5rem;color:${p.status==='success'?'var(--green)':p.status==='pending'?'var(--amber)':'var(--red)'}">
-            ${p.status==='success'?'Оплачено':p.status==='pending'?'Очікує':'Помилка'}</div>
-        </div>`).join('');
-    }
-  } catch(e){ console.warn('loadBilling:',e.message); }
+    const paymSnap=await getDocs(collection(db,'payments'));
+    const payments=paymSnap.docs.map(d=>({id:d.id,...d.data()})).filter(p=>p.venueId===venueId).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    if(payments.length){document.getElementById('billing-history-wrap').innerHTML=payments.map(p=>`<div class="bh-row"><div class="bh-status ${p.status==='success'?'bh-paid':p.status==='pending'?'bh-pending':'bh-failed'}"></div><div style="flex:1"><div style="font-weight:500">${PLANS_BILLING[p.plan]?.name||p.plan} тариф</div><div style="font-size:11px;color:var(--muted)">${p.createdAt?new Date(p.createdAt.seconds*1000).toLocaleDateString('uk-UA'):''}</div></div><div style="font-weight:600">₴${(p.amount/100)||0}</div><div style="font-size:11px;margin-left:.5rem;color:${p.status==='success'?'var(--green)':p.status==='pending'?'var(--amber)':'var(--red)'}">${p.status==='success'?'Оплачено':p.status==='pending'?'Очікує':'Помилка'}</div></div>`).join('');}
+  }catch(e){console.warn('loadBilling:',e.message);}
 }
 
 function renderBillingPlanCards(currentPlan){
@@ -2883,87 +1924,74 @@ function renderBillingPlanCards(currentPlan){
     {key:'enterprise',name:'Enterprise',price:1999,features:['Необмежено','POS інтеграція','Власний домен']},
   ];
   document.getElementById('billing-plan-cards').innerHTML=plans.map(p=>`
-    <div style="background:var(--card);border:1.5px solid ${p.key===currentPlan?'var(--accent)':'var(--border)'};
-      border-radius:var(--radius);padding:1rem;position:relative;
-      ${p.key===currentPlan?'background:var(--accent-soft)':''}">
+    <div style="background:var(--card);border:1.5px solid ${p.key===currentPlan?'var(--accent)':'var(--border)'};border-radius:var(--radius);padding:1rem;position:relative;${p.key===currentPlan?'background:var(--accent-soft)':''}">
       ${p.popular?'<div style="position:absolute;top:.5rem;right:.5rem;background:var(--accent);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600">ПОПУЛЯРНИЙ</div>':''}
       <div style="font-family:var(--font-head);font-size:.95rem;font-weight:600;margin-bottom:.25rem">${p.name}</div>
-      <div style="font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:.5rem">
-        ${p.price?'₴'+p.price+'<span style="font-size:11px;font-weight:400;color:var(--muted)">/міс</span>':'Безкоштовно'}
-      </div>
+      <div style="font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:.5rem">${p.price?'₴'+p.price+'<span style="font-size:11px;font-weight:400;color:var(--muted)">/міс</span>':'Безкоштовно'}</div>
       <div style="font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:.75rem">${p.features.join('<br/>')}</div>
-      ${p.key!==currentPlan
-        ?`<button class="btn btn-accent btn-sm" style="width:100%" onclick="subscribePlan('${p.key}')">
-            ${currentPlan==='trial'||currentPlan==='free'?'Обрати':'Перейти'}</button>`
-        :'<div style="text-align:center;font-size:12px;color:var(--accent);font-weight:600">✓ Поточний тариф</div>'}
+      ${p.key!==currentPlan?`<button class="btn btn-accent btn-sm" style="width:100%" onclick="subscribePlan('${p.key}')">${currentPlan==='trial'||currentPlan==='free'?'Обрати':'Перейти'}</button>`:'<div style="text-align:center;font-size:12px;color:var(--accent);font-weight:600">✓ Поточний тариф</div>'}
     </div>`).join('');
 }
 
-window.openPlanSelect = function(){
-  document.getElementById('plan-select-section').scrollIntoView({behavior:'smooth'});
-};
+window.openPlanSelect=function(){document.getElementById('plan-select-section').scrollIntoView({behavior:'smooth'});};
+window.bindCard=function(){document.getElementById('plan-select-section').scrollIntoView({behavior:'smooth'});notify('Оберіть тариф для прив’язки картки 👇','ok');};
 
-// Прив'язати картку — показати вибір тарифу і проскролити
-window.bindCard = function(){
-  document.getElementById('plan-select-section').scrollIntoView({behavior:'smooth'});
-  notify('Оберіть тариф для прив\u2019язки картки 👇','ok');
-};
-
-window.subscribePlan = async function(plan){
-  if(plan==='free'){ notify('Free тариф не потребує оплати','ok'); return; }
+window.subscribePlan=async function(plan){
+  if(plan==='free'){notify('Free тариф не потребує оплати','ok');return;}
   notify('Створюємо рахунок Monobank...','ok');
-  try {
-    const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
-    const token = await getAuth().currentUser.getIdToken();
-    const res = await fetch(`${window.__CF_URL}/createMonoInvoice`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-      body:JSON.stringify({venueId,plan}),
-    });
-    const data = await res.json();
-    if(!res.ok){ notify('Помилка: '+(data.error||'невідома'),'err'); return; }
+  try{
+    const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token=await getAuth().currentUser.getIdToken();
+    const res=await fetch(`${window.__CF_URL}/createMonoInvoice`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,plan})});
+    const data=await res.json();
+    if(!res.ok){notify('Помилка: '+(data.error||'невідома'),'err');return;}
     window.open(data.pageUrl,'_blank');
     notify('✅ Відкрито сторінку оплати Monobank','ok');
-  } catch(e){ notify('Помилка: '+e.message,'err'); }
+  }catch(e){notify('Помилка: '+e.message,'err');}
+};
+window.changeCard=async function(){const {doc,getDoc}=window.__FS;const snap=await getDoc(doc(db,'venues',venueId));const plan=snap.data()?.plan||'pro';await window.subscribePlan(plan==='trial'||plan==='free'?'starter':plan);};
+window.removeCard=async function(){
+  if(!confirm('Відвязати картку?'))return;
+  const {doc,updateDoc}=window.__FS;
+  try{await updateDoc(doc(db,'venues',venueId),{recToken:null,cardMask:null,cardExpiry:null});
+  document.getElementById('no-card-block').style.display='block';document.getElementById('has-card-block').style.display='none';notify('Картку відвязано','ok');}
+  catch(e){notify('Помилка: '+e.message,'err');}
 };
 
-window.changeCard = async function(){
-  const { doc, getDoc } = window.__FS;
-  const snap = await getDoc(doc(db,'venues',venueId));
-  const plan = snap.data()?.plan || 'pro';
-  await subscribePlan(plan==='trial'||plan==='free'?'starter':plan);
-};
+// ── POS ──
+function renderMappingRows(){
+  document.getElementById('mapping-rows').innerHTML=items.map(it=>`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.375rem;align-items:center">
+      <div style="font-size:13px">🍽️ ${it.name}</div>
+      <input type="text" placeholder="напр. 42" style="padding:5px 8px;font-size:12px" value=""/>
+      <input type="text" placeholder="UUID" style="padding:5px 8px;font-size:12px" value=""/>
+    </div>`).join('');
+}
+function connectPOS(sys){const s=document.getElementById(sys+'-status');const c=document.getElementById('pos-card-'+sys);const l=document.getElementById('log-'+sys);s.textContent='Підключення...';setTimeout(()=>{s.textContent='✓ Підключено';s.className='pos-status ok';c.classList.add('connected');const now=new Date().toLocaleTimeString('uk-UA');l.innerHTML=`<div class="log-ok">[${now}] ✓ Підключення успішне</div><div class="log-info">[${now}] ℹ Готово до синхронізації</div>`;notify(`✅ ${sys==='poster'?'Poster':'Syrve'} підключено!`,'ok');},1200);}
+function testPOS(sys){const l=document.getElementById('log-'+sys);const now=new Date().toLocaleTimeString('uk-UA');l.innerHTML=`<div class="log-info">[${now}] → Відправка тест-замовлення...</div>`;setTimeout(()=>{l.innerHTML+=`<div class="log-ok">[${now}] ✓ Відповідь: 200 OK</div>`;notify('✅ Тест успішний!','ok');},900);}
+window.connectPOS=connectPOS;window.testPOS=testPOS;
+window.savePOS=function(){notify('✅ POS-налаштування збережено!','ok');};
+window.savePayments=function(){notify('✅ Налаштування платежів збережено!','ok');};
+window.autoMapProducts=function(){renderMappingRows();notify('⚡ Зіставлення виконано','ok');};
+function selectMode(m){['instant','after','both'].forEach(id=>{document.getElementById('mode-'+id).classList.toggle('selected',id===m);const r=document.getElementById('radio-'+id);r.classList.toggle('on',id===m);});}
+function toggleProvider(id,on){document.getElementById('card-'+id).classList.toggle('enabled',on);document.getElementById('fields-'+id).style.display=on?'flex':'none';}
+window.selectMode=selectMode;window.toggleProvider=toggleProvider;
+document.getElementById('fiscal')?.addEventListener('change',function(){document.getElementById('fiscal-fields').style.display=this.checked?'block':'none';});
 
-window.removeCard = async function(){
-  if(!confirm('Відв\'язати картку? Автоматичні списання припиняться.')) return;
-  const { doc, updateDoc } = window.__FS;
-  try {
-    await updateDoc(doc(db,'venues',venueId),{recToken:null,cardMask:null,cardExpiry:null});
-    document.getElementById('no-card-block').style.display='block';
-    document.getElementById('has-card-block').style.display='none';
-    notify('Картку відв\'язано','ok');
-  } catch(e){notify('Помилка: '+e.message,'err');}
-};
+// ── UTILS ──
+function nav(btn,tab){
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+  const main=document.querySelector('.main');if(main)main.scrollTop=0;
+  if(tab==='t-billing')loadBilling();
+}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function notify(msg,type='ok'){const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';setTimeout(()=>n.classList.remove('show'),2800);}
+window.nav=nav;window.openModal=openModal;window.closeModal=closeModal;window.notify=notify;
 
-const _origNav = window.nav;
-window.nav = function(btn,tab){
-  _origNav(btn,tab);
-  if(tab==='t-billing') {
-    // Чекаємо поки venueId визначиться
-    if(venueId && venueId !== 'demo') {
-      loadBilling();
-    } else {
-      const wait = setInterval(() => {
-        if(venueId && venueId !== 'demo') {
-          clearInterval(wait);
-          loadBilling();
-        }
-      }, 300);
-    }
-  }
-};
-
-init();
+initFirebase();
 </script>
 </body>
 </html>
