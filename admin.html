@@ -1030,9 +1030,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
             <div style="font-size:11px;color:var(--muted);margin-bottom:.75rem;background:var(--bg2);padding:.625rem;border-radius:6px;line-height:1.6">
               <strong>Як підключити:</strong> Poster Admin → Додатки → Маркет → Mage QR Rest → Встановити → Скопіювати токен
             </div>
-            <div style="display:flex;gap:.5rem">
-              <button class="btn btn-outline btn-sm" onclick="testPOS('poster')">🧪 Тест-замовлення</button>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <button class="btn btn-outline btn-sm" onclick="testPOS('poster')">🧪 Тест</button>
               <button class="btn btn-accent btn-sm" onclick="connectPOS('poster')">Підключити</button>
+              <button class="btn btn-outline btn-sm" onclick="showPosterWebhook()" title="Налаштувати авто-оновлення статусів">🔗 Webhook</button>
             </div>
             <div style="margin-top:.875rem">
               <div class="pay-field-label">Журнал синхронізації</div>
@@ -2097,7 +2098,7 @@ window.savePOSMapping = async function() {
   } catch(e) { notify('Помилка: ' + e.message, 'err'); }
 };
 
-window.autoMapProducts=function(){renderMappingRows();notify('⚡ Зіставлення виконано','ok');};
+// autoMapProducts визначено вище
 function selectMode(m){['instant','after','both'].forEach(id=>{document.getElementById('mode-'+id).classList.toggle('selected',id===m);const r=document.getElementById('radio-'+id);r.classList.toggle('on',id===m);});}
 function toggleProvider(id,on){document.getElementById('card-'+id).classList.toggle('enabled',on);document.getElementById('fields-'+id).style.display=on?'flex':'none';}
 window.selectMode=selectMode;window.toggleProvider=toggleProvider;
@@ -2392,7 +2393,60 @@ window.nav=function(btn,tab){
 }
 };
 
+
+window.showPosterWebhook = function() {
+  const account = document.getElementById('poster-account')?.value;
+  if(account) {
+    document.getElementById('poster-webhook-url').textContent = 
+      `https://us-central1-mageqrrest.cloudfunctions.net/posterWebhook`;
+  }
+  openModal('modal-poster-webhook');
+};
+
+window.copyWebhookUrl = function() {
+  const url = 'https://us-central1-mageqrrest.cloudfunctions.net/posterWebhook';
+  navigator.clipboard.writeText(url).then(() => notify('✅ URL скопійовано!', 'ok'));
+};
+
+window.openPosterWebhookSettings = function() {
+  const account = document.getElementById('poster-account')?.value;
+  if(!account) { notify('Спочатку введіть обліковий запис Poster', 'err'); return; }
+  window.open(`https://${account}.joinposter.com/settings/webhooks`, '_blank');
+  closeModal('modal-poster-webhook');
+};
+
 initFirebase();
 </script>
+<!-- POSTER WEBHOOK MODAL -->
+<div class="overlay" id="modal-poster-webhook" onclick="closeModal('modal-poster-webhook')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title">🔗 Webhook від Poster</div>
+      <button class="close-btn" onclick="closeModal('modal-poster-webhook')">✕</button>
+    </div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:1rem;line-height:1.6">
+      Після налаштування — коли ви позначаєте замовлення як виконане в Poster, статус автоматично оновиться в Mage QR.
+    </div>
+    <div style="background:var(--bg2);border-radius:8px;padding:1rem;margin-bottom:1rem">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Ваш Webhook URL</div>
+      <div id="poster-webhook-url" style="font-family:monospace;font-size:12px;word-break:break-all;color:var(--accent);cursor:pointer" onclick="copyWebhookUrl()">
+        https://us-central1-mageqrrest.cloudfunctions.net/posterWebhook
+      </div>
+      <button class="btn btn-outline btn-sm" style="margin-top:.5rem" onclick="copyWebhookUrl()">📋 Скопіювати</button>
+    </div>
+    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:1rem">
+      <div style="font-size:12px;font-weight:600;color:#1D4ED8;margin-bottom:.5rem">📋 Як налаштувати (2 кроки):</div>
+      <div style="font-size:12px;color:#1e40af;line-height:1.8">
+        <b>1.</b> Відкрийте Poster Admin → <b>Налаштування → Вебхуки</b><br/>
+        <b>2.</b> Натисніть "Додати вебхук" → вставте URL → оберіть подію <b>"Замовлення змінено"</b> → Зберегти
+      </div>
+    </div>
+    <button class="btn btn-accent" style="width:100%;margin-top:1rem" onclick="openPosterWebhookSettings()">
+      🚀 Відкрити налаштування Poster
+    </button>
+  </div>
+</div>
+
+
 </body>
 </html>
