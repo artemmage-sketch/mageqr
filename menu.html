@@ -133,12 +133,12 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 <script src="anti-scraping.js"></script>
 <script>
 window.__MQ_CFG = {
-  apiKey:            "ЗАМІНІТЬ_НА_СВІЙ_API_KEY",
-  authDomain:        "ВАШ_ПРОЄКТ.firebaseapp.com",
-  projectId:         "ВАШ_ПРОЄКТ_ID",
-  storageBucket:     "ВАШ_ПРОЄКТ.appspot.com",
-  messagingSenderId: "ВАШ_SENDER_ID",
-  appId:             "ВАШ_APP_ID"
+  apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
+    authDomain: "mageqrrest.firebaseapp.com",
+    projectId: "mageqrrest",
+    storageBucket: "mageqrrest.firebasestorage.app",
+    messagingSenderId: "207231972557",
+    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 </script>
 
@@ -556,7 +556,21 @@ function updateCart(){
   if(n>0){fab.classList.remove('hidden');$('cart-badge').textContent=n+' · '+t+' грн';}
   else fab.classList.add('hidden');
 }
-window.openCart = () => { renderCart(); $('cart-ov').classList.add('open'); };
+window.openCart = () => {
+  renderCart();
+  // Застосовуємо налаштування оплати і приборів
+  const payOnline = orderingSettings.payOnline !== false;
+  const payCash   = orderingSettings.payCash !== false;
+  const elOnline = $('pay-opt-online');
+  const elCash   = $('pay-opt-cash');
+  if(elOnline) elOnline.style.display = payOnline ? '' : 'none';
+  if(elCash)   elCash.style.display   = payCash   ? '' : 'none';
+  if(payOnline && !payCash) selectPayment('online');
+  const askCutlery = orderingSettings.askCutlery !== false;
+  const elCutlery = $('form-cutlery');
+  if(elCutlery) elCutlery.style.display = askCutlery ? 'block' : 'none';
+  $('cart-ov').classList.add('open');
+};
 window.closeCart = () => $('cart-ov').classList.remove('open');
 function renderCart(){
   $('cart-list').innerHTML = Object.entries(cart).filter(([,q])=>q>0).map(([id,q])=>{
@@ -591,30 +605,24 @@ function initOrderTypeBar() {
   const hasTake = !take || take.enabled !== false;
   const hasDel  = del?.enabled || false;
 
-  document.getElementById('ot-dine').disabled = !hasDine;
-  document.getElementById('ot-take').disabled = !hasTake;
-  document.getElementById('ot-del').disabled  = !hasDel;
-  document.getElementById('ot-del').style.display = hasDel ? '' : 'none';
+  const elDine = document.getElementById('ot-dine');
+  const elTake = document.getElementById('ot-take');
+  const elDel  = document.getElementById('ot-del');
+  if(elDine) elDine.disabled = !hasDine;
+  if(elTake) elTake.disabled = !hasTake;
+  if(elDel)  { elDel.disabled = !hasDel; elDel.style.display = hasDel ? '' : 'none'; }
 
   // Якщо більше одного типу — показуємо бар
-  const count = [hasDine,hasTake,hasDel].filter(Boolean).length;
-  bar.style.display = count > 1 ? 'flex' : 'none';
+  const typeCount = [hasDine,hasTake,hasDel].filter(Boolean).length;
+  if(bar) bar.style.display = typeCount > 1 ? 'flex' : 'none';
 
   // Вибираємо перший доступний
   if(hasDine) setOrderType('dine_in');
   else if(hasTake) setOrderType('takeaway');
   else if(hasDel) setOrderType('delivery');
 
-  // Оплата
-  const payOnline = orderingSettings.payOnline !== false;
-  const payCash   = orderingSettings.payCash !== false;
-  document.getElementById('pay-opt-online').style.display = payOnline ? '' : 'none';
-  document.getElementById('pay-opt-cash').style.display = payCash ? '' : 'none';
-  if(payOnline && !payCash) selectPayment('online');
-
-  // Прибори
-  const askCutlery = orderingSettings.askCutlery !== false;
-  document.getElementById('form-cutlery').style.display = askCutlery ? 'block' : 'none';
+  // Оплата і прибори — застосовуємо при відкритті кошика
+  // (елементи форми існують тільки в кошику)
 }
 
 window.setOrderType = function(type) {
