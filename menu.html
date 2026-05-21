@@ -243,16 +243,38 @@ window.__MQ_CFG = {
       <div class="form-section" id="form-address" style="display:none">
         <div class="form-section-title">📍 Адреса доставки</div>
         <div id="delivery-price-info" style="font-size:13px;margin-bottom:.75rem;color:var(--accent);font-weight:500"></div>
+
+        <!-- МІСТО -->
+        <div style="margin-bottom:.75rem">
+          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Місто *</label>
+          <input id="cli-city" type="text" placeholder="Місто" style="font-size:16px;padding:12px"/>
+        </div>
+
+        <!-- ВУЛИЦЯ + будинок з Google Maps -->
         <div style="margin-bottom:.75rem;position:relative">
-          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Вулиця, будинок, квартира *</label>
-          <input id="cli-address" type="text" placeholder="Почніть вводити адресу..." style="font-size:16px;padding:12px"
+          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Вулиця та будинок *</label>
+          <input id="cli-address" type="text" placeholder="вул. Шевченка, 12" style="font-size:16px;padding:12px"
             autocomplete="off" oninput="onAddressInput(this.value)"/>
           <div id="address-suggestions" style="display:none;position:absolute;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-top:4px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:100"></div>
         </div>
-        <div style="margin-bottom:.75rem">
-          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Під'їзд / поверх</label>
-          <input id="cli-address2" type="text" placeholder="Під'їзд 2, поверх 3" style="font-size:16px;padding:12px"/>
+
+        <!-- КВАРТИРА, ПІД'ЇЗД, ПОВЕРХ -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.75rem">
+          <div>
+            <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Квартира</label>
+            <input id="cli-apt" type="text" placeholder="42" style="font-size:16px;padding:12px"/>
+          </div>
+          <div>
+            <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Під'їзд</label>
+            <input id="cli-entrance" type="text" placeholder="2" style="font-size:16px;padding:12px"/>
+          </div>
+          <div>
+            <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Поверх</label>
+            <input id="cli-floor" type="text" placeholder="5" style="font-size:16px;padding:12px"/>
+          </div>
         </div>
+
+        <!-- КОМЕНТАР ДЛЯ КУР'ЄРА -->
         <div>
           <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Коментар для кур'єра</label>
           <textarea id="cli-delivery-comment" rows="2" placeholder="Код домофону, орієнтир..."
@@ -447,6 +469,13 @@ function applySettings(s) {
   if (line2) tagHtml += `<div style="margin-top:2px">${line2}</div>`;
   if (line3) tagHtml += `<div style="margin-top:2px">🕐 ${line3}</div>`;
   $('venue-tag').innerHTML = tagHtml;
+
+  // Місто закладу — підставляємо в поле доставки
+  if(s.city) {
+    const cityEl = document.getElementById('cli-city');
+    if(cityEl) cityEl.value = s.city;
+    window._venueCity = s.city;
+  }
 
   // Стіл
   if (tableId) $('venue-tag').innerHTML += `<div style="margin-top:3px"><span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Стіл №${tableId}</span></div>`;
@@ -701,24 +730,34 @@ function initGoogleMaps() {
 window.onAddressInput = function(value) {
   const suggestEl = document.getElementById('address-suggestions');
   if(!suggestEl) return;
-  if(!value || value.length < 3) { suggestEl.style.display='none'; return; }
+  if(!value || value.length < 2) { suggestEl.style.display='none'; return; }
 
   if(autocompleteService) {
+    const city = document.getElementById('cli-city')?.value || window._venueCity || '';
+    const query = city ? `${value}, ${city}` : value;
     autocompleteService.getPlacePredictions(
-      { input: value, language: 'uk', componentRestrictions: { country: 'ua' } },
+      {
+        input: query,
+        language: 'uk',
+        componentRestrictions: { country: 'ua' },
+        types: ['address'],
+      },
       (predictions, status) => {
         if(status !== 'OK' || !predictions) { suggestEl.style.display='none'; return; }
         suggestEl.style.display = 'block';
-        suggestEl.innerHTML = predictions.slice(0,4).map(p => `
-          <div onclick="selectAddress('${p.description.replace(/'/g,"\'")}','${p.place_id}')"
-            style="padding:10px 14px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--border)"
+        suggestEl.innerHTML = predictions.slice(0,5).map(p => {
+          // Показуємо тільки вулицю без міста/країни
+          const parts = p.description.split(',');
+          const short = parts.slice(0,2).join(',').trim();
+          return `<div onclick="selectAddress('${short.replace(/'/g,"\'")}','${p.place_id}')"
+            style="padding:11px 14px;font-size:15px;cursor:pointer;border-bottom:1px solid var(--border);line-height:1.3"
             onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
-            📍 ${p.description}
-          </div>`).join('');
+            📍 ${short}
+          </div>`;
+        }).join('');
       }
     );
   } else {
-    // Якщо Google Maps не завантажено — просто ховаємо підказки
     suggestEl.style.display = 'none';
   }
 };
@@ -726,7 +765,7 @@ window.onAddressInput = function(value) {
 window.selectAddress = function(address, placeId) {
   const input = document.getElementById('cli-address');
   const suggestEl = document.getElementById('address-suggestions');
-  if(input) input.value = address;
+  if(input) { input.value = address; input.focus(); }
   if(suggestEl) suggestEl.style.display = 'none';
 };
 
@@ -804,7 +843,13 @@ window.placeOrder = async () => {
       comment: $('cli-comment')?.value||'',
       tableId: orderType==='dine_in' ? ($('cli-table')?.value||tableId||null) : null,
       pickupTime: orderType==='takeaway' ? selectedTime?.toISOString() : null,
-      deliveryAddress: orderType==='delivery' ? ($('cli-address')?.value+' '+($('cli-address2')?.value||'')).trim() : null,
+      deliveryAddress: orderType==='delivery' ? [
+        $('cli-city')?.value||'',
+        $('cli-address')?.value||'',
+        $('cli-apt')?.value ? 'кв.'+$('cli-apt').value : '',
+        $('cli-entrance')?.value ? 'під.'+$('cli-entrance').value : '',
+        $('cli-floor')?.value ? 'пов.'+$('cli-floor').value : '',
+      ].filter(Boolean).join(', ') : null,
       deliveryComment: orderType==='delivery' ? $('cli-delivery-comment')?.value||'' : null,
       cutlery: orderingSettings.askCutlery !== false ? {needed: cutleryNeeded, count: cutleryCount} : null,
       paymentMethod: selectedPayment,
