@@ -1966,11 +1966,7 @@ function renderMappingRows(){
       <input type="text" placeholder="UUID" style="padding:5px 8px;font-size:12px" value=""/>
     </div>`).join('');
 }
-function connectPOS(sys){const s=document.getElementById(sys+'-status');const c=document.getElementById('pos-card-'+sys);const l=document.getElementById('log-'+sys);s.textContent='Підключення...';setTimeout(()=>{s.textContent='✓ Підключено';s.className='pos-status ok';c.classList.add('connected');const now=new Date().toLocaleTimeString('uk-UA');l.innerHTML=`<div class="log-ok">[${now}] ✓ Підключення успішне</div><div class="log-info">[${now}] ℹ Готово до синхронізації</div>`;notify(`✅ ${sys==='poster'?'Poster':'Syrve'} підключено!`,'ok');},1200);}
-function testPOS(sys){const l=document.getElementById('log-'+sys);const now=new Date().toLocaleTimeString('uk-UA');l.innerHTML=`<div class="log-info">[${now}] → Відправка тест-замовлення...</div>`;setTimeout(()=>{l.innerHTML+=`<div class="log-ok">[${now}] ✓ Відповідь: 200 OK</div>`;notify('✅ Тест успішний!','ok');},900);}
-window.connectPOS=connectPOS;window.testPOS=testPOS;
-window.savePOS=function(){notify('✅ POS-налаштування збережено!','ok');};
-window.savePayments=function(){notify('✅ Налаштування платежів збережено!','ok');};
+
 window.autoMapProducts=function(){renderMappingRows();notify('⚡ Зіставлення виконано','ok');};
 function selectMode(m){['instant','after','both'].forEach(id=>{document.getElementById('mode-'+id).classList.toggle('selected',id===m);const r=document.getElementById('radio-'+id);r.classList.toggle('on',id===m);});}
 function toggleProvider(id,on){document.getElementById('card-'+id).classList.toggle('enabled',on);document.getElementById('fields-'+id).style.display=on?'flex':'none';}
@@ -2146,6 +2142,114 @@ renderZoneTabs();
 renderTables();
 renderStaff();
 
+
+
+// ── ПЛАТЕЖІ ──────────────────────────────────────────────
+async function loadPaymentSettings() {
+  if(!db||!window.__FS) return;
+  const {doc,getDoc}=window.__FS;
+  try {
+    const snap=await getDoc(doc(db,'venues',venueId,'settings','payments'));
+    if(!snap.exists()) return;
+    const d=snap.data(),providers=d.providers||{};
+    ['liqpay','mono','wfp','abank'].forEach(p=>{
+      const cfg=providers[p];if(!cfg)return;
+      const tog=document.getElementById('tog-'+p);
+      if(tog){tog.checked=cfg.enabled;toggleProvider(p,cfg.enabled);}
+    });
+    if(providers.liqpay)document.getElementById('liqpay-pub')&&(document.getElementById('liqpay-pub').value=providers.liqpay.publicKey||'');
+    if(providers.mono)document.getElementById('mono-token')&&(document.getElementById('mono-token').value=providers.mono.token||'');
+    if(providers.wfp){document.getElementById('wfp-account')&&(document.getElementById('wfp-account').value=providers.wfp.merchantAccount||'');document.getElementById('wfp-domain')&&(document.getElementById('wfp-domain').value=providers.wfp.domain||'');}
+    if(d.paymentMode)selectMode(d.paymentMode);
+  }catch(e){console.warn('loadPaymentSettings:',e.message);}
+}
+window.savePayments=async function(){
+  if(!db){notify('Firebase не підключено','err');return;}
+  notify('Зберігаємо...','ok');
+  try{
+    const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token=await getAuth().currentUser?.getIdToken();
+    const providers={
+      liqpay:{enabled:document.getElementById('tog-liqpay')?.checked||false,publicKey:document.getElementById('liqpay-pub')?.value||'',privateKey:document.getElementById('liqpay-priv')?.value||''},
+      mono:{enabled:document.getElementById('tog-mono')?.checked||false,token:document.getElementById('mono-token')?.value||''},
+      wfp:{enabled:document.getElementById('tog-wfp')?.checked||false,merchantAccount:document.getElementById('wfp-account')?.value||'',merchantSecret:document.getElementById('wfp-secret')?.value||'',domain:document.getElementById('wfp-domain')?.value||''},
+      abank:{enabled:document.getElementById('tog-abank')?.checked||false,merchantId:document.getElementById('abank-mid')?.value||'',secretKey:document.getElementById('abank-secret')?.value||'',apiUrl:document.getElementById('abank-url')?.value||''},
+    };
+    const mode=document.querySelector('.mode-option.selected')?.id?.replace('mode-','')||'both';
+    const res=await fetch(`${window.__CF_URL}/savePaymentSettings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,providers,paymentMode:mode})});
+    const data=await res.json();
+    if(!res.ok){notify('Помилка: '+(data.error||''),'err');return;}
+    notify('Налаштування платежів збережено!','ok');
+  }catch(e){notify('Помилка: '+e.message,'err');}
+};
+
+// ── POS ──────────────────────────────────────────────────
+async function loadPOSSettings(){
+  if(!db||!window.__FS)return;
+  const {doc,getDoc}=window.__FS;
+  try{
+    const snap=await getDoc(doc(db,'venues',venueId,'settings','pos'));
+    if(!snap.exists())return;
+    const d=snap.data();
+    if(d.poster){
+      document.getElementById('poster-account')&&(document.getElementById('poster-account').value=d.poster.account||'');
+      document.getElementById('poster-token')&&(document.getElementById('poster-token').value=d.poster.token||'');
+      document.getElementById('poster-spot')&&(document.getElementById('poster-spot').value=d.poster.spotId||'');
+      if(d.poster.enabled){document.getElementById('poster-status').textContent='Підключено';document.getElementById('poster-status').className='pos-status ok';document.getElementById('pos-card-poster').classList.add('connected');}
+    }
+    if(d.syrve){
+      document.getElementById('syrve-url')&&(document.getElementById('syrve-url').value=d.syrve.serverUrl||'');
+      document.getElementById('syrve-login')&&(document.getElementById('syrve-login').value=d.syrve.login||'');
+      document.getElementById('syrve-org')&&(document.getElementById('syrve-org').value=d.syrve.organizationId||'');
+      document.getElementById('syrve-term')&&(document.getElementById('syrve-term').value=d.syrve.terminalGroupId||'');
+      if(d.syrve.enabled){document.getElementById('syrve-status').textContent='Підключено';document.getElementById('syrve-status').className='pos-status ok';document.getElementById('pos-card-syrve').classList.add('connected');}
+    }
+  }catch(e){console.warn('loadPOSSettings:',e.message);}
+}
+async function savePOSData(){
+  const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+  const token=await getAuth().currentUser?.getIdToken();
+  const poster={enabled:document.getElementById('pos-card-poster')?.classList.contains('connected'),account:document.getElementById('poster-account')?.value||'',token:document.getElementById('poster-token')?.value||'',spotId:parseInt(document.getElementById('poster-spot')?.value)||1};
+  const syrve={enabled:document.getElementById('pos-card-syrve')?.classList.contains('connected'),serverUrl:document.getElementById('syrve-url')?.value||'',login:document.getElementById('syrve-login')?.value||'',password:document.getElementById('syrve-pass')?.value||'',organizationId:document.getElementById('syrve-org')?.value||'',terminalGroupId:document.getElementById('syrve-term')?.value||''};
+  await fetch(`${window.__CF_URL}/savePOSSettings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,poster,syrve,syncEnabled:true,syncWhen:document.getElementById('pos-when')?.value||'paid'})});
+}
+window.savePOS=async function(){try{await savePOSData();notify('POS-налаштування збережено!','ok');}catch(e){notify('Помилка: '+e.message,'err');}};
+window.connectPOS=async function(sys){
+  const logEl=document.getElementById('log-'+sys),now=new Date().toLocaleTimeString('uk-UA');
+  logEl.innerHTML=`<div class="log-info">[${now}] Підключення...</div>`;
+  try{
+    const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token=await getAuth().currentUser?.getIdToken();
+    await savePOSData();
+    const res=await fetch(`${window.__CF_URL}/testPOSConnection`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,posSystem:sys})});
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error||'Помилка');
+    document.getElementById(sys+'-status').textContent='Підключено';
+    document.getElementById(sys+'-status').className='pos-status ok';
+    document.getElementById('pos-card-'+sys).classList.add('connected');
+    logEl.innerHTML+=`<div class="log-ok">[${now}] Підключено: ${data.name||sys}</div>`;
+    notify((sys==='poster'?'Poster':'Syrve')+' підключено!','ok');
+  }catch(e){logEl.innerHTML+=`<div class="log-err">[${now}] ${e.message}</div>`;notify('Помилка: '+e.message,'err');}
+};
+window.testPOS=async function(sys){
+  const logEl=document.getElementById('log-'+sys),now=new Date().toLocaleTimeString('uk-UA');
+  logEl.innerHTML=`<div class="log-info">[${now}] Тест...</div>`;
+  try{
+    const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token=await getAuth().currentUser?.getIdToken();
+    const res=await fetch(`${window.__CF_URL}/testPOSConnection`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,posSystem:sys})});
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error);
+    logEl.innerHTML+=`<div class="log-ok">[${now}] OK: ${data.name||''}</div>`;
+    notify('Тест успішний!','ok');
+  }catch(e){logEl.innerHTML+=`<div class="log-err">[${now}] ${e.message}</div>`;notify('Помилка: '+e.message,'err');}
+};
+const _origNav2=window.nav;
+window.nav=function(btn,tab){
+  _origNav2(btn,tab);
+  if(tab==='t-payments')loadPaymentSettings();
+  if(tab==='t-pos')loadPOSSettings();
+};
 
 initFirebase();
 </script>
