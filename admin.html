@@ -21,7 +21,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 button{cursor:pointer}
 
 /* LAYOUT */
-.shell{display:grid;grid-template-columns:200px 1fr;height:100vh;overflow:hidden}
+.shell{display:grid;grid-template-columns:200px 1fr;min-height:100vh}
 @media(max-width:700px){.shell{grid-template-columns:1fr}}
 .sidebar{background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
 .sb-brand{padding:1.25rem 1rem;border-bottom:1px solid var(--border)}
@@ -40,7 +40,7 @@ button{cursor:pointer}
 .btn-danger{background:#FEF2F2;color:var(--red);border:1px solid #FECACA}.btn-danger:hover{background:#FEE2E2}
 .btn-success{background:#F0FDF4;color:var(--green);border:1px solid #BBF7D0}.btn-success:hover{background:#DCFCE7}
 .main{overflow-y:auto;background:var(--bg)}
-.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:.875rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;position:sticky;top:0;z-index:20}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:.875rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .page-title{font-family:var(--font-head);font-size:1.05rem;font-weight:600}
 .page-sub{font-size:12px;color:var(--muted);margin-top:1px}
 .content{padding:1.5rem}
@@ -1319,7 +1319,6 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       </div>
     </div>
 
-</div>
 
 <!-- ITEM MODAL -->
 <div class="overlay" id="modal-item" onclick="closeModal('modal-item')">
@@ -1982,14 +1981,173 @@ document.getElementById('fiscal')?.addEventListener('change',function(){document
 function nav(btn,tab){
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
   document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));
-  document.getElementById(tab).classList.add('active');
-  const main=document.querySelector('.main');if(main)main.scrollTop=0;
+  const el=document.getElementById(tab);
+  el.classList.add('active');
+  // Скидаємо скрол window (не .main)
+  window.scrollTo({top:0,left:0,behavior:'instant'});
+  document.documentElement.scrollTop=0;
+  document.body.scrollTop=0;
   if(tab==='t-billing')loadBilling();
 }
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function notify(msg,type='ok'){const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';setTimeout(()=>n.classList.remove('show'),2800);}
 window.nav=nav;window.openModal=openModal;window.closeModal=closeModal;window.notify=notify;
+
+
+// ── TABLES & QR ──
+let tables=[
+  {id:1,num:1,zone:'Основний зал',seats:4,status:'occupied',staffId:'s1',amount:568,startTime:'13:10',orders:[{name:'Філадельфія ×2',price:378},{name:'Зелений чай ×2',price:90}]},
+  {id:2,num:2,zone:'Основний зал',seats:2,status:'free',staffId:'',amount:0,startTime:'',orders:[]},
+  {id:3,num:3,zone:'Основний зал',seats:6,status:'ordered',staffId:'s2',amount:1240,startTime:'12:45',orders:[{name:'Сет «Свято» ×1',price:699}]},
+  {id:4,num:4,zone:'Основний зал',seats:4,status:'paid',staffId:'s1',amount:445,startTime:'12:00',orders:[{name:'Каліфорнія ×2',price:338}]},
+  {id:5,num:5,zone:'Тераса',seats:4,status:'free',staffId:'',amount:0,startTime:'',orders:[]},
+  {id:6,num:6,zone:'Тераса',seats:2,status:'occupied',staffId:'s2',amount:179,startTime:'14:05',orders:[{name:'Дракон ×1',price:219}]},
+  {id:7,num:7,zone:'VIP-зал',seats:8,status:'free',staffId:'',amount:0,startTime:'',orders:[]},
+  {id:8,num:8,zone:'VIP-зал',seats:6,status:'ordered',staffId:'s1',amount:2100,startTime:'13:30',orders:[{name:'Сет «Свято» ×3',price:2097}]},
+];
+let staff=[
+  {id:'s1',name:'Іван Петренко',role:'Офіціант',emoji:'👨‍🍳',monoId:'emp_001',tipsToday:320},
+  {id:'s2',name:'Марія Коваль',role:'Офіціант',emoji:'👩‍🍳',monoId:'emp_002',tipsToday:180},
+  {id:'s3',name:'Олег Бондар',role:'Бармен',emoji:'🧑‍🍳',monoId:'',tipsToday:0},
+];
+let zones=['Основний зал','Тераса','VIP-зал'];
+let activeZone='';
+let selectedTable=null;
+let editStaffId=null;
+
+function renderTables(){
+  const filtered=activeZone?tables.filter(t=>t.zone===activeZone):tables;
+  const stMap={free:'ts-free',occupied:'ts-occupied',ordered:'ts-ordered',paid:'ts-paid'};
+  const stLabel={free:'Вільний',occupied:'Зайнятий',ordered:'Замовлено',paid:'Оплачено'};
+  document.getElementById('tables-grid').innerHTML=filtered.map(t=>`
+    <div class="table-card ${t.status}" onclick="openTableDetail(${t.id})">
+      <div class="table-qr-icon">⬛</div>
+      <div class="table-num">${t.num}</div>
+      <div class="table-zone">${t.zone} · ${t.seats} місць</div>
+      <div><span class="table-status ${stMap[t.status]}">${stLabel[t.status]}</span></div>
+      ${t.amount?`<div class="table-amount">₴${t.amount}</div>`:''}
+      ${t.startTime?`<div class="table-timer">⏱ з ${t.startTime}</div>`:''}
+    </div>`).join('');
+  document.getElementById('st-tables-free').textContent=tables.filter(t=>t.status==='free').length;
+  document.getElementById('st-tables-occ').textContent=tables.filter(t=>t.status!=='free').length;
+  document.getElementById('st-tables-rev').textContent='₴'+tables.filter(t=>t.status==='paid').reduce((s,t)=>s+t.amount,0);
+  document.getElementById('st-tips-today').textContent='₴'+staff.reduce((s,p)=>s+p.tipsToday,0);
+}
+function filterZone(btn,zone){
+  document.querySelectorAll('.zone-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');activeZone=zone;renderTables();
+}
+function renderZoneTabs(){
+  const wrap=document.getElementById('zone-tabs');
+  wrap.innerHTML=`<button class="zone-tab active" onclick="filterZone(this,'')">Всі зали</button>`
+    +zones.map(z=>`<button class="zone-tab" onclick="filterZone(this,'${z}')">${z}</button>`).join('');
+}
+window.filterZone=filterZone;
+
+function drawQRMock(canvas){
+  const ctx=canvas.getContext('2d');const size=canvas.width;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);ctx.fillStyle='#1C1916';
+  const p=[[1,1,1,1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1],[1,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0,1],[1,0,1,1,1,0,1,0,0,1,0,1,1,0,1,1,1,0,1],[1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1],[1,0,1,1,1,0,1,0,0,1,1,1,1,0,1,1,1,0,1],[1,0,0,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,1],[1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0],[1,1,0,1,1,0,1,1,0,1,1,0,1,0,1,1,0,1,1],[0,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,0,0],[1,0,1,0,1,0,1,0,1,1,0,0,1,0,1,0,1,0,1],[0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0],[1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,0,0,1,1],[1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0],[1,0,1,1,1,0,1,0,1,0,1,1,1,0,0,1,0,1,1],[1,0,1,1,1,0,1,0,0,1,0,0,1,0,1,0,1,0,0],[1,0,1,1,1,0,1,0,1,0,1,0,0,1,0,1,0,1,1],[1,0,0,0,0,0,1,0,0,1,1,0,1,0,1,0,0,0,0],[1,1,1,1,1,1,1,0,1,0,0,1,0,1,0,1,1,0,1]];
+  const cell=size/p.length;
+  p.forEach((row,r)=>row.forEach((v,c_)=>{if(v)ctx.fillRect(Math.round(c_*cell),Math.round(r*cell),Math.ceil(cell),Math.ceil(cell));}));
+}
+
+function openTableDetail(id){
+  selectedTable=tables.find(t=>t.id===id);
+  const t=selectedTable;
+  document.getElementById('table-detail-title').textContent=`Стіл №${t.num} — ${t.zone}`;
+  document.getElementById('table-qr-url').textContent=`mageqrrest.com/dykanka?table=${t.num}`;
+  drawQRMock(document.getElementById('table-qr-canvas'));
+  document.getElementById('table-order-lines').innerHTML=t.orders.length
+    ?t.orders.map(o=>`<div class="order-line"><span>${o.name}</span><span style="font-weight:500">₴${o.price}</span></div>`).join('')
+    :'<div style="font-size:13px;color:var(--muted);text-align:center;padding:.75rem">Замовлень немає</div>';
+  document.getElementById('table-order-total').textContent=t.amount?'₴'+t.amount:'—';
+  document.getElementById('split-row').innerHTML=[2,3,4].map(n=>`
+    <div class="split-person" onclick="selectSplit(this,${n},${t.amount})">
+      <div>👤×${n}</div>
+      <div style="font-size:11px;color:var(--muted)">${t.amount?'≈₴'+Math.ceil(t.amount/n)+'/ос.':''}</div>
+    </div>`).join('');
+  const staffSel=document.getElementById('table-staff-assign');
+  staffSel.innerHTML='<option value="">— Не призначено —</option>'+staff.map(s=>`<option value="${s.id}"${s.id===t.staffId?' selected':''}>${s.emoji} ${s.name}</option>`).join('');
+  openModal('modal-table-detail');
+}
+window.openTableDetail=openTableDetail;
+
+function selectSplit(el,n,total){document.querySelectorAll('.split-person').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');notify(`Рахунок розділено на ${n}: ≈₴${Math.ceil(total/n)} з особи`,'ok');}
+window.selectSplit=selectSplit;
+function selectTip(btn,pct){document.querySelectorAll('.tips-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('tips-custom-val').value='';if(selectedTable&&selectedTable.amount)notify(`Чайові ${pct}% = ₴${Math.round(selectedTable.amount*parseInt(pct)/100)}`,'ok');}
+window.selectTip=selectTip;
+function sendPayLink(){closeModal('modal-table-detail');notify('💳 Посилання надіслано клієнту','ok');}
+function markPaid(){if(selectedTable){selectedTable.status='paid';closeModal('modal-table-detail');renderTables();notify('✅ Стіл оплачено','ok');}}
+function clearTable(){if(selectedTable){selectedTable.status='free';selectedTable.orders=[];selectedTable.amount=0;selectedTable.startTime='';closeModal('modal-table-detail');renderTables();notify('Стіл звільнено','ok');}}
+function downloadQR(){notify('⬇️ QR завантажується...','ok');}
+function printQR(){notify('🖨️ Відправлено на друк','ok');}
+function printAllQR(){notify('🖨️ Всі QR відправлені','ok');}
+window.sendPayLink=sendPayLink;window.markPaid=markPaid;window.clearTable=clearTable;
+window.downloadQR=downloadQR;window.printQR=printQR;window.printAllQR=printAllQR;
+
+function openAddTable(){['at-num','at-desc'].forEach(f=>document.getElementById(f).value='');document.getElementById('at-seats').value='4';openModal('modal-add-table');}
+function saveTable(){
+  const num=parseInt(document.getElementById('at-num').value);if(!num){notify('Введіть номер','err');return;}
+  tables.push({id:Date.now(),num,zone:document.getElementById('at-zone').value,seats:parseInt(document.getElementById('at-seats').value)||4,status:'free',staffId:'',amount:0,startTime:'',orders:[]});
+  closeModal('modal-add-table');renderTables();renderZoneTabs();notify('✅ Стіл додано!','ok');
+}
+function openAddZone(){const z=prompt('Назва нового залу:');if(z&&!zones.includes(z)){zones.push(z);renderZoneTabs();notify('Зал додано','ok');}}
+window.openAddTable=openAddTable;window.saveTable=saveTable;window.openAddZone=openAddZone;
+
+function renderStaff(){
+  document.getElementById('staff-list').innerHTML=staff.map(s=>`
+    <div class="item-row" style="margin-bottom:.5rem">
+      <div class="item-em">${s.emoji||'👤'}</div>
+      <div class="item-body"><div class="item-name">${s.name}</div><div class="item-sub">${s.role} · Mono ID: ${s.monoId||'<span style="color:var(--amber)">не вказано</span>'}</div></div>
+      <div style="font-size:12px;font-weight:600;color:var(--green);margin-right:.5rem">₴${s.tipsToday}</div>
+      <div class="item-btns">
+        <button class="icon-btn" onclick="openEditStaff('${s.id}')">✏️</button>
+        <button class="icon-btn del" onclick="deleteStaff('${s.id}')">🗑️</button>
+      </div>
+    </div>`).join('')||'<div style="color:var(--muted);font-size:13px">Персонал не додано</div>';
+  document.getElementById('staff-tips-grid').innerHTML=staff.map(s=>`
+    <div class="staff-card">
+      <div class="staff-avatar">${s.emoji||'👤'}</div>
+      <div class="staff-name">${s.name}</div>
+      <div class="staff-role">${s.role}</div>
+      <div class="staff-tips-total">₴${s.tipsToday} чайових</div>
+      ${!s.monoId?'<div style="font-size:10px;color:var(--amber)">⚠️ Без Mono ID</div>':''}
+    </div>`).join('');
+}
+function openAddStaff(){editStaffId=null;document.getElementById('staff-modal-title').textContent='Новий офіціант';['sf-name','sf-mono-id'].forEach(f=>document.getElementById(f).value='');document.getElementById('sf-emoji').value='';openModal('modal-add-staff');}
+function openEditStaff(id){
+  editStaffId=id;const s=staff.find(x=>x.id===id);
+  document.getElementById('staff-modal-title').textContent='Редагувати: '+s.name;
+  document.getElementById('sf-name').value=s.name;
+  document.getElementById('sf-emoji').value=s.emoji||'';
+  document.getElementById('sf-role').value=s.role;
+  document.getElementById('sf-mono-id').value=s.monoId||'';
+  openModal('modal-add-staff');
+}
+function saveStaff(){
+  const name=document.getElementById('sf-name').value.trim();if(!name){notify("Введіть ім'я",'err');return;}
+  const data={name,emoji:document.getElementById('sf-emoji').value||'👤',role:document.getElementById('sf-role').value,monoId:document.getElementById('sf-mono-id').value.trim(),tipsToday:0};
+  if(editStaffId)Object.assign(staff.find(s=>s.id===editStaffId),data);else{data.id='s'+Date.now();staff.push(data);}
+  closeModal('modal-add-staff');renderStaff();notify('✅ Збережено!','ok');
+}
+function deleteStaff(id){if(confirm('Видалити?')){staff=staff.filter(s=>s.id!==id);renderStaff();}}
+window.openAddStaff=openAddStaff;window.openEditStaff=openEditStaff;window.saveStaff=saveStaff;window.deleteStaff=deleteStaff;
+
+// ── ПІДПИСКА (стара вкладка - для loadSubscription) ──
+const PLAN_LIMITS={free:{name:'Free',price:0,items:20,cats:5,orders:100},trial:{name:'Trial',price:0,items:500,cats:50,orders:5000},starter:{name:'Starter',price:299,items:80,cats:15,orders:500},pro:{name:'Pro',price:699,items:500,cats:50,orders:5000},enterprise:{name:'Enterprise',price:1999,items:99999,cats:999,orders:99999}};
+
+async function loadSubscription(){
+  // Тепер просто перезавантажуємо billing
+  if(document.getElementById('t-billing')?.classList.contains('active')) await loadBilling();
+}
+
+// Ініціалізація UI
+renderZoneTabs();
+renderTables();
+renderStaff();
+
 
 initFirebase();
 </script>
