@@ -2322,6 +2322,15 @@ async function loadPOSSettings(){
     const snap=await getDoc(doc(db,'venues',venueId,'settings','pos'));
     if(!snap.exists())return;
     const d=snap.data();
+    // Відновлюємо налаштування синхронізації
+    if(d.syncEnabled!==undefined){
+      const syncEl=document.getElementById('pos-sync');
+      if(syncEl) syncEl.checked=d.syncEnabled;
+    }
+    if(d.syncWhen){
+      const whenEl=document.getElementById('pos-when');
+      if(whenEl) whenEl.value=d.syncWhen;
+    }
     if(d.poster){
       document.getElementById('poster-account')&&(document.getElementById('poster-account').value=d.poster.account||'');
       document.getElementById('poster-token')&&(document.getElementById('poster-token').value=d.poster.token||'');
@@ -2342,7 +2351,7 @@ async function savePOSData(){
   const token=await getAuth().currentUser?.getIdToken();
   const poster={enabled:document.getElementById('pos-card-poster')?.classList.contains('connected'),account:document.getElementById('poster-account')?.value||'',token:document.getElementById('poster-token')?.value||'',spotId:parseInt(document.getElementById('poster-spot')?.value)||1};
   const syrve={enabled:document.getElementById('pos-card-syrve')?.classList.contains('connected'),serverUrl:document.getElementById('syrve-url')?.value||'',login:document.getElementById('syrve-login')?.value||'',password:document.getElementById('syrve-pass')?.value||'',organizationId:document.getElementById('syrve-org')?.value||'',terminalGroupId:document.getElementById('syrve-term')?.value||''};
-  await fetch(`${window.__CF_URL}/savePOSSettings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,poster,syrve,syncEnabled:true,syncWhen:document.getElementById('pos-when')?.value||'paid'})});
+  await fetch(`${window.__CF_URL}/savePOSSettings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,poster,syrve,syncEnabled:document.getElementById('pos-sync')?.checked!==false,syncWhen:document.getElementById('pos-when')?.value||'placed'})});
 }
 window.savePOS=async function(){try{await savePOSData();notify('POS-налаштування збережено!','ok');}catch(e){notify('Помилка: '+e.message,'err');}};
 window.connectPOS=async function(sys){
