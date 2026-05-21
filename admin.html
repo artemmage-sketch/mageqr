@@ -13,7 +13,7 @@
   --green:#059669;--amber:#D97706;--red:#DC2626;
   --font:'Inter',sans-serif;--font-head:'Space Grotesk',sans-serif;--radius:12px;
 }
-html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px}
+html,body{height:100%;margin:0;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px}
 h2,h3{font-family:var(--font-head)}
 button,input,select,textarea{font-family:var(--font)}
 input,select,textarea{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 12px;font-size:13px;outline:none;width:100%;transition:border .15s}
@@ -21,7 +21,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 button{cursor:pointer}
 
 /* LAYOUT */
-.shell{display:grid;grid-template-columns:200px 1fr;min-height:100vh}
+.shell{display:grid;grid-template-columns:200px 1fr;height:100vh}
 @media(max-width:700px){.shell{grid-template-columns:1fr}}
 .sidebar{background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
 .sb-brand{padding:1.25rem 1rem;border-bottom:1px solid var(--border)}
@@ -39,12 +39,12 @@ button{cursor:pointer}
 .btn-ghost{background:transparent;border:none;color:var(--muted);padding:6px 10px}.btn-ghost:hover{color:var(--text)}
 .btn-danger{background:#FEF2F2;color:var(--red);border:1px solid #FECACA}.btn-danger:hover{background:#FEE2E2}
 .btn-success{background:#F0FDF4;color:var(--green);border:1px solid #BBF7D0}.btn-success:hover{background:#DCFCE7}
-.main{overflow-y:auto;background:var(--bg)}
+.main{overflow-y:auto;background:var(--bg);height:100vh}
 .topbar{background:var(--card);border-bottom:1px solid var(--border);padding:.875rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .page-title{font-family:var(--font-head);font-size:1.05rem;font-weight:600}
 .page-sub{font-size:12px;color:var(--muted);margin-top:1px}
 .content{padding:1.5rem}
-.tab-section{display:none}.tab-section.active{display:block}
+.tab-section{display:none}.tab-section.active{display:block;scroll-margin-top:0}
 
 /* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.875rem;margin-bottom:1.5rem}
@@ -322,11 +322,11 @@ button{cursor:pointer}
 // ⚠️ ЗАМІНІТЬ на свої ключі (такі самі як у login.html)
 window.__MQ_CFG = window.__MQ_CFG || {
   apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-  authDomain: "mageqrrest.firebaseapp.com",
-  projectId: "mageqrrest",
-  storageBucket: "mageqrrest.firebasestorage.app",
-  messagingSenderId: "207231972557",
-  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+    authDomain: "mageqrrest.firebaseapp.com",
+    projectId: "mageqrrest",
+    storageBucket: "mageqrrest.firebasestorage.app",
+    messagingSenderId: "207231972557",
+    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 </script>
@@ -1213,9 +1213,6 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       </div>
     </div>
 
-  </div>
-</div>
-
     <!-- SETTINGS -->
     <div id="t-settings" class="tab-section">
       <div class="topbar">
@@ -1319,6 +1316,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       </div>
     </div>
 
+
+  </div>
+</div>
 
 <!-- ITEM MODAL -->
 <div class="overlay" id="modal-item" onclick="closeModal('modal-item')">
@@ -1983,10 +1983,8 @@ function nav(btn,tab){
   document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));
   const el=document.getElementById(tab);
   el.classList.add('active');
-  // Скидаємо скрол window (не .main)
-  window.scrollTo({top:0,left:0,behavior:'instant'});
-  document.documentElement.scrollTop=0;
-  document.body.scrollTop=0;
+  const main=document.querySelector('.main');
+  if(main) main.scrollTop=0;
   if(tab==='t-billing')loadBilling();
 }
 function openModal(id){document.getElementById(id).classList.add('open');}
