@@ -134,11 +134,11 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 <script>
 window.__MQ_CFG = {
   apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-    authDomain: "mageqrrest.firebaseapp.com",
-    projectId: "mageqrrest",
-    storageBucket: "mageqrrest.firebasestorage.app",
-    messagingSenderId: "207231972557",
-    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+  authDomain: "mageqrrest.firebaseapp.com",
+  projectId: "mageqrrest",
+  storageBucket: "mageqrrest.firebasestorage.app",
+  messagingSenderId: "207231972557",
+  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 </script>
 
@@ -208,86 +208,112 @@ window.__MQ_CFG = {
 <div class="overlay" id="cart-ov" onclick="if(event.target===this)closeCart()">
   <div class="sheet">
     <div class="sh-handle"></div>
-    <div style="padding:0 1rem 1.25rem">
-      <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:600;margin-bottom:.875rem">🛒 Ваш кошик</div>
+    <div style="padding:0 1rem 1.5rem">
+
+      <div style="font-family:var(--font-head);font-size:1.2rem;font-weight:600;margin-bottom:1rem">🛒 Ваше замовлення</div>
+
+      <!-- СПИСОК СТРАВ -->
       <div class="cart-list" id="cart-list"></div>
       <div class="cart-total"><span>Разом:</span><span class="cart-total-price" id="cart-total-val">0 грн</span></div>
-      <!-- ФОРМА ЗАМОВЛЕННЯ -->
-      <div id="order-form-wrap">
 
-        <!-- ІМ'Я І ТЕЛЕФОН -->
-        <div class="form-section">
-          <div class="form-section-title">Контактні дані</div>
-          <div class="fl" style="margin:0">
-            <div><label>Ім'я *</label><input id="cli-name" type="text" placeholder="Ваше ім'я"/></div>
-            <div><label>Телефон *</label><input id="cli-phone" type="tel" placeholder="+380XXXXXXXXX"/></div>
-          </div>
+      <!-- ТИП ЗАМОВЛЕННЯ -->
+      <div class="form-section">
+        <div class="form-section-title">Тип замовлення</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem">
+          <div class="pay-opt active" id="ot-opt-dine" onclick="setOrderType('dine_in')" style="text-align:center;padding:10px 4px;font-size:13px">🪑<br/>В закладі</div>
+          <div class="pay-opt" id="ot-opt-take" onclick="setOrderType('takeaway')" style="text-align:center;padding:10px 4px;font-size:13px">🥡<br/>З собою</div>
+          <div class="pay-opt" id="ot-opt-del" onclick="setOrderType('delivery')" style="text-align:center;padding:10px 4px;font-size:13px">🚗<br/>Доставка</div>
         </div>
-
-        <!-- СТІЛ (тільки для В ЗАКЛАДІ) -->
-        <div class="form-section" id="form-table" style="display:none">
-          <div class="form-section-title">🪑 Номер столу</div>
-          <input id="cli-table" type="number" placeholder="Введіть номер столу"/>
-        </div>
-
-        <!-- ЧАС (тільки для З СОБОЮ) -->
-        <div class="form-section" id="form-time" style="display:none">
-          <div class="form-section-title">🕐 Час самовиносу</div>
-          <div style="font-size:12px;color:var(--muted);margin-bottom:.5rem">Оберіть зручний час (мін. 40 хв від зараз)</div>
-          <div class="time-slots" id="time-slots"></div>
-        </div>
-
-        <!-- АДРЕСА (тільки для ДОСТАВКИ) -->
-        <div class="form-section" id="form-address" style="display:none">
-          <div class="form-section-title">📍 Адреса доставки</div>
-          <div class="fl" style="margin:0">
-            <div><label>Вулиця, будинок, квартира *</label>
-              <input id="cli-address" type="text" placeholder="вул. Шевченка 12, кв. 5"/>
-            </div>
-            <div><label>Під'їзд / поверх (необов'язково)</label>
-              <input id="cli-address2" type="text" placeholder="Під'їзд 2, поверх 3"/>
-            </div>
-          </div>
-          <div id="delivery-price-info" style="font-size:12px;margin-top:.5rem;color:var(--muted)"></div>
-          <div class="fl" style="margin-top:.625rem;margin-bottom:0">
-            <div><label>Коментар для кур'єра (необов'язково)</label>
-              <textarea id="cli-delivery-comment" rows="2" placeholder="Код домофону, орієнтир..."></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- КОМЕНТАР ДЛЯ ЗАКЛАДУ -->
-        <div class="form-section" id="form-comment">
-          <div class="form-section-title" id="comment-label">💬 Коментар</div>
-          <textarea id="cli-comment" rows="2" placeholder="Побажання, алергія..."></textarea>
-        </div>
-
-        <!-- ПРИБОРИ -->
-        <div class="form-section" id="form-cutlery" style="display:none">
-          <div class="form-section-title">🍴 Прибори</div>
-          <div class="cutlery-row">
-            <button class="cutlery-btn" onclick="changeCutlery(-1)">−</button>
-            <span id="cutlery-val" style="font-size:15px;font-weight:600;min-width:28px;text-align:center">1</span>
-            <button class="cutlery-btn" onclick="changeCutlery(1)">+</button>
-            <span style="font-size:12px;color:var(--muted)">осіб</span>
-            <button onclick="setCutleryNone()" id="cutlery-none-btn" style="margin-left:auto;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--muted)">Не потрібні</button>
-          </div>
-        </div>
-
-        <!-- СПОСІБ ОПЛАТИ -->
-        <div class="form-section" id="form-payment">
-          <div class="form-section-title">💳 Спосіб оплати</div>
-          <div class="pay-opts" id="pay-opts">
-            <div class="pay-opt active" id="pay-opt-cash" onclick="selectPayment('cash')">💵 При отриманні</div>
-            <div class="pay-opt" id="pay-opt-online" onclick="selectPayment('online')" style="display:none">💳 Онлайн</div>
-          </div>
-        </div>
-
       </div>
 
-      <button class="order-btn" id="order-btn" onclick="placeOrder()">Замовити</button>
-      <div style="text-align:center;margin-top:.75rem">
-        <span style="font-size:12px;color:var(--muted);cursor:pointer" onclick="closeCart()">← Продовжити вибір</span>
+      <!-- НОМЕР СТОЛУ -->
+      <div class="form-section" id="form-table">
+        <div class="form-section-title">🪑 Номер столу</div>
+        <input id="cli-table" type="number" placeholder="Введіть номер столу" style="font-size:16px;padding:12px"/>
+      </div>
+
+      <!-- ЧАС САМОВИНОСУ -->
+      <div class="form-section" id="form-time" style="display:none">
+        <div class="form-section-title">🕐 Час самовиносу</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:.625rem">Мін. 40 хвилин від зараз</div>
+        <div class="time-slots" id="time-slots"></div>
+      </div>
+
+      <!-- АДРЕСА ДОСТАВКИ -->
+      <div class="form-section" id="form-address" style="display:none">
+        <div class="form-section-title">📍 Адреса доставки</div>
+        <div id="delivery-price-info" style="font-size:13px;margin-bottom:.75rem;color:var(--accent);font-weight:500"></div>
+        <div style="margin-bottom:.75rem;position:relative">
+          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Вулиця, будинок, квартира *</label>
+          <input id="cli-address" type="text" placeholder="Почніть вводити адресу..." style="font-size:16px;padding:12px"
+            autocomplete="off" oninput="onAddressInput(this.value)"/>
+          <div id="address-suggestions" style="display:none;position:absolute;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-top:4px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:100"></div>
+        </div>
+        <div style="margin-bottom:.75rem">
+          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Під'їзд / поверх</label>
+          <input id="cli-address2" type="text" placeholder="Під'їзд 2, поверх 3" style="font-size:16px;padding:12px"/>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Коментар для кур'єра</label>
+          <textarea id="cli-delivery-comment" rows="2" placeholder="Код домофону, орієнтир..."
+            style="font-size:15px;padding:12px;width:100%;border:1px solid var(--border);border-radius:8px;background:var(--bg);font-family:var(--font-body);resize:none;outline:none;color:var(--text)"></textarea>
+        </div>
+      </div>
+
+      <!-- КОНТАКТНІ ДАНІ -->
+      <div class="form-section">
+        <div class="form-section-title">👤 Контактні дані</div>
+        <div style="margin-bottom:.75rem">
+          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Ім'я *</label>
+          <input id="cli-name" type="text" placeholder="Ваше ім'я" style="font-size:16px;padding:12px"/>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Телефон *</label>
+          <div style="display:flex;align-items:center;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg)">
+            <span style="padding:12px;font-size:16px;color:var(--text);font-weight:600;border-right:1px solid var(--border);background:var(--bg2)">+38</span>
+            <input id="cli-phone" type="tel" placeholder="0XXXXXXXXX" maxlength="10"
+              style="border:none;border-radius:0;flex:1;font-size:16px;padding:12px;background:var(--bg);color:var(--text);outline:none"
+              oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- ПРИБОРИ -->
+      <div class="form-section" id="form-cutlery">
+        <div class="form-section-title">🍴 Прибори</div>
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <button class="cutlery-btn" onclick="changeCutlery(-1)" style="width:40px;height:40px;font-size:1.3rem;border-radius:50%;border:1.5px solid var(--border);background:none;cursor:pointer">−</button>
+          <span id="cutlery-val" style="font-size:20px;font-weight:700;min-width:36px;text-align:center">1</span>
+          <button class="cutlery-btn" onclick="changeCutlery(1)" style="width:40px;height:40px;font-size:1.3rem;border-radius:50%;border:1.5px solid var(--border);background:none;cursor:pointer">+</button>
+          <span style="font-size:14px;color:var(--muted)">осіб</span>
+          <button onclick="setCutleryNone()" id="cutlery-none-btn"
+            style="margin-left:auto;font-size:13px;padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:none;cursor:pointer;color:var(--muted)">
+            Не потрібні
+          </button>
+        </div>
+      </div>
+
+      <!-- КОМЕНТАР -->
+      <div class="form-section" id="form-comment">
+        <div class="form-section-title" id="comment-label">💬 Коментар для закладу</div>
+        <textarea id="cli-comment" rows="2" placeholder="Побажання, алергії..."
+          style="font-size:15px;padding:12px;width:100%;border:1px solid var(--border);border-radius:8px;background:var(--bg);font-family:var(--font-body);resize:none;outline:none;color:var(--text)"></textarea>
+      </div>
+
+      <!-- ОПЛАТА -->
+      <div class="form-section">
+        <div class="form-section-title">💳 Спосіб оплати</div>
+        <div style="display:flex;gap:.5rem">
+          <div class="pay-opt active" id="pay-opt-cash" onclick="selectPayment('cash')" style="flex:1;padding:12px;font-size:14px;text-align:center">💵 Готівка / картка при отриманні</div>
+          <div class="pay-opt" id="pay-opt-online" onclick="selectPayment('online')" style="flex:1;padding:12px;font-size:14px;text-align:center;display:none">💳 Онлайн</div>
+        </div>
+      </div>
+
+      <button class="order-btn" id="order-btn" onclick="placeOrder()" style="font-size:16px;padding:16px;margin-top:.5rem">
+        Оформити замовлення
+      </button>
+      <div style="text-align:center;margin-top:1rem">
+        <span style="font-size:14px;color:var(--muted);cursor:pointer" onclick="closeCart()">← Продовжити вибір</span>
       </div>
     </div>
   </div>
@@ -627,33 +653,81 @@ function initOrderTypeBar() {
 
 window.setOrderType = function(type) {
   orderType = type;
+  // Оновлюємо кнопки типу
   ['dine_in','takeaway','delivery'].forEach(t => {
-    const map = {dine_in:'ot-dine',takeaway:'ot-take',delivery:'ot-del'};
+    const map = {dine_in:'ot-opt-dine',takeaway:'ot-opt-take',delivery:'ot-opt-del'};
     document.getElementById(map[t])?.classList.toggle('active', t === type);
   });
-  // Показуємо/ховаємо поля форми
-  document.getElementById('form-table').style.display = type==='dine_in' ? 'block' : 'none';
-  document.getElementById('form-time').style.display = type==='takeaway' ? 'block' : 'none';
-  document.getElementById('form-address').style.display = type==='delivery' ? 'block' : 'none';
-  // Коментар — для доставки ховаємо (є окремий для кур'єра)
-  document.getElementById('form-comment').style.display = type==='delivery' ? 'none' : 'block';
-  document.getElementById('comment-label').textContent = type==='takeaway' ? '💬 Коментар для закладу' : '💬 Коментар';
-
-  // Час самовиносу
+  // Також оновлюємо верхній бар якщо є
+  ['dine_in','takeaway','delivery'].forEach(t => {
+    const map2 = {dine_in:'ot-dine',takeaway:'ot-take',delivery:'ot-del'};
+    document.getElementById(map2[t])?.classList.toggle('active', t === type);
+  });
+  // Показуємо/ховаємо поля
+  const elTable   = document.getElementById('form-table');
+  const elTime    = document.getElementById('form-time');
+  const elAddress = document.getElementById('form-address');
+  const elComment = document.getElementById('form-comment');
+  const elLabel   = document.getElementById('comment-label');
+  if(elTable)   elTable.style.display   = type==='dine_in'  ? 'block' : 'none';
+  if(elTime)    elTime.style.display    = type==='takeaway' ? 'block' : 'none';
+  if(elAddress) elAddress.style.display = type==='delivery' ? 'block' : 'none';
+  if(elComment) elComment.style.display = type==='delivery' ? 'none'  : 'block';
+  if(elLabel)   elLabel.textContent     = type==='takeaway' ? '💬 Коментар для закладу' : '💬 Коментар';
   if(type === 'takeaway') buildTimeSlots();
-
-  // Інфо про доставку
   if(type === 'delivery') {
     const del = orderingSettings.delivery;
-    if(del) {
+    const info_el = document.getElementById('delivery-price-info');
+    if(del && info_el) {
       let info = '';
       if(del.price) info += `Доставка: ${del.price} грн`;
       if(del.freeFrom) info += ` · Безкоштовно від ${del.freeFrom} грн`;
-      if(del.minOrder) info += `<br/>Мін. замовлення: ${del.minOrder} грн`;
-      if(del.zones?.length) info += '<br/>Зони: ' + del.zones.map(z=>`${z.name} — ${z.price} грн`).join(', ');
-      document.getElementById('delivery-price-info').innerHTML = info;
+      if(del.minOrder) info += ` · Мін. замовлення: ${del.minOrder} грн`;
+      info_el.innerHTML = info;
     }
   }
+};
+
+// Google Maps автодоповнення адреси
+let autocompleteService = null;
+let placesService = null;
+
+function initGoogleMaps() {
+  if(window.google?.maps?.places) {
+    autocompleteService = new google.maps.places.AutocompleteService();
+  }
+}
+
+window.onAddressInput = function(value) {
+  const suggestEl = document.getElementById('address-suggestions');
+  if(!suggestEl) return;
+  if(!value || value.length < 3) { suggestEl.style.display='none'; return; }
+
+  if(autocompleteService) {
+    autocompleteService.getPlacePredictions(
+      { input: value, language: 'uk', componentRestrictions: { country: 'ua' } },
+      (predictions, status) => {
+        if(status !== 'OK' || !predictions) { suggestEl.style.display='none'; return; }
+        suggestEl.style.display = 'block';
+        suggestEl.innerHTML = predictions.slice(0,4).map(p => `
+          <div onclick="selectAddress('${p.description.replace(/'/g,"\'")}','${p.place_id}')"
+            style="padding:10px 14px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--border)"
+            onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
+            📍 ${p.description}
+          </div>`).join('');
+      }
+    );
+  } else {
+    // Якщо Google Maps не завантажено — просто ховаємо підказки
+    suggestEl.style.display = 'none';
+  }
+};
+
+window.selectAddress = function(address, placeId) {
+  const input = document.getElementById('cli-address');
+  const suggestEl = document.getElementById('address-suggestions');
+  if(input) input.value = address;
+  if(suggestEl) suggestEl.style.display = 'none';
 };
 
 function buildTimeSlots() {
@@ -756,5 +830,10 @@ function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'
 
 init();
 </script>
+<!-- Google Maps Places API -->
+<script>
+function initGoogleMapsCallback() { if(window.initGoogleMaps) initGoogleMaps(); }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA&libraries=places&callback=initGoogleMapsCallback&language=uk" async defer></script>
 </body>
 </html>
