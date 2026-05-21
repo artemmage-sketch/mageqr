@@ -108,18 +108,37 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .empty-icon{font-size:2.5rem;margin-bottom:.625rem;opacity:.4}
 .toast{position:fixed;bottom:6rem;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:300;white-space:nowrap}
 .toast.on{opacity:1}
+
+/* ORDER TYPE TABS */
+.order-type-bar{background:var(--card);border-bottom:1px solid var(--border);padding:.5rem 1rem;display:flex;gap:.375rem;position:sticky;top:0;z-index:11}
+.order-type-btn{flex:1;padding:7px 4px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s;font-family:var(--font-body);text-align:center}
+.order-type-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.order-type-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* ORDER FORM */
+.form-section{background:var(--bg2);border-radius:10px;padding:.875rem;margin-bottom:.75rem}
+.form-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.625rem}
+.time-slots{display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.375rem}
+.time-slot{padding:5px 12px;border-radius:20px;font-size:12px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:all .15s}
+.time-slot.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cutlery-row{display:flex;align-items:center;gap:.5rem}
+.cutlery-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pay-opts{display:flex;gap:.5rem;margin-top:.375rem}
+.pay-opt{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);font-size:12px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s}
+.pay-opt.active{border-color:var(--accent);background:var(--accent-soft,#FAECE7);color:var(--accent)}
+
 </style>
 </head>
 <body class="public-menu">
 <script src="anti-scraping.js"></script>
 <script>
 window.__MQ_CFG = {
-  apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-  authDomain: "mageqrrest.firebaseapp.com",
-  projectId: "mageqrrest",
-  storageBucket: "mageqrrest.firebasestorage.app",
-  messagingSenderId: "207231972557",
-  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+  apiKey:            "ЗАМІНІТЬ_НА_СВІЙ_API_KEY",
+  authDomain:        "ВАШ_ПРОЄКТ.firebaseapp.com",
+  projectId:         "ВАШ_ПРОЄКТ_ID",
+  storageBucket:     "ВАШ_ПРОЄКТ.appspot.com",
+  messagingSenderId: "ВАШ_SENDER_ID",
+  appId:             "ВАШ_APP_ID"
 };
 </script>
 
@@ -142,6 +161,11 @@ window.__MQ_CFG = {
   </div>
 </div>
 
+<div id="order-type-bar" class="order-type-bar" style="display:none">
+  <button class="order-type-btn active" id="ot-dine" onclick="setOrderType('dine_in')">🪑 В закладі</button>
+  <button class="order-type-btn" id="ot-take" onclick="setOrderType('takeaway')">🥡 З собою</button>
+  <button class="order-type-btn" id="ot-del" onclick="setOrderType('delivery')">🚗 Доставка</button>
+</div>
 <div class="cat-bar" id="cat-bar"></div>
 <div class="menu-body" id="menu-body"></div>
 
@@ -188,10 +212,79 @@ window.__MQ_CFG = {
       <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:600;margin-bottom:.875rem">🛒 Ваш кошик</div>
       <div class="cart-list" id="cart-list"></div>
       <div class="cart-total"><span>Разом:</span><span class="cart-total-price" id="cart-total-val">0 грн</span></div>
-      <div class="fl">
-        <div><label>Ваше ім'я або номер столу</label><input id="cli-name" type="text" placeholder="Іван або стіл №5"/></div>
-        <div><label>Коментар</label><textarea id="cli-comment" rows="2" placeholder="Побажання, алергія..."></textarea></div>
+      <!-- ФОРМА ЗАМОВЛЕННЯ -->
+      <div id="order-form-wrap">
+
+        <!-- ІМ'Я І ТЕЛЕФОН -->
+        <div class="form-section">
+          <div class="form-section-title">Контактні дані</div>
+          <div class="fl" style="margin:0">
+            <div><label>Ім'я *</label><input id="cli-name" type="text" placeholder="Ваше ім'я"/></div>
+            <div><label>Телефон *</label><input id="cli-phone" type="tel" placeholder="+380XXXXXXXXX"/></div>
+          </div>
+        </div>
+
+        <!-- СТІЛ (тільки для В ЗАКЛАДІ) -->
+        <div class="form-section" id="form-table" style="display:none">
+          <div class="form-section-title">🪑 Номер столу</div>
+          <input id="cli-table" type="number" placeholder="Введіть номер столу"/>
+        </div>
+
+        <!-- ЧАС (тільки для З СОБОЮ) -->
+        <div class="form-section" id="form-time" style="display:none">
+          <div class="form-section-title">🕐 Час самовиносу</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:.5rem">Оберіть зручний час (мін. 40 хв від зараз)</div>
+          <div class="time-slots" id="time-slots"></div>
+        </div>
+
+        <!-- АДРЕСА (тільки для ДОСТАВКИ) -->
+        <div class="form-section" id="form-address" style="display:none">
+          <div class="form-section-title">📍 Адреса доставки</div>
+          <div class="fl" style="margin:0">
+            <div><label>Вулиця, будинок, квартира *</label>
+              <input id="cli-address" type="text" placeholder="вул. Шевченка 12, кв. 5"/>
+            </div>
+            <div><label>Під'їзд / поверх (необов'язково)</label>
+              <input id="cli-address2" type="text" placeholder="Під'їзд 2, поверх 3"/>
+            </div>
+          </div>
+          <div id="delivery-price-info" style="font-size:12px;margin-top:.5rem;color:var(--muted)"></div>
+          <div class="fl" style="margin-top:.625rem;margin-bottom:0">
+            <div><label>Коментар для кур'єра (необов'язково)</label>
+              <textarea id="cli-delivery-comment" rows="2" placeholder="Код домофону, орієнтир..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- КОМЕНТАР ДЛЯ ЗАКЛАДУ -->
+        <div class="form-section" id="form-comment">
+          <div class="form-section-title" id="comment-label">💬 Коментар</div>
+          <textarea id="cli-comment" rows="2" placeholder="Побажання, алергія..."></textarea>
+        </div>
+
+        <!-- ПРИБОРИ -->
+        <div class="form-section" id="form-cutlery" style="display:none">
+          <div class="form-section-title">🍴 Прибори</div>
+          <div class="cutlery-row">
+            <button class="cutlery-btn" onclick="changeCutlery(-1)">−</button>
+            <span id="cutlery-val" style="font-size:15px;font-weight:600;min-width:28px;text-align:center">1</span>
+            <button class="cutlery-btn" onclick="changeCutlery(1)">+</button>
+            <span style="font-size:12px;color:var(--muted)">осіб</span>
+            <button onclick="setCutleryNone()" id="cutlery-none-btn" style="margin-left:auto;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--muted)">Не потрібні</button>
+          </div>
+        </div>
+
+        <!-- СПОСІБ ОПЛАТИ -->
+        <div class="form-section" id="form-payment">
+          <div class="form-section-title">💳 Спосіб оплати</div>
+          <div class="pay-opts" id="pay-opts">
+            <div class="pay-opt active" id="pay-opt-cash" onclick="selectPayment('cash')">💵 При отриманні</div>
+            <div class="pay-opt" id="pay-opt-online" onclick="selectPayment('online')" style="display:none">💳 Онлайн</div>
+          </div>
+        </div>
+
       </div>
+
       <button class="order-btn" id="order-btn" onclick="placeOrder()">Замовити</button>
       <div style="text-align:center;margin-top:.75rem">
         <span style="font-size:12px;color:var(--muted);cursor:pointer" onclick="closeCart()">← Продовжити вибір</span>
@@ -227,6 +320,12 @@ const tableId = params.get('t') || null;
 
 let allItems = [], allCats = [], activeCat = null;
 let cart = {}, detItem = null, detQty = 1, design = {};
+let orderType = 'dine_in'; // 'dine_in' | 'takeaway' | 'delivery'
+let orderingSettings = {};  // налаштування з Firestore
+let selectedTime = null;
+let cutleryCount = 1;
+let cutleryNeeded = true;
+let selectedPayment = 'cash'; // 'cash' | 'online'
 
 const $ = id => document.getElementById(id);
 
@@ -259,12 +358,15 @@ const ALLERGEN_ICONS = {
 async function init() {
   try {
     // Завантажуємо всі дані паралельно
-    const [sSnap, dSnap, cSnap, iSnap] = await Promise.all([
+    const [sSnap, dSnap, cSnap, iSnap, ordSnap] = await Promise.all([
       getDoc(doc(db,'venues',venueId,'settings','main')),
       getDoc(doc(db,'venues',venueId,'design','main')),
       getDocs(collection(db,'venues',venueId,'categories')),
       getDocs(collection(db,'venues',venueId,'items')),
+      getDoc(doc(db,'venues',venueId,'settings','ordering')),
     ]);
+    orderingSettings = ordSnap.exists() ? ordSnap.data() : {};
+    initOrderTypeBar();
 
     // Налаштування — окремий try щоб не блокував страви
     try {
@@ -471,25 +573,159 @@ window.cQty = (id,d) => {
   updateCart(); count()>0?renderCart():closeCart();
 };
 
+// ── ТИПИ ЗАМОВЛЕНЬ ────────────────────────────────────────
+function initOrderTypeBar() {
+  const bar = document.getElementById('order-type-bar');
+  const dine = orderingSettings.dineIn;
+  const take = orderingSettings.takeaway;
+  const del  = orderingSettings.delivery;
+
+  // Якщо немає налаштувань — показуємо всі
+  const hasDine = !dine || dine.enabled !== false;
+  const hasTake = !take || take.enabled !== false;
+  const hasDel  = del?.enabled || false;
+
+  document.getElementById('ot-dine').disabled = !hasDine;
+  document.getElementById('ot-take').disabled = !hasTake;
+  document.getElementById('ot-del').disabled  = !hasDel;
+  document.getElementById('ot-del').style.display = hasDel ? '' : 'none';
+
+  // Якщо більше одного типу — показуємо бар
+  const count = [hasDine,hasTake,hasDel].filter(Boolean).length;
+  bar.style.display = count > 1 ? 'flex' : 'none';
+
+  // Вибираємо перший доступний
+  if(hasDine) setOrderType('dine_in');
+  else if(hasTake) setOrderType('takeaway');
+  else if(hasDel) setOrderType('delivery');
+
+  // Оплата
+  const payOnline = orderingSettings.payOnline !== false;
+  const payCash   = orderingSettings.payCash !== false;
+  document.getElementById('pay-opt-online').style.display = payOnline ? '' : 'none';
+  document.getElementById('pay-opt-cash').style.display = payCash ? '' : 'none';
+  if(payOnline && !payCash) selectPayment('online');
+
+  // Прибори
+  const askCutlery = orderingSettings.askCutlery !== false;
+  document.getElementById('form-cutlery').style.display = askCutlery ? 'block' : 'none';
+}
+
+window.setOrderType = function(type) {
+  orderType = type;
+  ['dine_in','takeaway','delivery'].forEach(t => {
+    const map = {dine_in:'ot-dine',takeaway:'ot-take',delivery:'ot-del'};
+    document.getElementById(map[t])?.classList.toggle('active', t === type);
+  });
+  // Показуємо/ховаємо поля форми
+  document.getElementById('form-table').style.display = type==='dine_in' ? 'block' : 'none';
+  document.getElementById('form-time').style.display = type==='takeaway' ? 'block' : 'none';
+  document.getElementById('form-address').style.display = type==='delivery' ? 'block' : 'none';
+  // Коментар — для доставки ховаємо (є окремий для кур'єра)
+  document.getElementById('form-comment').style.display = type==='delivery' ? 'none' : 'block';
+  document.getElementById('comment-label').textContent = type==='takeaway' ? '💬 Коментар для закладу' : '💬 Коментар';
+
+  // Час самовиносу
+  if(type === 'takeaway') buildTimeSlots();
+
+  // Інфо про доставку
+  if(type === 'delivery') {
+    const del = orderingSettings.delivery;
+    if(del) {
+      let info = '';
+      if(del.price) info += `Доставка: ${del.price} грн`;
+      if(del.freeFrom) info += ` · Безкоштовно від ${del.freeFrom} грн`;
+      if(del.minOrder) info += `<br/>Мін. замовлення: ${del.minOrder} грн`;
+      if(del.zones?.length) info += '<br/>Зони: ' + del.zones.map(z=>`${z.name} — ${z.price} грн`).join(', ');
+      document.getElementById('delivery-price-info').innerHTML = info;
+    }
+  }
+};
+
+function buildTimeSlots() {
+  const now = new Date();
+  const min = orderingSettings.takeaway?.minMinutes || 40;
+  const step = orderingSettings.takeaway?.stepMinutes || 15;
+  const slots = [];
+  let t = new Date(now.getTime() + min * 60000);
+  // Округляємо до наступного слоту
+  const mins = t.getMinutes();
+  const rounded = Math.ceil(mins / step) * step;
+  t.setMinutes(rounded, 0, 0);
+  // Генеруємо слоти на 3 години вперед
+  for(let i = 0; i < 12; i++) {
+    slots.push(new Date(t));
+    t = new Date(t.getTime() + step * 60000);
+  }
+  selectedTime = slots[0];
+  document.getElementById('time-slots').innerHTML = slots.map((s,i) =>
+    `<button class="time-slot${i===0?' active':''}" onclick="selectTime(this,'${s.toISOString()}')">${s.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'})}</button>`
+  ).join('');
+}
+
+window.selectTime = function(btn, iso) {
+  document.querySelectorAll('.time-slot').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedTime = new Date(iso);
+};
+
+window.changeCutlery = function(d) {
+  cutleryNeeded = true;
+  cutleryCount = Math.max(1, cutleryCount + d);
+  document.getElementById('cutlery-val').textContent = cutleryCount;
+  document.getElementById('cutlery-none-btn').style.opacity = '1';
+};
+
+window.setCutleryNone = function() {
+  cutleryNeeded = false;
+  cutleryCount = 0;
+  document.getElementById('cutlery-val').textContent = '0';
+  document.getElementById('cutlery-none-btn').style.opacity = '.4';
+};
+
+window.selectPayment = function(type) {
+  selectedPayment = type;
+  document.getElementById('pay-opt-cash')?.classList.toggle('active', type==='cash');
+  document.getElementById('pay-opt-online')?.classList.toggle('active', type==='online');
+};
+
 window.placeOrder = async () => {
   if(!count()){toast('Кошик порожній');return;}
   const btn=$('order-btn'); btn.textContent='Відправляємо...'; btn.disabled=true;
+  // Валідація
+  const name = $('cli-name')?.value?.trim();
+  const phone = $('cli-phone')?.value?.trim();
+  if(!name) { toast('Введіть ваше ім\'я'); return; }
+  if(!phone) { toast('Введіть номер телефону'); return; }
+  if(orderType==='delivery' && !$('cli-address')?.value?.trim()) { toast('Введіть адресу доставки'); return; }
+  if(orderType==='takeaway' && !selectedTime) { toast('Оберіть час самовиносу'); return; }
+
   try {
     const items = Object.entries(cart).map(([id,qty])=>{
       const it=allItems.find(x=>x.id===id);
       return{id,itemId:id,name:it.name,price:it.price,qty};
     });
-    const res = await fetch(`https://us-central1-mageqrrest.cloudfunctions.net/createOrder`,{
+
+    const orderData = {
+      venueId,
+      items,
+      total: total(),
+      orderType,
+      clientName: name,
+      clientPhone: phone,
+      comment: $('cli-comment')?.value||'',
+      tableId: orderType==='dine_in' ? ($('cli-table')?.value||tableId||null) : null,
+      pickupTime: orderType==='takeaway' ? selectedTime?.toISOString() : null,
+      deliveryAddress: orderType==='delivery' ? ($('cli-address')?.value+' '+($('cli-address2')?.value||'')).trim() : null,
+      deliveryComment: orderType==='delivery' ? $('cli-delivery-comment')?.value||'' : null,
+      cutlery: orderingSettings.askCutlery !== false ? {needed: cutleryNeeded, count: cutleryCount} : null,
+      paymentMethod: selectedPayment,
+    };
+
+    const res = await fetch('https://us-central1-mageqrrest.cloudfunctions.net/createOrder',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        venueId,
-        items,
-        total: total(),
-        clientName: $('cli-name')?.value||'Гість',
-        comment:    $('cli-comment')?.value||'',
-        tableId:    tableId||null,
-      }),
+      body:JSON.stringify(orderData),
     });
     const data = await res.json();
     if(!res.ok) throw new Error(data.error||'Помилка замовлення');
