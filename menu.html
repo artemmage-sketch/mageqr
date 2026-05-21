@@ -358,14 +358,20 @@ const ALLERGEN_ICONS = {
 async function init() {
   try {
     // Завантажуємо всі дані паралельно
-    const [sSnap, dSnap, cSnap, iSnap, ordSnap] = await Promise.all([
+    const [sSnap, dSnap, cSnap, iSnap] = await Promise.all([
       getDoc(doc(db,'venues',venueId,'settings','main')),
       getDoc(doc(db,'venues',venueId,'design','main')),
       getDocs(collection(db,'venues',venueId,'categories')),
       getDocs(collection(db,'venues',venueId,'items')),
-      getDoc(doc(db,'venues',venueId,'settings','ordering')),
     ]);
-    orderingSettings = ordSnap.exists() ? ordSnap.data() : {};
+    // Завантажуємо налаштування замовлень окремо — може не бути доступу
+    try {
+      const ordSnap = await getDoc(doc(db,'venues',venueId,'settings','ordering'));
+      orderingSettings = ordSnap.exists() ? ordSnap.data() : {};
+    } catch(e) {
+      console.warn('ordering settings:', e.message);
+      orderingSettings = {};
+    }
     initOrderTypeBar();
 
     // Налаштування — окремий try щоб не блокував страви
