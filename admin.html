@@ -322,11 +322,11 @@ button{cursor:pointer}
 // ⚠️ ЗАМІНІТЬ на свої ключі (такі самі як у login.html)
 window.__MQ_CFG = window.__MQ_CFG || {
   apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-    authDomain: "mageqrrest.firebaseapp.com",
-    projectId: "mageqrrest",
-    storageBucket: "mageqrrest.firebasestorage.app",
-    messagingSenderId: "207231972557",
-    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+  authDomain: "mageqrrest.firebaseapp.com",
+  projectId: "mageqrrest",
+  storageBucket: "mageqrrest.firebasestorage.app",
+  messagingSenderId: "207231972557",
+  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 </script>
@@ -1092,17 +1092,33 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
         <!-- PRODUCT MAPPING -->
         <div class="settings-section">
-          <h3>Прив'язка страв до POS-коди</h3>
-          <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">Зіставте страви меню з ID продуктів у вашій касовій системі. Без прив'язки замовлення передаються за назвою.</div>
+          <h3>🔗 Прив'язка страв до POS</h3>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">
+            Зіставте страви вашого меню з позиціями в касовій системі. Замовлення передаватимуться з правильними ID.
+          </div>
+          <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
+            <button class="btn btn-outline btn-sm" onclick="loadPOSProductsForMapping('poster')">
+              🍽️ Завантажити з Poster
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="loadPOSProductsForMapping('syrve')">
+              🖥️ Завантажити з Syrve
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="autoMapProducts()">
+              ⚡ Авто-зіставлення за назвою
+            </button>
+            <button class="btn btn-accent btn-sm" onclick="savePOSMapping()" style="margin-left:auto">
+              💾 Зберегти маппінг
+            </button>
+          </div>
+          <div id="mapping-status" style="font-size:12px;color:var(--muted);margin-bottom:.75rem"></div>
           <div id="mapping-table">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem;padding:0 .5rem">
               <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Страва в меню</div>
-              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Poster ID</div>
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Poster (оберіть)</div>
               <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Syrve UUID</div>
             </div>
             <div id="mapping-rows"></div>
           </div>
-          <button class="btn btn-outline btn-sm" style="margin-top:.75rem" onclick="autoMapProducts()">⚡ Автоматично зіставити за назвою</button>
         </div>
 
       </div>
@@ -1958,14 +1974,115 @@ window.removeCard=async function(){
 };
 
 // ── POS ──
-function renderMappingRows(){
-  document.getElementById('mapping-rows').innerHTML=items.map(it=>`
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.375rem;align-items:center">
-      <div style="font-size:13px">🍽️ ${it.name}</div>
-      <input type="text" placeholder="напр. 42" style="padding:5px 8px;font-size:12px" value=""/>
-      <input type="text" placeholder="UUID" style="padding:5px 8px;font-size:12px" value=""/>
-    </div>`).join('');
+// Продукти з POS для маппінгу
+let posProducts = { poster: [], syrve: [] };
+let currentMapping = {}; // { itemId: { posterId, syrveId } }
+
+async function loadPOSProductsForMapping(posSystem) {
+  const statusEl = document.getElementById('mapping-status');
+  statusEl.textContent = `Завантажуємо продукти з ${posSystem === 'poster' ? 'Poster' : 'Syrve'}...`;
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const res = await fetch(`${window.__CF_URL}/getPOSProducts`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({venueId, posSystem}),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error);
+    posProducts[posSystem] = data.products || [];
+    statusEl.textContent = `Завантажено ${posProducts[posSystem].length} продуктів з ${posSystem === 'poster' ? 'Poster' : 'Syrve'}`;
+    renderMappingRows();
+  } catch(e) {
+    statusEl.textContent = 'Помилка: ' + e.message;
+    notify('Помилка: ' + e.message, 'err');
+  }
 }
+
+async function loadExistingMapping() {
+  if(!db||!window.__FS) return;
+  const {doc,getDoc} = window.__FS;
+  try {
+    const snap = await getDoc(doc(db,'venues',venueId,'settings','posMapping'));
+    if(snap.exists()) currentMapping = snap.data().mapping || {};
+  } catch(e) { console.warn('loadExistingMapping:', e.message); }
+}
+
+function renderMappingRows() {
+  if(!items.length) {
+    document.getElementById('mapping-rows').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:.5rem">Спочатку додайте страви в меню</div>';
+    return;
+  }
+
+  const posterOptions = posProducts.poster.length
+    ? '<option value="">— не вибрано —</option>' + posProducts.poster.map(p =>
+        `<option value="${p.id}">${p.name} (${p.category})</option>`).join('')
+    : '<option value="">Завантажте продукти з Poster</option>';
+
+  document.getElementById('mapping-rows').innerHTML = items.map(item => {
+    const existing = currentMapping[item.id] || {};
+    return `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.625rem .75rem">
+      <div>
+        <div style="font-size:13px;font-weight:500">🍽️ ${item.name}</div>
+        <div style="font-size:11px;color:var(--muted)">${item.category||''} · ${item.price} грн</div>
+      </div>
+      <select data-item="${item.id}" data-type="posterId" style="font-size:12px;padding:5px 8px">
+        ${posterOptions.replace(`value="${existing.posterId||''}"`, `value="${existing.posterId||''}" selected`)}
+      </select>
+      <input type="text" data-item="${item.id}" data-type="syrveId"
+        placeholder="Syrve UUID" style="padding:5px 8px;font-size:12px"
+        value="${existing.syrveId||''}"/>
+    </div>`;
+  }).join('');
+}
+
+window.autoMapProducts = async function() {
+  if(!posProducts.poster.length && !posProducts.syrve.length) {
+    notify('Спочатку завантажте продукти з POS', 'err');
+    return;
+  }
+  let matched = 0;
+  items.forEach(item => {
+    const name = item.name.toLowerCase();
+    if(posProducts.poster.length) {
+      const found = posProducts.poster.find(p => p.name.toLowerCase() === name ||
+        p.name.toLowerCase().includes(name) || name.includes(p.name.toLowerCase()));
+      if(found) {
+        currentMapping[item.id] = { ...currentMapping[item.id], posterId: found.id };
+        matched++;
+      }
+    }
+  });
+  renderMappingRows();
+  notify(`⚡ Знайдено ${matched} збігів`, 'ok');
+};
+
+window.savePOSMapping = async function() {
+  // Збираємо дані з форми
+  document.querySelectorAll('[data-item][data-type]').forEach(el => {
+    const itemId = el.dataset.item;
+    const type   = el.dataset.type;
+    const value  = el.value.trim();
+    if(!currentMapping[itemId]) currentMapping[itemId] = {};
+    if(value) currentMapping[itemId][type] = value;
+    else delete currentMapping[itemId][type];
+  });
+
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const res = await fetch(`${window.__CF_URL}/savePOSMapping`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({venueId, mapping: currentMapping}),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error);
+    notify('✅ Маппінг збережено!', 'ok');
+  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
+};
 
 window.autoMapProducts=function(){renderMappingRows();notify('⚡ Зіставлення виконано','ok');};
 function selectMode(m){['instant','after','both'].forEach(id=>{document.getElementById('mode-'+id).classList.toggle('selected',id===m);const r=document.getElementById('radio-'+id);r.classList.toggle('on',id===m);});}
@@ -2228,6 +2345,8 @@ window.connectPOS=async function(sys){
     document.getElementById(sys+'-status').className='pos-status ok';
     document.getElementById('pos-card-'+sys).classList.add('connected');
     logEl.innerHTML+=`<div class="log-ok">[${now}] Підключено: ${data.name||sys}</div>`;
+    // Зберігаємо enabled:true
+    await savePOSData();
     notify((sys==='poster'?'Poster':'Syrve')+' підключено!','ok');
   }catch(e){logEl.innerHTML+=`<div class="log-err">[${now}] ${e.message}</div>`;notify('Помилка: '+e.message,'err');}
 };
@@ -2248,7 +2367,7 @@ const _origNav2=window.nav;
 window.nav=function(btn,tab){
   _origNav2(btn,tab);
   if(tab==='t-payments')loadPaymentSettings();
-  if(tab==='t-pos')loadPOSSettings();
+  if(tab==='t-pos'){loadPOSSettings();loadExistingMapping().then(renderMappingRows);}
 };
 
 initFirebase();
