@@ -351,6 +351,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       <button class="nav-item" onclick="nav(this,'t-payments')">💳 Платежі</button>
       <button class="nav-item" onclick="nav(this,'t-pos')">🖥️ POS-інтеграція</button>
       <button class="nav-item" onclick="nav(this,'t-billing')">💳 Підписка</button>
+      <button class="nav-item" onclick="nav(this,'t-ordering')">📋 Налаш. замовлень</button>
       <button class="nav-item" onclick="nav(this,'t-settings')">⚙️ Налаштування</button>
     </div>
     <div class="sb-bottom">
@@ -1230,6 +1231,171 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       </div>
     </div>
 
+
+    <!-- ORDERING SETTINGS -->
+    <div id="t-ordering" class="tab-section">
+      <div class="topbar">
+        <div><div class="page-title">📋 Налаштування замовлень</div><div class="page-sub">Типи замовлень, доставка, години роботи</div></div>
+        <button class="btn btn-accent btn-sm" onclick="saveOrderingSettings()">💾 Зберегти</button>
+      </div>
+      <div class="content">
+
+        <!-- ТИПИ ЗАМОВЛЕНЬ -->
+        <div class="settings-section">
+          <h3>🍽️ Типи замовлень</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Оберіть які типи замовлень приймає ваш заклад</p>
+
+          <!-- В ЗАКЛАДІ -->
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.75rem">
+            <div class="toggle-row" style="margin-bottom:.75rem">
+              <div>
+                <div style="font-size:14px;font-weight:600">🪑 В закладі</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px">Клієнт замовляє за столом</div>
+              </div>
+              <label class="sw"><input type="checkbox" id="ord-dine-in" checked/><span class="sw-slider"></span></label>
+            </div>
+            <div id="dine-in-fields">
+              <div class="field-row">
+                <label class="field-label">Кількість столів (для вибору столу клієнтом)</label>
+                <input type="number" id="ord-tables-count" placeholder="0 = не показувати вибір столу" value="0"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- З СОБОЮ -->
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.75rem">
+            <div class="toggle-row" style="margin-bottom:.75rem">
+              <div>
+                <div style="font-size:14px;font-weight:600">🥡 З собою (самовинос)</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px">Клієнт забирає замовлення сам</div>
+              </div>
+              <label class="sw"><input type="checkbox" id="ord-takeaway" checked/><span class="sw-slider"></span></label>
+            </div>
+            <div id="takeaway-fields">
+              <div class="grid-2">
+                <div class="field-row">
+                  <label class="field-label">Мін. час готовності (хв)</label>
+                  <input type="number" id="ord-takeaway-min" value="40" placeholder="40"/>
+                </div>
+                <div class="field-row">
+                  <label class="field-label">Крок вибору часу (хв)</label>
+                  <input type="number" id="ord-takeaway-step" value="15" placeholder="15"/>
+                </div>
+              </div>
+              <div class="toggle-row" style="margin-top:.5rem">
+                <div style="font-size:13px">Окремі години роботи самовиносу</div>
+                <label class="sw"><input type="checkbox" id="ord-takeaway-custom-hours" onchange="toggleTakeawayHours(this.checked)"/><span class="sw-slider"></span></label>
+              </div>
+              <div id="takeaway-hours-fields" style="display:none;margin-top:.75rem">
+                <div class="grid-2">
+                  <div class="field-row">
+                    <label class="field-label">Від</label>
+                    <input type="time" id="ord-takeaway-from" value="10:00"/>
+                  </div>
+                  <div class="field-row">
+                    <label class="field-label">До</label>
+                    <input type="time" id="ord-takeaway-to" value="21:30"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ДОСТАВКА -->
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem">
+            <div class="toggle-row" style="margin-bottom:.75rem">
+              <div>
+                <div style="font-size:14px;font-weight:600">🚗 Доставка</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px">Доставка кур'єром до клієнта</div>
+              </div>
+              <label class="sw"><input type="checkbox" id="ord-delivery" onchange="toggleDeliveryFields(this.checked)"/><span class="sw-slider"></span></label>
+            </div>
+            <div id="delivery-fields" style="display:none">
+              <div class="grid-2">
+                <div class="field-row">
+                  <label class="field-label">Мінімальна сума замовлення (грн)</label>
+                  <input type="number" id="ord-delivery-min" placeholder="200"/>
+                </div>
+                <div class="field-row">
+                  <label class="field-label">Вартість доставки (грн)</label>
+                  <input type="number" id="ord-delivery-price" placeholder="50"/>
+                </div>
+              </div>
+              <div class="field-row">
+                <label class="field-label">Мін. час доставки (хв від моменту замовлення)</label>
+                <input type="number" id="ord-delivery-time" value="60" placeholder="60"/>
+              </div>
+              <div class="toggle-row" style="margin-top:.5rem">
+                <div style="font-size:13px">Безкоштовна доставка від суми</div>
+                <label class="sw"><input type="checkbox" id="ord-delivery-free-toggle" onchange="toggleFreeDelivery(this.checked)"/><span class="sw-slider"></span></label>
+              </div>
+              <div id="free-delivery-field" style="display:none;margin-top:.5rem">
+                <div class="field-row">
+                  <label class="field-label">Безкоштовна доставка від (грн)</label>
+                  <input type="number" id="ord-delivery-free-from" placeholder="500"/>
+                </div>
+              </div>
+              <div class="toggle-row" style="margin-top:.5rem">
+                <div style="font-size:13px">Окремі години доставки</div>
+                <label class="sw"><input type="checkbox" id="ord-delivery-custom-hours" onchange="toggleDeliveryHours(this.checked)"/><span class="sw-slider"></span></label>
+              </div>
+              <div id="delivery-hours-fields" style="display:none;margin-top:.75rem">
+                <div class="grid-2">
+                  <div class="field-row">
+                    <label class="field-label">Від</label>
+                    <input type="time" id="ord-delivery-from" value="10:00"/>
+                  </div>
+                  <div class="field-row">
+                    <label class="field-label">До</label>
+                    <input type="time" id="ord-delivery-to" value="21:00"/>
+                  </div>
+                </div>
+              </div>
+              <!-- ЗОНИ ДОСТАВКИ -->
+              <div style="margin-top:1rem">
+                <label class="field-label">Зони доставки</label>
+                <div id="delivery-zones-list" style="margin-bottom:.5rem"></div>
+                <button class="btn btn-outline btn-sm" onclick="addDeliveryZone()">+ Додати зону</button>
+                <div style="font-size:11px;color:var(--muted);margin-top:.375rem">
+                  Приклад: Центр — 30 грн, Передмістя — 80 грн
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ПРИБОРИ -->
+        <div class="settings-section">
+          <h3>🍴 Прибори</h3>
+          <div class="toggle-row">
+            <div>
+              <div style="font-size:13px;font-weight:500">Запитувати кількість приборів</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Клієнт вкаже скільки приборів потрібно або відмовиться від них</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="ord-ask-cutlery" checked/><span class="sw-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- ОПЛАТА -->
+        <div class="settings-section">
+          <h3>💳 Способи оплати замовлень</h3>
+          <div class="toggle-row" style="margin-bottom:.625rem">
+            <div>
+              <div style="font-size:13px;font-weight:500">Онлайн оплата (через підключений провайдер)</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="ord-pay-online" checked/><span class="sw-slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <div style="font-size:13px;font-weight:500">Готівка / картка при отриманні</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="ord-pay-cash" checked/><span class="sw-slider"></span></label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- SETTINGS -->
     <div id="t-settings" class="tab-section">
       <div class="topbar">
@@ -1535,7 +1701,16 @@ function renderOrders(){
         </div>
       </div>
       <div class="o-items">${(o.items||[]).map(i=>`<b>${i.name}</b> ×${i.qty} — ${i.price*i.qty}грн`).join('<br/>')}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:.375rem;display:flex;flex-wrap:wrap;gap:.5rem">
+        ${o.clientPhone?`<span>📞 ${o.clientPhone}</span>`:''}
+        ${o.orderType?`<span>${{dine_in:'🪑 В закладі',takeaway:'🥡 З собою',delivery:'🚗 Доставка'}[o.orderType]||o.orderType}</span>`:''}
+        ${o.pickupTime?`<span>🕐 ${new Date(o.pickupTime).toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'})}</span>`:''}
+        ${o.deliveryAddress?`<span>📍 ${o.deliveryAddress}</span>`:''}
+        ${o.paymentMethod?`<span>${o.paymentMethod==='online'?'💳 Онлайн':'💵 Готівка'}</span>`:''}
+        ${o.cutlery?.needed===false?`<span>🍴 без приборів</span>`:o.cutlery?.count?`<span>🍴 ${o.cutlery.count} приб.</span>`:''}
+      </div>
       ${o.comment?`<div class="o-comment">💬 ${o.comment}</div>`:''}
+      ${o.deliveryComment?`<div class="o-comment">🚗 ${o.deliveryComment}</div>`:''}
       <div class="o-total">Разом: <b>${o.total} грн</b></div>
       <div class="o-actions">
         ${(o.status==='new'||!o.status)?`
@@ -2422,6 +2597,142 @@ window.openPosterWebhookSettings = function() {
   if(!account) { notify('Спочатку введіть обліковий запис Poster', 'err'); return; }
   window.open(`https://${account}.joinposter.com/settings/webhooks`, '_blank');
   closeModal('modal-poster-webhook');
+};
+
+
+// ── НАЛАШТУВАННЯ ЗАМОВЛЕНЬ ────────────────────────────────
+let deliveryZones = [];
+
+window.toggleDeliveryFields = function(on) {
+  document.getElementById('delivery-fields').style.display = on ? 'block' : 'none';
+};
+window.toggleFreeDelivery = function(on) {
+  document.getElementById('free-delivery-field').style.display = on ? 'block' : 'none';
+};
+window.toggleDeliveryHours = function(on) {
+  document.getElementById('delivery-hours-fields').style.display = on ? 'block' : 'none';
+};
+window.toggleTakeawayHours = function(on) {
+  document.getElementById('takeaway-hours-fields').style.display = on ? 'block' : 'none';
+};
+
+window.addDeliveryZone = function(zone={}) {
+  const id = 'zone-' + Date.now();
+  deliveryZones.push({id, name: zone.name||'', price: zone.price||''});
+  renderDeliveryZones();
+};
+
+function renderDeliveryZones() {
+  document.getElementById('delivery-zones-list').innerHTML = deliveryZones.map(z => `
+    <div style="display:grid;grid-template-columns:1fr 100px 32px;gap:.5rem;align-items:center;margin-bottom:.375rem">
+      <input type="text" placeholder="Назва зони (напр. Центр)" value="${z.name}"
+        oninput="deliveryZones.find(x=>x.id==='${z.id}').name=this.value" style="font-size:12px"/>
+      <input type="number" placeholder="Ціна грн" value="${z.price}"
+        oninput="deliveryZones.find(x=>x.id==='${z.id}').price=this.value" style="font-size:12px"/>
+      <button class="icon-btn del" onclick="deliveryZones=deliveryZones.filter(x=>x.id!=='${z.id}');renderDeliveryZones()">✕</button>
+    </div>`).join('');
+}
+
+async function loadOrderingSettings() {
+  if(!db||!window.__FS) return;
+  const {doc,getDoc} = window.__FS;
+  try {
+    const snap = await getDoc(doc(db,'venues',venueId,'settings','ordering'));
+    if(!snap.exists()) return;
+    const d = snap.data();
+
+    // Типи замовлень
+    const dineIn = document.getElementById('ord-dine-in');
+    const takeaway = document.getElementById('ord-takeaway');
+    const delivery = document.getElementById('ord-delivery');
+    if(dineIn) dineIn.checked = d.dineIn?.enabled !== false;
+    if(takeaway) takeaway.checked = d.takeaway?.enabled !== false;
+    if(delivery) { delivery.checked = d.delivery?.enabled || false; toggleDeliveryFields(d.delivery?.enabled); }
+
+    // Столи
+    document.getElementById('ord-tables-count')&&(document.getElementById('ord-tables-count').value = d.dineIn?.tablesCount||0);
+
+    // Самовинос
+    document.getElementById('ord-takeaway-min')&&(document.getElementById('ord-takeaway-min').value = d.takeaway?.minMinutes||40);
+    document.getElementById('ord-takeaway-step')&&(document.getElementById('ord-takeaway-step').value = d.takeaway?.stepMinutes||15);
+    if(d.takeaway?.customHours) {
+      document.getElementById('ord-takeaway-custom-hours').checked = true;
+      toggleTakeawayHours(true);
+      document.getElementById('ord-takeaway-from')&&(document.getElementById('ord-takeaway-from').value = d.takeaway.from||'10:00');
+      document.getElementById('ord-takeaway-to')&&(document.getElementById('ord-takeaway-to').value = d.takeaway.to||'21:30');
+    }
+
+    // Доставка
+    if(d.delivery) {
+      document.getElementById('ord-delivery-min')&&(document.getElementById('ord-delivery-min').value = d.delivery.minOrder||'');
+      document.getElementById('ord-delivery-price')&&(document.getElementById('ord-delivery-price').value = d.delivery.price||'');
+      document.getElementById('ord-delivery-time')&&(document.getElementById('ord-delivery-time').value = d.delivery.minMinutes||60);
+      if(d.delivery.freeFrom) {
+        document.getElementById('ord-delivery-free-toggle').checked = true;
+        toggleFreeDelivery(true);
+        document.getElementById('ord-delivery-free-from')&&(document.getElementById('ord-delivery-free-from').value = d.delivery.freeFrom);
+      }
+      if(d.delivery.customHours) {
+        document.getElementById('ord-delivery-custom-hours').checked = true;
+        toggleDeliveryHours(true);
+        document.getElementById('ord-delivery-from')&&(document.getElementById('ord-delivery-from').value = d.delivery.from||'10:00');
+        document.getElementById('ord-delivery-to')&&(document.getElementById('ord-delivery-to').value = d.delivery.to||'21:00');
+      }
+      deliveryZones = d.delivery.zones||[];
+      renderDeliveryZones();
+    }
+
+    // Прибори і оплата
+    if(d.askCutlery !== undefined) document.getElementById('ord-ask-cutlery').checked = d.askCutlery;
+    if(d.payOnline !== undefined) document.getElementById('ord-pay-online').checked = d.payOnline;
+    if(d.payCash !== undefined) document.getElementById('ord-pay-cash').checked = d.payCash;
+  } catch(e) { console.warn('loadOrderingSettings:', e.message); }
+}
+
+window.saveOrderingSettings = async function() {
+  if(!db) { notify('Firebase не підключено','err'); return; }
+  const {doc,setDoc} = window.__FS;
+  try {
+    const data = {
+      dineIn: {
+        enabled: document.getElementById('ord-dine-in')?.checked || false,
+        tablesCount: parseInt(document.getElementById('ord-tables-count')?.value)||0,
+      },
+      takeaway: {
+        enabled: document.getElementById('ord-takeaway')?.checked || false,
+        minMinutes: parseInt(document.getElementById('ord-takeaway-min')?.value)||40,
+        stepMinutes: parseInt(document.getElementById('ord-takeaway-step')?.value)||15,
+        customHours: document.getElementById('ord-takeaway-custom-hours')?.checked||false,
+        from: document.getElementById('ord-takeaway-from')?.value||'10:00',
+        to: document.getElementById('ord-takeaway-to')?.value||'21:30',
+      },
+      delivery: {
+        enabled: document.getElementById('ord-delivery')?.checked || false,
+        minOrder: parseInt(document.getElementById('ord-delivery-min')?.value)||0,
+        price: parseInt(document.getElementById('ord-delivery-price')?.value)||0,
+        minMinutes: parseInt(document.getElementById('ord-delivery-time')?.value)||60,
+        freeFrom: document.getElementById('ord-delivery-free-toggle')?.checked
+          ? parseInt(document.getElementById('ord-delivery-free-from')?.value)||0 : null,
+        customHours: document.getElementById('ord-delivery-custom-hours')?.checked||false,
+        from: document.getElementById('ord-delivery-from')?.value||'10:00',
+        to: document.getElementById('ord-delivery-to')?.value||'21:00',
+        zones: deliveryZones,
+      },
+      askCutlery: document.getElementById('ord-ask-cutlery')?.checked !== false,
+      payOnline: document.getElementById('ord-pay-online')?.checked !== false,
+      payCash: document.getElementById('ord-pay-cash')?.checked !== false,
+      updatedAt: new Date().toISOString(),
+    };
+    await setDoc(doc(db,'venues',venueId,'settings','ordering'), data);
+    notify('✅ Налаштування замовлень збережено!','ok');
+  } catch(e) { notify('Помилка: '+e.message,'err'); }
+};
+
+// Завантажуємо при відкритті вкладки
+const _origNav3 = window.nav;
+window.nav = function(btn,tab){
+  _origNav3(btn,tab);
+  if(tab==='t-ordering') loadOrderingSettings();
 };
 
 initFirebase();
