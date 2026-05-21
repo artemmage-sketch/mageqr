@@ -2028,8 +2028,11 @@ function renderMappingRows() {
         <div style="font-size:13px;font-weight:500">🍽️ ${item.name}</div>
         <div style="font-size:11px;color:var(--muted)">${item.category||''} · ${item.price} грн</div>
       </div>
-      <select data-item="${item.id}" data-type="posterId" style="font-size:12px;padding:5px 8px">
-        ${posterOptions.replace(`value="${existing.posterId||''}"`, `value="${existing.posterId||''}" selected`)}
+      <select data-item="${item.id}" data-type="posterId" style="font-size:12px;padding:5px 8px" onchange="currentMapping['${item.id}'] = {...(currentMapping['${item.id}']||{}), posterId: this.value}">
+        ${posProducts.poster.length
+          ? '<option value="">— не вибрано —</option>' + posProducts.poster.map(p =>
+              `<option value="${p.id}"${existing.posterId === p.id ? ' selected' : ''}>${p.name} (${p.category})</option>`).join('')
+          : '<option value="">Завантажте продукти з Poster ↑</option>'}
       </select>
       <input type="text" data-item="${item.id}" data-type="syrveId"
         placeholder="Syrve UUID" style="padding:5px 8px;font-size:12px"
@@ -2044,13 +2047,23 @@ window.autoMapProducts = async function() {
     return;
   }
   let matched = 0;
+  const normalize = s => s.toLowerCase()
+    .replace(/[''`]/g,'')
+    .replace(/\s+/g,' ')
+    .trim();
+
   items.forEach(item => {
-    const name = item.name.toLowerCase();
+    const name = normalize(item.name);
     if(posProducts.poster.length) {
-      const found = posProducts.poster.find(p => p.name.toLowerCase() === name ||
-        p.name.toLowerCase().includes(name) || name.includes(p.name.toLowerCase()));
+      // Точний збіг
+      let found = posProducts.poster.find(p => normalize(p.name) === name);
+      // Частковий збіг
+      if(!found) found = posProducts.poster.find(p => {
+        const pName = normalize(p.name);
+        return pName.includes(name) || name.includes(pName);
+      });
       if(found) {
-        currentMapping[item.id] = { ...currentMapping[item.id], posterId: found.id };
+        currentMapping[item.id] = { ...(currentMapping[item.id]||{}), posterId: found.id };
         matched++;
       }
     }
@@ -2367,7 +2380,16 @@ const _origNav2=window.nav;
 window.nav=function(btn,tab){
   _origNav2(btn,tab);
   if(tab==='t-payments')loadPaymentSettings();
-  if(tab==='t-pos'){loadPOSSettings();loadExistingMapping().then(renderMappingRows);}
+  if(tab==='t-pos'){
+  loadPOSSettings();
+  loadExistingMapping().then(async () => {
+    // Якщо є збережений маппінг — завантажуємо продукти з Poster автоматично
+    if(Object.keys(currentMapping).length > 0) {
+      await loadPOSProductsForMapping('poster').catch(()=>{});
+    }
+    renderMappingRows();
+  });
+}
 };
 
 initFirebase();
