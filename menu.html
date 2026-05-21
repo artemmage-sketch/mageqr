@@ -474,18 +474,28 @@ window.cQty = (id,d) => {
 window.placeOrder = async () => {
   if(!count()){toast('Кошик порожній');return;}
   const btn=$('order-btn'); btn.textContent='Відправляємо...'; btn.disabled=true;
-  const num=Math.floor(Math.random()*9000)+1000;
   try {
-    await addDoc(collection(db,'venues',venueId,'orders'),{
-      items: Object.entries(cart).map(([id,qty])=>{const it=allItems.find(x=>x.id===id);return{id,name:it.name,price:it.price,qty};}),
-      total: total(), status:'new', num,
-      clientName: $('cli-name').value||'Гість',
-      comment:    $('cli-comment').value||'',
-      tableId:    tableId||null,
-      createdAt:  serverTimestamp(),
+    const items = Object.entries(cart).map(([id,qty])=>{
+      const it=allItems.find(x=>x.id===id);
+      return{id,itemId:id,name:it.name,price:it.price,qty};
     });
+    const res = await fetch(`https://us-central1-mageqrrest.cloudfunctions.net/createOrder`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        venueId,
+        items,
+        total: total(),
+        clientName: $('cli-name')?.value||'Гість',
+        comment:    $('cli-comment')?.value||'',
+        tableId:    tableId||null,
+      }),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error||'Помилка замовлення');
+
     cart={}; updateCart(); closeCart();
-    $('s-num').textContent='#'+num;
+    $('s-num').textContent='#'+data.orderNum;
     $('success').classList.add('open');
   } catch(e){ toast('Помилка: '+e.message); }
   finally{ btn.textContent='Замовити'; btn.disabled=false; }
