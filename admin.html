@@ -3088,6 +3088,9 @@ window.syncTablesFromPoster = async function() {
     const count = data.tables?.length || 0;
     notify(`✅ Синхронізовано ${count} столів з ${data.halls} залів Poster`, 'ok');
 
+    // Перезавантажуємо столи в адмінці
+    await loadTablesFromFirestore();
+
     // Відображаємо столи в журналі POS
     const logEl = document.getElementById('log-poster');
     if(logEl && data.tables?.length) {
