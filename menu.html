@@ -257,7 +257,7 @@ window.__MQ_CFG = {
         <div style="margin-bottom:.75rem;position:relative">
           <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Вулиця та будинок *</label>
           <input id="cli-address" type="text" placeholder="вул. Шевченка, 12" style="font-size:16px;padding:12px"
-            autocomplete="off" oninput="onAddressInput(this.value)"/>
+            autocomplete="off"/>
           <div id="address-suggestions" style="display:none;position:absolute;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-top:4px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:100"></div>
           <div id="maps-debug" style="font-size:11px;color:var(--muted);margin-top:4px">⏳ Завантаження Google Maps...</div>
         </div>
@@ -934,6 +934,12 @@ window.placeOrder = async () => {
 window.resetSuccess = () => { $('success').classList.remove('open'); renderMenu(); };
 
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2500); }
+
+// Прив'язуємо адресний input через addEventListener (надійніше ніж oninput в HTML)
+document.addEventListener('DOMContentLoaded', () => {
+  const addrEl = document.getElementById('cli-address');
+  if(addrEl) addrEl.addEventListener('input', e => onAddressInput(e.target.value));
+});
 
 init();
 </script>
