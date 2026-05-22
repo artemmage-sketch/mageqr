@@ -259,7 +259,6 @@ window.__MQ_CFG = {
           <input id="cli-address" type="text" placeholder="вул. Шевченка, 12" style="font-size:16px;padding:12px"
             autocomplete="off"/>
           <div id="address-suggestions" style="display:none;position:absolute;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-top:4px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:100"></div>
-          <div id="maps-debug" style="font-size:11px;color:var(--muted);margin-top:4px">⏳ Завантаження Google Maps...</div>
         </div>
 
         <!-- КВАРТИРА, ПІД'ЇЗД, ПОВЕРХ -->
@@ -804,14 +803,12 @@ window.onAddressInput = function(value) {
     const city = document.getElementById('cli-city')?.value || window._venueCity || '';
     const query = city ? `${value}, ${city}` : value;
     
-    toast('calling Maps: ' + query);
     window.autocompleteService.getPlacePredictions(
       { input: query, language: 'uk', componentRestrictions: { country: 'ua' } },
       (predictions, status) => {
-        toast('Maps status: ' + status);
         if(status !== google.maps.places.PlacesServiceStatus.OK || !predictions?.length) {
           suggestEl.style.display = 'block';
-          suggestEl.innerHTML = `<div style="padding:10px 14px;font-size:13px;color:var(--muted)">Статус: ${status}</div>`;
+          suggestEl.style.display = 'none';
           return;
         }
         suggestEl.style.display = 'block';
@@ -952,20 +949,19 @@ init();
 window.initGoogleMapsCallback = function() {
   if(window.google?.maps?.places) {
     window.autocompleteService = new google.maps.places.AutocompleteService();
-    const dbg = document.getElementById('maps-debug');
-    if(dbg) { dbg.textContent = '✓ Google Maps готовий'; dbg.style.color = 'var(--green)'; }
+
   }
 };
 window.loadGoogleMaps = function() {
   if(window.google?.maps?.places) { window.initGoogleMapsCallback(); return; }
   if(document.getElementById('gmaps-script')) return; // вже завантажується
   const dbg = document.getElementById('maps-debug');
-  if(dbg) dbg.textContent = '⏳ Підключення Maps...';
+
   const s = document.createElement('script');
   s.id = 'gmaps-script';
   s.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA&libraries=places&callback=initGoogleMapsCallback&language=uk&v=weekly';
   s.async = true;
-  s.onerror = () => { if(dbg) { dbg.textContent = '✗ Помилка завантаження Maps'; dbg.style.color = 'red'; } };
+
   document.head.appendChild(s);
 };
 </script>
