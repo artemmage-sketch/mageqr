@@ -542,7 +542,7 @@ function renderMenu() {
               const p = itemPrice(it);
               const disc = getDiscount(p);
               const final = Math.max(0, p - disc);
-              if(disc > 0) return final+'<span style="text-decoration:line-through;color:var(--muted);font-size:11px;margin-left:4px">'+p+'</span> грн';
+              if(disc > 0) return '<span style="color:var(--green,#059669)">'+final+' грн</span><span style="text-decoration:line-through;color:var(--muted);font-size:13px;margin-left:6px">'+p+'</span>';
               return p+' грн';
             })()}
           </div>`:'<div></div>'}
@@ -571,7 +571,14 @@ window.openDet = id => {
   // Основна інфо
   $('det-name').textContent  = detItem.name;
   $('det-desc').textContent  = detItem.desc||'';
-  $('det-price').textContent = itemPrice(detItem)+' грн';
+  const _dp = itemPrice(detItem);
+  const _dd = getDiscount(_dp);
+  const _df = Math.max(0, _dp - _dd);
+  if(_dd > 0) {
+    $('det-price').innerHTML = '<span style="color:var(--green,#059669)">'+_df+' грн</span> <span style="text-decoration:line-through;color:var(--muted);font-size:1rem">'+_dp+'</span>';
+  } else {
+    $('det-price').textContent = _dp+' грн';
+  }
   $('det-qty').textContent   = detQty;
 
   // Вага / об'єм
@@ -679,9 +686,11 @@ function renderCart(){
   $('cart-list').innerHTML = Object.entries(cart).filter(([,q])=>q>0).map(([id,q])=>{
     const it=allItems.find(x=>x.id===id); if(!it) return '';
     const p = itemPrice(it);
+    const d = getDiscount(p);
+    const fp = Math.max(0, p - d);
     return `<div class="cart-row">
       ${it.photoUrl?`<img class="c-img" src="${it.photoUrl}" alt="${it.name}"/>`:'<div class="c-img-ph">🍽️</div>'}
-      <div class="c-info"><div class="c-name">${it.name}</div><div class="c-price">${p}×${q} = ${p*q} грн</div></div>
+      <div class="c-info"><div class="c-name">${it.name}</div><div class="c-price">${d>0?'<span style="color:var(--green,#059669)">'+fp+'</span> <span style="text-decoration:line-through;font-size:11px">'+p+'</span>':p}×${q} = ${fp*q} грн</div></div>
       <div class="c-qty">
         <button class="cq-btn" onclick="cQty('${id}',-1)">−</button>
         <div class="cq-val">${q}</div>
@@ -725,6 +734,24 @@ function initOrderTypeBar() {
   else if(hasTake) setOrderType('takeaway');
   else if(hasDel) setOrderType('delivery');
 
+  // Показуємо знижки на верхньому барі
+  const discMap = {
+    'ot-dine': orderingSettings.discounts?.dineIn,
+    'ot-take': orderingSettings.discounts?.takeaway,
+    'ot-del':  orderingSettings.discounts?.delivery,
+  };
+  const labelMap = {
+    'ot-dine': '🪑 В закладі',
+    'ot-take': '🥡 З собою',
+    'ot-del':  '🚗 Доставка',
+  };
+  Object.entries(discMap).forEach(([id, disc]) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const discText = disc?.pct ? ` −${disc.pct}%` : disc?.fix ? ` −${disc.fix}₴` : '';
+    el.textContent = labelMap[id] + discText;
+  });
+
   // Оплата і прибори — застосовуємо при відкритті кошика
   // (елементи форми існують тільки в кошику)
 }
@@ -755,7 +782,7 @@ window.setOrderType = function(type) {
     const map = {dine_in:'ot-opt-dine',takeaway:'ot-opt-take',delivery:'ot-opt-del'};
     document.getElementById(map[t])?.classList.toggle('active', t === type);
   });
-  // Також оновлюємо верхній бар якщо є
+  // Оновлюємо верхній бар
   ['dine_in','takeaway','delivery'].forEach(t => {
     const map2 = {dine_in:'ot-dine',takeaway:'ot-take',delivery:'ot-del'};
     document.getElementById(map2[t])?.classList.toggle('active', t === type);
