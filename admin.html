@@ -3042,14 +3042,27 @@ window.syncTablesFromPoster = async function() {
   try {
     const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     const token = await getAuth().currentUser?.getIdToken();
-    const res = await fetch(`${window.__CF_URL}/getPOSProducts`, {
+    const res = await fetch(`${window.__CF_URL}/syncTablesFromPoster`, {
       method: 'POST',
       headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
-      body: JSON.stringify({venueId, posSystem: 'poster', dataType: 'tables'}),
+      body: JSON.stringify({venueId}),
     });
     const data = await res.json();
     if(!res.ok) throw new Error(data.error);
-    notify(`✅ Синхронізовано ${data.tables?.length||0} столів з Poster`, 'ok');
+
+    // Показуємо результат
+    const count = data.tables?.length || 0;
+    notify(`✅ Синхронізовано ${count} столів з ${data.halls} залів Poster`, 'ok');
+
+    // Відображаємо столи в журналі POS
+    const logEl = document.getElementById('log-poster');
+    if(logEl && data.tables?.length) {
+      const now = new Date().toLocaleTimeString('uk-UA');
+      logEl.innerHTML = `<div class="log-ok">[${now}] ✓ Синхронізовано ${count} столів</div>` +
+        data.tables.slice(0,5).map(t =>
+          `<div class="log-info">[${now}] ${t.zone}: ${t.name} (${t.seats} місць)</div>`
+        ).join('');
+    }
   } catch(e) { notify('Помилка: '+e.message, 'err'); }
 };
 
