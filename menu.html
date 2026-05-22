@@ -776,6 +776,7 @@ function initGoogleMaps() {
 
 let _addrTimer = null;
 window.onAddressInput = function(value) {
+  toast('input: ' + value); // ТЕСТ
   const suggestEl = document.getElementById('address-suggestions');
   if(!suggestEl) return;
   if(!value || value.length < 2) { suggestEl.style.display='none'; return; }
