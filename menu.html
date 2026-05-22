@@ -647,7 +647,6 @@ function updateCart(){
 window.openCart = () => {
   renderCart();
   setTimeout(()=>{ const s=document.querySelector('#cart-ov .sheet'); if(s) s.scrollTop=0; },10);
-  toast('openCart called, addr: ' + (document.getElementById('cli-address') ? 'exists' : 'NOT FOUND'));
   // Завантажуємо Google Maps при відкритті кошика
   if(window.loadGoogleMaps) window.loadGoogleMaps();
   // Прив'язуємо input listener тут — елемент точно існує
@@ -655,7 +654,7 @@ window.openCart = () => {
     const addrEl = document.getElementById('cli-address');
     if(addrEl && !addrEl._bound) {
       addrEl._bound = true;
-      addrEl.addEventListener('input', e => { toast('typing: '+e.target.value); window.onAddressInput(e.target.value); });
+      addrEl.addEventListener('input', e => window.onAddressInput(e.target.value));
     }
   }, 100);
   // Застосовуємо налаштування оплати і приборів
@@ -768,8 +767,8 @@ window.setOrderType = function(type) {
 };
 
 // Google Maps автодоповнення адреси
-let autocompleteService = null;
-let placesService = null;
+
+
 
 function initGoogleMaps() {
   if(window.google?.maps?.places) {
@@ -785,7 +784,6 @@ function initGoogleMaps() {
 
 let _addrTimer = null;
 window.onAddressInput = function(value) {
-  toast('input: ' + value); // ТЕСТ
   const suggestEl = document.getElementById('address-suggestions');
   if(!suggestEl) return;
   if(!value || value.length < 2) { suggestEl.style.display='none'; return; }
@@ -794,9 +792,9 @@ window.onAddressInput = function(value) {
   clearTimeout(_addrTimer);
   _addrTimer = setTimeout(() => {
     // Перевіряємо autocompleteService
-    if(!autocompleteService) {
+    if(!window.autocompleteService) {
       if(window.google?.maps?.places) {
-        autocompleteService = new google.maps.places.AutocompleteService();
+        window.autocompleteService = new google.maps.places.AutocompleteService();
       } else {
         suggestEl.style.display = 'block';
         suggestEl.innerHTML = '<div style="padding:10px 14px;font-size:13px;color:var(--muted)">Maps не готовий, спробуйте ще раз</div>';
@@ -806,7 +804,7 @@ window.onAddressInput = function(value) {
     const city = document.getElementById('cli-city')?.value || window._venueCity || '';
     const query = city ? `${value}, ${city}` : value;
     
-    autocompleteService.getPlacePredictions(
+    window.autocompleteService.getPlacePredictions(
       { input: query, language: 'uk', componentRestrictions: { country: 'ua' } },
       (predictions, status) => {
         if(status !== google.maps.places.PlacesServiceStatus.OK || !predictions?.length) {
