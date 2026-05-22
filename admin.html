@@ -1946,10 +1946,16 @@ function updateOrderBadge(){
   if(b){b.textContent=n||'';b.style.display=n?'inline-block':'none';}
 }
 
-window.setStatus = async function(id,status){
-  const {doc,updateDoc}=window.__FS;
-  try{await updateDoc(doc(db,'venues',venueId,'orders',id),{status});}
-  catch(e){notify('Помилка: '+e.message,'err');}
+window.setStatus = async function(id, status) {
+  const {doc, updateDoc} = window.__FS;
+  try {
+    await updateDoc(doc(db,'venues',venueId,'orders',id), {status});
+    // Оновлюємо локально без перезавантаження
+    const o = orders.find(x => x.id === id);
+    if(o) o.status = status;
+    renderOrders();
+    notify(status==='done'?'✅ Виконано':status==='cancel'?'Скасовано':'Статус оновлено','ok');
+  } catch(e) { notify('Помилка: '+e.message,'err'); }
 };
 
 function renderOrders(){
@@ -1994,8 +2000,13 @@ function renderOrders(){
       <div class="o-total">Разом: <b>${o.total} грн</b></div>
       <div class="o-actions">
         ${(o.status==='new'||!o.status)?`
+          <button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','preparing')">👨‍🍳 Готується</button>
           <button class="btn btn-success btn-sm" onclick="setStatus('${o.id}','done')">✅ Виконано</button>
           <button class="btn btn-danger btn-sm" onclick="setStatus('${o.id}','cancel')">✕ Скасувати</button>`:''}
+        ${o.status==='preparing'?`
+          <button class="btn btn-success btn-sm" onclick="setStatus('${o.id}','done')">✅ Виконано</button>
+          <button class="btn btn-danger btn-sm" onclick="setStatus('${o.id}','cancel')">✕ Скасувати</button>
+          <button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','new')">↺ Назад</button>`:''}
         ${o.status==='done'?`<button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','new')">↺ Повернути</button>`:''}
         ${o.status==='cancel'?`<button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','new')">↺ Відкрити</button>`:''}
       </div>
