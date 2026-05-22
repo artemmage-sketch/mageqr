@@ -2585,22 +2585,13 @@ window.nav=nav;window.openModal=openModal;window.closeModal=closeModal;window.no
 
 
 // ── TABLES & QR ──
-let tables=[
-  {id:1,num:1,zone:'Основний зал',seats:4,status:'occupied',staffId:'s1',amount:568,startTime:'13:10',orders:[{name:'Філадельфія ×2',price:378},{name:'Зелений чай ×2',price:90}]},
-  {id:2,num:2,zone:'Основний зал',seats:2,status:'free',staffId:'',amount:0,startTime:'',orders:[]},
-  {id:3,num:3,zone:'Основний зал',seats:6,status:'ordered',staffId:'s2',amount:1240,startTime:'12:45',orders:[{name:'Сет «Свято» ×1',price:699}]},
-  {id:4,num:4,zone:'Основний зал',seats:4,status:'paid',staffId:'s1',amount:445,startTime:'12:00',orders:[{name:'Каліфорнія ×2',price:338}]},
-  {id:5,num:5,zone:'Тераса',seats:4,status:'free',staffId:'',amount:0,startTime:'',orders:[]},
-  {id:6,num:6,zone:'Тераса',seats:2,status:'occupied',staffId:'s2',amount:179,startTime:'14:05',orders:[{name:'Дракон ×1',price:219}]},
-  {id:7,num:7,zone:'VIP-зал',seats:8,status:'free',staffId:'',amount:0,startTime:'',orders:[]},
-  {id:8,num:8,zone:'VIP-зал',seats:6,status:'ordered',staffId:'s1',amount:2100,startTime:'13:30',orders:[{name:'Сет «Свято» ×3',price:2097}]},
-];
+let tables = []; // завантажуються з Firestore
 let staff=[
   {id:'s1',name:'Іван Петренко',role:'Офіціант',emoji:'👨‍🍳',monoId:'emp_001',tipsToday:320},
   {id:'s2',name:'Марія Коваль',role:'Офіціант',emoji:'👩‍🍳',monoId:'emp_002',tipsToday:180},
   {id:'s3',name:'Олег Бондар',role:'Бармен',emoji:'🧑‍🍳',monoId:'',tipsToday:0},
 ];
-let zones=['Основний зал','Тераса','VIP-зал'];
+let zones = []; // завантажуються з Firestore
 let activeZone='';
 let selectedTable=null;
 let editStaffId=null;
@@ -2668,8 +2659,8 @@ window.selectSplit=selectSplit;
 function selectTip(btn,pct){document.querySelectorAll('.tips-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('tips-custom-val').value='';if(selectedTable&&selectedTable.amount)notify(`Чайові ${pct}% = ₴${Math.round(selectedTable.amount*parseInt(pct)/100)}`,'ok');}
 window.selectTip=selectTip;
 function sendPayLink(){closeModal('modal-table-detail');notify('💳 Посилання надіслано клієнту','ok');}
-function markPaid(){if(selectedTable){selectedTable.status='paid';closeModal('modal-table-detail');renderTables();notify('✅ Стіл оплачено','ok');}}
-function clearTable(){if(selectedTable){selectedTable.status='free';selectedTable.orders=[];selectedTable.amount=0;selectedTable.startTime='';closeModal('modal-table-detail');renderTables();notify('Стіл звільнено','ok');}}
+function markPaid(){if(selectedTable){selectedTable.status='paid';closeModal('modal-table-detail');renderTables();updateTableStatus(selectedTable.id,{status:'paid'});notify('✅ Стіл оплачено','ok');}}
+function clearTable(){if(selectedTable){selectedTable.status='free';selectedTable.orders=[];selectedTable.amount=0;selectedTable.startTime='';closeModal('modal-table-detail');renderTables();updateTableStatus(selectedTable.id,{status:'free',amount:0,startTime:''});notify('Стіл звільнено','ok');}}
 function downloadQR(){notify('⬇️ QR завантажується...','ok');}
 function printQR(){notify('🖨️ Відправлено на друк','ok');}
 function printAllQR(){notify('🖨️ Всі QR відправлені','ok');}
@@ -2733,6 +2724,49 @@ async function loadSubscription(){
 }
 
 // Ініціалізація UI
+// Завантажуємо столи при відкритті вкладки
+async function loadTablesFromFirestore() {
+  if(!db||!window.__FS) return;
+  const {collection, getDocs} = window.__FS;
+  try {
+    const snap = await getDocs(collection(db,'venues',venueId,'tables'));
+    if(snap.empty) {
+      // Немає столів — показуємо підказку
+      document.getElementById('tables-grid').innerHTML =
+        '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">' +
+        '🪑 Столів ще немає. Натисніть "🪑 Синх. столи" в POS-інтеграції або додайте вручну.</div>';
+      return;
+    }
+    tables = snap.docs.map(d => ({
+      ...d.data(),
+      id: d.id,
+      status: d.data().status || 'free',
+      orders: d.data().orders || [],
+      amount: d.data().amount || 0,
+      startTime: d.data().startTime || '',
+      staffId: d.data().staffId || '',
+    }));
+    // Витягуємо унікальні зони
+    zones = [...new Set(tables.map(t => t.zone).filter(Boolean))];
+    renderZoneTabs();
+    renderTables();
+  } catch(e) {
+    console.warn('loadTablesFromFirestore:', e.message);
+  }
+}
+
+// Оновлюємо статус столу в Firestore
+async function updateTableStatus(tableId, updates) {
+  if(!db||!window.__FS) return;
+  const {doc, updateDoc} = window.__FS;
+  try {
+    await updateDoc(doc(db,'venues',venueId,'tables',String(tableId)), {
+      ...updates,
+      updatedAt: new Date().toISOString(),
+    });
+  } catch(e) { console.warn('updateTableStatus:', e.message); }
+}
+
 renderZoneTabs();
 renderTables();
 renderStaff();
