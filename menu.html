@@ -935,13 +935,11 @@ window.resetSuccess = () => { $('success').classList.remove('open'); renderMenu(
 
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2500); }
 
-// Прив'язуємо адресний input через addEventListener (надійніше ніж oninput в HTML)
-document.addEventListener('DOMContentLoaded', () => {
+init().then(() => {
+  // Прив'язуємо після завантаження даних
   const addrEl = document.getElementById('cli-address');
-  if(addrEl) addrEl.addEventListener('input', e => onAddressInput(e.target.value));
+  if(addrEl) addrEl.addEventListener('input', e => window.onAddressInput(e.target.value));
 });
-
-init();
 </script>
 <!-- Google Maps Places API — завантажується динамічно -->
 <script>
