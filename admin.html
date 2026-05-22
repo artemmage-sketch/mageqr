@@ -819,8 +819,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
                 </div>
                 <div>
                   <label class="pay-field-label">Webhook URL (скопіюйте в LiqPay)</label>
-                  <div class="webhook-box">https://us-central1-your-project.cloudfunctions.net/paymentWebhook?provider=liqpay&venue=temari</div>
-                  <button class="copy-btn" onclick="notify('Скопійовано!','ok')">📋 Копіювати</button>
+                  <div class="webhook-box" id="webhook-url-liqpay">https://us-central1-mageqrrest.cloudfunctions.net/orderPaymentWebhook?provider=liqpay&venue=VENUE_ID</div>
+                  <button class="copy-btn" onclick="copyWebhook('liqpay')">📋 Копіювати</button>
+                </div>
+                <div style="margin-top:.5rem">
+                  <button class="btn btn-outline btn-sm" onclick="testPayment('liqpay')">🧪 Тест оплати</button>
+                  <button class="btn btn-outline btn-sm" style="margin-left:.375rem" onclick="verifyProvider('liqpay')">✓ Перевірити ключі</button>
                 </div>
                 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
                   <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Visa/MC</span>
@@ -854,8 +858,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
                 </div>
                 <div>
                   <label class="pay-field-label">Webhook URL</label>
-                  <div class="webhook-box">https://us-central1-your-project.cloudfunctions.net/paymentWebhook?provider=mono&venue=temari</div>
-                  <button class="copy-btn" onclick="notify('Скопійовано!','ok')">📋 Копіювати</button>
+                  <div class="webhook-box" id="webhook-url-mono">https://us-central1-mageqrrest.cloudfunctions.net/orderPaymentWebhook?provider=mono&venue=VENUE_ID</div>
+                  <button class="copy-btn" onclick="copyWebhook('mono')">📋 Копіювати</button>
+                </div>
+                <div style="margin-top:.5rem">
+                  <button class="btn btn-outline btn-sm" onclick="testPayment('mono')">🧪 Тест оплати</button>
+                  <button class="btn btn-outline btn-sm" style="margin-left:.375rem" onclick="verifyProvider('mono')">✓ Перевірити токен</button>
                 </div>
                 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
                   <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Visa/MC</span>
@@ -893,8 +901,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
                 </div>
                 <div>
                   <label class="pay-field-label">Service URL (webhook)</label>
-                  <div class="webhook-box">https://us-central1-your-project.cloudfunctions.net/paymentWebhook?provider=wfp&venue=temari</div>
-                  <button class="copy-btn" onclick="notify('Скопійовано!','ok')">📋 Копіювати</button>
+                  <div class="webhook-box" id="webhook-url-wfp">https://us-central1-mageqrrest.cloudfunctions.net/orderPaymentWebhook?provider=wayforpay&venue=VENUE_ID</div>
+                  <button class="copy-btn" onclick="copyWebhook('wfp')">📋 Копіювати</button>
+                </div>
+                <div style="margin-top:.5rem">
+                  <button class="btn btn-outline btn-sm" onclick="testPayment('wfp')">🧪 Тест оплати</button>
                 </div>
                 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
                   <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Visa/MC</span>
@@ -936,8 +947,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
                 </div>
                 <div>
                   <label class="pay-field-label">Webhook URL</label>
-                  <div class="webhook-box">https://us-central1-your-project.cloudfunctions.net/paymentWebhook?provider=abank&venue=temari</div>
-                  <button class="copy-btn" onclick="notify('Скопійовано!','ok')">📋 Копіювати</button>
+                  <div class="webhook-box" id="webhook-url-abank">https://us-central1-mageqrrest.cloudfunctions.net/orderPaymentWebhook?provider=abank&venue=VENUE_ID</div>
+                  <button class="copy-btn" onclick="copyWebhook('abank')">📋 Копіювати</button>
                 </div>
               </div>
             </div>
@@ -2779,6 +2790,7 @@ renderStaff();
 // ── ПЛАТЕЖІ ──────────────────────────────────────────────
 async function loadPaymentSettings() {
   if(!db||!window.__FS) return;
+  updateWebhookUrls(); // оновлюємо URLs з реальним venueId
   const {doc,getDoc}=window.__FS;
   try {
     const snap=await getDoc(doc(db,'venues',venueId,'settings','payments'));
@@ -3348,6 +3360,75 @@ window.syncSyrveMenu = async function() {
       logEl.innerHTML = `<div class="log-ok">[${now}] ✓ Меню: ${data.products} позицій, зіставлено ${data.matched}</div>`;
     }
   } catch(e) { notify('Помилка: '+e.message, 'err'); }
+};
+
+
+// ── ПЛАТЕЖІ — webhook, тест, перевірка ──────────────────
+window.copyWebhook = function(provider) {
+  const url = `https://us-central1-mageqrrest.cloudfunctions.net/orderPaymentWebhook?provider=${provider === 'wfp' ? 'wayforpay' : provider}&venue=${venueId}`;
+  // Оновлюємо текст в блоці
+  const el = document.getElementById(`webhook-url-${provider}`);
+  if(el) el.textContent = url;
+  navigator.clipboard.writeText(url).then(() => notify('✅ Webhook URL скопійовано!', 'ok'));
+};
+
+// Оновлюємо webhook URLs з реальним venueId після завантаження
+function updateWebhookUrls() {
+  ['liqpay','mono','wfp','abank'].forEach(p => {
+    const el = document.getElementById(`webhook-url-${p}`);
+    if(el) {
+      const provider = p === 'wfp' ? 'wayforpay' : p;
+      el.textContent = `https://us-central1-mageqrrest.cloudfunctions.net/orderPaymentWebhook?provider=${provider}&venue=${venueId}`;
+    }
+  });
+}
+
+window.testPayment = async function(provider) {
+  notify('Створюємо тестове замовлення...', 'ok');
+  try {
+    // Спочатку зберігаємо налаштування
+    await savePayments();
+
+    // Створюємо тестове замовлення на 1 грн
+    const res = await fetch(`${window.__CF_URL}/createOrder`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        venueId,
+        items: [{ id: 'test', itemId: 'test', name: 'Тест-замовлення', price: 1, qty: 1 }],
+        total: 1,
+        orderType: 'dine_in',
+        clientName: 'Тест',
+        clientPhone: '0000000000',
+        paymentProvider: provider,
+        paymentMethod: 'online',
+      }),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'Помилка');
+    if(data.payUrl) {
+      window.open(data.payUrl, '_blank');
+      notify('✅ Відкрито сторінку оплати. Перевірте чи вона коректна.', 'ok');
+    } else {
+      notify('❌ Платіжне посилання не отримано. Перевірте ключі.', 'err');
+    }
+  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
+};
+
+window.verifyProvider = async function(provider) {
+  notify('Перевіряємо підключення...', 'ok');
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const res = await fetch(`${window.__CF_URL}/verifyPaymentProvider`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({venueId, provider}),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error);
+    notify('✅ ' + (data.message || 'Підключення успішне!'), 'ok');
+  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
 };
 
 initFirebase();
