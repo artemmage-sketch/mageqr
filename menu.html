@@ -51,7 +51,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .qty-chip{position:absolute;top:.5rem;right:.5rem;background:var(--accent);color:#fff;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s}
 .overlay.open{opacity:1;pointer-events:all}
-.sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;transform:translateY(100%);transition:transform .25s}
+.sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;transform:translateY(100%);transition:transform .25s;scroll-behavior:auto}
 .overlay.open .sheet{transform:translateY(0)}
 .sh-handle{width:36px;height:3px;background:var(--border);border-radius:2px;margin:10px auto}
 .det-img{width:100%;max-height:380px;object-fit:contain;background:#f5f0eb}
@@ -210,7 +210,10 @@ window.__MQ_CFG = {
     <div class="sh-handle"></div>
     <div style="padding:0 1rem 1.5rem">
 
-      <div style="font-family:var(--font-head);font-size:1.2rem;font-weight:600;margin-bottom:1rem">🛒 Ваше замовлення</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <div style="font-family:var(--font-head);font-size:1.2rem;font-weight:600">🛒 Ваше замовлення</div>
+        <button onclick="closeCart()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.4rem;line-height:1;padding:4px 8px;border-radius:6px" title="Закрити">✕</button>
+      </div>
 
       <!-- СПИСОК СТРАВ -->
       <div class="cart-list" id="cart-list"></div>
@@ -326,8 +329,8 @@ window.__MQ_CFG = {
       <div class="form-section">
         <div class="form-section-title">💳 Спосіб оплати</div>
         <div style="display:flex;gap:.5rem">
-          <div class="pay-opt active" id="pay-opt-cash" onclick="selectPayment('cash')" style="flex:1;padding:12px;font-size:14px;text-align:center">💵 Готівка / картка при отриманні</div>
-          <div class="pay-opt" id="pay-opt-online" onclick="selectPayment('online')" style="flex:1;padding:12px;font-size:14px;text-align:center;display:none">💳 Онлайн</div>
+          <div class="pay-opt active" id="pay-opt-cash" onclick="selectPayment('cash')" style="flex:1;padding:12px;font-size:14px;text-align:center">💵 Готівкою при отриманні</div>
+          <div class="pay-opt" id="pay-opt-online" onclick="selectPayment('online')" style="flex:1;padding:12px;font-size:14px;text-align:center;display:none">💳 Карткою онлайн</div>
         </div>
       </div>
 
@@ -604,6 +607,21 @@ window.qAdd = id => {
 };
 
 function total(){ return Object.entries(cart).reduce((s,[id,q])=>{const it=allItems.find(x=>x.id===id);return it?s+it.price*q:s;},0); }
+function getDiscount(subtotal) {
+  const disc = orderingSettings.discounts;
+  if(!disc) return 0;
+  const d = {dine_in: disc.dineIn, takeaway: disc.takeaway, delivery: disc.delivery}[orderType] || {};
+  if(d.pct) return Math.round(subtotal * d.pct / 100);
+  if(d.fix) return Math.min(d.fix, subtotal);
+  return 0;
+}
+function discountName() {
+  const disc = orderingSettings.discounts;
+  if(!disc) return '';
+  const d = {dine_in: disc.dineIn, takeaway: disc.takeaway, delivery: disc.delivery}[orderType] || {};
+  return d.name || '';
+}
+function totalWithDiscount() { return Math.max(0, total() - getDiscount(total())); }
 function count(){ return Object.values(cart).reduce((a,b)=>a+b,0); }
 function updateCart(){
   const n=count(),t=total();
@@ -613,6 +631,7 @@ function updateCart(){
 }
 window.openCart = () => {
   renderCart();
+  setTimeout(()=>{ const s=document.querySelector('#cart-ov .sheet'); if(s) s.scrollTop=0; },10);
   // Застосовуємо налаштування оплати і приборів
   const payOnline = orderingSettings.payOnline !== false;
   const payCash   = orderingSettings.payCash !== false;
@@ -846,7 +865,9 @@ window.placeOrder = async () => {
     const orderData = {
       venueId,
       items,
-      total: total(),
+      total: totalWithDiscount(),
+      discount: getDiscount(total()),
+      discountName: discountName(),
       orderType,
       clientName: name,
       clientPhone: phone,
