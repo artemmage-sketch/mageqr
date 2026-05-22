@@ -335,11 +335,11 @@ button{cursor:pointer}
 // ⚠️ ЗАМІНІТЬ на свої ключі (такі самі як у login.html)
 window.__MQ_CFG = window.__MQ_CFG || {
   apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-  authDomain: "mageqrrest.firebaseapp.com",
-  projectId: "mageqrrest",
-  storageBucket: "mageqrrest.firebasestorage.app",
-  messagingSenderId: "207231972557",
-  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+    authDomain: "mageqrrest.firebaseapp.com",
+    projectId: "mageqrrest",
+    storageBucket: "mageqrrest.firebasestorage.app",
+    messagingSenderId: "207231972557",
+    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 </script>
@@ -1920,16 +1920,18 @@ function subscribeOrders() {
   const {collection,onSnapshot} = window.__FS;
   if (unsubOrders) unsubOrders();
   unsubOrders = onSnapshot(collection(db,'venues',venueId,'orders'), snap => {
-    orders = snap.docs.map(d => {
-      const data = d.data();
-      return {...data, id:d.id,
-        time: data.createdAt ? new Date(data.createdAt.seconds*1000).toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'}) : '—',
-        dateMs: data.createdAt ? data.createdAt.seconds*1000 : 0};
-    }).sort((a,b)=>b.dateMs-a.dateMs);
-    renderOrders();
-    updateOrderBadge();
-    playNewOrderSound();
-  }, err => { console.warn('subscribeOrders:',err.message); });
+    try {
+      orders = snap.docs.map(d => {
+        const data = d.data();
+        return {...data, id:d.id,
+          time: data.createdAt ? new Date(data.createdAt.seconds*1000).toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'}) : '—',
+          dateMs: data.createdAt ? data.createdAt.seconds*1000 : 0};
+      }).sort((a,b)=>b.dateMs-a.dateMs);
+      renderOrders();
+      updateOrderBadge();
+      playNewOrderSound();
+    } catch(e) { console.warn('subscribeOrders render error:', e.message); }
+  }, err => { console.warn('subscribeOrders:', err.message); });
 }
 
 let prevOrderCount=0;
