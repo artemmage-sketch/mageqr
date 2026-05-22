@@ -807,9 +807,10 @@ window.onAddressInput = function(value) {
     window.autocompleteService.getPlacePredictions(
       { input: query, language: 'uk', componentRestrictions: { country: 'ua' } },
       (predictions, status) => {
+        toast('Maps status: ' + status);
         if(status !== google.maps.places.PlacesServiceStatus.OK || !predictions?.length) {
           suggestEl.style.display = 'block';
-          suggestEl.innerHTML = `<div style="padding:10px 14px;font-size:13px;color:var(--muted)">Нічого не знайдено (${status})</div>`;
+          suggestEl.innerHTML = `<div style="padding:10px 14px;font-size:13px;color:var(--muted)">Статус: ${status}</div>`;
           return;
         }
         suggestEl.style.display = 'block';
