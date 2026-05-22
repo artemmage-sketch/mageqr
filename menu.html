@@ -698,7 +698,25 @@ function renderCart(){
       </div>
     </div>`;
   }).join('')||'<div style="color:var(--muted);text-align:center;padding:1rem;font-size:13px">Кошик порожній</div>';
-  $('cart-total-val').textContent = total()+' грн';
+  // Разом зі знижкою
+  const _sub = total();
+  const _disc = getDiscount(_sub);
+  const _final = Math.max(0, _sub - _disc);
+  const _discNm = discountName();
+  if(_disc > 0) {
+    $('cart-total-val').innerHTML = `<span style="color:var(--green,#059669);font-weight:700">${_final} грн</span> <span style="text-decoration:line-through;color:var(--muted);font-size:13px">${_sub}</span>`;
+    let discEl = document.getElementById('cart-discount-row');
+    if(!discEl) {
+      discEl = document.createElement('div');
+      discEl.id = 'cart-discount-row';
+      discEl.style.cssText = 'font-size:13px;color:var(--green,#059669);margin:.25rem 0 .5rem;font-weight:500';
+      $('cart-total-val')?.closest('.cart-total')?.after(discEl);
+    }
+    discEl.textContent = '🏷️ ' + (_discNm||'Знижка') + ': −' + _disc + ' грн';
+  } else {
+    $('cart-total-val').textContent = _final + ' грн';
+    document.getElementById('cart-discount-row')?.remove();
+  }
 }
 window.cQty = (id,d) => {
   cart[id]=Math.max(0,(cart[id]||0)+d);
@@ -799,9 +817,14 @@ window.setOrderType = function(type) {
   if(elComment) elComment.style.display = type==='delivery' ? 'none'  : 'block';
   if(elLabel)   elLabel.textContent     = type==='takeaway' ? '💬 Коментар для закладу' : '💬 Коментар';
   if(type === 'takeaway') buildTimeSlots();
-  // Перерендеримо меню бо доступність і ціни змінились
+  // Перерендеримо меню і кошик бо ціни/доступність змінились
   renderMenu();
   updateCart();
+  // Якщо кошик відкритий — оновлюємо його вміст і суму
+  if($('cart-ov')?.classList.contains('open')) {
+    renderCart();
+    renderOrderTypeBtns();
+  }
   if(type === 'delivery') {
     if(window.loadGoogleMaps) window.loadGoogleMaps();
     const del = orderingSettings.delivery;
