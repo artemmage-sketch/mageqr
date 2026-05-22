@@ -134,11 +134,11 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 <script>
 window.__MQ_CFG = {
   apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-  authDomain: "mageqrrest.firebaseapp.com",
-  projectId: "mageqrrest",
-  storageBucket: "mageqrrest.firebasestorage.app",
-  messagingSenderId: "207231972557",
-  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+    authDomain: "mageqrrest.firebaseapp.com",
+    projectId: "mageqrrest",
+    storageBucket: "mageqrrest.firebasestorage.app",
+    messagingSenderId: "207231972557",
+    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 </script>
 
@@ -1007,10 +1007,16 @@ window.placeOrder = async () => {
     if(!res.ok) throw new Error(data.error||'Помилка замовлення');
 
     cart={}; updateCart(); closeCart();
-    $('s-num').textContent='#'+data.orderNum;
+    $('s-num').textContent = data.orderNum ? '#'+data.orderNum : '';
 
-    // Якщо онлайн оплата — відкриваємо платіжну сторінку
+    // Якщо онлайн оплата — зберігаємо orderId і переходимо
     if(data.payUrl) {
+      // Зберігаємо дані для перевірки після повернення
+      localStorage.setItem('mq_pending_order', JSON.stringify({
+        orderId: data.orderId,
+        orderNum: data.orderNum,
+        venueId,
+      }));
       window.location.href = data.payUrl;
       return;
     }
@@ -1026,12 +1032,30 @@ function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'
 // Перевіряємо чи повернулись після оплати
 async function checkPaymentAfterRedirect() {
   const urlParams = new URLSearchParams(location.search);
-  const orderId = urlParams.get('order');
-  const paid = urlParams.get('paid');
-  if (!orderId || !paid) return;
+  let orderId = urlParams.get('order');
+  let paid = urlParams.get('paid');
 
-  // Прибираємо параметри з URL без перезавантаження
+  // Якщо немає в URL — перевіряємо localStorage (Mono/WFP можуть не передавати params)
+  if (!orderId) {
+    const pending = localStorage.getItem('mq_pending_order');
+    if (pending) {
+      try {
+        const data = JSON.parse(pending);
+        // Перевіряємо тільки якщо це той самий заклад
+        if (data.venueId === venueId) {
+          orderId = data.orderId;
+          paid = '1';
+        }
+      } catch(e) {}
+    }
+  }
+
+  if (!orderId) return;
+
+  // Прибираємо параметри з URL
   window.history.replaceState({}, '', location.pathname + '?v=' + venueId + (urlParams.get('t') ? '&t='+urlParams.get('t') : ''));
+  // Очищаємо localStorage
+  localStorage.removeItem('mq_pending_order');
 
   // Показуємо екран очікування
   const success = $('success');
