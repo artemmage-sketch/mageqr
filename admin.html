@@ -1761,6 +1761,53 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       <div><label class="field-label">Вага / обєм</label><input id="if-weight" type="text" placeholder="250 г"/></div>
       <div><label class="field-label">Категорія</label><select id="if-cat"></select></div>
       <div><label class="field-label">Артикул / код</label><input id="if-sku" type="text" placeholder="необовязково"/></div>
+
+      <!-- ДОСТУПНІСТЬ ПО ТИПАХ ЗАМОВЛЕННЯ -->
+      <div class="span2">
+        <label class="field-label">Доступність та ціна за типом замовлення</label>
+        <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.375rem">
+
+          <!-- В ЗАКЛАДІ -->
+          <div style="background:var(--bg2);border-radius:8px;padding:.75rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+              <div style="font-size:13px;font-weight:500">🪑 В закладі</div>
+              <label class="sw"><input type="checkbox" id="if-avail-dine" checked/><span class="sw-slider"></span></label>
+            </div>
+            <div style="display:flex;align-items:center;gap:.5rem">
+              <span style="font-size:12px;color:var(--muted);white-space:nowrap">Окрема ціна:</span>
+              <input id="if-price-dine" type="number" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
+              <span style="font-size:11px;color:var(--muted)">грн</span>
+            </div>
+          </div>
+
+          <!-- З СОБОЮ -->
+          <div style="background:var(--bg2);border-radius:8px;padding:.75rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+              <div style="font-size:13px;font-weight:500">🥡 З собою</div>
+              <label class="sw"><input type="checkbox" id="if-avail-take" checked/><span class="sw-slider"></span></label>
+            </div>
+            <div style="display:flex;align-items:center;gap:.5rem">
+              <span style="font-size:12px;color:var(--muted);white-space:nowrap">Окрема ціна:</span>
+              <input id="if-price-take" type="number" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
+              <span style="font-size:11px;color:var(--muted)">грн</span>
+            </div>
+          </div>
+
+          <!-- ДОСТАВКА -->
+          <div style="background:var(--bg2);border-radius:8px;padding:.75rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+              <div style="font-size:13px;font-weight:500">🚗 Доставка</div>
+              <label class="sw"><input type="checkbox" id="if-avail-del" checked/><span class="sw-slider"></span></label>
+            </div>
+            <div style="display:flex;align-items:center;gap:.5rem">
+              <span style="font-size:12px;color:var(--muted);white-space:nowrap">Окрема ціна:</span>
+              <input id="if-price-del" type="number" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
+              <span style="font-size:11px;color:var(--muted)">грн</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="span2">
         <label class="field-label">Алергени (оберіть всі що є)</label>
         <div id="allergen-checkboxes" style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.375rem"></div>
@@ -2066,7 +2113,18 @@ window.saveItem=async function(){
   const photoUrl=await uploadPhotoAndGetUrl();
   const data={name,desc:document.getElementById('if-desc').value,price,photoUrl:photoUrl||'',
     weight:document.getElementById('if-weight').value,category:document.getElementById('if-cat').value,
-    sku:document.getElementById('if-sku')?.value||'',allergens:getSelectedAllergens(),updatedAt:new Date().toISOString()};
+    sku:document.getElementById('if-sku')?.value||'',allergens:getSelectedAllergens(),
+    availability:{
+      dineIn:  document.getElementById('if-avail-dine')?.checked!==false,
+      takeaway:document.getElementById('if-avail-take')?.checked!==false,
+      delivery:document.getElementById('if-avail-del')?.checked!==false,
+    },
+    prices:{
+      dineIn:  parseFloat(document.getElementById('if-price-dine')?.value)||null,
+      takeaway:parseFloat(document.getElementById('if-price-take')?.value)||null,
+      delivery:parseFloat(document.getElementById('if-price-del')?.value)||null,
+    },
+    updatedAt:new Date().toISOString()};
   try{
     if(editItemId)await setDoc(doc(db,'venues',venueId,'items',editItemId),data);
     else await addDoc(collection(db,'venues',venueId,'items'),data);
@@ -2117,12 +2175,24 @@ function openItemModal(id=null){
     document.getElementById('if-sku')&&(document.getElementById('if-sku').value=i.sku||'');
     document.getElementById('if-cat').value=i.category||'';
     renderAllergenCheckboxes(i.allergens||[]);
+    // Доступність
+    const av = i.availability || {};
+    document.getElementById('if-avail-dine')&&(document.getElementById('if-avail-dine').checked=av.dineIn!==false);
+    document.getElementById('if-avail-take')&&(document.getElementById('if-avail-take').checked=av.takeaway!==false);
+    document.getElementById('if-avail-del')&&(document.getElementById('if-avail-del').checked=av.delivery!==false);
+    // Ціни за типом
+    const pr = i.prices || {};
+    document.getElementById('if-price-dine')&&(document.getElementById('if-price-dine').value=pr.dineIn||'');
+    document.getElementById('if-price-take')&&(document.getElementById('if-price-take').value=pr.takeaway||'');
+    document.getElementById('if-price-del')&&(document.getElementById('if-price-del').value=pr.delivery||'');
     if(i.photoUrl){document.getElementById('if-photo-url').value=i.photoUrl;document.getElementById('if-photo-url-input').value=i.photoUrl;showPhotoPreview(i.photoUrl);}else clearPhoto();
   }else{
     document.getElementById('item-modal-t').textContent='Нова страва';
     ['if-name','if-desc','if-price','if-weight'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('if-sku')&&(document.getElementById('if-sku').value='');
     renderAllergenCheckboxes([]);clearPhoto();currentPhotoFile=null;
+    ['if-avail-dine','if-avail-take','if-avail-del'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=true;});
+    ['if-price-dine','if-price-take','if-price-del'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   }
   openModal('modal-item');
 }
