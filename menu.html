@@ -804,6 +804,7 @@ window.onAddressInput = function(value) {
     const city = document.getElementById('cli-city')?.value || window._venueCity || '';
     const query = city ? `${value}, ${city}` : value;
     
+    toast('calling Maps: ' + query);
     window.autocompleteService.getPlacePredictions(
       { input: query, language: 'uk', componentRestrictions: { country: 'ua' } },
       (predictions, status) => {
