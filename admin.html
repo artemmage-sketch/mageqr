@@ -1878,6 +1878,7 @@ async function initFirebase() {
     renderMappingRows();
     renderPresetsRow();
     loadDesignSettings();
+    loadTablesFromFirestore();
     setTimeout(() => loadBilling(), 500);
   });
 }
