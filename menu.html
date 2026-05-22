@@ -647,6 +647,7 @@ function updateCart(){
 window.openCart = () => {
   renderCart();
   setTimeout(()=>{ const s=document.querySelector('#cart-ov .sheet'); if(s) s.scrollTop=0; },10);
+  toast('openCart called, addr: ' + (document.getElementById('cli-address') ? 'exists' : 'NOT FOUND'));
   // Завантажуємо Google Maps при відкритті кошика
   if(window.loadGoogleMaps) window.loadGoogleMaps();
   // Прив'язуємо input listener тут — елемент точно існує
