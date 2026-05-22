@@ -313,8 +313,21 @@ button{cursor:pointer}
 .empty{text-align:center;padding:2.5rem;color:var(--muted)}
 .empty i{font-size:2rem;display:block;margin-bottom:.625rem;opacity:.4}
 
+.customers-table{width:100%;border-collapse:collapse}
+.customers-table th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:.5rem .75rem;border-bottom:2px solid var(--border);text-align:left;font-weight:600}
+.customers-table td{padding:.75rem;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+.customers-table tr:hover td{background:var(--bg2)}
+.cust-phone{font-family:monospace;font-size:12px;color:var(--muted)}
+.cust-orders{font-size:11px;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:10px;font-weight:600}
+.cust-total{font-weight:600;color:var(--accent)}
 /* PLAN LOCK */
 .plan-lock{display:flex;align-items:center;gap:.625rem;background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:.625rem .875rem;font-size:12px;color:#92400E;margin-bottom:.875rem}
+.customers-table{width:100%;border-collapse:collapse}
+.customers-table th{background:var(--bg2);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:.625rem .875rem;text-align:left;border-bottom:1px solid var(--border)}
+.customers-table td{padding:.75rem .875rem;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+.customers-table tr:hover td{background:var(--bg2)}
+.customer-phone{font-family:monospace;color:var(--accent);font-size:13px}
+.customer-badge{display:inline-block;background:var(--accent-soft);color:var(--accent);font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
 </style>
 
 <!-- Firebase Config — такий самий як у login.html -->
@@ -350,7 +363,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       <button class="nav-item" onclick="nav(this,'t-design')">🎨 Дизайн меню</button>
       <button class="nav-item" onclick="nav(this,'t-payments')">💳 Платежі</button>
       <button class="nav-item" onclick="nav(this,'t-pos')">🖥️ POS-інтеграція</button>
+      <button class="nav-item" onclick="nav(this,'t-customers')">👥 Клієнти</button>
       <button class="nav-item" onclick="nav(this,'t-billing')">💳 Підписка</button>
+      <button class="nav-item" onclick="nav(this,'t-customers')">👥 Клієнти</button>
       <button class="nav-item" onclick="nav(this,'t-ordering')">📋 Налаш. замовлень</button>
       <button class="nav-item" onclick="nav(this,'t-settings')">⚙️ Налаштування</button>
     </div>
@@ -932,7 +947,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
         <!-- RECEIPTS -->
         <div class="settings-section">
-          <h3>Фіскалізація та чеки</h3>
+          <h3>🧾 Фіскалізація та чеки</h3>
           <div class="toggle-row" style="margin-bottom:.875rem">
             <div>
               <div style="font-size:13px;font-weight:500">Надсилати email-квитанцію клієнту</div>
@@ -940,17 +955,76 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
             </div>
             <label class="sw"><input type="checkbox" id="send-receipt" checked/><span class="sw-slider"></span></label>
           </div>
-          <div class="toggle-row">
-            <div>
-              <div style="font-size:13px;font-weight:500">Checkbox / ПРРО фіскалізація</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:2px">Автоматично пробивати фіскальний чек через ПРРО</div>
+
+          <div style="background:var(--bg2);border-radius:10px;padding:1rem;margin-top:.875rem">
+            <div style="font-size:13px;font-weight:600;margin-bottom:.875rem">ПРРО — оберіть спосіб фіскалізації</div>
+
+            <!-- Варіант 1: Через POS -->
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.875rem;margin-bottom:.625rem">
+              <div class="toggle-row">
+                <div>
+                  <div style="font-size:13px;font-weight:500">🖥️ Через POS систему (Poster / Syrve)</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px">Якщо підключено Poster або Syrve — фіскалізація відбувається автоматично в касі. Додаткових налаштувань не потрібно.</div>
+                </div>
+                <label class="sw"><input type="checkbox" id="fiscal-pos" onchange="toggleFiscalMethod('pos',this.checked)"/><span class="sw-slider"></span></label>
+              </div>
+              <div id="fiscal-pos-info" style="display:none;margin-top:.75rem;background:#EFF6FF;border-radius:6px;padding:.625rem;font-size:12px;color:#1D4ED8">
+                ✓ Poster і Syrve автоматично пробивають фіскальний чек при отриманні замовлення. Переконайтесь що ПРРО налаштовано в самій POS системі.
+              </div>
             </div>
-            <label class="sw"><input type="checkbox" id="fiscal"/><span class="sw-slider"></span></label>
-          </div>
-          <div id="fiscal-fields" style="display:none;margin-top:1rem">
-            <div class="field-row">
-              <label class="field-label">Checkbox API ключ</label>
-              <input type="password" placeholder="••••••••••••••••" id="checkbox-key"/>
+
+            <!-- Варіант 2: Checkbox -->
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.875rem;margin-bottom:.625rem">
+              <div class="toggle-row">
+                <div>
+                  <div style="font-size:13px;font-weight:500">✅ Checkbox ПРРО</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px">Автоматичний фіскальний чек через API Checkbox</div>
+                </div>
+                <label class="sw"><input type="checkbox" id="fiscal-checkbox" onchange="toggleFiscalMethod('checkbox',this.checked)"/><span class="sw-slider"></span></label>
+              </div>
+              <div id="fiscal-checkbox-fields" style="display:none;margin-top:.875rem">
+                <div class="field-row">
+                  <label class="field-label">Checkbox Login (email)</label>
+                  <input type="text" placeholder="your@email.com" id="checkbox-login"/>
+                </div>
+                <div class="field-row">
+                  <label class="field-label">Checkbox Password</label>
+                  <input type="password" placeholder="••••••••" id="checkbox-pass"/>
+                </div>
+                <div class="field-row">
+                  <label class="field-label">Каса ID (cashier_id)</label>
+                  <input type="text" placeholder="UUID каси з кабінету Checkbox" id="checkbox-cashier"/>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-top:.25rem">
+                  Отримайте дані на <a href="https://my.checkbox.ua" target="_blank" style="color:var(--accent)">my.checkbox.ua</a> → Каси → API
+                </div>
+                <button class="btn btn-outline btn-sm" style="margin-top:.5rem" onclick="testCheckbox()">🧪 Перевірити підключення</button>
+              </div>
+            </div>
+
+            <!-- Варіант 3: Vchasno -->
+            <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.875rem">
+              <div class="toggle-row">
+                <div>
+                  <div style="font-size:13px;font-weight:500">🕐 Vchasno ПРРО</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px">Фіскалізація через сервіс Vchasno.ua</div>
+                </div>
+                <label class="sw"><input type="checkbox" id="fiscal-vchasno" onchange="toggleFiscalMethod('vchasno',this.checked)"/><span class="sw-slider"></span></label>
+              </div>
+              <div id="fiscal-vchasno-fields" style="display:none;margin-top:.875rem">
+                <div class="field-row">
+                  <label class="field-label">Vchasno API Key</label>
+                  <input type="password" placeholder="••••••••••••••••" id="vchasno-key"/>
+                </div>
+                <div class="field-row">
+                  <label class="field-label">Касовий апарат ID</label>
+                  <input type="text" placeholder="ID з кабінету Vchasno" id="vchasno-rro"/>
+                </div>
+                <div style="font-size:11px;color:var(--muted);margin-top:.25rem">
+                  Отримайте дані на <a href="https://vchasno.ua" target="_blank" style="color:var(--accent)">vchasno.ua</a> → Налаштування → API
+                </div>
+                <button class="btn btn-outline btn-sm" style="margin-top:.5rem" onclick="testVchasno()">🧪 Перевірити підключення</button>
+              </div>
             </div>
           </div>
         </div>
@@ -1034,7 +1108,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
               <button class="btn btn-outline btn-sm" onclick="testPOS('poster')">🧪 Тест</button>
               <button class="btn btn-accent btn-sm" onclick="connectPOS('poster')">Підключити</button>
-              <button class="btn btn-outline btn-sm" onclick="showPosterWebhook()" title="Налаштувати авто-оновлення статусів">🔗 Webhook</button>
+              <button class="btn btn-outline btn-sm" onclick="showPosterWebhook()">🔗 Webhook</button>
+              <button class="btn btn-outline btn-sm" onclick="syncTablesFromPoster()">🪑 Синх. столи</button>
             </div>
             <div style="margin-top:.875rem">
               <div class="pay-field-label">Журнал синхронізації</div>
@@ -1123,6 +1198,49 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
           </div>
         </div>
 
+      </div>
+    </div>
+
+
+    <!-- CUSTOMERS -->
+    <div id="t-customers" class="tab-section">
+      <div class="topbar">
+        <div>
+          <div class="page-title">👥 Клієнти</div>
+          <div class="page-sub" id="customers-sub">Завантаження...</div>
+        </div>
+        <div style="display:flex;gap:.5rem">
+          <input type="text" id="customer-search" placeholder="Пошук за ім'ям або телефоном..." style="width:220px" oninput="filterCustomers()"/>
+          <button class="btn btn-outline btn-sm" onclick="exportCustomersExcel()">📊 Excel</button>
+          <button class="btn btn-outline btn-sm" onclick="loadCustomers()">↺</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="stats-grid" style="margin-bottom:1.25rem">
+          <div class="stat"><div class="stat-val" id="cst-total">—</div><div class="stat-lbl">Всього клієнтів</div></div>
+          <div class="stat"><div class="stat-val" id="cst-new">—</div><div class="stat-lbl">Нових за місяць</div></div>
+          <div class="stat"><div class="stat-val" id="cst-repeat">—</div><div class="stat-lbl">Повторних</div></div>
+          <div class="stat"><div class="stat-val" id="cst-avg">—</div><div class="stat-lbl">Сер. чек</div></div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+          <div style="overflow-x:auto">
+            <table class="customers-table">
+              <thead>
+                <tr>
+                  <th>Клієнт</th>
+                  <th>Телефон</th>
+                  <th>Замовлень</th>
+                  <th>Витрачено</th>
+                  <th>Сер. чек</th>
+                  <th>Перше замовлення</th>
+                  <th>Останнє замовлення</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="customers-tbody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1231,6 +1349,47 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       </div>
     </div>
 
+
+
+    <!-- CUSTOMERS -->
+    <div id="t-customers" class="tab-section">
+      <div class="topbar">
+        <div><div class="page-title">👥 Клієнти</div><div class="page-sub" id="customers-sub">Завантаження...</div></div>
+        <div style="display:flex;gap:.5rem">
+          <input type="text" id="cust-search" placeholder="Пошук за ім'ям або телефоном..." style="width:220px" oninput="filterCustomers()"/>
+          <button class="btn btn-outline btn-sm" onclick="exportCustomersExcel()">📥 Excel</button>
+          <button class="btn btn-outline btn-sm" onclick="loadCustomers()">↺</button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="stats-grid" style="margin-bottom:1.25rem">
+          <div class="stat"><div class="stat-val" id="cust-total-count">—</div><div class="stat-lbl">Всього клієнтів</div></div>
+          <div class="stat"><div class="stat-val" id="cust-new-month">—</div><div class="stat-lbl">Нових за місяць</div></div>
+          <div class="stat"><div class="stat-val" id="cust-repeat">—</div><div class="stat-lbl">Постійних (2+ замовлень)</div></div>
+          <div class="stat"><div class="stat-val" id="cust-avg-check">—</div><div class="stat-lbl">Середній чек</div></div>
+        </div>
+        <div class="settings-section" style="padding:0;overflow:hidden">
+          <div id="customers-table-wrap" style="overflow-x:auto">
+            <table class="customers-table">
+              <thead>
+                <tr>
+                  <th>Клієнт</th>
+                  <th>Телефон</th>
+                  <th>Замовлень</th>
+                  <th>Загальна сума</th>
+                  <th>Останнє замовлення</th>
+                  <th>Тип</th>
+                </tr>
+              </thead>
+              <tbody id="customers-tbody"></tbody>
+            </table>
+          </div>
+          <div id="customers-empty" style="display:none;text-align:center;padding:2rem;color:var(--muted)">
+            Замовлень ще немає
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- ORDERING SETTINGS -->
     <div id="t-ordering" class="tab-section">
@@ -1373,6 +1532,66 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
               <div style="font-size:11px;color:var(--muted);margin-top:2px">Клієнт вкаже скільки приборів потрібно або відмовиться від них</div>
             </div>
             <label class="sw"><input type="checkbox" id="ord-ask-cutlery" checked/><span class="sw-slider"></span></label>
+          </div>
+        </div>
+
+        <!-- ЗНИЖКИ -->
+        <div class="settings-section">
+          <h3>🏷️ Знижки</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Встановіть знижку для кожного типу замовлення. Клієнт побачить знижену ціну автоматично.</p>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.75rem">
+            <div style="font-size:14px;font-weight:600;margin-bottom:.75rem">🪑 В закладі</div>
+            <div class="grid-2">
+              <div class="field-row">
+                <label class="field-label">Знижка (%)</label>
+                <input type="number" id="disc-dine-pct" placeholder="0" min="0" max="100"/>
+              </div>
+              <div class="field-row">
+                <label class="field-label">або фіксована сума (грн)</label>
+                <input type="number" id="disc-dine-fix" placeholder="0" min="0"/>
+              </div>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Назва знижки (відображається клієнту)</label>
+              <input type="text" id="disc-dine-name" placeholder="Знижка в закладі"/>
+            </div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.75rem">
+            <div style="font-size:14px;font-weight:600;margin-bottom:.75rem">🥡 З собою</div>
+            <div class="grid-2">
+              <div class="field-row">
+                <label class="field-label">Знижка (%)</label>
+                <input type="number" id="disc-take-pct" placeholder="0" min="0" max="100"/>
+              </div>
+              <div class="field-row">
+                <label class="field-label">або фіксована сума (грн)</label>
+                <input type="number" id="disc-take-fix" placeholder="0" min="0"/>
+              </div>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Назва знижки</label>
+              <input type="text" id="disc-take-name" placeholder="Знижка на самовинос"/>
+            </div>
+          </div>
+
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem">
+            <div style="font-size:14px;font-weight:600;margin-bottom:.75rem">🚗 Доставка</div>
+            <div class="grid-2">
+              <div class="field-row">
+                <label class="field-label">Знижка (%)</label>
+                <input type="number" id="disc-del-pct" placeholder="0" min="0" max="100"/>
+              </div>
+              <div class="field-row">
+                <label class="field-label">або фіксована сума (грн)</label>
+                <input type="number" id="disc-del-fix" placeholder="0" min="0"/>
+              </div>
+            </div>
+            <div class="field-row">
+              <label class="field-label">Назва знижки</label>
+              <input type="text" id="disc-del-name" placeholder="Знижка на доставку"/>
+            </div>
           </div>
         </div>
 
@@ -2277,7 +2496,7 @@ window.savePOSMapping = async function() {
 function selectMode(m){['instant','after','both'].forEach(id=>{document.getElementById('mode-'+id).classList.toggle('selected',id===m);const r=document.getElementById('radio-'+id);r.classList.toggle('on',id===m);});}
 function toggleProvider(id,on){document.getElementById('card-'+id).classList.toggle('enabled',on);document.getElementById('fields-'+id).style.display=on?'flex':'none';}
 window.selectMode=selectMode;window.toggleProvider=toggleProvider;
-document.getElementById('fiscal')?.addEventListener('change',function(){document.getElementById('fiscal-fields').style.display=this.checked?'block':'none';});
+// fiscal listener — handled by toggleFiscalMethod
 
 // ── UTILS ──
 function nav(btn,tab){
@@ -2684,6 +2903,13 @@ async function loadOrderingSettings() {
 
     // Прибори і оплата
     if(d.askCutlery !== undefined) document.getElementById('ord-ask-cutlery').checked = d.askCutlery;
+    // Знижки
+    if(d.discounts) {
+      const disc = d.discounts;
+      if(disc.dineIn)   { document.getElementById('disc-dine-pct')&&(document.getElementById('disc-dine-pct').value=disc.dineIn.pct||0); document.getElementById('disc-dine-fix')&&(document.getElementById('disc-dine-fix').value=disc.dineIn.fix||0); document.getElementById('disc-dine-name')&&(document.getElementById('disc-dine-name').value=disc.dineIn.name||''); }
+      if(disc.takeaway) { document.getElementById('disc-take-pct')&&(document.getElementById('disc-take-pct').value=disc.takeaway.pct||0); document.getElementById('disc-take-fix')&&(document.getElementById('disc-take-fix').value=disc.takeaway.fix||0); document.getElementById('disc-take-name')&&(document.getElementById('disc-take-name').value=disc.takeaway.name||''); }
+      if(disc.delivery) { document.getElementById('disc-del-pct')&&(document.getElementById('disc-del-pct').value=disc.delivery.pct||0); document.getElementById('disc-del-fix')&&(document.getElementById('disc-del-fix').value=disc.delivery.fix||0); document.getElementById('disc-del-name')&&(document.getElementById('disc-del-name').value=disc.delivery.name||''); }
+    }
     if(d.payOnline !== undefined) document.getElementById('ord-pay-online').checked = d.payOnline;
     if(d.payCash !== undefined) document.getElementById('ord-pay-cash').checked = d.payCash;
   } catch(e) { console.warn('loadOrderingSettings:', e.message); }
@@ -2721,6 +2947,11 @@ window.saveOrderingSettings = async function() {
       askCutlery: document.getElementById('ord-ask-cutlery')?.checked !== false,
       payOnline: document.getElementById('ord-pay-online')?.checked !== false,
       payCash: document.getElementById('ord-pay-cash')?.checked !== false,
+      discounts: {
+        dineIn:   { pct: parseInt(document.getElementById('disc-dine-pct')?.value)||0, fix: parseInt(document.getElementById('disc-dine-fix')?.value)||0, name: document.getElementById('disc-dine-name')?.value||'' },
+        takeaway: { pct: parseInt(document.getElementById('disc-take-pct')?.value)||0, fix: parseInt(document.getElementById('disc-take-fix')?.value)||0, name: document.getElementById('disc-take-name')?.value||'' },
+        delivery: { pct: parseInt(document.getElementById('disc-del-pct')?.value)||0,  fix: parseInt(document.getElementById('disc-del-fix')?.value)||0,  name: document.getElementById('disc-del-name')?.value||'' },
+      },
       updatedAt: new Date().toISOString(),
     };
     await setDoc(doc(db,'venues',venueId,'settings','ordering'), data);
@@ -2733,6 +2964,223 @@ const _origNav3 = window.nav;
 window.nav = function(btn,tab){
   _origNav3(btn,tab);
   if(tab==='t-ordering') loadOrderingSettings();
+};
+
+
+window.syncTablesFromPoster = async function() {
+  notify('Завантажуємо столи з Poster...', 'ok');
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const res = await fetch(`${window.__CF_URL}/getPOSProducts`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({venueId, posSystem: 'poster', dataType: 'tables'}),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error);
+    notify(`✅ Синхронізовано ${data.tables?.length||0} столів з Poster`, 'ok');
+  } catch(e) { notify('Помилка: '+e.message, 'err'); }
+};
+
+
+// ── КЛІЄНТИ ──────────────────────────────────────────────
+let allCustomers = [];
+
+async function loadCustomers() {
+  if(!db||!window.__FS) return;
+  const {collection, getDocs, query, orderBy} = window.__FS;
+  try {
+    const snap = await getDocs(query(
+      collection(db,'venues',venueId,'customers'),
+      orderBy('lastOrderAt','desc')
+    ));
+    allCustomers = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    renderCustomers(allCustomers);
+
+    // Статистика
+    document.getElementById('cst-total').textContent = allCustomers.length;
+    const monthAgo = new Date(); monthAgo.setMonth(monthAgo.getMonth()-1);
+    const newCount = allCustomers.filter(c => c.firstOrderAt?.seconds*1000 > monthAgo.getTime()).length;
+    const repeatCount = allCustomers.filter(c => c.ordersCount > 1).length;
+    const avgSpend = allCustomers.length
+      ? Math.round(allCustomers.reduce((s,c) => s + (c.totalSpent||0)/( c.ordersCount||1), 0) / allCustomers.length)
+      : 0;
+    document.getElementById('cst-new').textContent = newCount;
+    document.getElementById('cst-repeat').textContent = repeatCount;
+    document.getElementById('cst-avg').textContent = avgSpend + ' ₴';
+    document.getElementById('customers-sub').textContent = allCustomers.length + ' клієнтів';
+  } catch(e) { console.warn('loadCustomers:', e.message); }
+}
+
+function renderCustomers(list) {
+  const fmt = ts => ts?.seconds
+    ? new Date(ts.seconds*1000).toLocaleDateString('uk-UA',{day:'numeric',month:'short',year:'numeric'})
+    : '—';
+  document.getElementById('customers-tbody').innerHTML = list.map(c => `
+    <tr>
+      <td><div style="font-weight:500">${c.name||'Гість'}</div></td>
+      <td><span class="customer-phone">${c.phone||'—'}</span></td>
+      <td><span class="customer-badge">${c.ordersCount||0}</span></td>
+      <td style="font-weight:600;color:var(--accent)">${(c.totalSpent||0)} ₴</td>
+      <td>${c.ordersCount ? Math.round((c.totalSpent||0)/(c.ordersCount)) + ' ₴' : '—'}</td>
+      <td style="color:var(--muted);font-size:12px">${fmt(c.firstOrderAt)}</td>
+      <td style="color:var(--muted);font-size:12px">${fmt(c.lastOrderAt)}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="showCustomerOrders('${c.phone}','${c.name||'Гість'}')">Замовлення</button></td>
+    </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">Клієнтів ще немає</td></tr>';
+}
+
+window.filterCustomers = function() {
+  const q = document.getElementById('customer-search').value.toLowerCase();
+  if(!q) { renderCustomers(allCustomers); return; }
+  renderCustomers(allCustomers.filter(c =>
+    (c.name||'').toLowerCase().includes(q) || (c.phone||'').includes(q)
+  ));
+};
+
+window.showCustomerOrders = async function(phone, name) {
+  if(!db||!window.__FS) return;
+  const {collection, getDocs, query, where, orderBy} = window.__FS;
+  try {
+    const snap = await getDocs(query(
+      collection(db,'venues',venueId,'orders'),
+      where('clientPhone','==',phone),
+      orderBy('createdAt','desc')
+    ));
+    const orders = snap.docs.map(d => ({id:d.id,...d.data()}));
+    const info = orders.map(o => {
+      const date = o.createdAt?.seconds ? new Date(o.createdAt.seconds*1000).toLocaleDateString('uk-UA') : '—';
+      const items = (o.items||[]).map(i=>`${i.name} ×${i.qty}`).join(', ');
+      return `${date}: ${items} — ${o.total} ₴`;
+    }).join('\n');
+    alert(`Замовлення клієнта ${name} (${phone}):\n\n${info||'Замовлень немає'}`);
+  } catch(e) { notify('Помилка: '+e.message,'err'); }
+};
+
+window.exportCustomersExcel = function() {
+  if(!allCustomers.length) { notify('Немає даних для експорту','err'); return; }
+  const fmt = ts => ts?.seconds ? new Date(ts.seconds*1000).toLocaleDateString('uk-UA') : '';
+  const rows = [
+    ["Імʼя","Телефон","Замовлень","Витрачено (грн)","Сер. чек (грн)","Перше замовлення","Останнє замовлення"],
+    ...allCustomers.map(c => [
+      c.name||'Гість', c.phone||'', c.ordersCount||0, c.totalSpent||0,
+      c.ordersCount ? Math.round((c.totalSpent||0)/c.ordersCount) : 0,
+      fmt(c.firstOrderAt), fmt(c.lastOrderAt),
+    ])
+  ];
+  // Генеруємо CSV (відкривається в Excel)
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const bom = '\uFEFF'; // BOM для правильного відображення кирилиці
+  const blob = new Blob([bom+csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `clients_${venueId}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  notify('✅ Файл завантажено — відкрийте в Excel','ok');
+};
+
+// Оновлюємо nav для завантаження клієнтів
+const _origNavCust = window.nav;
+window.nav = function(btn,tab){
+  _origNavCust(btn,tab);
+  if(tab==='t-customers') loadCustomers();
+};
+
+
+// ── ФІСКАЛІЗАЦІЯ ────────────────────────────────────────
+window.toggleFiscalMethod = function(method, on) {
+  // Показуємо/ховаємо поля
+  const fields = document.getElementById(`fiscal-${method}-fields`);
+  const info   = document.getElementById(`fiscal-${method}-info`);
+  if(fields) fields.style.display = on ? 'block' : 'none';
+  if(info)   info.style.display   = on ? 'block' : 'none';
+};
+
+window.testCheckbox = async function() {
+  const login    = document.getElementById('checkbox-login')?.value;
+  const password = document.getElementById('checkbox-pass')?.value;
+  if(!login || !password) { notify('Введіть логін і пароль Checkbox','err'); return; }
+  notify('Перевіряємо підключення...','ok');
+  try {
+    const res = await fetch('https://api.checkbox.ua/api/v1/cashier/signin', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'X-Client-Name':'MageQRRest'},
+      body: JSON.stringify({ login, password }),
+    });
+    if(res.ok) notify('✅ Checkbox підключено успішно!','ok');
+    else notify('Помилка: невірні дані Checkbox','err');
+  } catch(e) { notify('Помилка: '+e.message,'err'); }
+};
+
+window.testVchasno = function() {
+  const key = document.getElementById('vchasno-key')?.value;
+  if(!key) { notify('Введіть API ключ Vchasno','err'); return; }
+  notify('Vchasno: перевірка виконана (API недоступний з браузера — перевірка відбудеться при першому замовленні)','ok');
+};
+
+// Зберігаємо фіскальні налаштування разом з платежами
+const _origSavePayments = window.savePayments;
+window.savePayments = async function() {
+  await _origSavePayments();
+  // Зберігаємо фіскальні налаштування
+  if(!db||!window.__FS) return;
+  const {doc,setDoc} = window.__FS;
+  try {
+    const fiscal = {
+      pos:      document.getElementById('fiscal-pos')?.checked || false,
+      checkbox: {
+        enabled:  document.getElementById('fiscal-checkbox')?.checked || false,
+        login:    document.getElementById('checkbox-login')?.value||'',
+        password: document.getElementById('checkbox-pass')?.value||'',
+        cashierId:document.getElementById('checkbox-cashier')?.value||'',
+      },
+      vchasno: {
+        enabled: document.getElementById('fiscal-vchasno')?.checked || false,
+        apiKey:  document.getElementById('vchasno-key')?.value||'',
+        rroId:   document.getElementById('vchasno-rro')?.value||'',
+      },
+    };
+    await setDoc(doc(db,'venues',venueId,'settings','fiscal'), fiscal);
+  } catch(e) { console.warn('saveFiscal:', e.message); }
+};
+
+// Завантажуємо фіскальні налаштування при відкритті Платежів
+const _origNavFisc = window.nav;
+window.nav = function(btn,tab){
+  _origNavFisc(btn,tab);
+  if(tab==='t-payments') loadFiscalSettings();
+};
+
+async function loadFiscalSettings() {
+  if(!db||!window.__FS) return;
+  const {doc,getDoc} = window.__FS;
+  try {
+    const snap = await getDoc(doc(db,'venues',venueId,'settings','fiscal'));
+    if(!snap.exists()) return;
+    const d = snap.data();
+    if(d.pos !== undefined) document.getElementById('fiscal-pos').checked = d.pos;
+    if(d.checkbox) {
+      document.getElementById('fiscal-checkbox').checked = d.checkbox.enabled;
+      toggleFiscalMethod('checkbox', d.checkbox.enabled);
+      document.getElementById('checkbox-login')&&(document.getElementById('checkbox-login').value = d.checkbox.login||'');
+      document.getElementById('checkbox-cashier')&&(document.getElementById('checkbox-cashier').value = d.checkbox.cashierId||'');
+    }
+    if(d.vchasno) {
+      document.getElementById('fiscal-vchasno').checked = d.vchasno.enabled;
+      toggleFiscalMethod('vchasno', d.vchasno.enabled);
+      document.getElementById('vchasno-rro')&&(document.getElementById('vchasno-rro').value = d.vchasno.rroId||'');
+    }
+  } catch(e) { console.warn('loadFiscal:', e.message); }
+}
+
+
+// ── КЛІЄНТИ ──────────────────────────────────────────────
+const _origNav4 = window.nav;
+window.nav = function(btn,tab){
+  _origNav4(btn,tab);
+  if(tab==='t-customers') loadCustomers();
 };
 
 initFirebase();
