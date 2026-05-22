@@ -1154,9 +1154,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
             <div style="font-size:11px;color:var(--muted);margin-bottom:.75rem;background:var(--bg2);padding:.625rem;border-radius:6px;line-height:1.6">
               <strong>Токен живе 1 год.</strong> Система автоматично оновлює його. Organization і Terminal ID знайдіть в Syrve Office → Ресторани → Загальні налаштування.
             </div>
-            <div style="display:flex;gap:.5rem">
-              <button class="btn btn-outline btn-sm" onclick="testPOS('syrve')">🧪 Тест-замовлення</button>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <button class="btn btn-outline btn-sm" onclick="testPOS('syrve')">🧪 Тест</button>
               <button class="btn btn-accent btn-sm" onclick="connectPOS('syrve')">Підключити</button>
+              <button class="btn btn-outline btn-sm" onclick="syncSyrveTables()">🪑 Синх. столи</button>
+              <button class="btn btn-outline btn-sm" onclick="syncSyrveMenu()">🍽️ Синх. меню</button>
             </div>
             <div style="margin-top:.875rem">
               <div class="pay-field-label">Журнал синхронізації</div>
@@ -3302,6 +3304,50 @@ const _origNav4 = window.nav;
 window.nav = function(btn,tab){
   _origNav4(btn,tab);
   if(tab==='t-customers') loadCustomers();
+};
+
+
+window.syncSyrveTables = async function() {
+  notify('Завантажуємо столи з Syrve...', 'ok');
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const res = await fetch(`${window.__CF_URL}/syncTablesFromSyrve`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({venueId}),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error);
+    notify(`✅ Синхронізовано ${data.tables?.length||0} столів з ${data.halls} залів Syrve`, 'ok');
+    await loadTablesFromFirestore();
+    const logEl = document.getElementById('log-syrve');
+    if(logEl) {
+      const now = new Date().toLocaleTimeString('uk-UA');
+      logEl.innerHTML = `<div class="log-ok">[${now}] ✓ ${data.tables?.length||0} столів синхронізовано</div>`;
+    }
+  } catch(e) { notify('Помилка: '+e.message, 'err'); }
+};
+
+window.syncSyrveMenu = async function() {
+  notify('Синхронізуємо меню з Syrve...', 'ok');
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const res = await fetch(`${window.__CF_URL}/syncMenuFromSyrve`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({venueId}),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error);
+    notify(`✅ Знайдено ${data.products} позицій, автозіставлено ${data.matched}`, 'ok');
+    const logEl = document.getElementById('log-syrve');
+    if(logEl) {
+      const now = new Date().toLocaleTimeString('uk-UA');
+      logEl.innerHTML = `<div class="log-ok">[${now}] ✓ Меню: ${data.products} позицій, зіставлено ${data.matched}</div>`;
+    }
+  } catch(e) { notify('Помилка: '+e.message, 'err'); }
 };
 
 initFirebase();
