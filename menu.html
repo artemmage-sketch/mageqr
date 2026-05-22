@@ -222,11 +222,7 @@ window.__MQ_CFG = {
       <!-- ТИП ЗАМОВЛЕННЯ -->
       <div class="form-section">
         <div class="form-section-title">Тип замовлення</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem">
-          <div class="pay-opt active" id="ot-opt-dine" onclick="setOrderType('dine_in')" style="text-align:center;padding:10px 4px;font-size:13px">🪑<br/>В закладі</div>
-          <div class="pay-opt" id="ot-opt-take" onclick="setOrderType('takeaway')" style="text-align:center;padding:10px 4px;font-size:13px">🥡<br/>З собою</div>
-          <div class="pay-opt" id="ot-opt-del" onclick="setOrderType('delivery')" style="text-align:center;padding:10px 4px;font-size:13px">🚗<br/>Доставка</div>
-        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem" id="order-type-opts-grid"></div>
       </div>
 
       <!-- НОМЕР СТОЛУ -->
@@ -541,7 +537,15 @@ function renderMenu() {
         ${design.showWeight!==false&&it.weight?`<div class="dish-weight">⚖️ ${fmtWeight(it.weight)}</div>`:''}
         ${it.allergens&&it.allergens.length?`<div class="dish-allergens">${it.allergens.slice(0,4).map(a=>`<span class="a-chip">${ALLERGEN_ICONS[a]||''}${a}</span>`).join('')}</div>`:''}
         <div class="dish-footer">
-          ${design.showPrices!==false?`<div class="dish-price">${itemPrice(it)} грн${itemPrice(it)!==it.price?'<span style="font-size:11px;text-decoration:line-through;color:var(--muted);margin-left:4px">'+it.price+'</span>':''}</div>`:'<div></div>'}
+          ${design.showPrices!==false?`<div class="dish-price">
+            ${(()=>{
+              const p = itemPrice(it);
+              const disc = getDiscount(p);
+              const final = Math.max(0, p - disc);
+              if(disc > 0) return final+'<span style="text-decoration:line-through;color:var(--muted);font-size:11px;margin-left:4px">'+p+'</span> грн';
+              return p+' грн';
+            })()}
+          </div>`:'<div></div>'}
           <button class="add-btn${cart[it.id]?' added':''}" id="ab-${it.id}" onclick="event.stopPropagation();qAdd('${it.id}')">${cart[it.id]?'✓':'+'}</button>
         </div>
       </div>
@@ -645,6 +649,7 @@ function updateCart(){
 }
 window.openCart = () => {
   renderCart();
+  renderOrderTypeBtns();
   setTimeout(()=>{ const s=document.querySelector('#cart-ov .sheet'); if(s) s.scrollTop=0; },10);
   // Завантажуємо Google Maps при відкритті кошика
   if(window.loadGoogleMaps) window.loadGoogleMaps();
@@ -722,6 +727,25 @@ function initOrderTypeBar() {
 
   // Оплата і прибори — застосовуємо при відкритті кошика
   // (елементи форми існують тільки в кошику)
+}
+
+function renderOrderTypeBtns() {
+  const grid = document.getElementById('order-type-opts-grid');
+  if(!grid) return;
+  const types = [
+    {key:'dine_in',  emoji:'🪑', label:'В закладі',  disc: orderingSettings.discounts?.dineIn},
+    {key:'takeaway', emoji:'🥡', label:'З собою',     disc: orderingSettings.discounts?.takeaway},
+    {key:'delivery', emoji:'🚗', label:'Доставка',    disc: orderingSettings.discounts?.delivery},
+  ];
+  grid.innerHTML = types.map(t => {
+    const discText = t.disc?.pct ? `<div style="font-size:10px;color:var(--green,#059669);font-weight:700">−${t.disc.pct}%</div>`
+                   : t.disc?.fix ? `<div style="font-size:10px;color:var(--green,#059669);font-weight:700">−${t.disc.fix}₴</div>`
+                   : '';
+    return `<div class="pay-opt${orderType===t.key?' active':''}" id="ot-opt-${t.key.replace('_','-')}"
+      onclick="setOrderType('${t.key}')" style="text-align:center;padding:10px 4px;font-size:13px">
+      ${t.emoji}<br/>${t.label}${discText}
+    </div>`;
+  }).join('');
 }
 
 window.setOrderType = function(type) {
