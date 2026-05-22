@@ -1960,7 +1960,9 @@ window.setStatus = async function(id, status) {
 
 function renderOrders(){
   const f=document.getElementById('order-filter').value;
-  const list=f?orders.filter(o=>o.status===f):orders;
+  // pending_payment — не показуємо поки не оплачено
+  const visibleOrders = orders.filter(o => o.status !== 'pending_payment');
+  const list = f ? visibleOrders.filter(o=>o.status===f) : visibleOrders;
   const newO=orders.filter(o=>o.status==='new'||!o.status);
   const doneO=orders.filter(o=>o.status==='done');
   const todayStart=new Date();todayStart.setHours(0,0,0,0);
