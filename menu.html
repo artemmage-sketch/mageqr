@@ -1008,6 +1008,13 @@ window.placeOrder = async () => {
 
     cart={}; updateCart(); closeCart();
     $('s-num').textContent='#'+data.orderNum;
+
+    // Якщо онлайн оплата — відкриваємо платіжну сторінку
+    if(data.payUrl) {
+      window.location.href = data.payUrl;
+      return;
+    }
+
     $('success').classList.add('open');
   } catch(e){ toast('Помилка: '+e.message); }
   finally{ btn.textContent='Замовити'; btn.disabled=false; }
@@ -1016,7 +1023,75 @@ window.resetSuccess = () => { $('success').classList.remove('open'); renderMenu(
 
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2500); }
 
-init();
+// Перевіряємо чи повернулись після оплати
+async function checkPaymentAfterRedirect() {
+  const urlParams = new URLSearchParams(location.search);
+  const orderId = urlParams.get('order');
+  const paid = urlParams.get('paid');
+  if (!orderId || !paid) return;
+
+  // Прибираємо параметри з URL без перезавантаження
+  window.history.replaceState({}, '', location.pathname + '?v=' + venueId + (urlParams.get('t') ? '&t='+urlParams.get('t') : ''));
+
+  // Показуємо екран очікування
+  const success = $('success');
+  const sIcon = $('s-icon');
+  const sTitle = $('s-title');
+  const sSub = $('s-sub');
+  if(sIcon) sIcon.textContent = '⏳';
+  if(sTitle) sTitle.textContent = 'Перевіряємо оплату...';
+  if(sSub) sSub.textContent = 'Зачекайте кілька секунд';
+  if(success) success.classList.add('open');
+
+  // Polling — перевіряємо статус кожні 2 секунди, максимум 30 секунд
+  let attempts = 0;
+  const maxAttempts = 15;
+
+  const poll = async () => {
+    attempts++;
+    try {
+      const res = await fetch('https://us-central1-mageqrrest.cloudfunctions.net/checkPaymentStatus', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({venueId, orderId}),
+      });
+      const data = await res.json();
+
+      if(data.status === 'paid' || data.status === 'success') {
+        // Оплата успішна
+        if(sIcon) sIcon.textContent = '✅';
+        if(sTitle) sTitle.textContent = 'Оплата успішна!';
+        if(sSub) sSub.textContent = 'Ваше замовлення прийнято та оплачено.';
+        const numEl = $('s-num');
+        if(numEl && data.order?.num) numEl.textContent = '#' + data.order.num;
+        return;
+      }
+
+      if(data.status === 'failure' || data.status === 'expired') {
+        // Оплата не вдалась
+        if(sIcon) sIcon.textContent = '❌';
+        if(sTitle) sTitle.textContent = 'Оплата не вдалась';
+        if(sSub) sSub.textContent = 'Спробуйте ще раз або оберіть інший спосіб оплати.';
+        return;
+      }
+
+      // Ще pending — продовжуємо polling
+      if(attempts < maxAttempts) {
+        setTimeout(poll, 2000);
+      } else {
+        if(sIcon) sIcon.textContent = '⏳';
+        if(sTitle) sTitle.textContent = 'Замовлення в обробці';
+        if(sSub) sSub.textContent = 'Оплата обробляється. Ви отримаєте підтвердження найближчим часом.';
+      }
+    } catch(e) {
+      if(attempts < maxAttempts) setTimeout(poll, 2000);
+    }
+  };
+
+  setTimeout(poll, 1500);
+}
+
+init().then(() => checkPaymentAfterRedirect());
 </script>
 <!-- Google Maps Places API — завантажується динамічно -->
 <script>
