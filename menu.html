@@ -645,6 +645,8 @@ function updateCart(){
 window.openCart = () => {
   renderCart();
   setTimeout(()=>{ const s=document.querySelector('#cart-ov .sheet'); if(s) s.scrollTop=0; },10);
+  // Завантажуємо Google Maps при відкритті кошика
+  if(window.loadGoogleMaps) window.loadGoogleMaps();
   // Застосовуємо налаштування оплати і приборів
   const payOnline = orderingSettings.payOnline !== false;
   const payCash   = orderingSettings.payCash !== false;
@@ -741,6 +743,7 @@ window.setOrderType = function(type) {
   renderMenu();
   updateCart();
   if(type === 'delivery') {
+    if(window.loadGoogleMaps) window.loadGoogleMaps();
     const del = orderingSettings.delivery;
     const info_el = document.getElementById('delivery-price-info');
     if(del && info_el) {
@@ -929,10 +932,27 @@ function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'
 
 init();
 </script>
-<!-- Google Maps Places API -->
+<!-- Google Maps Places API — завантажується динамічно -->
 <script>
-function initGoogleMapsCallback() { if(window.initGoogleMaps) initGoogleMaps(); }
+window.initGoogleMapsCallback = function() {
+  if(window.google?.maps?.places) {
+    window.autocompleteService = new google.maps.places.AutocompleteService();
+    const dbg = document.getElementById('maps-debug');
+    if(dbg) { dbg.textContent = '✓ Google Maps готовий'; dbg.style.color = 'var(--green)'; }
+  }
+};
+window.loadGoogleMaps = function() {
+  if(window.google?.maps?.places) { window.initGoogleMapsCallback(); return; }
+  if(document.getElementById('gmaps-script')) return; // вже завантажується
+  const dbg = document.getElementById('maps-debug');
+  if(dbg) dbg.textContent = '⏳ Підключення Maps...';
+  const s = document.createElement('script');
+  s.id = 'gmaps-script';
+  s.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA&libraries=places&callback=initGoogleMapsCallback&language=uk&v=weekly';
+  s.async = true;
+  s.onerror = () => { if(dbg) { dbg.textContent = '✗ Помилка завантаження Maps'; dbg.style.color = 'red'; } };
+  document.head.appendChild(s);
+};
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA&libraries=places&callback=initGoogleMapsCallback&language=uk" async defer></script>
 </body>
 </html>
