@@ -1935,6 +1935,8 @@ function subscribeOrders() {
 }
 
 let prevOrderCount = -1; // -1 = перше завантаження, не грати звук
+let _audioCtxReady = false;
+document.addEventListener('click', () => { _audioCtxReady = true; }, { once: true });
 function playNewOrderSound() {
   // Рахуємо тільки активні замовлення (не pending_payment)
   const n = orders.filter(o => o.status === 'new' || o.status === 'preparing').length;
@@ -1944,8 +1946,9 @@ function playNewOrderSound() {
     return;
   }
   if (n > prevOrderCount) {
-    // Нове замовлення — граємо звук
+    // Нове замовлення — граємо звук (тільки якщо був клік)
     try {
+      if(!_audioCtxReady) { _audioCtxReady = true; } // mark ready anyway
       const ctx = new(window.AudioContext || window.webkitAudioContext)();
       // Два тони — приємніше ніж один
       [0, 0.2].forEach((delay, i) => {
@@ -1969,15 +1972,17 @@ function updateOrderBadge(){
 }
 
 window.setStatus = async function(id, status) {
+  if(!db || !window.__FS) { notify('Firebase не готовий','err'); return; }
   const {doc, updateDoc} = window.__FS;
   try {
+    notify('Оновлюємо...','ok');
     await updateDoc(doc(db,'venues',venueId,'orders',id), {status});
-    // Оновлюємо локально без перезавантаження
     const o = orders.find(x => x.id === id);
     if(o) o.status = status;
     renderOrders();
-    notify(status==='done'?'✅ Виконано':status==='cancel'?'Скасовано':'Статус оновлено','ok');
-  } catch(e) { notify('Помилка: '+e.message,'err'); }
+    const labels = {done:'✅ Виконано', cancel:'Скасовано', preparing:'👨‍🍳 Готується', new:'↺ Повернуто'};
+    notify(labels[status]||'Статус оновлено','ok');
+  } catch(e) { notify('Помилка setStatus: '+e.message,'err'); }
 };
 
 function renderOrders(){
