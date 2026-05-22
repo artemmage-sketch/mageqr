@@ -649,6 +649,14 @@ window.openCart = () => {
   setTimeout(()=>{ const s=document.querySelector('#cart-ov .sheet'); if(s) s.scrollTop=0; },10);
   // Завантажуємо Google Maps при відкритті кошика
   if(window.loadGoogleMaps) window.loadGoogleMaps();
+  // Прив'язуємо input listener тут — елемент точно існує
+  setTimeout(() => {
+    const addrEl = document.getElementById('cli-address');
+    if(addrEl && !addrEl._bound) {
+      addrEl._bound = true;
+      addrEl.addEventListener('input', e => { toast('typing: '+e.target.value); window.onAddressInput(e.target.value); });
+    }
+  }, 100);
   // Застосовуємо налаштування оплати і приборів
   const payOnline = orderingSettings.payOnline !== false;
   const payCash   = orderingSettings.payCash !== false;
@@ -936,11 +944,7 @@ window.resetSuccess = () => { $('success').classList.remove('open'); renderMenu(
 
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2500); }
 
-init().then(() => {
-  // Прив'язуємо після завантаження даних
-  const addrEl = document.getElementById('cli-address');
-  if(addrEl) addrEl.addEventListener('input', e => window.onAddressInput(e.target.value));
-});
+init();
 </script>
 <!-- Google Maps Places API — завантажується динамічно -->
 <script>
