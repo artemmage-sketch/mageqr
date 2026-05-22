@@ -525,7 +525,7 @@ function renderCats() {
 window.setCat = name => { activeCat=name; renderCats(); renderMenu(); };
 
 function renderMenu() {
-  const list = activeCat ? allItems.filter(i=>i.category===activeCat) : allItems;
+  const list = (activeCat ? allItems.filter(i=>i.category===activeCat) : allItems).filter(itemAvailable);
   if (!list.length) {
     $('menu-body').innerHTML = '<div class="empty"><div class="empty-icon">🍽️</div><div>У цій категорії немає страв</div></div>';
     return;
@@ -539,7 +539,7 @@ function renderMenu() {
         ${design.showWeight!==false&&it.weight?`<div class="dish-weight">⚖️ ${fmtWeight(it.weight)}</div>`:''}
         ${it.allergens&&it.allergens.length?`<div class="dish-allergens">${it.allergens.slice(0,4).map(a=>`<span class="a-chip">${ALLERGEN_ICONS[a]||''}${a}</span>`).join('')}</div>`:''}
         <div class="dish-footer">
-          ${design.showPrices!==false?`<div class="dish-price">${it.price} грн</div>`:'<div></div>'}
+          ${design.showPrices!==false?`<div class="dish-price">${itemPrice(it)} грн${itemPrice(it)!==it.price?'<span style="font-size:11px;text-decoration:line-through;color:var(--muted);margin-left:4px">'+it.price+'</span>':''}</div>`:'<div></div>'}
           <button class="add-btn${cart[it.id]?' added':''}" id="ab-${it.id}" onclick="event.stopPropagation();qAdd('${it.id}')">${cart[it.id]?'✓':'+'}</button>
         </div>
       </div>
@@ -565,7 +565,7 @@ window.openDet = id => {
   // Основна інфо
   $('det-name').textContent  = detItem.name;
   $('det-desc').textContent  = detItem.desc||'';
-  $('det-price').textContent = detItem.price+' грн';
+  $('det-price').textContent = itemPrice(detItem)+' грн';
   $('det-qty').textContent   = detQty;
 
   // Вага / об'єм
@@ -606,7 +606,19 @@ window.qAdd = id => {
   updateCart();
 };
 
-function total(){ return Object.entries(cart).reduce((s,[id,q])=>{const it=allItems.find(x=>x.id===id);return it?s+it.price*q:s;},0); }
+// Ціна страви з урахуванням типу замовлення
+function itemPrice(it) {
+  if(!it) return 0;
+  const typeKey = {dine_in:'dineIn', takeaway:'takeaway', delivery:'delivery'}[orderType] || 'dineIn';
+  return it.prices?.[typeKey] || it.price || 0;
+}
+// Страва доступна для поточного типу замовлення?
+function itemAvailable(it) {
+  if(!it?.availability) return true; // якщо не налаштовано — доступна скрізь
+  const typeKey = {dine_in:'dineIn', takeaway:'takeaway', delivery:'delivery'}[orderType] || 'dineIn';
+  return it.availability[typeKey] !== false;
+}
+function total(){ return Object.entries(cart).reduce((s,[id,q])=>{const it=allItems.find(x=>x.id===id);return it?s+itemPrice(it)*q:s;},0); }
 function getDiscount(subtotal) {
   const disc = orderingSettings.discounts;
   if(!disc) return 0;
@@ -649,9 +661,10 @@ window.closeCart = () => $('cart-ov').classList.remove('open');
 function renderCart(){
   $('cart-list').innerHTML = Object.entries(cart).filter(([,q])=>q>0).map(([id,q])=>{
     const it=allItems.find(x=>x.id===id); if(!it) return '';
+    const p = itemPrice(it);
     return `<div class="cart-row">
       ${it.photoUrl?`<img class="c-img" src="${it.photoUrl}" alt="${it.name}"/>`:'<div class="c-img-ph">🍽️</div>'}
-      <div class="c-info"><div class="c-name">${it.name}</div><div class="c-price">${it.price}×${q} = ${it.price*q} грн</div></div>
+      <div class="c-info"><div class="c-name">${it.name}</div><div class="c-price">${p}×${q} = ${p*q} грн</div></div>
       <div class="c-qty">
         <button class="cq-btn" onclick="cQty('${id}',-1)">−</button>
         <div class="cq-val">${q}</div>
@@ -723,6 +736,9 @@ window.setOrderType = function(type) {
   if(elComment) elComment.style.display = type==='delivery' ? 'none'  : 'block';
   if(elLabel)   elLabel.textContent     = type==='takeaway' ? '💬 Коментар для закладу' : '💬 Коментар';
   if(type === 'takeaway') buildTimeSlots();
+  // Перерендеримо меню бо доступність і ціни змінились
+  renderMenu();
+  updateCart();
   if(type === 'delivery') {
     const del = orderingSettings.delivery;
     const info_el = document.getElementById('delivery-price-info');
