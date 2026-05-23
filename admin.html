@@ -404,10 +404,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <!-- ITEMS -->
     <div id="t-items" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title">Страви</div><div class="page-sub" id="items-count-sub"></div></div>
+        <div><div class="page-title" data-i18n="dishes">Страви</div><div class="page-sub" id="items-count-sub"></div></div>
         <div style="display:flex;gap:.375rem;align-items:center">
           <button class="btn btn-outline btn-sm" id="translate-all-btn" onclick="translateAllMenu()">🌐 Перекласти все меню</button>
-          <button class="btn btn-accent btn-sm" onclick="openItemModal()">+ Додати</button>
+          <button class="btn btn-accent btn-sm" onclick="openItemModal()" data-i18n="add">+ Додати</button>
         </div>
       </div>
       <div class="content">
@@ -423,7 +423,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <div id="t-cats" class="tab-section">
       <div class="topbar">
         <div><div class="page-title">Категорії</div></div>
-        <button class="btn btn-accent btn-sm" onclick="openCatModal()">+ Додати</button>
+        <button class="btn btn-accent btn-sm" onclick="openCatModal()" data-i18n="add">+ Додати</button>
       </div>
       <div class="content">
         <div class="items-list" id="cats-list"></div>
@@ -742,7 +742,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
               </div>
               <div class="ds-save-bar">
                 <div style="font-size:12px;color:var(--muted)">Зміни не збережені</div>
-                <button class="btn btn-accent btn-sm" onclick="saveDesign()">💾 Зберегти</button>
+                <button class="btn btn-accent btn-sm" onclick="saveDesign()" data-i18n="save">💾 Зберегти</button>
               </div>
             </div>
           </div>
@@ -756,7 +756,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
         <div><div class="page-title">💳 Платежі</div><div class="page-sub">Налаштуйте способи оплати для клієнтів</div></div>
         <div style="display:flex;gap:.5rem">
           <button class="btn btn-outline btn-sm" onclick="notify('Тест-замовлення відправлено!','ok')">🧪 Тест оплати</button>
-          <button class="btn btn-accent btn-sm" onclick="savePayments()">💾 Зберегти</button>
+          <button class="btn btn-accent btn-sm" onclick="savePayments()" data-i18n="save">💾 Зберегти</button>
         </div>
       </div>
       <div class="content">
@@ -1064,7 +1064,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <div id="t-pos" class="tab-section">
       <div class="topbar">
         <div><div class="page-title">🖥️ POS-інтеграція</div><div class="page-sub">Синхронізація замовлень з касовими системами</div></div>
-        <button class="btn btn-accent btn-sm" onclick="savePOS()">💾 Зберегти</button>
+        <button class="btn btn-accent btn-sm" onclick="savePOS()" data-i18n="save">💾 Зберегти</button>
       </div>
       <div class="content">
 
@@ -1237,7 +1237,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <div id="t-customers" class="tab-section">
       <div class="topbar">
         <div>
-          <div class="page-title">👥 Клієнти</div>
+          <div class="page-title" data-i18n="customers">👥 Клієнти</div>
           <div class="page-sub" id="customers-sub">Завантаження...</div>
         </div>
         <div style="display:flex;gap:.5rem">
@@ -1385,7 +1385,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <!-- CUSTOMERS -->
     <div id="t-customers" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title">👥 Клієнти</div><div class="page-sub" id="customers-sub">Завантаження...</div></div>
+        <div><div class="page-title" data-i18n="customers">👥 Клієнти</div><div class="page-sub" id="customers-sub">Завантаження...</div></div>
         <div style="display:flex;gap:.5rem">
           <input type="text" id="cust-search" placeholder="Пошук за ім'ям або телефоном..." style="width:220px" oninput="filterCustomers()"/>
           <button class="btn btn-outline btn-sm" onclick="exportCustomersExcel()">📥 Excel</button>
@@ -1426,7 +1426,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <div id="t-ordering" class="tab-section">
       <div class="topbar">
         <div><div class="page-title">📋 Налаштування замовлень</div><div class="page-sub">Типи замовлень, доставка, години роботи</div></div>
-        <button class="btn btn-accent btn-sm" onclick="saveOrderingSettings()">💾 Зберегти</button>
+        <button class="btn btn-accent btn-sm" onclick="saveOrderingSettings()" data-i18n="save">💾 Зберегти</button>
       </div>
       <div class="content">
 
@@ -3734,7 +3734,13 @@ const I18N = {
     save:'💾 Зберегти', add:'+ Додати', edit:'Редагувати', delete:'Видалити',
     translateAll:'🌐 Перекласти все меню', translating:'⏳ Перекладаємо...',
     translateDone:'✅ Меню перекладено!', language:'Мова інтерфейсу',
-    name:'Назва', description:'Опис', price:'Ціна', category:'Категорія',
+    name:'Назва', description:'Опис', price:'Ціна (грн)', category:'Категорія',
+    allCategories:'Всі категорії', search:'Пошук страви...',
+    addDish:'+ Страва', addCategory:'+ Категорія',
+    refresh:'↺ Оновити', export:'📥 Excel',
+    total:'Разом', noOrders:'Замовлень немає',
+    phone:'Телефон', orderCount:'Замовлень', spent:'Витрачено',
+    lastOrder:'Останнє замовлення',
   },
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
@@ -3810,20 +3816,38 @@ function t(key) { return (I18N[adminLang] || I18N.uk)[key] || key; }
 function applyAdminLang(lang) {
   adminLang = lang;
   localStorage.setItem('mq_admin_lang', lang);
+
   // Оновлюємо навбар
   const navMap = {
-    't-orders': 'orders', 't-dishes': 'dishes', 't-cats': 'categories',
+    't-orders': 'orders', 't-items': 'dishes', 't-cats': 'categories',
     't-tables': 'tables', 't-design': 'design', 't-payments': 'payments',
     't-pos': 'pos', 't-customers': 'customers', 't-ordering': 'ordering',
     't-settings': 'settings', 't-subscription': 'subscription',
   };
   document.querySelectorAll('.nav-item').forEach(btn => {
-    const tab = btn.getAttribute('onclick')?.match(/nav\(this,'([^']+)'\)/)?.[1];
-    if(tab && navMap[tab]) btn.textContent = t(navMap[tab]);
+    const raw = btn.getAttribute('onclick') || '';
+    const match = raw.match(/nav\(this,'([^']+)'\)/);
+    const tab = match ? match[1] : null;
+    if(tab && navMap[tab]) {
+      const badge = btn.querySelector('#new-badge');
+      btn.textContent = t(navMap[tab]);
+      if(badge) btn.appendChild(badge);
+    }
   });
-  // Оновлюємо кнопку перекладу меню
-  const btn = document.getElementById('translate-all-btn');
-  if(btn) btn.textContent = t('translateAll');
+
+  // Оновлюємо всі елементи з data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if(val !== key) el.textContent = val;
+  });
+
+  // Кнопка перекладу меню
+  const translateBtn = document.getElementById('translate-all-btn');
+  if(translateBtn) translateBtn.textContent = t('translateAll');
+
+  // Оновлюємо перемикач мов
+  renderAdminLangSwitcher();
 }
 
 // Перемикач мови адмінки
