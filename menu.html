@@ -169,13 +169,13 @@ window.__MQ_CFG = {
 
 <!-- ПЕРЕМИКАЧ МОВ -->
 <div class="lang-bar" id="lang-bar" style="display:none">
-  <button class="lang-btn active" onclick="setLang('uk')">🇺🇦 UA</button>
-  <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
-  <button class="lang-btn" onclick="setLang('pl')">🇵🇱 PL</button>
-  <button class="lang-btn" onclick="setLang('de')">🇩🇪 DE</button>
-  <button class="lang-btn" onclick="setLang('ro')">🇷🇴 RO</button>
-  <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
-  <button class="lang-btn" onclick="setLang('cnr')">🇲🇪 MNE</button>
+  <button class="lang-btn active" data-lang="uk">🇺🇦 UA</button>
+  <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
+  <button class="lang-btn" data-lang="pl">🇵🇱 PL</button>
+  <button class="lang-btn" data-lang="de">🇩🇪 DE</button>
+  <button class="lang-btn" data-lang="ro">🇷🇴 RO</button>
+  <button class="lang-btn" data-lang="es">🇪🇸 ES</button>
+  <button class="lang-btn" data-lang="cnr">🇲🇪 MNE</button>
 </div>
 
 <div id="order-type-bar" class="order-type-bar" style="display:none">
@@ -758,9 +758,8 @@ function itemDesc(it) {
 window.setLang = function(lang) {
   currentLang = lang;
   // Оновлюємо активну кнопку
-  document.querySelectorAll('.lang-btn').forEach(b => {
-    const btnLang = b.getAttribute('onclick')?.match(/setLang\('([^']+)'\)/)?.[1];
-    b.classList.toggle('active', btnLang === lang);
+  document.querySelectorAll('.lang-btn[data-lang]').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
   });
   // Перерендеримо меню
   renderCats();
@@ -773,6 +772,10 @@ window.setLang = function(lang) {
 function initLangBar() {
   // Показуємо перемикач мов завжди
   document.getElementById('lang-bar').style.display = 'flex';
+  // Прив'язуємо кліки на кнопки мов
+  document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
+    btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang')));
+  });
   // Відновлюємо збережену мову
   const saved = localStorage.getItem('mq_lang');
   if(saved && saved !== 'uk') setLang(saved);
