@@ -127,6 +127,12 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .pay-opt{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);font-size:12px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s}
 .pay-opt.active{border-color:var(--accent);background:var(--accent-soft,#FAECE7);color:var(--accent)}
 
+
+/* LANGUAGE SWITCHER */
+.lang-bar{display:flex;gap:.25rem;padding:.375rem .75rem;background:var(--card);border-bottom:1px solid var(--border);justify-content:flex-end}
+.lang-btn{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
+.lang-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
 </style>
 </head>
 <body class="public-menu">
@@ -159,6 +165,17 @@ window.__MQ_CFG = {
     <div class="venue-name" id="venue-name">Меню</div>
     <div class="venue-tag" id="venue-tag"></div>
   </div>
+</div>
+
+<!-- ПЕРЕМИКАЧ МОВ -->
+<div class="lang-bar" id="lang-bar" style="display:none">
+  <button class="lang-btn active" onclick="setLang('uk')">🇺🇦 UA</button>
+  <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+  <button class="lang-btn" onclick="setLang('pl')">🇵🇱 PL</button>
+  <button class="lang-btn" onclick="setLang('de')">🇩🇪 DE</button>
+  <button class="lang-btn" onclick="setLang('ro')">🇷🇴 RO</button>
+  <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+  <button class="lang-btn" onclick="setLang('cnr')">🇲🇪 MNE</button>
 </div>
 
 <div id="order-type-bar" class="order-type-bar" style="display:none">
@@ -370,6 +387,7 @@ const tableId = params.get('t') || null;
 let allItems = [], allCats = [], activeCat = null;
 let cart = {}, detItem = null, detQty = 1, design = {};
 let orderType = 'dine_in'; // 'dine_in' | 'takeaway' | 'delivery'
+let currentLang = 'uk'; // поточна мова меню
 let orderingSettings = {};  // налаштування з Firestore
 let selectedTime = null;
 let cutleryCount = 1;
@@ -439,6 +457,7 @@ async function init() {
     allItems = iSnap.docs.map(d=>({id:d.id,...d.data()}));
 
     activeCat = allCats[0]?.name || null;
+    initLangBar();
     renderCats();
     renderMenu();
 
@@ -532,8 +551,8 @@ function renderMenu() {
     <div class="dish-card" onclick="openDet('${it.id}')">
       ${it.photoUrl ? `<img class="dish-img" src="${it.photoUrl}" alt="${it.name}" loading="lazy"/>` : '<div class="dish-img-ph">🍽️</div>'}
       <div class="dish-body">
-        <div class="dish-name">${it.name}</div>
-        ${design.showDesc!==false&&it.desc?`<div class="dish-desc">${it.desc}</div>`:''}
+        <div class="dish-name">${itemName(it)}</div>
+        ${design.showDesc!==false&&itemDesc(it)?`<div class="dish-desc">${itemDesc(it)}</div>`:''}
         ${design.showWeight!==false&&it.weight?`<div class="dish-weight">⚖️ ${fmtWeight(it.weight)}</div>`:''}
         ${it.allergens&&it.allergens.length?`<div class="dish-allergens">${it.allergens.slice(0,4).map(a=>`<span class="a-chip">${ALLERGEN_ICONS[a]||''}${a}</span>`).join('')}</div>`:''}
         <div class="dish-footer">
@@ -569,8 +588,8 @@ window.openDet = id => {
   }
 
   // Основна інфо
-  $('det-name').textContent  = detItem.name;
-  $('det-desc').textContent  = detItem.desc||'';
+  $('det-name').textContent  = itemName(detItem);
+  $('det-desc').textContent  = itemDesc(detItem)||'';
   const _dp = itemPrice(detItem);
   const _dd = getDiscount(_dp);
   const _df = Math.max(0, _dp - _dd);
@@ -725,6 +744,40 @@ window.cQty = (id,d) => {
 };
 
 // ── ТИПИ ЗАМОВЛЕНЬ ────────────────────────────────────────
+// Отримуємо назву в поточній мові
+function itemName(it) {
+  if(!it) return '';
+  return it[`name_${currentLang}`] || it.name || '';
+}
+function itemDesc(it) {
+  if(!it) return '';
+  return it[`desc_${currentLang}`] || it.desc || '';
+}
+
+window.setLang = function(lang) {
+  currentLang = lang;
+  // Оновлюємо активну кнопку
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(lang) || 
+      (lang === 'uk' && b.textContent.includes('UA')) ||
+      (lang === 'cnr' && b.textContent.includes('MNE')));
+  });
+  // Перерендеримо меню
+  renderCats();
+  renderMenu();
+  // Зберігаємо вибір
+  localStorage.setItem('mq_lang', lang);
+};
+
+// Показуємо перемикач якщо є хоча б один переклад
+function initLangBar() {
+  const hasTranslations = allItems.some(it => it.name_en || it.name_pl);
+  document.getElementById('lang-bar').style.display = hasTranslations ? 'flex' : 'none';
+  // Відновлюємо збережену мову
+  const saved = localStorage.getItem('mq_lang');
+  if(saved && saved !== 'uk') setLang(saved);
+}
+
 function initOrderTypeBar() {
   const bar = document.getElementById('order-type-bar');
   const dine = orderingSettings.dineIn;
