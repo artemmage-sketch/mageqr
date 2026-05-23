@@ -556,6 +556,9 @@ window.setLang = function(lang) {
   document.querySelectorAll('.lang-btn[data-lang]').forEach(b => {
     b.classList.toggle('active', b.getAttribute('data-lang') === lang);
   });
+  // Перевіряємо переклад першої страви
+  const first = allItems[0];
+  toast('lang='+lang+' name_en='+(first?.name_en||'EMPTY')+' result='+itemName(first));
   renderCats();
   renderMenu();
   localStorage.setItem('mq_lang', lang);
