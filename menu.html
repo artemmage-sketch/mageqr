@@ -228,7 +228,7 @@ window.__MQ_CFG = {
     <div style="padding:0 1rem 1.5rem">
 
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-        <div style="font-family:var(--font-head);font-size:1.2rem;font-weight:600">🛒 Ваше замовлення</div>
+        <div style="font-family:var(--font-head);font-size:1.2rem;font-weight:600" id="cart-title">🛒 Ваше замовлення</div>
         <button onclick="closeCart()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.4rem;line-height:1;padding:4px 8px;border-radius:6px" title="Закрити">✕</button>
       </div>
 
@@ -238,7 +238,7 @@ window.__MQ_CFG = {
 
       <!-- ТИП ЗАМОВЛЕННЯ -->
       <div class="form-section">
-        <div class="form-section-title">Тип замовлення</div>
+        <div class="form-section-title" id="order-type-title">Тип замовлення</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem" id="order-type-opts-grid"></div>
       </div>
 
@@ -300,13 +300,13 @@ window.__MQ_CFG = {
 
       <!-- КОНТАКТНІ ДАНІ -->
       <div class="form-section">
-        <div class="form-section-title">👤 Контактні дані</div>
+        <div class="form-section-title" id="contacts-title">👤 Контактні дані</div>
         <div style="margin-bottom:.75rem">
           <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Ім'я *</label>
           <input id="cli-name" type="text" placeholder="Ваше ім'я" style="font-size:16px;padding:12px"/>
         </div>
         <div>
-          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Телефон *</label>
+          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px" id="phone-label">Телефон *</label>
           <div style="display:flex;align-items:center;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg)">
             <span style="padding:12px;font-size:16px;color:var(--text);font-weight:600;border-right:1px solid var(--border);background:var(--bg2)">+38</span>
             <input id="cli-phone" type="tel" placeholder="0XXXXXXXXX" maxlength="10"
@@ -340,7 +340,7 @@ window.__MQ_CFG = {
 
       <!-- ОПЛАТА -->
       <div class="form-section">
-        <div class="form-section-title">💳 Спосіб оплати</div>
+        <div class="form-section-title" id="payment-title">💳 Спосіб оплати</div>
         <div style="display:flex;gap:.5rem">
           <div class="pay-opt active" id="pay-opt-cash" onclick="selectPayment('cash')" style="flex:1;padding:12px;font-size:14px;text-align:center">💵 Готівкою при отриманні</div>
           <div class="pay-opt" id="pay-opt-online" onclick="selectPayment('online')" style="flex:1;padding:12px;font-size:14px;text-align:center;display:none">💳 Карткою онлайн</div>
@@ -351,7 +351,7 @@ window.__MQ_CFG = {
         Оформити замовлення
       </button>
       <div style="text-align:center;margin-top:1rem">
-        <span style="font-size:14px;color:var(--muted);cursor:pointer" onclick="closeCart()">← Продовжити вибір</span>
+        <span style="font-size:14px;color:var(--muted);cursor:pointer" onclick="closeCart()" id="continue-btn">← Продовжити вибір</span>
       </div>
     </div>
   </div>
@@ -751,6 +751,52 @@ function applyUILang() {
   // Разом
   const totalLabel = document.querySelector('.cart-total > span:first-child');
   if(totalLabel) totalLabel.textContent = ui('total');
+
+  // Заголовок кошика
+  const cartTitle = document.getElementById('cart-title');
+  if(cartTitle) cartTitle.textContent = ui('cart');
+
+  // Тип замовлення
+  const orderTypeTitle = document.getElementById('order-type-title');
+  if(orderTypeTitle) orderTypeTitle.textContent = ui('orderType');
+
+  // Контактні дані
+  const contactsTitle = document.getElementById('contacts-title');
+  if(contactsTitle) contactsTitle.textContent = ui('contacts');
+
+  // Телефон
+  const phoneLabel = document.getElementById('phone-label');
+  if(phoneLabel) phoneLabel.textContent = ui('phone') + ' *';
+
+  // Спосіб оплати
+  const paymentTitle = document.getElementById('payment-title');
+  if(paymentTitle) paymentTitle.textContent = ui('payment');
+
+  // Продовжити вибір
+  const continueBtn = document.getElementById('continue-btn');
+  if(continueBtn) continueBtn.textContent = '← ' + ui('continue').replace('← ','');
+
+  // Коментар
+  const commentLabel = document.getElementById('comment-label');
+  if(commentLabel) commentLabel.textContent = ui('comment');
+
+  // Кнопки типу замовлення — перерендеримо
+  renderOrderTypeBtns();
+
+  // Верхній бар — оновлюємо тексти
+  const discMap2 = {
+    'ot-dine': orderingSettings.discounts?.dineIn,
+    'ot-take': orderingSettings.discounts?.takeaway,
+    'ot-del':  orderingSettings.discounts?.delivery,
+  };
+  const labelMap2 = {'ot-dine': ui('dineIn'), 'ot-take': ui('takeaway'), 'ot-del': ui('delivery')};
+  Object.entries(labelMap2).forEach(([id, label]) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const disc = discMap2[id];
+    const discText = disc?.pct ? \` −\${disc.pct}%\` : disc?.fix ? \` −\${disc.fix}₴\` : '';
+    el.textContent = label + discText;
+  });
 }
 
 window.setLang = function(lang) {
@@ -1012,9 +1058,9 @@ function initOrderTypeBar() {
     'ot-del':  orderingSettings.discounts?.delivery,
   };
   const labelMap = {
-    'ot-dine': '🪑 В закладі',
-    'ot-take': '🥡 З собою',
-    'ot-del':  '🚗 Доставка',
+    'ot-dine': ui('dineIn'),
+    'ot-take': ui('takeaway'),
+    'ot-del':  ui('delivery'),
   };
   Object.entries(discMap).forEach(([id, disc]) => {
     const el = document.getElementById(id);
@@ -1031,9 +1077,9 @@ function renderOrderTypeBtns() {
   const grid = document.getElementById('order-type-opts-grid');
   if(!grid) return;
   const types = [
-    {key:'dine_in',  emoji:'🪑', label:'В закладі',  disc: orderingSettings.discounts?.dineIn},
-    {key:'takeaway', emoji:'🥡', label:'З собою',     disc: orderingSettings.discounts?.takeaway},
-    {key:'delivery', emoji:'🚗', label:'Доставка',    disc: orderingSettings.discounts?.delivery},
+    {key:'dine_in',  emoji:'🪑', label:ui('dineIn'),    disc: orderingSettings.discounts?.dineIn},
+    {key:'takeaway', emoji:'🥡', label:ui('takeaway'),   disc: orderingSettings.discounts?.takeaway},
+    {key:'delivery', emoji:'🚗', label:ui('delivery'),   disc: orderingSettings.discounts?.delivery},
   ];
   grid.innerHTML = types.map(t => {
     const discText = t.disc?.pct ? `<div style="font-size:10px;color:var(--green,#059669);font-weight:700">−${t.disc.pct}%</div>`
@@ -1068,7 +1114,7 @@ window.setOrderType = function(type) {
   if(elTime)    elTime.style.display    = type==='takeaway' ? 'block' : 'none';
   if(elAddress) elAddress.style.display = type==='delivery' ? 'block' : 'none';
   if(elComment) elComment.style.display = type==='delivery' ? 'none'  : 'block';
-  if(elLabel)   elLabel.textContent     = type==='takeaway' ? '💬 Коментар для закладу' : '💬 Коментар';
+  if(elLabel)   elLabel.textContent     = ui('comment');
   if(type === 'takeaway') buildTimeSlots();
   // Перерендеримо меню і кошик бо ціни/доступність змінились
   renderMenu();
