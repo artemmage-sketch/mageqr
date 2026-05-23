@@ -1825,6 +1825,42 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
         <label class="field-label">Алергени (оберіть всі що є)</label>
         <div id="allergen-checkboxes" style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.375rem"></div>
       </div>
+
+      <!-- ПЕРЕКЛАДИ -->
+      <div class="span2" style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+          <label class="field-label" style="margin:0">🌐 Переклади</label>
+          <button type="button" class="btn btn-outline btn-sm" onclick="translateItemFields()" id="translate-btn">✨ Перекласти автоматично</button>
+        </div>
+        <details style="margin-bottom:.375rem"><summary style="cursor:pointer;font-size:13px;font-weight:500;padding:.375rem 0;color:var(--muted)">🇬🇧 English</summary><div style="padding:.5rem 0;display:flex;flex-direction:column;gap:.375rem"><input id="if-name-en" type="text" placeholder="Name (English)"/><textarea id="if-desc-en" rows="2" placeholder="Description (English)" style="resize:none"></textarea></div></details>
+        <details style="margin-bottom:.375rem"><summary style="cursor:pointer;font-size:13px;font-weight:500;padding:.375rem 0;color:var(--muted)">🇵🇱 Polski</summary><div style="padding:.5rem 0;display:flex;flex-direction:column;gap:.375rem"><input id="if-name-pl" type="text" placeholder="Nazwa (Polski)"/><textarea id="if-desc-pl" rows="2" placeholder="Opis (Polski)" style="resize:none"></textarea></div></details>
+        <details style="margin-bottom:.375rem"><summary style="cursor:pointer;font-size:13px;font-weight:500;padding:.375rem 0;color:var(--muted)">🇩🇪 Deutsch</summary><div style="padding:.5rem 0;display:flex;flex-direction:column;gap:.375rem"><input id="if-name-de" type="text" placeholder="Name (Deutsch)"/><textarea id="if-desc-de" rows="2" placeholder="Beschreibung (Deutsch)" style="resize:none"></textarea></div></details>
+        <details style="margin-bottom:.375rem"><summary style="cursor:pointer;font-size:13px;font-weight:500;padding:.375rem 0;color:var(--muted)">🇷🇴 Română</summary><div style="padding:.5rem 0;display:flex;flex-direction:column;gap:.375rem"><input id="if-name-ro" type="text" placeholder="Nume (Română)"/><textarea id="if-desc-ro" rows="2" placeholder="Descriere (Română)" style="resize:none"></textarea></div></details>
+        <details style="margin-bottom:.375rem"><summary style="cursor:pointer;font-size:13px;font-weight:500;padding:.375rem 0;color:var(--muted)">🇪🇸 Español</summary><div style="padding:.5rem 0;display:flex;flex-direction:column;gap:.375rem"><input id="if-name-es" type="text" placeholder="Nombre (Español)"/><textarea id="if-desc-es" rows="2" placeholder="Descripción (Español)" style="resize:none"></textarea></div></details>
+        <details style="margin-bottom:.375rem"><summary style="cursor:pointer;font-size:13px;font-weight:500;padding:.375rem 0;color:var(--muted)">🇲🇪 Crnogorski</summary><div style="padding:.5rem 0;display:flex;flex-direction:column;gap:.375rem"><input id="if-name-cnr" type="text" placeholder="Ime (Crnogorski)"/><textarea id="if-desc-cnr" rows="2" placeholder="Opis (Crnogorski)" style="resize:none"></textarea></div></details>
+      </div>
+
+      <!-- ПЕРЕКЛАДИ -->
+      <div class="span2" style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+          <label class="field-label" style="margin:0">🌐 Переклади</label>
+          <button type="button" class="btn btn-outline btn-sm" onclick="translateItemFields()" id="translate-btn">
+            ✨ Перекласти автоматично
+          </button>
+        </div>
+        <div id="translations-wrap">
+          
+          <details style="margin-bottom:.5rem">
+            <summary style="cursor:pointer;font-size:13px;font-weight:500;padding:.375rem 0;color:var(--muted)">
+              ${{en:'🇬🇧 English',pl:'🇵🇱 Polski',de:'🇩🇪 Deutsch',ro:'🇷🇴 Română',es:'🇪🇸 Español',cnr:'🇲🇪 Crnogorski'}[lang]}
+            </summary>
+            <div style="padding:.5rem 0;display:flex;flex-direction:column;gap:.375rem">
+              <input id="if-name-${lang}" type="text" placeholder="Назва (${lang})" style="font-size:13px"/>
+              <textarea id="if-desc-${lang}" rows="2" placeholder="Опис (${lang})" style="font-size:13px;resize:none"></textarea>
+            </div>
+          </details>`).join('')}
+        </div>
+      </div>
     </div>
     <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveItem()">Зберегти страву</button>
   </div>
@@ -2222,6 +2258,7 @@ window.saveItem=async function(){
       takeaway:parseFloat(document.getElementById('if-price-take')?.value)||null,
       delivery:parseFloat(document.getElementById('if-price-del')?.value)||null,
     },
+    ...getItemTranslations(),
     updatedAt:new Date().toISOString()};
   try{
     if(editItemId)await setDoc(doc(db,'venues',venueId,'items',editItemId),data);
@@ -2273,6 +2310,7 @@ function openItemModal(id=null){
     document.getElementById('if-sku')&&(document.getElementById('if-sku').value=i.sku||'');
     document.getElementById('if-cat').value=i.category||'';
     renderAllergenCheckboxes(i.allergens||[]);
+    loadItemTranslations(i);
     // Доступність
     const av = i.availability || {};
     document.getElementById('if-avail-dine')&&(document.getElementById('if-avail-dine').checked=av.dineIn!==false);
@@ -2291,6 +2329,7 @@ function openItemModal(id=null){
     renderAllergenCheckboxes([]);clearPhoto();currentPhotoFile=null;
     ['if-avail-dine','if-avail-take','if-avail-del'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=true;});
     ['if-price-dine','if-price-take','if-price-del'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    loadItemTranslations({});
   }
   openModal('modal-item');
 }
@@ -3587,6 +3626,79 @@ window.syncOrderToPOS = async function(orderId) {
       notify('Статус: ' + data.status, 'ok');
     }
   } catch(e) { notify('Помилка: ' + e.message, 'err'); }
+};
+
+
+// ── ПЕРЕКЛАДИ ─────────────────────────────────────────────
+const LANGS = ['en','pl','de','ro','es','cnr'];
+
+// Завантажуємо переклади при відкритті картки страви
+function loadItemTranslations(item) {
+  LANGS.forEach(lang => {
+    const nameEl = document.getElementById(`if-name-${lang}`);
+    const descEl = document.getElementById(`if-desc-${lang}`);
+    if(nameEl) nameEl.value = item[`name_${lang}`] || '';
+    if(descEl) descEl.value = item[`desc_${lang}`] || '';
+  });
+}
+
+// Збираємо переклади при збереженні
+function getItemTranslations() {
+  const result = {};
+  LANGS.forEach(lang => {
+    const name = document.getElementById(`if-name-${lang}`)?.value || '';
+    const desc = document.getElementById(`if-desc-${lang}`)?.value || '';
+    if(name) result[`name_${lang}`] = name;
+    if(desc) result[`desc_${lang}`] = desc;
+  });
+  return result;
+}
+
+// Автоматичний переклад через Cloud Function
+window.translateItemFields = async function() {
+  const name = document.getElementById('if-name')?.value?.trim();
+  const desc = document.getElementById('if-desc')?.value?.trim();
+  if(!name) { notify('Спочатку введіть назву страви', 'err'); return; }
+
+  const btn = document.getElementById('translate-btn');
+  btn.textContent = '⏳ Перекладаємо...';
+  btn.disabled = true;
+
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+
+    const res = await fetch(`${window.__CF_URL}/translateContent`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({
+        venueId,
+        texts: { name, ...(desc ? {desc} : {}) },
+        targetLangs: LANGS,
+        sourceLang: 'uk',
+      }),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error);
+
+    // Заповнюємо поля
+    LANGS.forEach(lang => {
+      if(!data.results[lang]) return;
+      const nameEl = document.getElementById(`if-name-${lang}`);
+      const descEl = document.getElementById(`if-desc-${lang}`);
+      if(nameEl && data.results[lang].name) nameEl.value = data.results[lang].name;
+      if(descEl && data.results[lang].desc) descEl.value = data.results[lang].desc;
+      // Відкриваємо секцію якщо є переклад
+      nameEl?.closest('details')?.setAttribute('open','');
+    });
+
+    notify('✅ Переклад готовий! Перевірте і збережіть.', 'ok');
+  } catch(e) {
+    notify('Помилка перекладу: ' + e.message, 'err');
+  } finally {
+    btn.textContent = '✨ Перекласти автоматично';
+    btn.disabled = false;
+  }
 };
 
 initFirebase();
