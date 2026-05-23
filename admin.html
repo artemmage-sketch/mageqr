@@ -1831,6 +1831,49 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 </div>
 
 <!-- CAT MODAL -->
+
+<!-- TABLE DETAIL MODAL -->
+<div class="overlay" id="modal-table-detail" onclick="if(event.target===this)closeModal('modal-table-detail')">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <div class="modal-title" id="table-detail-title">Стіл</div>
+      <button class="modal-close" onclick="closeModal('modal-table-detail')">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding:1rem">
+      <!-- QR КОД -->
+      <div style="text-align:center">
+        <div id="table-qr-wrap" style="background:#fff;padding:.5rem;border-radius:8px;border:1px solid var(--border);display:inline-block">
+          <canvas id="table-qr-canvas" width="160" height="160"></canvas>
+        </div>
+        <div id="table-qr-url" style="font-size:10px;color:var(--muted);margin-top:.375rem;word-break:break-all"></div>
+        <button class="btn btn-outline btn-sm" style="margin-top:.5rem;width:100%" onclick="downloadTableQR()">⬇️ Завантажити QR</button>
+        <button class="btn btn-outline btn-sm" style="margin-top:.375rem;width:100%" onclick="copyTableQRUrl()">🔗 Копіювати URL</button>
+      </div>
+
+      <!-- СТАТУС І ДІЇ -->
+      <div>
+        <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem">Статус столу</div>
+        <div id="table-status-display" style="font-weight:600;font-size:15px;margin-bottom:1rem"></div>
+
+        <div style="display:flex;flex-direction:column;gap:.375rem">
+          <button class="btn btn-success btn-sm" onclick="setTableStatus('occupied')">🪑 Відкрити стіл</button>
+          <button class="btn btn-outline btn-sm" onclick="setTableStatus('free')">✓ Звільнити стіл</button>
+          <button class="btn btn-accent btn-sm" onclick="markPaid()">💳 Оплачено</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ЗАМОВЛЕННЯ НА СТОЛІ -->
+    <div style="padding:0 1rem 1rem">
+      <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem">Активні замовлення</div>
+      <div id="table-order-lines"></div>
+      <div style="display:flex;justify-content:space-between;font-weight:600;border-top:1px solid var(--border);padding-top:.5rem;margin-top:.5rem">
+        <span>Разом:</span><span id="table-order-total">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="modal-cat" onclick="closeModal('modal-cat')">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-head">
@@ -2038,6 +2081,7 @@ function renderOrders(){
           <button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','new')">↺ Назад</button>`:''}
         ${o.status==='done'?`<button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','new')">↺ Повернути</button>`:''}
         ${o.status==='cancel'?`<button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','new')">↺ Відкрити</button>`:''}
+        ${o.paymentStatus==='success'&&!o.posSynced?`<button class="btn btn-outline btn-sm" onclick="syncOrderToPOS('${o.id}')">🔄 Синх. POS</button>`:''}
       </div>
     </div>`).join('');
 }
@@ -2655,13 +2699,13 @@ function renderTables(){
   const stMap={free:'ts-free',occupied:'ts-occupied',ordered:'ts-ordered',paid:'ts-paid'};
   const stLabel={free:'Вільний',occupied:'Зайнятий',ordered:'Замовлено',paid:'Оплачено'};
   document.getElementById('tables-grid').innerHTML=filtered.map(t=>`
-    <div class="table-card ${t.status}" onclick="openTableDetail(${t.id})">
-      <div class="table-qr-icon">⬛</div>
+    <div class="table-card ${t.status}" onclick="openTableDetail('${t.id}')">
       <div class="table-num">${t.num}</div>
       <div class="table-zone">${t.zone} · ${t.seats} місць</div>
-      <div><span class="table-status ${stMap[t.status]}">${stLabel[t.status]}</span></div>
+      <div><span class="table-status ${stMap[t.status]||'ts-free'}">${stLabel[t.status]||'Вільний'}</span></div>
       ${t.amount?`<div class="table-amount">₴${t.amount}</div>`:''}
       ${t.startTime?`<div class="table-timer">⏱ з ${t.startTime}</div>`:''}
+      <div style="margin-top:.5rem;font-size:11px;color:var(--muted)">QR · Деталі</div>
     </div>`).join('');
   document.getElementById('st-tables-free').textContent=tables.filter(t=>t.status==='free').length;
   document.getElementById('st-tables-occ').textContent=tables.filter(t=>t.status!=='free').length;
@@ -2687,16 +2731,43 @@ function drawQRMock(canvas){
   p.forEach((row,r)=>row.forEach((v,c_)=>{if(v)ctx.fillRect(Math.round(c_*cell),Math.round(r*cell),Math.ceil(cell),Math.ceil(cell));}));
 }
 
-function openTableDetail(id){
-  selectedTable=tables.find(t=>t.id===id);
-  const t=selectedTable;
-  document.getElementById('table-detail-title').textContent=`Стіл №${t.num} — ${t.zone}`;
-  document.getElementById('table-qr-url').textContent=`mageqrrest.com/dykanka?table=${t.num}`;
-  drawQRMock(document.getElementById('table-qr-canvas'));
-  document.getElementById('table-order-lines').innerHTML=t.orders.length
-    ?t.orders.map(o=>`<div class="order-line"><span>${o.name}</span><span style="font-weight:500">₴${o.price}</span></div>`).join('')
-    :'<div style="font-size:13px;color:var(--muted);text-align:center;padding:.75rem">Замовлень немає</div>';
-  document.getElementById('table-order-total').textContent=t.amount?'₴'+t.amount:'—';
+window.openTableDetail = function(id) {
+  selectedTable = tables.find(t => String(t.id) === String(id));
+  if(!selectedTable) return;
+  const t = selectedTable;
+
+  document.getElementById('table-detail-title').textContent = `Стіл №${t.num} — ${t.zone}`;
+
+  // Реальний QR URL
+  const qrUrl = `https://mageqrrest.com/menu.html?v=${venueId}&t=${t.num}`;
+  document.getElementById('table-qr-url').textContent = qrUrl;
+
+  // Генеруємо реальний QR через Google Charts API
+  const canvas = document.getElementById('table-qr-canvas');
+  const img = document.createElement('img');
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}`;
+  img.style.cssText = 'width:200px;height:200px;display:block;margin:0 auto';
+  canvas.parentNode.replaceChild(img, canvas);
+
+  // Замовлення столу — шукаємо активні замовлення
+  const tableOrders = orders.filter(o => String(o.tableId) === String(t.num) && (o.status === 'new' || o.status === 'preparing'));
+  document.getElementById('table-order-lines').innerHTML = tableOrders.length
+    ? tableOrders.map(o => `
+        <div class="order-line">
+          <span>${o.clientName || 'Гість'} · #${o.num}</span>
+          <span style="font-weight:500">₴${o.total}</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:.375rem">
+          ${(o.items||[]).map(i=>`${i.name} ×${i.qty}`).join(', ')}
+        </div>`).join('')
+    : '<div style="font-size:13px;color:var(--muted);text-align:center;padding:.75rem">Активних замовлень немає</div>';
+
+  const totalAmount = tableOrders.reduce((s,o) => s + (o.total||0), 0);
+  document.getElementById('table-order-total').textContent = totalAmount ? '₴' + totalAmount : '—';
+
+  // Статус столу
+  const statusLabels = {free:'🟢 Вільний',occupied:'🔴 Зайнятий',ordered:'🔵 Замовлено',paid:'✅ Оплачено'};
+  document.getElementById('table-status-display').textContent = statusLabels[t.status] || t.status;
   document.getElementById('split-row').innerHTML=[2,3,4].map(n=>`
     <div class="split-person" onclick="selectSplit(this,${n},${t.amount})">
       <div>👤×${n}</div>
@@ -2712,9 +2783,33 @@ function selectSplit(el,n,total){document.querySelectorAll('.split-person').forE
 window.selectSplit=selectSplit;
 function selectTip(btn,pct){document.querySelectorAll('.tips-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('tips-custom-val').value='';if(selectedTable&&selectedTable.amount)notify(`Чайові ${pct}% = ₴${Math.round(selectedTable.amount*parseInt(pct)/100)}`,'ok');}
 window.selectTip=selectTip;
+window.setTableStatus = function(status) {
+  if(!selectedTable) return;
+  selectedTable.status = status;
+  document.getElementById('table-status-display').textContent = 
+    {free:'Вільний',occupied:'Зайнятий',ordered:'Замовлено',paid:'Оплачено'}[status] || status;
+  renderTables();
+  updateTableStatus(selectedTable.id, {status});
+  notify({free:'Стіл звільнено',occupied:'Стіл відкрито',paid:'Стіл оплачено'}[status]||'Оновлено','ok');
+};
+function markPaid(){setTableStatus('paid');closeModal('modal-table-detail');}
+function clearTable(){setTableStatus('free');closeModal('modal-table-detail');}
 function sendPayLink(){closeModal('modal-table-detail');notify('💳 Посилання надіслано клієнту','ok');}
-function markPaid(){if(selectedTable){selectedTable.status='paid';closeModal('modal-table-detail');renderTables();updateTableStatus(selectedTable.id,{status:'paid'});notify('✅ Стіл оплачено','ok');}}
-function clearTable(){if(selectedTable){selectedTable.status='free';selectedTable.orders=[];selectedTable.amount=0;selectedTable.startTime='';closeModal('modal-table-detail');renderTables();updateTableStatus(selectedTable.id,{status:'free',amount:0,startTime:''});notify('Стіл звільнено','ok');}}
+
+window.downloadTableQR = function() {
+  const img = document.querySelector('#table-qr-wrap img');
+  if(!img) return;
+  const a = document.createElement('a');
+  a.href = img.src;
+  a.download = `table-${selectedTable?.num || 'qr'}.png`;
+  a.target = '_blank';
+  a.click();
+};
+
+window.copyTableQRUrl = function() {
+  const url = document.getElementById('table-qr-url').textContent;
+  navigator.clipboard.writeText(url).then(() => notify('✅ URL скопійовано','ok'));
+};
 function downloadQR(){notify('⬇️ QR завантажується...','ok');}
 function printQR(){notify('🖨️ Відправлено на друк','ok');}
 function printAllQR(){notify('🖨️ Всі QR відправлені','ok');}
@@ -3468,6 +3563,29 @@ window.verifyProvider = async function(provider) {
     const data = await res.json();
     if(!res.ok) throw new Error(data.error);
     notify('✅ ' + (data.message || 'Підключення успішне!'), 'ok');
+  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
+};
+
+
+window.syncOrderToPOS = async function(orderId) {
+  notify('Синхронізуємо з POS...', 'ok');
+  try {
+    const {doc, updateDoc} = window.__FS;
+    // Скидаємо posSynced щоб checkPaymentStatus міг синхронізувати
+    await updateDoc(doc(db,'venues',venueId,'orders',orderId), { posSynced: false, status: 'new' });
+    
+    // Викликаємо checkPaymentStatus
+    const res = await fetch(`${window.__CF_URL}/checkPaymentStatus`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({venueId, orderId}),
+    });
+    const data = await res.json();
+    if(data.status === 'paid') {
+      notify('✅ Синхронізовано з POS', 'ok');
+    } else {
+      notify('Статус: ' + data.status, 'ok');
+    }
   } catch(e) { notify('Помилка: ' + e.message, 'err'); }
 };
 
