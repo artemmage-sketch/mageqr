@@ -377,7 +377,7 @@ const UI_STRINGS = {
     courierComment:"Коментар для кур'єра", courierPh:'Код домофону, орієнтир...',
     orderDone:'Замовлення прийнято!', waitConfirm:'Очікуйте підтвердження від закладу.',
     backToMenu:'← Назад до меню', noDishes:'У цій категорії немає страв',
-    emptyCart:'Кошик порожній', add:'Додати', namePh:"Ваше ім'я",
+    emptyCart:'Кошик порожній', add:'Додати', discount:'Знижка', namePh:"Ваше ім'я",
   },
   en: {
     cart:'🛒 Cart', yourOrder:'🛒 Your order', orderType:'Order type',
@@ -394,7 +394,7 @@ const UI_STRINGS = {
     courierComment:'Comment for courier', courierPh:'Intercom code, landmark...',
     orderDone:'Order accepted!', waitConfirm:'Awaiting confirmation from the venue.',
     backToMenu:'← Back to menu', noDishes:'No dishes in this category',
-    emptyCart:'Cart is empty', add:'Add', namePh:'Your name',
+    emptyCart:'Cart is empty', add:'Add', discount:'Discount', namePh:'Your name',
   },
   pl: {
     cart:'🛒 Koszyk', yourOrder:'🛒 Twoje zamówienie', orderType:'Typ zamówienia',
@@ -411,7 +411,7 @@ const UI_STRINGS = {
     courierComment:'Komentarz dla kuriera', courierPh:'Kod domofonu, punkt orientacyjny...',
     orderDone:'Zamówienie przyjęte!', waitConfirm:'Czekaj na potwierdzenie od lokalu.',
     backToMenu:'← Powrót do menu', noDishes:'Brak dań w tej kategorii',
-    emptyCart:'Koszyk jest pusty', add:'Dodaj', namePh:'Twoje imię',
+    emptyCart:'Koszyk jest pusty', add:'Dodaj', discount:'Zniżka', namePh:'Twoje imię',
   },
   de: {
     cart:'🛒 Warenkorb', yourOrder:'🛒 Ihre Bestellung', orderType:'Bestellart',
@@ -428,7 +428,7 @@ const UI_STRINGS = {
     courierComment:'Kommentar für Kurier', courierPh:'Türcode, Orientierungspunkt...',
     orderDone:'Bestellung angenommen!', waitConfirm:'Bitte warten Sie auf Bestätigung.',
     backToMenu:'← Zurück zum Menü', noDishes:'Keine Gerichte in dieser Kategorie',
-    emptyCart:'Warenkorb ist leer', add:'Hinzufügen', namePh:'Ihr Name',
+    emptyCart:'Warenkorb ist leer', add:'Hinzufügen', discount:'Rabatt', namePh:'Ihr Name',
   },
   ro: {
     cart:'🛒 Coș', yourOrder:'🛒 Comanda ta', orderType:'Tip comandă',
@@ -445,7 +445,7 @@ const UI_STRINGS = {
     courierComment:'Comentariu pentru curier', courierPh:'Cod interfon, reper...',
     orderDone:'Comandă acceptată!', waitConfirm:'Așteptați confirmarea de la local.',
     backToMenu:'← Înapoi la meniu', noDishes:'Nu sunt preparate în această categorie',
-    emptyCart:'Coșul este gol', add:'Adaugă', namePh:'Numele tău',
+    emptyCart:'Coșul este gol', add:'Adaugă', discount:'Reducere', namePh:'Numele tău',
   },
   es: {
     cart:'🛒 Carrito', yourOrder:'🛒 Tu pedido', orderType:'Tipo de pedido',
@@ -462,7 +462,7 @@ const UI_STRINGS = {
     courierComment:'Comentario para el repartidor', courierPh:'Código de portero, referencia...',
     orderDone:'¡Pedido aceptado!', waitConfirm:'Espere la confirmación del local.',
     backToMenu:'← Volver al menú', noDishes:'No hay platos en esta categoría',
-    emptyCart:'El carrito está vacío', add:'Agregar', namePh:'Tu nombre',
+    emptyCart:'El carrito está vacío', add:'Agregar', discount:'Descuento', namePh:'Tu nombre',
   },
   cnr: {
     cart:'🛒 Korpa', yourOrder:'🛒 Vaša narudžbina', orderType:'Tip narudžbine',
@@ -479,7 +479,7 @@ const UI_STRINGS = {
     courierComment:'Komentar za dostavljača', courierPh:'Kod interfona, orijentir...',
     orderDone:'Narudžbina prihvaćena!', waitConfirm:'Čekajte potvrdu od lokala.',
     backToMenu:'← Nazad na meni', noDishes:'Nema jela u ovoj kategoriji',
-    emptyCart:'Korpa je prazna', add:'Dodaj', namePh:'Vaše ime',
+    emptyCart:'Korpa je prazna', add:'Dodaj', discount:'Popust', namePh:'Vaše ime',
   },
 };
 
@@ -801,7 +801,7 @@ function renderCart() {
       discEl.style.cssText = 'font-size:13px;color:var(--green,#059669);margin:.25rem 0 .5rem;font-weight:500';
       $('cart-total-val')?.closest('.cart-total')?.after(discEl);
     }
-    discEl.textContent = '🏷️ ' + (_discNm || 'Знижка') + ': −' + _disc + ' грн';
+    discEl.textContent = '🏷️ ' + (_discNm || ui('discount')) + ': −' + _disc + ' грн';
   } else {
     $('cart-total-val').textContent = _final + ' грн';
     document.getElementById('cart-discount-row')?.remove();
@@ -1105,6 +1105,11 @@ async function init() {
     initOrderTypeBar();
     renderCats();
     renderMenu();
+    // Прив'язуємо кліки на верхній бар через addEventListener
+    [['ot-dine','dine_in'],['ot-take','takeaway'],['ot-del','delivery']].forEach(([id,type])=>{
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('click', () => setOrderType(type));
+    });
   } catch(e) {
     console.error('init error:', e);
     $('menu-body').innerHTML = `<div class="empty">
