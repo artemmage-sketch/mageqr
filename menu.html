@@ -794,7 +794,7 @@ function applyUILang() {
     const el = document.getElementById(id);
     if(!el) return;
     const disc = discMap2[id];
-    const discText = disc?.pct ? \` −\${disc.pct}%\` : disc?.fix ? \` −\${disc.fix}₴\` : '';
+    const discText = disc?.pct ? ` −${disc.pct}%` : disc?.fix ? ` −${disc.fix}₴` : '';
     el.textContent = label + discText;
   });
 }
