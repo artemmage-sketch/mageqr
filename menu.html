@@ -945,6 +945,36 @@ window.resetSuccess = () => { $('success').classList.remove('open'); renderMenu(
 
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2500); }
 
+async function init() {
+  try {
+    const [sSnap, dSnap, cSnap, iSnap] = await Promise.all([
+      getDoc(doc(db,'venues',venueId,'settings','main')),
+      getDoc(doc(db,'venues',venueId,'design','main')),
+      getDocs(collection(db,'venues',venueId,'categories')),
+      getDocs(collection(db,'venues',venueId,'items')),
+    ]);
+    try {
+      const ordSnap = await getDoc(doc(db,'venues',venueId,'settings','ordering'));
+      orderingSettings = ordSnap.exists() ? ordSnap.data() : {};
+    } catch(e) { orderingSettings = {}; }
+    initOrderTypeBar();
+    try { applySettings(sSnap.exists() ? sSnap.data() : {}); } catch(e) {}
+    try { design = dSnap.exists() ? dSnap.data() : {}; applyDesign(design); } catch(e) {}
+    allCats  = cSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
+    allItems = iSnap.docs.map(d=>({id:d.id,...d.data()}));
+    activeCat = allCats[0]?.name || null;
+    initLangBar();
+    renderCats();
+    renderMenu();
+  } catch(e) {
+    console.error('init error:', e);
+    $('menu-body').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div style="font-size:13px;margin-top:.5rem">'+e.message+'</div></div>';
+  } finally {
+    $('loader').classList.add('gone');
+  }
+}
+
+
 // Перевіряємо чи повернулись після оплати
 async function checkPaymentAfterRedirect() {
   const urlParams = new URLSearchParams(location.search);
