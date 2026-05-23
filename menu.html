@@ -535,9 +535,10 @@ function applyDesign(d) {
 }
 
 function renderCats() {
-  $('cat-bar').innerHTML = allCats.map(c=>
-    `<button class="cat-pill${c.name===activeCat?' active':''}" onclick="setCat('${c.name}')">${c.emoji?c.emoji+' ':''}${c.name}</button>`
-  ).join('');
+  $('cat-bar').innerHTML = allCats.map(c=> {
+    const catName = c[`name_${currentLang}`] || c.name || '';
+    return `<button class="cat-pill${c.name===activeCat?' active':''}" onclick="setCat('${c.name}')">${c.emoji?c.emoji+' ':''}${catName}</button>`;
+  }).join('');
 }
 window.setCat = name => { activeCat=name; renderCats(); renderMenu(); };
 
@@ -758,9 +759,8 @@ window.setLang = function(lang) {
   currentLang = lang;
   // Оновлюємо активну кнопку
   document.querySelectorAll('.lang-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent.toLowerCase().includes(lang) || 
-      (lang === 'uk' && b.textContent.includes('UA')) ||
-      (lang === 'cnr' && b.textContent.includes('MNE')));
+    const btnLang = b.getAttribute('onclick')?.match(/setLang\('([^']+)'\)/)?.[1];
+    b.classList.toggle('active', btnLang === lang);
   });
   // Перерендеримо меню
   renderCats();
@@ -771,8 +771,8 @@ window.setLang = function(lang) {
 
 // Показуємо перемикач якщо є хоча б один переклад
 function initLangBar() {
-  const hasTranslations = allItems.some(it => it.name_en || it.name_pl);
-  document.getElementById('lang-bar').style.display = hasTranslations ? 'flex' : 'none';
+  // Показуємо перемикач мов завжди
+  document.getElementById('lang-bar').style.display = 'flex';
   // Відновлюємо збережену мову
   const saved = localStorage.getItem('mq_lang');
   if(saved && saved !== 'uk') setLang(saved);
