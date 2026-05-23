@@ -542,6 +542,34 @@ function renderCats() {
 }
 window.setCat = name => { activeCat=name; renderCats(); renderMenu(); };
 
+// ── МОВА МЕНЮ ─────────────────────────────────────────────
+function itemName(it) {
+  if(!it) return '';
+  return it['name_'+currentLang] || it.name || '';
+}
+function itemDesc(it) {
+  if(!it) return '';
+  return it['desc_'+currentLang] || it.desc || '';
+}
+window.setLang = function(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn[data-lang]').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+  });
+  renderCats();
+  renderMenu();
+  localStorage.setItem('mq_lang', lang);
+};
+function initLangBar() {
+  document.getElementById('lang-bar').style.display = 'flex';
+  document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
+    btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang')));
+  });
+  const saved = localStorage.getItem('mq_lang');
+  if(saved && saved !== 'uk') setLang(saved);
+}
+// ──────────────────────────────────────────────────────────
+
 function renderMenu() {
   const list = (activeCat ? allItems.filter(i=>i.category===activeCat) : allItems).filter(itemAvailable);
   if (!list.length) {
@@ -745,41 +773,6 @@ window.cQty = (id,d) => {
 };
 
 // ── ТИПИ ЗАМОВЛЕНЬ ────────────────────────────────────────
-// Отримуємо назву в поточній мові
-function itemName(it) {
-  if(!it) return '';
-  return it[`name_${currentLang}`] || it.name || '';
-}
-function itemDesc(it) {
-  if(!it) return '';
-  return it[`desc_${currentLang}`] || it.desc || '';
-}
-
-window.setLang = function(lang) {
-  currentLang = lang;
-  // Оновлюємо активну кнопку
-  document.querySelectorAll('.lang-btn[data-lang]').forEach(b => {
-    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
-  });
-  // Перерендеримо меню
-  renderCats();
-  renderMenu();
-  // Зберігаємо вибір
-  localStorage.setItem('mq_lang', lang);
-};
-
-// Показуємо перемикач якщо є хоча б один переклад
-function initLangBar() {
-  // Показуємо перемикач мов завжди
-  document.getElementById('lang-bar').style.display = 'flex';
-  // Прив'язуємо кліки на кнопки мов
-  document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
-    btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang')));
-  });
-  // Відновлюємо збережену мову
-  const saved = localStorage.getItem('mq_lang');
-  if(saved && saved !== 'uk') setLang(saved);
-}
 
 function initOrderTypeBar() {
   const bar = document.getElementById('order-type-bar');
