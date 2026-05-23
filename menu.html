@@ -21,7 +21,6 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .loader-spin{width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loader.gone{display:none}
-/* BANNER — дві зони: фото зверху, інфо знизу */
 .banner-photo{width:100%;height:160px;background:var(--accent);position:relative;overflow:hidden}
 .banner-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .banner-photo-placeholder{width:100%;height:100%;background:var(--accent)}
@@ -30,6 +29,9 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .venue-logo img{width:100%;height:100%;object-fit:cover}
 .venue-name{font-family:var(--font-head);font-size:1.15rem;color:var(--text);font-weight:600;line-height:1.2}
 .venue-tag{font-size:12px;color:var(--muted);margin-top:.2rem}
+.lang-bar{display:flex;gap:.25rem;padding:.375rem .75rem;background:var(--card);border-bottom:1px solid var(--border);justify-content:flex-end}
+.lang-btn{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
+.lang-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .cat-bar{background:var(--card);border-bottom:1px solid var(--border);padding:.625rem 1rem;display:flex;gap:.5rem;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:10}
 .cat-bar::-webkit-scrollbar{display:none}
 .cat-pill{padding:5px 14px;border-radius:20px;font-size:13px;border:1px solid var(--border);white-space:nowrap;cursor:pointer;background:var(--card);color:var(--muted);transition:all .15s;font-family:var(--font-body);flex-shrink:0}
@@ -68,7 +70,6 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .allergen-tag.warn{background:#FEF3C7;border-color:#FDE68A;color:#92400E}
 .det-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:.875rem}
 .det-price{font-family:var(--font-head);font-size:1.4rem;color:var(--accent);font-weight:600}
-/* Алергени в списку страв */
 .dish-allergens{display:flex;gap:.25rem;flex-wrap:wrap;margin-top:.375rem}
 .a-chip{font-size:10px;padding:1px 7px;border-radius:10px;background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
 .qty-ctrl{display:flex;align-items:center;gap:.625rem}
@@ -91,10 +92,6 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .cq-val{font-size:13px;font-weight:600;min-width:16px;text-align:center}
 .cart-total{display:flex;justify-content:space-between;font-weight:600;font-size:15px;border-top:1px solid var(--border);padding-top:.75rem;margin-bottom:.875rem}
 .cart-total-price{color:var(--accent);font-family:var(--font-head)}
-.fl{display:flex;flex-direction:column;gap:.625rem;margin-bottom:.875rem}
-.fl label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.fl input,.fl textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--font-body);outline:none;color:var(--text);background:var(--bg)}
-.fl input:focus,.fl textarea:focus{border-color:var(--accent)}
 .order-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-body)}
 .order-btn:disabled{opacity:.5;cursor:not-allowed}
 .success{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;z-index:200}
@@ -108,14 +105,10 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .empty-icon{font-size:2.5rem;margin-bottom:.625rem;opacity:.4}
 .toast{position:fixed;bottom:6rem;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:300;white-space:nowrap}
 .toast.on{opacity:1}
-
-/* ORDER TYPE TABS */
 .order-type-bar{background:var(--card);border-bottom:1px solid var(--border);padding:.5rem 1rem;display:flex;gap:.375rem;position:sticky;top:0;z-index:11}
 .order-type-btn{flex:1;padding:7px 4px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s;font-family:var(--font-body);text-align:center}
 .order-type-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 .order-type-btn:disabled{opacity:.35;cursor:not-allowed}
-
-/* ORDER FORM */
 .form-section{background:var(--bg2);border-radius:10px;padding:.875rem;margin-bottom:.75rem}
 .form-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.625rem}
 .time-slots{display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.375rem}
@@ -126,13 +119,6 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .pay-opts{display:flex;gap:.5rem;margin-top:.375rem}
 .pay-opt{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);font-size:12px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s}
 .pay-opt.active{border-color:var(--accent);background:var(--accent-soft,#FAECE7);color:var(--accent)}
-
-
-/* LANGUAGE SWITCHER */
-.lang-bar{display:flex;gap:.25rem;padding:.375rem .75rem;background:var(--card);border-bottom:1px solid var(--border);justify-content:flex-end}
-.lang-btn{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
-.lang-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-
 </style>
 </head>
 <body class="public-menu">
@@ -140,12 +126,13 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 <script>
 window.__MQ_CFG = {
   apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-    authDomain: "mageqrrest.firebaseapp.com",
-    projectId: "mageqrrest",
-    storageBucket: "mageqrrest.firebasestorage.app",
-    messagingSenderId: "207231972557",
-    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+  authDomain: "mageqrrest.firebaseapp.com",
+  projectId: "mageqrrest",
+  storageBucket: "mageqrrest.firebasestorage.app",
+  messagingSenderId: "207231972557",
+  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
+window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 </script>
 
 <div class="loader" id="loader">
@@ -153,12 +140,10 @@ window.__MQ_CFG = {
   <div class="loader-spin"></div>
 </div>
 
-<!-- БАНЕР: фото зверху -->
 <div class="banner-photo" id="banner-photo">
   <img id="banner-img" src="" alt="" style="display:none"/>
   <div class="banner-photo-placeholder" id="banner-placeholder"></div>
 </div>
-<!-- ІНФО: назва і лого окремо внизу -->
 <div class="venue-header">
   <div class="venue-logo" id="venue-logo">🍽️</div>
   <div>
@@ -168,7 +153,7 @@ window.__MQ_CFG = {
 </div>
 
 <!-- ПЕРЕМИКАЧ МОВ -->
-<div class="lang-bar" id="lang-bar" style="display:none">
+<div class="lang-bar" id="lang-bar">
   <button class="lang-btn active" data-lang="uk">🇺🇦 UA</button>
   <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
   <button class="lang-btn" data-lang="pl">🇵🇱 PL</button>
@@ -179,9 +164,9 @@ window.__MQ_CFG = {
 </div>
 
 <div id="order-type-bar" class="order-type-bar" style="display:none">
-  <button class="order-type-btn active" id="ot-dine" onclick="setOrderType('dine_in')">🪑 В закладі</button>
-  <button class="order-type-btn" id="ot-take" onclick="setOrderType('takeaway')">🥡 З собою</button>
-  <button class="order-type-btn" id="ot-del" onclick="setOrderType('delivery')">🚗 Доставка</button>
+  <button class="order-type-btn active" id="ot-dine">🪑 В закладі</button>
+  <button class="order-type-btn" id="ot-take">🥡 З собою</button>
+  <button class="order-type-btn" id="ot-del">🚗 Доставка</button>
 </div>
 <div class="cat-bar" id="cat-bar"></div>
 <div class="menu-body" id="menu-body"></div>
@@ -215,7 +200,7 @@ window.__MQ_CFG = {
           <div class="qty-val" id="det-qty">1</div>
           <button class="qty-btn" onclick="dQty(1)">+</button>
         </div>
-        <button class="add-cart-btn" onclick="addFromDet()">Додати</button>
+        <button class="add-cart-btn" id="add-cart-btn" onclick="addFromDet()">Додати</button>
       </div>
     </div>
   </div>
@@ -232,81 +217,65 @@ window.__MQ_CFG = {
         <button onclick="closeCart()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.4rem;line-height:1;padding:4px 8px;border-radius:6px" title="Закрити">✕</button>
       </div>
 
-      <!-- СПИСОК СТРАВ -->
       <div class="cart-list" id="cart-list"></div>
-      <div class="cart-total"><span>Разом:</span><span class="cart-total-price" id="cart-total-val">0 грн</span></div>
+      <div class="cart-total"><span id="total-label">Разом:</span><span class="cart-total-price" id="cart-total-val">0 грн</span></div>
 
-      <!-- ТИП ЗАМОВЛЕННЯ -->
       <div class="form-section">
         <div class="form-section-title" id="order-type-title">Тип замовлення</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem" id="order-type-opts-grid"></div>
       </div>
 
-      <!-- НОМЕР СТОЛУ -->
       <div class="form-section" id="form-table">
-        <div class="form-section-title">🪑 Номер столу</div>
+        <div class="form-section-title" id="table-num-title">🪑 Номер столу</div>
         <input id="cli-table" type="number" placeholder="Введіть номер столу" style="font-size:16px;padding:12px"/>
       </div>
 
-      <!-- ЧАС САМОВИНОСУ -->
       <div class="form-section" id="form-time" style="display:none">
-        <div class="form-section-title">🕐 Час самовиносу</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:.625rem">Мін. 40 хвилин від зараз</div>
+        <div class="form-section-title" id="pickup-time-title">🕐 Час самовиносу</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:.625rem" id="min-time-note">Мін. 40 хвилин від зараз</div>
         <div class="time-slots" id="time-slots"></div>
       </div>
 
-      <!-- АДРЕСА ДОСТАВКИ -->
       <div class="form-section" id="form-address" style="display:none">
-        <div class="form-section-title">📍 Адреса доставки</div>
+        <div class="form-section-title" id="delivery-addr-title">📍 Адреса доставки</div>
         <div id="delivery-price-info" style="font-size:13px;margin-bottom:.75rem;color:var(--accent);font-weight:500"></div>
-
-        <!-- МІСТО -->
         <div style="margin-bottom:.75rem">
-          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Місто *</label>
+          <label id="lbl-city" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Місто *</label>
           <input id="cli-city" type="text" placeholder="Місто" style="font-size:16px;padding:12px"/>
         </div>
-
-        <!-- ВУЛИЦЯ + будинок з Google Maps -->
         <div style="margin-bottom:.75rem;position:relative">
-          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Вулиця та будинок *</label>
-          <input id="cli-address" type="text" placeholder="вул. Шевченка, 12" style="font-size:16px;padding:12px"
-            autocomplete="off"/>
+          <label id="lbl-street" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Вулиця та будинок *</label>
+          <input id="cli-address" type="text" placeholder="вул. Шевченка, 12" style="font-size:16px;padding:12px" autocomplete="off"/>
           <div id="address-suggestions" style="display:none;position:absolute;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-top:4px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:100"></div>
         </div>
-
-        <!-- КВАРТИРА, ПІД'ЇЗД, ПОВЕРХ -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem">
           <div>
-            <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Квартира</label>
+            <label id="lbl-apt" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Квартира</label>
             <input id="cli-apt" type="text" placeholder="42" style="font-size:16px;padding:12px;width:100%"/>
           </div>
           <div>
-            <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Під'їзд</label>
+            <label id="lbl-entrance" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Під'їзд</label>
             <input id="cli-entrance" type="text" placeholder="2" style="font-size:16px;padding:12px;width:100%"/>
           </div>
         </div>
         <div style="margin-bottom:.75rem">
-          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Поверх</label>
+          <label id="lbl-floor" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Поверх</label>
           <input id="cli-floor" type="text" placeholder="5" style="font-size:16px;padding:12px;width:100%"/>
         </div>
-
-        <!-- КОМЕНТАР ДЛЯ КУР'ЄРА -->
         <div>
-          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Коментар для кур'єра</label>
-          <textarea id="cli-delivery-comment" rows="2" placeholder="Код домофону, орієнтир..."
-            style="font-size:15px;padding:12px;width:100%;border:1px solid var(--border);border-radius:8px;background:var(--bg);font-family:var(--font-body);resize:none;outline:none;color:var(--text)"></textarea>
+          <label id="lbl-courier" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Коментар для кур'єра</label>
+          <textarea id="cli-delivery-comment" rows="2" placeholder="Код домофону, орієнтир..." style="font-size:15px;padding:12px;width:100%;border:1px solid var(--border);border-radius:8px;background:var(--bg);font-family:var(--font-body);resize:none;outline:none;color:var(--text)"></textarea>
         </div>
       </div>
 
-      <!-- КОНТАКТНІ ДАНІ -->
       <div class="form-section">
         <div class="form-section-title" id="contacts-title">👤 Контактні дані</div>
         <div style="margin-bottom:.75rem">
-          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Ім'я *</label>
+          <label id="lbl-name" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Ім'я *</label>
           <input id="cli-name" type="text" placeholder="Ваше ім'я" style="font-size:16px;padding:12px"/>
         </div>
         <div>
-          <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px" id="phone-label">Телефон *</label>
+          <label id="lbl-phone" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Телефон *</label>
           <div style="display:flex;align-items:center;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg)">
             <span style="padding:12px;font-size:16px;color:var(--text);font-weight:600;border-right:1px solid var(--border);background:var(--bg2)">+38</span>
             <input id="cli-phone" type="tel" placeholder="0XXXXXXXXX" maxlength="10"
@@ -316,14 +285,13 @@ window.__MQ_CFG = {
         </div>
       </div>
 
-      <!-- ПРИБОРИ -->
       <div class="form-section" id="form-cutlery">
-        <div class="form-section-title">🍴 Прибори</div>
+        <div class="form-section-title" id="cutlery-title">🍴 Прибори</div>
         <div style="display:flex;align-items:center;gap:.75rem">
           <button class="cutlery-btn" onclick="changeCutlery(-1)" style="width:40px;height:40px;font-size:1.3rem;border-radius:50%;border:1.5px solid var(--border);background:none;cursor:pointer">−</button>
           <span id="cutlery-val" style="font-size:20px;font-weight:700;min-width:36px;text-align:center">1</span>
           <button class="cutlery-btn" onclick="changeCutlery(1)" style="width:40px;height:40px;font-size:1.3rem;border-radius:50%;border:1.5px solid var(--border);background:none;cursor:pointer">+</button>
-          <span style="font-size:14px;color:var(--muted)">осіб</span>
+          <span id="lbl-persons" style="font-size:14px;color:var(--muted)">осіб</span>
           <button onclick="setCutleryNone()" id="cutlery-none-btn"
             style="margin-left:auto;font-size:13px;padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:none;cursor:pointer;color:var(--muted)">
             Не потрібні
@@ -331,14 +299,12 @@ window.__MQ_CFG = {
         </div>
       </div>
 
-      <!-- КОМЕНТАР -->
       <div class="form-section" id="form-comment">
         <div class="form-section-title" id="comment-label">💬 Коментар для закладу</div>
         <textarea id="cli-comment" rows="2" placeholder="Побажання, алергії..."
           style="font-size:15px;padding:12px;width:100%;border:1px solid var(--border);border-radius:8px;background:var(--bg);font-family:var(--font-body);resize:none;outline:none;color:var(--text)"></textarea>
       </div>
 
-      <!-- ОПЛАТА -->
       <div class="form-section">
         <div class="form-section-title" id="payment-title">💳 Спосіб оплати</div>
         <div style="display:flex;gap:.5rem">
@@ -351,7 +317,7 @@ window.__MQ_CFG = {
         Оформити замовлення
       </button>
       <div style="text-align:center;margin-top:1rem">
-        <span style="font-size:14px;color:var(--muted);cursor:pointer" onclick="closeCart()" id="continue-btn">← Продовжити вибір</span>
+        <span id="continue-btn" style="font-size:14px;color:var(--muted);cursor:pointer" onclick="closeCart()">← Продовжити вибір</span>
       </div>
     </div>
   </div>
@@ -359,62 +325,256 @@ window.__MQ_CFG = {
 
 <!-- Успіх -->
 <div class="success" id="success">
-  <div class="s-icon">✅</div>
-  <div class="s-title">Замовлення прийнято!</div>
+  <div class="s-icon" id="s-icon">✅</div>
+  <div class="s-title" id="s-title">Замовлення прийнято!</div>
   <div class="s-num" id="s-num" style="display:none"></div>
-  <div class="s-sub">Очікуйте підтвердження від закладу.<br/>Орієнтовний час — 20–35 хвилин.</div>
-  <button class="back-btn" onclick="resetSuccess()">← Назад до меню</button>
+  <div class="s-sub" id="s-sub">Очікуйте підтвердження від закладу.<br/>Орієнтовний час — 20–35 хвилин.</div>
+  <button class="back-btn" id="back-btn" onclick="resetSuccess()">← Назад до меню</button>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script type="module">
+import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-// ── ПЕРЕКЛАД UI ───────────────────────────────────────────
+const cfg = window.__MQ_CFG;
+const app = getApps().length ? getApps()[0] : initializeApp(cfg);
+const db  = getFirestore(app);
+
+const params   = new URLSearchParams(location.search);
+const rawVenueId = params.get('v') || 'demo';
+const venueId  = rawVenueId.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 50) || 'demo';
+const tableId  = params.get('t') || null;
+
+let allItems = [], allCats = [], activeCat = null;
+let cart = {}, detItem = null, detQty = 1, design = {};
+let orderType = 'dine_in';
+let currentLang = 'uk';
+let orderingSettings = {};
+let selectedTime = null;
+let cutleryCount = 1;
+let cutleryNeeded = true;
+let selectedPayment = 'cash';
+
+const $ = id => document.getElementById(id);
+
+// ── UI STRINGS — повний переклад інтерфейсу ──────────────
 const UI_STRINGS = {
-  uk:{cart:'🛒 Кошик',yourOrder:'🛒 Ваше замовлення',orderType:'Тип замовлення',dineIn:'🪑 В закладі',takeaway:'🥡 З собою',delivery:'🚗 Доставка',contacts:'👤 Контактні дані',name:"Ім'я",phone:'Телефон',cutlery:'🍴 Прибори',persons:'осіб',noCutlery:'Не потрібні',comment:'💬 Коментар для закладу',payment:'💳 Спосіб оплати',cash:'💵 Готівкою при отриманні',online:'💳 Карткою онлайн',placeOrder:'Оформити замовлення',continueShopping:'← Продовжити вибір',total:'Разом:',tableNum:'🪑 Номер столу',tableInput:'Введіть номер столу',pickupTime:'🕐 Час самовиносу',minTime:'Мін. 40 хвилин від зараз',deliveryAddress:'📍 Адреса доставки',city:'Місто',street:'Вулиця та будинок',apt:'Квартира',entrance:"Під'їзд",floor:'Поверх',courierComment:"Коментар для кур'єра",orderDone:'Замовлення прийнято!',waitConfirm:'Очікуйте підтвердження.',backToMenu:'← Назад до меню',noDishes:'У цій категорії немає страв',empty:'Кошик порожній',add:'Додати'},
-  en:{cart:'🛒 Cart',yourOrder:'🛒 Your order',orderType:'Order type',dineIn:'🪑 Dine in',takeaway:'🥡 Takeaway',delivery:'🚗 Delivery',contacts:'👤 Contact details',name:'Name',phone:'Phone',cutlery:'🍴 Cutlery',persons:'persons',noCutlery:'Not needed',comment:'💬 Comment for venue',payment:'💳 Payment method',cash:'💵 Cash on delivery',online:'💳 Pay online',placeOrder:'Place order',continueShopping:'← Continue shopping',total:'Total:',tableNum:'🪑 Table number',tableInput:'Enter table number',pickupTime:'🕐 Pickup time',minTime:'Min. 40 minutes from now',deliveryAddress:'📍 Delivery address',city:'City',street:'Street and building',apt:'Apartment',entrance:'Entrance',floor:'Floor',courierComment:'Comment for courier',orderDone:'Order accepted!',waitConfirm:'Please wait for confirmation.',backToMenu:'← Back to menu',noDishes:'No dishes in this category',empty:'Cart is empty',add:'Add'},
-  pl:{cart:'🛒 Koszyk',yourOrder:'🛒 Twoje zamówienie',orderType:'Typ zamówienia',dineIn:'🪑 Na miejscu',takeaway:'🥡 Na wynos',delivery:'🚗 Dostawa',contacts:'👤 Dane kontaktowe',name:'Imię',phone:'Telefon',cutlery:'🍴 Sztućce',persons:'osób',noCutlery:'Nie potrzeba',comment:'💬 Komentarz dla lokalu',payment:'💳 Metoda płatności',cash:'💵 Gotówka przy odbiorze',online:'💳 Płatność online',placeOrder:'Złóż zamówienie',continueShopping:'← Kontynuuj zakupy',total:'Razem:',tableNum:'🪑 Numer stolika',tableInput:'Wpisz numer stolika',pickupTime:'🕐 Czas odbioru',minTime:'Min. 40 minut od teraz',deliveryAddress:'📍 Adres dostawy',city:'Miasto',street:'Ulica i numer',apt:'Mieszkanie',entrance:'Klatka',floor:'Piętro',courierComment:'Komentarz dla kuriera',orderDone:'Zamówienie przyjęte!',waitConfirm:'Czekaj na potwierdzenie.',backToMenu:'← Powrót do menu',noDishes:'Brak dań w tej kategorii',empty:'Koszyk jest pusty',add:'Dodaj'},
-  de:{cart:'🛒 Warenkorb',yourOrder:'🛒 Ihre Bestellung',orderType:'Bestellart',dineIn:'🪑 Im Lokal',takeaway:'🥡 Zum Mitnehmen',delivery:'🚗 Lieferung',contacts:'👤 Kontaktdaten',name:'Name',phone:'Telefon',cutlery:'🍴 Besteck',persons:'Personen',noCutlery:'Nicht nötig',comment:'💬 Kommentar für das Lokal',payment:'💳 Zahlungsmethode',cash:'💵 Bar bei Lieferung',online:'💳 Online bezahlen',placeOrder:'Bestellung aufgeben',continueShopping:'← Weiter einkaufen',total:'Gesamt:',tableNum:'🪑 Tischnummer',tableInput:'Tischnummer eingeben',pickupTime:'🕐 Abholzeit',minTime:'Min. 40 Minuten ab jetzt',deliveryAddress:'📍 Lieferadresse',city:'Stadt',street:'Straße und Nummer',apt:'Wohnung',entrance:'Eingang',floor:'Etage',courierComment:'Kommentar für Kurier',orderDone:'Bestellung angenommen!',waitConfirm:'Bitte warten Sie auf Bestätigung.',backToMenu:'← Zurück zum Menü',noDishes:'Keine Gerichte in dieser Kategorie',empty:'Warenkorb ist leer',add:'Hinzufügen'},
-  ro:{cart:'🛒 Cos',yourOrder:'🛒 Comanda ta',orderType:'Tip comanda',dineIn:'🪑 La local',takeaway:'🥡 De luat',delivery:'🚗 Livrare',contacts:'👤 Date contact',name:'Nume',phone:'Telefon',cutlery:'🍴 Tacamuri',persons:'persoane',noCutlery:'Nu e nevoie',comment:'💬 Comentariu pentru local',payment:'💳 Metoda de plata',cash:'💵 Numerar la livrare',online:'💳 Plata online',placeOrder:'Plaseaza comanda',continueShopping:'← Continua cumparaturile',total:'Total:',tableNum:'🪑 Numar masa',tableInput:'Introduceti numarul mesei',pickupTime:'🕐 Ora ridicarii',minTime:'Min. 40 minute de acum',deliveryAddress:'📍 Adresa livrare',city:'Oras',street:'Strada si numar',apt:'Apartament',entrance:'Intrare',floor:'Etaj',courierComment:'Comentariu pentru curier',orderDone:'Comanda acceptata!',waitConfirm:'Asteptati confirmarea.',backToMenu:'← Inapoi la meniu',noDishes:'Nu sunt preparate in aceasta categorie',empty:'Cosul este gol',add:'Adauga'},
-  es:{cart:'🛒 Carrito',yourOrder:'🛒 Tu pedido',orderType:'Tipo de pedido',dineIn:'🪑 En el local',takeaway:'🥡 Para llevar',delivery:'🚗 Entrega',contacts:'👤 Datos de contacto',name:'Nombre',phone:'Telefono',cutlery:'🍴 Cubiertos',persons:'personas',noCutlery:'No necesario',comment:'💬 Comentario para el local',payment:'💳 Metodo de pago',cash:'💵 Efectivo al recibir',online:'💳 Pago online',placeOrder:'Realizar pedido',continueShopping:'← Seguir comprando',total:'Total:',tableNum:'🪑 Numero de mesa',tableInput:'Ingrese numero de mesa',pickupTime:'🕐 Hora de recogida',minTime:'Min. 40 minutos desde ahora',deliveryAddress:'📍 Direccion de entrega',city:'Ciudad',street:'Calle y numero',apt:'Apartamento',entrance:'Entrada',floor:'Piso',courierComment:'Comentario para el repartidor',orderDone:'Pedido aceptado!',waitConfirm:'Espere la confirmacion.',backToMenu:'← Volver al menu',noDishes:'No hay platos en esta categoria',empty:'El carrito esta vacio',add:'Agregar'},
-  cnr:{cart:'🛒 Korpa',yourOrder:'🛒 Vasa narudzbina',orderType:'Tip narudzbine',dineIn:'🪑 U lokalu',takeaway:'🥡 Za ponijeti',delivery:'🚗 Dostava',contacts:'👤 Kontakt podaci',name:'Ime',phone:'Telefon',cutlery:'🍴 Pribor',persons:'osoba',noCutlery:'Nije potrebno',comment:'💬 Komentar za lokal',payment:'💳 Nacin placanja',cash:'💵 Gotovina pri preuzimanju',online:'💳 Online placanje',placeOrder:'Naruci',continueShopping:'← Nastavi kupovinu',total:'Ukupno:',tableNum:'🪑 Broj stola',tableInput:'Unesite broj stola',pickupTime:'🕐 Vrijeme preuzimanja',minTime:'Min. 40 minuta od sada',deliveryAddress:'📍 Adresa dostave',city:'Grad',street:'Ulica i broj',apt:'Stan',entrance:'Ulaz',floor:'Sprat',courierComment:'Komentar za dostavljaca',orderDone:'Narudzbina prihvacena!',waitConfirm:'Cekajte potvrdu.',backToMenu:'← Nazad na meni',noDishes:'Nema jela u ovoj kategoriji',empty:'Korpa je prazna',add:'Dodaj'},
+  uk: {
+    cart:'🛒 Кошик', yourOrder:'🛒 Ваше замовлення', orderType:'Тип замовлення',
+    dineIn:'🪑 В закладі', takeaway:'🥡 З собою', delivery:'🚗 Доставка',
+    contacts:'👤 Контактні дані', nameLbl:"Ім'я *", phoneLbl:'Телефон *',
+    cutlery:'🍴 Прибори', persons:'осіб', noCutlery:'Не потрібні',
+    comment:'💬 Коментар для закладу', commentPh:'Побажання, алергії...',
+    payment:'💳 Спосіб оплати', cash:'💵 Готівкою при отриманні', online:'💳 Карткою онлайн',
+    placeOrder:'Оформити замовлення', continueBtn:'← Продовжити вибір', total:'Разом:',
+    tableNum:'🪑 Номер столу', tableInput:'Введіть номер столу',
+    pickupTime:'🕐 Час самовиносу', minTime:'Мін. 40 хвилин від зараз',
+    deliveryAddr:'📍 Адреса доставки', city:'Місто *', street:'Вулиця та будинок *',
+    apt:'Квартира', entrance:"Під'їзд", floor:'Поверх',
+    courierComment:"Коментар для кур'єра", courierPh:'Код домофону, орієнтир...',
+    orderDone:'Замовлення прийнято!', waitConfirm:'Очікуйте підтвердження від закладу.',
+    backToMenu:'← Назад до меню', noDishes:'У цій категорії немає страв',
+    emptyCart:'Кошик порожній', add:'Додати', namePh:"Ваше ім'я",
+  },
+  en: {
+    cart:'🛒 Cart', yourOrder:'🛒 Your order', orderType:'Order type',
+    dineIn:'🪑 Dine in', takeaway:'🥡 Takeaway', delivery:'🚗 Delivery',
+    contacts:'👤 Contact details', nameLbl:'Name *', phoneLbl:'Phone *',
+    cutlery:'🍴 Cutlery', persons:'persons', noCutlery:'Not needed',
+    comment:'💬 Comment for venue', commentPh:'Wishes, allergies...',
+    payment:'💳 Payment method', cash:'💵 Cash on delivery', online:'💳 Pay online',
+    placeOrder:'Place order', continueBtn:'← Continue shopping', total:'Total:',
+    tableNum:'🪑 Table number', tableInput:'Enter table number',
+    pickupTime:'🕐 Pickup time', minTime:'Min. 40 minutes from now',
+    deliveryAddr:'📍 Delivery address', city:'City *', street:'Street and building *',
+    apt:'Apartment', entrance:'Entrance', floor:'Floor',
+    courierComment:'Comment for courier', courierPh:'Intercom code, landmark...',
+    orderDone:'Order accepted!', waitConfirm:'Awaiting confirmation from the venue.',
+    backToMenu:'← Back to menu', noDishes:'No dishes in this category',
+    emptyCart:'Cart is empty', add:'Add', namePh:'Your name',
+  },
+  pl: {
+    cart:'🛒 Koszyk', yourOrder:'🛒 Twoje zamówienie', orderType:'Typ zamówienia',
+    dineIn:'🪑 Na miejscu', takeaway:'🥡 Na wynos', delivery:'🚗 Dostawa',
+    contacts:'👤 Dane kontaktowe', nameLbl:'Imię *', phoneLbl:'Telefon *',
+    cutlery:'🍴 Sztućce', persons:'osób', noCutlery:'Nie potrzeba',
+    comment:'💬 Komentarz dla lokalu', commentPh:'Życzenia, alergie...',
+    payment:'💳 Metoda płatności', cash:'💵 Gotówka przy odbiorze', online:'💳 Płatność online',
+    placeOrder:'Złóż zamówienie', continueBtn:'← Kontynuuj zakupy', total:'Razem:',
+    tableNum:'🪑 Numer stolika', tableInput:'Wpisz numer stolika',
+    pickupTime:'🕐 Czas odbioru', minTime:'Min. 40 minut od teraz',
+    deliveryAddr:'📍 Adres dostawy', city:'Miasto *', street:'Ulica i numer *',
+    apt:'Mieszkanie', entrance:'Klatka', floor:'Piętro',
+    courierComment:'Komentarz dla kuriera', courierPh:'Kod domofonu, punkt orientacyjny...',
+    orderDone:'Zamówienie przyjęte!', waitConfirm:'Czekaj na potwierdzenie od lokalu.',
+    backToMenu:'← Powrót do menu', noDishes:'Brak dań w tej kategorii',
+    emptyCart:'Koszyk jest pusty', add:'Dodaj', namePh:'Twoje imię',
+  },
+  de: {
+    cart:'🛒 Warenkorb', yourOrder:'🛒 Ihre Bestellung', orderType:'Bestellart',
+    dineIn:'🪑 Im Lokal', takeaway:'🥡 Zum Mitnehmen', delivery:'🚗 Lieferung',
+    contacts:'👤 Kontaktdaten', nameLbl:'Name *', phoneLbl:'Telefon *',
+    cutlery:'🍴 Besteck', persons:'Personen', noCutlery:'Nicht nötig',
+    comment:'💬 Kommentar für das Lokal', commentPh:'Wünsche, Allergien...',
+    payment:'💳 Zahlungsmethode', cash:'💵 Bar bei Lieferung', online:'💳 Online bezahlen',
+    placeOrder:'Bestellung aufgeben', continueBtn:'← Weiter einkaufen', total:'Gesamt:',
+    tableNum:'🪑 Tischnummer', tableInput:'Tischnummer eingeben',
+    pickupTime:'🕐 Abholzeit', minTime:'Mind. 40 Minuten ab jetzt',
+    deliveryAddr:'📍 Lieferadresse', city:'Stadt *', street:'Straße und Nummer *',
+    apt:'Wohnung', entrance:'Eingang', floor:'Etage',
+    courierComment:'Kommentar für Kurier', courierPh:'Türcode, Orientierungspunkt...',
+    orderDone:'Bestellung angenommen!', waitConfirm:'Bitte warten Sie auf Bestätigung.',
+    backToMenu:'← Zurück zum Menü', noDishes:'Keine Gerichte in dieser Kategorie',
+    emptyCart:'Warenkorb ist leer', add:'Hinzufügen', namePh:'Ihr Name',
+  },
+  ro: {
+    cart:'🛒 Coș', yourOrder:'🛒 Comanda ta', orderType:'Tip comandă',
+    dineIn:'🪑 La local', takeaway:'🥡 De luat', delivery:'🚗 Livrare',
+    contacts:'👤 Date contact', nameLbl:'Nume *', phoneLbl:'Telefon *',
+    cutlery:'🍴 Tacâmuri', persons:'persoane', noCutlery:'Nu e nevoie',
+    comment:'💬 Comentariu pentru local', commentPh:'Dorințe, alergii...',
+    payment:'💳 Metodă de plată', cash:'💵 Numerar la livrare', online:'💳 Plată online',
+    placeOrder:'Plasează comanda', continueBtn:'← Continuă cumpărăturile', total:'Total:',
+    tableNum:'🪑 Numărul mesei', tableInput:'Introduceți numărul mesei',
+    pickupTime:'🕐 Ora ridicării', minTime:'Min. 40 minute de acum',
+    deliveryAddr:'📍 Adresa de livrare', city:'Oraș *', street:'Stradă și număr *',
+    apt:'Apartament', entrance:'Intrare', floor:'Etaj',
+    courierComment:'Comentariu pentru curier', courierPh:'Cod interfon, reper...',
+    orderDone:'Comandă acceptată!', waitConfirm:'Așteptați confirmarea de la local.',
+    backToMenu:'← Înapoi la meniu', noDishes:'Nu sunt preparate în această categorie',
+    emptyCart:'Coșul este gol', add:'Adaugă', namePh:'Numele tău',
+  },
+  es: {
+    cart:'🛒 Carrito', yourOrder:'🛒 Tu pedido', orderType:'Tipo de pedido',
+    dineIn:'🪑 En el local', takeaway:'🥡 Para llevar', delivery:'🚗 Entrega',
+    contacts:'👤 Datos de contacto', nameLbl:'Nombre *', phoneLbl:'Teléfono *',
+    cutlery:'🍴 Cubiertos', persons:'personas', noCutlery:'No necesario',
+    comment:'💬 Comentario para el local', commentPh:'Deseos, alergias...',
+    payment:'💳 Método de pago', cash:'💵 Efectivo al recibir', online:'💳 Pago online',
+    placeOrder:'Realizar pedido', continueBtn:'← Seguir comprando', total:'Total:',
+    tableNum:'🪑 Número de mesa', tableInput:'Ingrese número de mesa',
+    pickupTime:'🕐 Hora de recogida', minTime:'Mín. 40 minutos desde ahora',
+    deliveryAddr:'📍 Dirección de entrega', city:'Ciudad *', street:'Calle y número *',
+    apt:'Apartamento', entrance:'Entrada', floor:'Piso',
+    courierComment:'Comentario para el repartidor', courierPh:'Código de portero, referencia...',
+    orderDone:'¡Pedido aceptado!', waitConfirm:'Espere la confirmación del local.',
+    backToMenu:'← Volver al menú', noDishes:'No hay platos en esta categoría',
+    emptyCart:'El carrito está vacío', add:'Agregar', namePh:'Tu nombre',
+  },
+  cnr: {
+    cart:'🛒 Korpa', yourOrder:'🛒 Vaša narudžbina', orderType:'Tip narudžbine',
+    dineIn:'🪑 U lokalu', takeaway:'🥡 Za ponijeti', delivery:'🚗 Dostava',
+    contacts:'👤 Kontakt podaci', nameLbl:'Ime *', phoneLbl:'Telefon *',
+    cutlery:'🍴 Pribor', persons:'osoba', noCutlery:'Nije potrebno',
+    comment:'💬 Komentar za lokal', commentPh:'Želje, alergije...',
+    payment:'💳 Način plaćanja', cash:'💵 Gotovina pri preuzimanju', online:'💳 Online plaćanje',
+    placeOrder:'Naruči', continueBtn:'← Nastavi kupovinu', total:'Ukupno:',
+    tableNum:'🪑 Broj stola', tableInput:'Unesite broj stola',
+    pickupTime:'🕐 Vrijeme preuzimanja', minTime:'Min. 40 minuta od sada',
+    deliveryAddr:'📍 Adresa dostave', city:'Grad *', street:'Ulica i broj *',
+    apt:'Stan', entrance:'Ulaz', floor:'Sprat',
+    courierComment:'Komentar za dostavljača', courierPh:'Kod interfona, orijentir...',
+    orderDone:'Narudžbina prihvaćena!', waitConfirm:'Čekajte potvrdu od lokala.',
+    backToMenu:'← Nazad na meni', noDishes:'Nema jela u ovoj kategoriji',
+    emptyCart:'Korpa je prazna', add:'Dodaj', namePh:'Vaše ime',
+  },
 };
-function ui(key){return(UI_STRINGS[currentLang]||UI_STRINGS.uk)[key]||(UI_STRINGS.uk)[key]||key;}
 
-function applyUILang(){
-  // Верхній бар
-  [['ot-dine','dineIn'],['ot-take','takeaway'],['ot-del','delivery']].forEach(([id,k])=>{
-    const el=document.getElementById(id);if(!el)return;
-    const disc={dineIn:orderingSettings.discounts?.dineIn,takeaway:orderingSettings.discounts?.takeaway,delivery:orderingSettings.discounts?.delivery}[k];
-    const dt=disc?.pct?' -'+disc.pct+'%':disc?.fix?' -'+disc.fix+'UAH':'';
-    el.textContent=ui(k)+dt;
+function ui(key) {
+  return (UI_STRINGS[currentLang] || UI_STRINGS.uk)[key] || (UI_STRINGS.uk)[key] || key;
+}
+
+function applyUILang() {
+  // FAB кошик
+  const badge = $('cart-badge');
+  const fab = $('cart-fab');
+  if (fab && badge) {
+    const bt = badge.textContent;
+    fab.innerHTML = ui('cart') + ' <span class="cart-badge" id="cart-badge">' + bt + '</span>';
+  }
+  // Текстові елементи за id
+  const set = (id, key) => { const el = $(id); if (el) el.textContent = ui(key); };
+  set('cart-title', 'yourOrder');
+  set('order-type-title', 'orderType');
+  set('contacts-title', 'contacts');
+  set('payment-title', 'payment');
+  set('continue-btn', 'continueBtn');
+  set('comment-label', 'comment');
+  set('total-label', 'total');
+  set('cutlery-title', 'cutlery');
+  set('lbl-persons', 'persons');
+  set('cutlery-none-btn', 'noCutlery');
+  set('table-num-title', 'tableNum');
+  set('pickup-time-title', 'pickupTime');
+  set('delivery-addr-title', 'deliveryAddr');
+  set('min-time-note', 'minTime');
+  set('lbl-name', 'nameLbl');
+  set('lbl-phone', 'phoneLbl');
+  set('lbl-city', 'city');
+  set('lbl-street', 'street');
+  set('lbl-apt', 'apt');
+  set('lbl-entrance', 'entrance');
+  set('lbl-floor', 'floor');
+  set('lbl-courier', 'courierComment');
+  set('back-btn', 'backToMenu');
+  // Кнопки
+  const ob = $('order-btn');
+  if (ob && !ob.disabled) ob.textContent = ui('placeOrder');
+  const pc = $('pay-opt-cash');
+  if (pc) pc.textContent = ui('cash');
+  const po = $('pay-opt-online');
+  if (po) po.textContent = ui('online');
+  const ab = $('add-cart-btn');
+  if (ab) ab.textContent = ui('add');
+  // Placeholders
+  const ph = (id, key) => { const el = $(id); if (el) el.placeholder = ui(key); };
+  ph('cli-table', 'tableInput');
+  ph('cli-name', 'namePh');
+  ph('cli-comment', 'commentPh');
+  ph('cli-delivery-comment', 'courierPh');
+  // Верхній бар з урахуванням знижок
+  const discMap = {
+    'ot-dine': orderingSettings.discounts?.dineIn,
+    'ot-take': orderingSettings.discounts?.takeaway,
+    'ot-del':  orderingSettings.discounts?.delivery,
+  };
+  const keyMap = { 'ot-dine': 'dineIn', 'ot-take': 'takeaway', 'ot-del': 'delivery' };
+  Object.entries(discMap).forEach(([id, disc]) => {
+    const el = $(id);
+    if (!el) return;
+    const dt = disc?.pct ? ' −' + disc.pct + '%' : disc?.fix ? ' −' + disc.fix + '₴' : '';
+    el.textContent = ui(keyMap[id]) + dt;
   });
-  // Кошик FAB
-  const badge=document.getElementById('cart-badge');
-  const fab=document.getElementById('cart-fab');
-  if(fab&&badge){const bt=badge.textContent;fab.innerHTML=ui('cart')+' <span class="cart-badge" id="cart-badge">'+bt+'</span>';}
-  // IDs
-  const setId=(id,k)=>{const el=document.getElementById(id);if(el)el.textContent=ui(k);};
-  setId('cart-title','yourOrder');setId('order-type-title','orderType');
-  setId('contacts-title','contacts');setId('payment-title','payment');
-  setId('cart-continue','continueShopping');setId('comment-label','comment');
-  // Labels
-  const setLbl=(inputId,k)=>{const el=document.getElementById(inputId);if(!el)return;const l=el.closest('div')?.querySelector('label');if(l)l.textContent=ui(k);};
-  setLbl('cli-name','name');setLbl('cli-phone','phone');setLbl('cli-city','city');
-  setLbl('cli-address','street');setLbl('cli-apt','apt');setLbl('cli-entrance','entrance');setLbl('cli-floor','floor');
-  // Section titles
-  const setSection=(id,k)=>{const el=document.getElementById(id);if(!el)return;const t=el.querySelector('.form-section-title');if(t)t.textContent=ui(k);};
-  setSection('form-table','tableNum');setSection('form-time','pickupTime');
-  setSection('form-address','deliveryAddress');setSection('form-cutlery','cutlery');
-  // Buttons
-  [['order-btn','placeOrder'],['pay-opt-cash','cash'],['pay-opt-online','online'],['cutlery-none-btn','noCutlery']].forEach(([id,k])=>{const el=document.getElementById(id);if(el)el.textContent=ui(k);});
-  const tl=document.querySelector('.cart-total > span:first-child');if(tl)tl.textContent=ui('total');
 }
 // ─────────────────────────────────────────────────────────
 
+// Іконки алергенів
+const ALLERGEN_ICONS = {
+  'Глютен': '🌾', 'Пшениця': '🌾', 'Молоко': '🥛', 'Лактоза': '🥛', 'Яйця': '🥚',
+  'Горіхи': '🥜', 'Арахіс': '🥜', 'Риба': '🐟', 'Молюски': '🦐', 'Ракоподібні': '🦞',
+  'Соя': '🫘', 'Селера': '🥬', 'Гірчиця': '🌶️', 'Кунжут': '🌰',
+  'Сірчистий ангідрид': '⚗️', 'Люпин': '🌸',
+};
 
-// ── ПЕРЕКЛАД UI ───────────────────────────────────────────
+function fmtWeight(w) {
+  if (!w) return '';
+  w = String(w).trim();
+  if (/^[\d.,]+$/.test(w)) return w + ' г';
+  return w;
+}
+
+// ── МОВА ─────────────────────────────────────────────────
+function itemName(it) {
+  if (!it) return '';
+  return it['name_' + currentLang] || it.name || '';
+}
+function itemDesc(it) {
+  if (!it) return '';
+  return it['desc_' + currentLang] || it.desc || '';
+}
 
 window.setLang = function(lang) {
   currentLang = lang;
@@ -426,386 +586,342 @@ window.setLang = function(lang) {
   applyUILang();
   localStorage.setItem('mq_lang', lang);
 };
+
 function initLangBar() {
   document.getElementById('lang-bar').style.display = 'flex';
   document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
     btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang')));
   });
   const saved = localStorage.getItem('mq_lang');
-  if(saved && saved !== 'uk') setLang(saved);
+  if (saved && saved !== 'uk') setLang(saved);
 }
-// ──────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────
+
+function renderCats() {
+  $('cat-bar').innerHTML = allCats.map(c => {
+    const catName = c['name_' + currentLang] || c.name || '';
+    return `<button class="cat-pill${c.name === activeCat ? ' active' : ''}" onclick="setCat('${c.name}')">${c.emoji ? c.emoji + ' ' : ''}${catName}</button>`;
+  }).join('');
+}
+window.setCat = name => { activeCat = name; renderCats(); renderMenu(); };
 
 function renderMenu() {
-  const list = (activeCat ? allItems.filter(i=>i.category===activeCat) : allItems).filter(itemAvailable);
+  const list = (activeCat ? allItems.filter(i => i.category === activeCat) : allItems).filter(itemAvailable);
   if (!list.length) {
-    $('menu-body').innerHTML = '<div class="empty"><div class="empty-icon">🍽️</div><div>У цій категорії немає страв</div></div>';
+    $('menu-body').innerHTML = `<div class="empty"><div class="empty-icon">🍽️</div><div>${ui('noDishes')}</div></div>`;
     return;
   }
-  $('menu-body').innerHTML = list.map(it=>`
+  $('menu-body').innerHTML = list.map(it => `
     <div class="dish-card" onclick="openDet('${it.id}')">
-      ${it.photoUrl ? `<img class="dish-img" src="${it.photoUrl}" alt="${it.name}" loading="lazy"/>` : '<div class="dish-img-ph">🍽️</div>'}
+      ${it.photoUrl ? `<img class="dish-img" src="${it.photoUrl}" alt="${itemName(it)}" loading="lazy"/>` : '<div class="dish-img-ph">🍽️</div>'}
       <div class="dish-body">
         <div class="dish-name">${itemName(it)}</div>
-        ${design.showDesc!==false&&itemDesc(it)?`<div class="dish-desc">${itemDesc(it)}</div>`:''}
-        ${design.showWeight!==false&&it.weight?`<div class="dish-weight">⚖️ ${fmtWeight(it.weight)}</div>`:''}
-        ${it.allergens&&it.allergens.length?`<div class="dish-allergens">${it.allergens.slice(0,4).map(a=>`<span class="a-chip">${ALLERGEN_ICONS[a]||''}${a}</span>`).join('')}</div>`:''}
+        ${design.showDesc !== false && itemDesc(it) ? `<div class="dish-desc">${itemDesc(it)}</div>` : ''}
+        ${design.showWeight !== false && it.weight ? `<div class="dish-weight">⚖️ ${fmtWeight(it.weight)}</div>` : ''}
+        ${it.allergens && it.allergens.length ? `<div class="dish-allergens">${it.allergens.slice(0, 4).map(a => `<span class="a-chip">${ALLERGEN_ICONS[a] || ''}${a}</span>`).join('')}</div>` : ''}
         <div class="dish-footer">
-          ${design.showPrices!==false?`<div class="dish-price">
-            ${(()=>{
+          ${design.showPrices !== false ? `<div class="dish-price">
+            ${(() => {
               const p = itemPrice(it);
               const disc = getDiscount(p);
               const final = Math.max(0, p - disc);
-              if(disc > 0) return '<span style="color:var(--green,#059669)">'+final+' грн</span><span style="text-decoration:line-through;color:var(--muted);font-size:13px;margin-left:6px">'+p+'</span>';
-              return p+' грн';
+              if (disc > 0) return '<span style="color:var(--green,#059669)">' + final + ' грн</span><span style="text-decoration:line-through;color:var(--muted);font-size:13px;margin-left:6px">' + p + '</span>';
+              return p + ' грн';
             })()}
-          </div>`:'<div></div>'}
-          <button class="add-btn${cart[it.id]?' added':''}" id="ab-${it.id}" onclick="event.stopPropagation();qAdd('${it.id}')">${cart[it.id]?'✓':'+'}</button>
+          </div>` : '<div></div>'}
+          <button class="add-btn${cart[it.id] ? ' added' : ''}" id="ab-${it.id}" onclick="event.stopPropagation();qAdd('${it.id}')">${cart[it.id] ? '✓' : '+'}</button>
         </div>
       </div>
-      ${cart[it.id]?`<div class="qty-chip">${cart[it.id]}</div>`:''}
+      ${cart[it.id] ? `<div class="qty-chip">${cart[it.id]}</div>` : ''}
     </div>`).join('');
 }
 
 window.openDet = id => {
-  detItem = allItems.find(x=>x.id===id); if(!detItem) return;
-  detQty = cart[id]||1;
-
-  // Фото + хрестик поверх фото
-  const img=$('det-img');
-  const closeBtn=document.getElementById('det-close-btn');
-  if(detItem.photoUrl){
-    img.src=detItem.photoUrl;img.alt=detItem.name;img.style.display='block';
-    closeBtn.style.display='flex';
+  detItem = allItems.find(x => x.id === id);
+  if (!detItem) return;
+  detQty = cart[id] || 1;
+  const img = $('det-img');
+  const closeBtn = $('det-close-btn');
+  if (detItem.photoUrl) {
+    img.src = detItem.photoUrl;
+    img.alt = itemName(detItem);
+    img.style.display = 'block';
+    closeBtn.style.display = 'flex';
   } else {
-    img.style.display='none';
-    closeBtn.style.display='none';
+    img.style.display = 'none';
+    closeBtn.style.display = 'none';
   }
-
-  // Основна інфо
-  $('det-name').textContent  = itemName(detItem);
-  $('det-desc').textContent  = itemDesc(detItem)||'';
+  $('det-name').textContent = itemName(detItem);
+  $('det-desc').textContent = itemDesc(detItem) || '';
   const _dp = itemPrice(detItem);
   const _dd = getDiscount(_dp);
   const _df = Math.max(0, _dp - _dd);
-  if(_dd > 0) {
-    $('det-price').innerHTML = '<span style="color:var(--green,#059669)">'+_df+' грн</span> <span style="text-decoration:line-through;color:var(--muted);font-size:1rem">'+_dp+'</span>';
+  if (_dd > 0) {
+    $('det-price').innerHTML = '<span style="color:var(--green,#059669)">' + _df + ' грн</span> <span style="text-decoration:line-through;color:var(--muted);font-size:1rem">' + _dp + '</span>';
   } else {
-    $('det-price').textContent = _dp+' грн';
+    $('det-price').textContent = _dp + ' грн';
   }
-  $('det-qty').textContent   = detQty;
-
-  // Вага / об'єм
+  $('det-qty').textContent = detQty;
   const weightEl = $('det-weight');
-  if(detItem.weight){
+  if (detItem.weight) {
     $('det-weight-val').textContent = fmtWeight(detItem.weight);
-    weightEl.style.display='flex';
+    weightEl.style.display = 'flex';
   } else {
-    weightEl.style.display='none';
+    weightEl.style.display = 'none';
   }
-
-  // Алергени
   const allergEl = $('det-allergens');
   const allergList = $('det-allergens-list');
-  if(detItem.allergens && detItem.allergens.length){
-    allergList.innerHTML = detItem.allergens.map(a=>
-      `<span class="allergen-tag warn">${ALLERGEN_ICONS[a]||'⚠️'} ${a}</span>`
+  if (detItem.allergens && detItem.allergens.length) {
+    allergList.innerHTML = detItem.allergens.map(a =>
+      `<span class="allergen-tag warn">${ALLERGEN_ICONS[a] || '⚠️'} ${a}</span>`
     ).join('');
-    allergEl.style.display='block';
+    allergEl.style.display = 'block';
   } else {
-    allergEl.style.display='none';
+    allergEl.style.display = 'none';
   }
-
+  const acb = $('add-cart-btn');
+  if (acb) acb.textContent = ui('add');
   $('det-ov').classList.add('open');
 };
-window.dQty = d => { detQty=Math.max(1,detQty+d); $('det-qty').textContent=detQty; };
+
+window.dQty = d => { detQty = Math.max(1, detQty + d); $('det-qty').textContent = detQty; };
 window.addFromDet = () => {
-  if(!detItem) return;
-  cart[detItem.id]=detQty;
+  if (!detItem) return;
+  cart[detItem.id] = detQty;
   $('det-ov').classList.remove('open');
-  updateCart(); renderMenu();
-  toast('✓ '+detItem.name+' додано');
+  updateCart();
+  renderMenu();
+  toast('✓ ' + itemName(detItem));
 };
 window.qAdd = id => {
-  cart[id]=(cart[id]||0)+1;
-  const b=$('ab-'+id);
-  if(b){b.classList.add('added');b.textContent='✓';setTimeout(()=>{b.classList.remove('added');b.textContent='+';},700);}
+  cart[id] = (cart[id] || 0) + 1;
+  const b = $('ab-' + id);
+  if (b) { b.classList.add('added'); b.textContent = '✓'; setTimeout(() => { b.classList.remove('added'); b.textContent = '+'; }, 700); }
   updateCart();
 };
 
-// Ціна страви з урахуванням типу замовлення
 function itemPrice(it) {
-  if(!it) return 0;
-  const typeKey = {dine_in:'dineIn', takeaway:'takeaway', delivery:'delivery'}[orderType] || 'dineIn';
+  if (!it) return 0;
+  const typeKey = { dine_in: 'dineIn', takeaway: 'takeaway', delivery: 'delivery' }[orderType] || 'dineIn';
   return it.prices?.[typeKey] || it.price || 0;
 }
-// Страва доступна для поточного типу замовлення?
 function itemAvailable(it) {
-  if(!it?.availability) return true; // якщо не налаштовано — доступна скрізь
-  const typeKey = {dine_in:'dineIn', takeaway:'takeaway', delivery:'delivery'}[orderType] || 'dineIn';
+  if (!it?.availability) return true;
+  const typeKey = { dine_in: 'dineIn', takeaway: 'takeaway', delivery: 'delivery' }[orderType] || 'dineIn';
   return it.availability[typeKey] !== false;
 }
-function total(){ return Object.entries(cart).reduce((s,[id,q])=>{const it=allItems.find(x=>x.id===id);return it?s+itemPrice(it)*q:s;},0); }
+function total() {
+  return Object.entries(cart).reduce((s, [id, q]) => {
+    const it = allItems.find(x => x.id === id);
+    return it ? s + itemPrice(it) * q : s;
+  }, 0);
+}
 function getDiscount(subtotal) {
   const disc = orderingSettings.discounts;
-  if(!disc) return 0;
-  const d = {dine_in: disc.dineIn, takeaway: disc.takeaway, delivery: disc.delivery}[orderType] || {};
-  if(d.pct) return Math.round(subtotal * d.pct / 100);
-  if(d.fix) return Math.min(d.fix, subtotal);
+  if (!disc) return 0;
+  const d = { dine_in: disc.dineIn, takeaway: disc.takeaway, delivery: disc.delivery }[orderType] || {};
+  if (d.pct) return Math.round(subtotal * d.pct / 100);
+  if (d.fix) return Math.min(d.fix, subtotal);
   return 0;
 }
 function discountName() {
   const disc = orderingSettings.discounts;
-  if(!disc) return '';
-  const d = {dine_in: disc.dineIn, takeaway: disc.takeaway, delivery: disc.delivery}[orderType] || {};
+  if (!disc) return '';
+  const d = { dine_in: disc.dineIn, takeaway: disc.takeaway, delivery: disc.delivery }[orderType] || {};
   return d.name || '';
 }
 function totalWithDiscount() { return Math.max(0, total() - getDiscount(total())); }
-function count(){ return Object.values(cart).reduce((a,b)=>a+b,0); }
-function updateCart(){
-  const n=count(),t=total();
-  const fab=$('cart-fab');
-  if(n>0){fab.classList.remove('hidden');$('cart-badge').textContent=n+' · '+t+' грн';}
+function count() { return Object.values(cart).reduce((a, b) => a + b, 0); }
+
+function updateCart() {
+  const n = count(), t = total();
+  const fab = $('cart-fab');
+  if (n > 0) { fab.classList.remove('hidden'); $('cart-badge').textContent = n + ' · ' + t + ' грн'; }
   else fab.classList.add('hidden');
 }
+
 window.openCart = () => {
   renderCart();
   renderOrderTypeBtns();
-  setTimeout(()=>{ const s=document.querySelector('#cart-ov .sheet'); if(s) s.scrollTop=0; },10);
-  // Завантажуємо Google Maps при відкритті кошика
-  if(window.loadGoogleMaps) window.loadGoogleMaps();
-  // Прив'язуємо input listener тут — елемент точно існує
+  applyUILang();
+  setTimeout(() => { const s = document.querySelector('#cart-ov .sheet'); if (s) s.scrollTop = 0; }, 10);
+  if (window.loadGoogleMaps) window.loadGoogleMaps();
   setTimeout(() => {
-    const addrEl = document.getElementById('cli-address');
-    if(addrEl && !addrEl._bound) {
+    const addrEl = $('cli-address');
+    if (addrEl && !addrEl._bound) {
       addrEl._bound = true;
       addrEl.addEventListener('input', e => window.onAddressInput(e.target.value));
     }
   }, 100);
-  // Застосовуємо налаштування оплати і приборів
   const payOnline = orderingSettings.payOnline !== false;
   const payCash   = orderingSettings.payCash !== false;
   const elOnline = $('pay-opt-online');
   const elCash   = $('pay-opt-cash');
-  if(elOnline) elOnline.style.display = payOnline ? '' : 'none';
-  if(elCash)   elCash.style.display   = payCash   ? '' : 'none';
-  if(payOnline && !payCash) selectPayment('online');
+  if (elOnline) elOnline.style.display = payOnline ? '' : 'none';
+  if (elCash)   elCash.style.display   = payCash   ? '' : 'none';
+  if (payOnline && !payCash) selectPayment('online');
   const askCutlery = orderingSettings.askCutlery !== false;
   const elCutlery = $('form-cutlery');
-  if(elCutlery) elCutlery.style.display = askCutlery ? 'block' : 'none';
-  applyUILang();
+  if (elCutlery) elCutlery.style.display = askCutlery ? 'block' : 'none';
   $('cart-ov').classList.add('open');
 };
 window.closeCart = () => $('cart-ov').classList.remove('open');
-function renderCart(){
-  $('cart-list').innerHTML = Object.entries(cart).filter(([,q])=>q>0).map(([id,q])=>{
-    const it=allItems.find(x=>x.id===id); if(!it) return '';
+
+function renderCart() {
+  $('cart-list').innerHTML = Object.entries(cart).filter(([, q]) => q > 0).map(([id, q]) => {
+    const it = allItems.find(x => x.id === id);
+    if (!it) return '';
     const p = itemPrice(it);
     const d = getDiscount(p);
     const fp = Math.max(0, p - d);
     return `<div class="cart-row">
-      ${it.photoUrl?`<img class="c-img" src="${it.photoUrl}" alt="${it.name}"/>`:'<div class="c-img-ph">🍽️</div>'}
-      <div class="c-info"><div class="c-name">${it.name}</div><div class="c-price">${d>0?'<span style="color:var(--green,#059669)">'+fp+'</span> <span style="text-decoration:line-through;font-size:11px">'+p+'</span>':p}×${q} = ${fp*q} грн</div></div>
+      ${it.photoUrl ? `<img class="c-img" src="${it.photoUrl}" alt="${itemName(it)}"/>` : '<div class="c-img-ph">🍽️</div>'}
+      <div class="c-info">
+        <div class="c-name">${itemName(it)}</div>
+        <div class="c-price">${d > 0 ? '<span style="color:var(--green,#059669)">' + fp + '</span> <span style="text-decoration:line-through;font-size:11px">' + p + '</span>' : p}×${q} = ${fp * q} грн</div>
+      </div>
       <div class="c-qty">
         <button class="cq-btn" onclick="cQty('${id}',-1)">−</button>
         <div class="cq-val">${q}</div>
         <button class="cq-btn" onclick="cQty('${id}',1)">+</button>
       </div>
     </div>`;
-  }).join('')||'<div style="color:var(--muted);text-align:center;padding:1rem;font-size:13px">Кошик порожній</div>';
-  // Разом зі знижкою
+  }).join('') || `<div style="color:var(--muted);text-align:center;padding:1rem;font-size:13px">${ui('emptyCart')}</div>`;
+
   const _sub = total();
   const _disc = getDiscount(_sub);
   const _final = Math.max(0, _sub - _disc);
   const _discNm = discountName();
-  if(_disc > 0) {
+  if (_disc > 0) {
     $('cart-total-val').innerHTML = `<span style="color:var(--green,#059669);font-weight:700">${_final} грн</span> <span style="text-decoration:line-through;color:var(--muted);font-size:13px">${_sub}</span>`;
     let discEl = document.getElementById('cart-discount-row');
-    if(!discEl) {
+    if (!discEl) {
       discEl = document.createElement('div');
       discEl.id = 'cart-discount-row';
       discEl.style.cssText = 'font-size:13px;color:var(--green,#059669);margin:.25rem 0 .5rem;font-weight:500';
       $('cart-total-val')?.closest('.cart-total')?.after(discEl);
     }
-    discEl.textContent = '🏷️ ' + (_discNm||'Знижка') + ': −' + _disc + ' грн';
+    discEl.textContent = '🏷️ ' + (_discNm || 'Знижка') + ': −' + _disc + ' грн';
   } else {
     $('cart-total-val').textContent = _final + ' грн';
     document.getElementById('cart-discount-row')?.remove();
   }
 }
-window.cQty = (id,d) => {
-  cart[id]=Math.max(0,(cart[id]||0)+d);
-  if(!cart[id]) delete cart[id];
-  updateCart(); count()>0?renderCart():closeCart();
+window.cQty = (id, d) => {
+  cart[id] = Math.max(0, (cart[id] || 0) + d);
+  if (!cart[id]) delete cart[id];
+  updateCart();
+  count() > 0 ? renderCart() : closeCart();
 };
 
 // ── ТИПИ ЗАМОВЛЕНЬ ────────────────────────────────────────
-
 function initOrderTypeBar() {
-  const bar = document.getElementById('order-type-bar');
+  const bar = $('order-type-bar');
   const dine = orderingSettings.dineIn;
   const take = orderingSettings.takeaway;
   const del  = orderingSettings.delivery;
-
-  // Якщо немає налаштувань — показуємо всі
   const hasDine = !dine || dine.enabled !== false;
   const hasTake = !take || take.enabled !== false;
   const hasDel  = del?.enabled || false;
-
-  const elDine = document.getElementById('ot-dine');
-  const elTake = document.getElementById('ot-take');
-  const elDel  = document.getElementById('ot-del');
-  if(elDine) elDine.disabled = !hasDine;
-  if(elTake) elTake.disabled = !hasTake;
-  if(elDel)  { elDel.disabled = !hasDel; elDel.style.display = hasDel ? '' : 'none'; }
-
-  // Якщо більше одного типу — показуємо бар
-  const typeCount = [hasDine,hasTake,hasDel].filter(Boolean).length;
-  if(bar) bar.style.display = typeCount > 1 ? 'flex' : 'none';
-
-  // Вибираємо перший доступний
-  if(hasDine) setOrderType('dine_in');
-  else if(hasTake) setOrderType('takeaway');
-  else if(hasDel) setOrderType('delivery');
-
-  // Показуємо знижки на верхньому барі
-  const discMap = {
-    'ot-dine': orderingSettings.discounts?.dineIn,
-    'ot-take': orderingSettings.discounts?.takeaway,
-    'ot-del':  orderingSettings.discounts?.delivery,
-  };
-  const labelMap = {
-    'ot-dine': ui('dineIn'),
-    'ot-take': ui('takeaway'),
-    'ot-del':  ui('delivery'),
-  };
-  Object.entries(discMap).forEach(([id, disc]) => {
-    const el = document.getElementById(id);
-    if(!el) return;
-    const discText = disc?.pct ? ` −${disc.pct}%` : disc?.fix ? ` −${disc.fix}₴` : '';
-    el.textContent = labelMap[id] + discText;
-  });
-
-  // Оплата і прибори — застосовуємо при відкритті кошика
-  // (елементи форми існують тільки в кошику)
+  const elDine = $('ot-dine');
+  const elTake = $('ot-take');
+  const elDel  = $('ot-del');
+  if (elDine) elDine.disabled = !hasDine;
+  if (elTake) elTake.disabled = !hasTake;
+  if (elDel)  { elDel.disabled = !hasDel; elDel.style.display = hasDel ? '' : 'none'; }
+  const typeCount = [hasDine, hasTake, hasDel].filter(Boolean).length;
+  if (bar) bar.style.display = typeCount > 1 ? 'flex' : 'none';
+  if (hasDine) setOrderType('dine_in');
+  else if (hasTake) setOrderType('takeaway');
+  else if (hasDel) setOrderType('delivery');
+  applyUILang();
 }
 
 function renderOrderTypeBtns() {
-  const grid = document.getElementById('order-type-opts-grid');
-  if(!grid) return;
+  const grid = $('order-type-opts-grid');
+  if (!grid) return;
   const types = [
-    {key:'dine_in',  emoji:'🪑', label:ui('dineIn'),    disc: orderingSettings.discounts?.dineIn},
-    {key:'takeaway', emoji:'🥡', label:ui('takeaway'),   disc: orderingSettings.discounts?.takeaway},
-    {key:'delivery', emoji:'🚗', label:ui('delivery'),   disc: orderingSettings.discounts?.delivery},
+    { key: 'dine_in',  label: ui('dineIn'),   disc: orderingSettings.discounts?.dineIn },
+    { key: 'takeaway', label: ui('takeaway'),  disc: orderingSettings.discounts?.takeaway },
+    { key: 'delivery', label: ui('delivery'),  disc: orderingSettings.discounts?.delivery },
   ];
   grid.innerHTML = types.map(t => {
     const discText = t.disc?.pct ? `<div style="font-size:10px;color:var(--green,#059669);font-weight:700">−${t.disc.pct}%</div>`
-                   : t.disc?.fix ? `<div style="font-size:10px;color:var(--green,#059669);font-weight:700">−${t.disc.fix}₴</div>`
-                   : '';
-    return `<div class="pay-opt${orderType===t.key?' active':''}" id="ot-opt-${t.key.replace('_','-')}"
+                   : t.disc?.fix ? `<div style="font-size:10px;color:var(--green,#059669);font-weight:700">−${t.disc.fix}₴</div>` : '';
+    return `<div class="pay-opt${orderType === t.key ? ' active' : ''}" id="ot-opt-${t.key.replace('_', '-')}"
       onclick="setOrderType('${t.key}')" style="text-align:center;padding:10px 4px;font-size:13px">
-      ${t.emoji}<br/>${t.label}${discText}
+      ${t.label}${discText}
     </div>`;
   }).join('');
 }
 
 window.setOrderType = function(type) {
   orderType = type;
-  // Оновлюємо кнопки типу
-  ['dine_in','takeaway','delivery'].forEach(t => {
-    const map = {dine_in:'ot-opt-dine',takeaway:'ot-opt-take',delivery:'ot-opt-del'};
+  ['dine_in', 'takeaway', 'delivery'].forEach(t => {
+    const map = { dine_in: 'ot-opt-dine', takeaway: 'ot-opt-take', delivery: 'ot-opt-del' };
     document.getElementById(map[t])?.classList.toggle('active', t === type);
   });
-  // Оновлюємо верхній бар
-  ['dine_in','takeaway','delivery'].forEach(t => {
-    const map2 = {dine_in:'ot-dine',takeaway:'ot-take',delivery:'ot-del'};
+  ['dine_in', 'takeaway', 'delivery'].forEach(t => {
+    const map2 = { dine_in: 'ot-dine', takeaway: 'ot-take', delivery: 'ot-del' };
     document.getElementById(map2[t])?.classList.toggle('active', t === type);
   });
-  // Показуємо/ховаємо поля
-  const elTable   = document.getElementById('form-table');
-  const elTime    = document.getElementById('form-time');
-  const elAddress = document.getElementById('form-address');
-  const elComment = document.getElementById('form-comment');
-  const elLabel   = document.getElementById('comment-label');
-  if(elTable)   elTable.style.display   = type==='dine_in'  ? 'block' : 'none';
-  if(elTime)    elTime.style.display    = type==='takeaway' ? 'block' : 'none';
-  if(elAddress) elAddress.style.display = type==='delivery' ? 'block' : 'none';
-  if(elComment) elComment.style.display = type==='delivery' ? 'none'  : 'block';
-  if(elLabel)   elLabel.textContent     = ui('comment');
-  if(type === 'takeaway') buildTimeSlots();
-  // Перерендеримо меню і кошик бо ціни/доступність змінились
+  const elTable   = $('form-table');
+  const elTime    = $('form-time');
+  const elAddress = $('form-address');
+  const elComment = $('form-comment');
+  const elLabel   = $('comment-label');
+  if (elTable)   elTable.style.display   = type === 'dine_in'  ? 'block' : 'none';
+  if (elTime)    elTime.style.display    = type === 'takeaway' ? 'block' : 'none';
+  if (elAddress) elAddress.style.display = type === 'delivery' ? 'block' : 'none';
+  if (elComment) elComment.style.display = type === 'delivery' ? 'none'  : 'block';
+  if (elLabel)   elLabel.textContent     = ui('comment');
+  if (type === 'takeaway') buildTimeSlots();
   renderMenu();
   updateCart();
-  // Якщо кошик відкритий — оновлюємо його вміст і суму
-  if($('cart-ov')?.classList.contains('open')) {
+  if ($('cart-ov')?.classList.contains('open')) {
     renderCart();
     renderOrderTypeBtns();
   }
-  if(type === 'delivery') {
-    if(window.loadGoogleMaps) window.loadGoogleMaps();
+  if (type === 'delivery') {
+    if (window.loadGoogleMaps) window.loadGoogleMaps();
     const del = orderingSettings.delivery;
-    const info_el = document.getElementById('delivery-price-info');
-    if(del && info_el) {
+    const info_el = $('delivery-price-info');
+    if (del && info_el) {
       let info = '';
-      if(del.price) info += `Доставка: ${del.price} грн`;
-      if(del.freeFrom) info += ` · Безкоштовно від ${del.freeFrom} грн`;
-      if(del.minOrder) info += ` · Мін. замовлення: ${del.minOrder} грн`;
+      if (del.price) info += `Доставка: ${del.price} грн`;
+      if (del.freeFrom) info += ` · Безкоштовно від ${del.freeFrom} грн`;
+      if (del.minOrder) info += ` · Мін. замовлення: ${del.minOrder} грн`;
       info_el.innerHTML = info;
     }
   }
 };
 
-// Google Maps автодоповнення адреси
-
-
-
-function initGoogleMaps() {
-  if(window.google?.maps?.places) {
-    autocompleteService = new google.maps.places.AutocompleteService();
-    // Діагностика — показуємо що Maps завантажено
-    const dbg = document.getElementById('maps-debug');
-    if(dbg) dbg.textContent = '✓ Google Maps готовий';
-  } else {
-    const dbg = document.getElementById('maps-debug');
-    if(dbg) dbg.textContent = '✗ Google Maps не завантажено';
-  }
-}
-
+// Google Maps
 let _addrTimer = null;
 window.onAddressInput = function(value) {
-  const suggestEl = document.getElementById('address-suggestions');
-  if(!suggestEl) return;
-  if(!value || value.length < 2) { suggestEl.style.display='none'; return; }
-
-  // Debounce 300ms
+  const suggestEl = $('address-suggestions');
+  if (!suggestEl) return;
+  if (!value || value.length < 2) { suggestEl.style.display = 'none'; return; }
   clearTimeout(_addrTimer);
   _addrTimer = setTimeout(() => {
-    // Перевіряємо autocompleteService
-    if(!window.autocompleteService) {
-      if(window.google?.maps?.places) {
+    if (!window.autocompleteService) {
+      if (window.google?.maps?.places) {
         window.autocompleteService = new google.maps.places.AutocompleteService();
-      } else {
-        suggestEl.style.display = 'block';
-        suggestEl.innerHTML = '<div style="padding:10px 14px;font-size:13px;color:var(--muted)">Maps не готовий, спробуйте ще раз</div>';
-        return;
-      }
+      } else { return; }
     }
-    const city = document.getElementById('cli-city')?.value || window._venueCity || '';
+    const city = $('cli-city')?.value || window._venueCity || '';
     const query = city ? `${value}, ${city}` : value;
-    
     window.autocompleteService.getPlacePredictions(
       { input: query, language: 'uk', componentRestrictions: { country: 'ua' } },
       (predictions, status) => {
-        if(status !== google.maps.places.PlacesServiceStatus.OK || !predictions?.length) {
-          suggestEl.style.display = 'block';
-          suggestEl.style.display = 'none';
-          return;
+        if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions?.length) {
+          suggestEl.style.display = 'none'; return;
         }
         suggestEl.style.display = 'block';
         suggestEl.innerHTML = '';
-        predictions.slice(0,5).forEach(p => {
+        predictions.slice(0, 5).forEach(p => {
           const parts = p.description.split(',');
-          const short = parts.slice(0,2).join(',').trim();
+          const short = parts.slice(0, 2).join(',').trim();
           const div = document.createElement('div');
           div.textContent = '📍 ' + short;
           div.style.cssText = 'padding:11px 14px;font-size:15px;cursor:pointer;border-bottom:1px solid var(--border);line-height:1.3';
@@ -818,12 +934,11 @@ window.onAddressInput = function(value) {
     );
   }, 400);
 };
-
 window.selectAddress = function(address) {
-  const input = document.getElementById('cli-address');
-  const suggestEl = document.getElementById('address-suggestions');
-  if(input) { input.value = address; }
-  if(suggestEl) suggestEl.style.display = 'none';
+  const input = $('cli-address');
+  const suggestEl = $('address-suggestions');
+  if (input) input.value = address;
+  if (suggestEl) suggestEl.style.display = 'none';
 };
 
 function buildTimeSlots() {
@@ -832,263 +947,255 @@ function buildTimeSlots() {
   const step = orderingSettings.takeaway?.stepMinutes || 15;
   const slots = [];
   let t = new Date(now.getTime() + min * 60000);
-  // Округляємо до наступного слоту
   const mins = t.getMinutes();
   const rounded = Math.ceil(mins / step) * step;
   t.setMinutes(rounded, 0, 0);
-  // Генеруємо слоти на 3 години вперед
-  for(let i = 0; i < 12; i++) {
-    slots.push(new Date(t));
-    t = new Date(t.getTime() + step * 60000);
-  }
+  for (let i = 0; i < 12; i++) { slots.push(new Date(t)); t = new Date(t.getTime() + step * 60000); }
   selectedTime = slots[0];
-  document.getElementById('time-slots').innerHTML = slots.map((s,i) =>
-    `<button class="time-slot${i===0?' active':''}" onclick="selectTime(this,'${s.toISOString()}')">${s.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'})}</button>`
+  $('time-slots').innerHTML = slots.map((s, i) =>
+    `<button class="time-slot${i === 0 ? ' active' : ''}" onclick="selectTime(this,'${s.toISOString()}')">${s.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}</button>`
   ).join('');
 }
-
 window.selectTime = function(btn, iso) {
   document.querySelectorAll('.time-slot').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   selectedTime = new Date(iso);
 };
-
 window.changeCutlery = function(d) {
   cutleryNeeded = true;
   cutleryCount = Math.max(1, cutleryCount + d);
-  document.getElementById('cutlery-val').textContent = cutleryCount;
-  document.getElementById('cutlery-none-btn').style.opacity = '1';
+  $('cutlery-val').textContent = cutleryCount;
+  $('cutlery-none-btn').style.opacity = '1';
 };
-
 window.setCutleryNone = function() {
   cutleryNeeded = false;
   cutleryCount = 0;
-  document.getElementById('cutlery-val').textContent = '0';
-  document.getElementById('cutlery-none-btn').style.opacity = '.4';
+  $('cutlery-val').textContent = '0';
+  $('cutlery-none-btn').style.opacity = '.4';
 };
-
 window.selectPayment = function(type) {
   selectedPayment = type;
-  document.getElementById('pay-opt-cash')?.classList.toggle('active', type==='cash');
-  document.getElementById('pay-opt-online')?.classList.toggle('active', type==='online');
+  $('pay-opt-cash')?.classList.toggle('active', type === 'cash');
+  $('pay-opt-online')?.classList.toggle('active', type === 'online');
 };
 
 window.placeOrder = async () => {
-  if(!count()){toast('Кошик порожній');return;}
-  const btn=$('order-btn'); btn.textContent='Відправляємо...'; btn.disabled=true;
-  // Валідація
+  if (!count()) { toast(ui('emptyCart')); return; }
+  const btn = $('order-btn');
+  btn.textContent = '...';
+  btn.disabled = true;
   const name = $('cli-name')?.value?.trim();
   const phone = $('cli-phone')?.value?.trim();
-  if(!name) { toast('Введіть ваше ім\'я'); return; }
-  if(!phone) { toast('Введіть номер телефону'); return; }
-  if(orderType==='delivery' && !$('cli-address')?.value?.trim()) { toast('Введіть адресу доставки'); return; }
-  if(orderType==='takeaway' && !selectedTime) { toast('Оберіть час самовиносу'); return; }
-
+  if (!name) { toast("Введіть ваше ім'я"); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
+  if (!phone) { toast('Введіть номер телефону'); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
+  if (orderType === 'delivery' && !$('cli-address')?.value?.trim()) { toast('Введіть адресу доставки'); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
+  if (orderType === 'takeaway' && !selectedTime) { toast('Оберіть час самовиносу'); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
   try {
-    const items = Object.entries(cart).map(([id,qty])=>{
-      const it=allItems.find(x=>x.id===id);
-      return{id,itemId:id,name:it.name,price:it.price,qty};
+    const items = Object.entries(cart).map(([id, qty]) => {
+      const it = allItems.find(x => x.id === id);
+      return { id, itemId: id, name: it.name, price: it.price, qty };
     });
-
     const orderData = {
-      venueId,
-      items,
+      venueId, items,
       total: totalWithDiscount(),
       discount: getDiscount(total()),
       discountName: discountName(),
       orderType,
       clientName: name,
       clientPhone: phone,
-      comment: $('cli-comment')?.value||'',
-      tableId: orderType==='dine_in' ? ($('cli-table')?.value||tableId||null) : null,
-      pickupTime: orderType==='takeaway' ? selectedTime?.toISOString() : null,
-      deliveryAddress: orderType==='delivery' ? [
-        $('cli-city')?.value||'',
-        $('cli-address')?.value||'',
-        $('cli-apt')?.value ? 'кв.'+$('cli-apt').value : '',
-        $('cli-entrance')?.value ? 'під.'+$('cli-entrance').value : '',
-        $('cli-floor')?.value ? 'пов.'+$('cli-floor').value : '',
+      comment: $('cli-comment')?.value || '',
+      tableId: orderType === 'dine_in' ? ($('cli-table')?.value || tableId || null) : null,
+      pickupTime: orderType === 'takeaway' ? selectedTime?.toISOString() : null,
+      deliveryAddress: orderType === 'delivery' ? [
+        $('cli-city')?.value || '',
+        $('cli-address')?.value || '',
+        $('cli-apt')?.value ? 'кв.' + $('cli-apt').value : '',
+        $('cli-entrance')?.value ? 'під.' + $('cli-entrance').value : '',
+        $('cli-floor')?.value ? 'пов.' + $('cli-floor').value : '',
       ].filter(Boolean).join(', ') : null,
-      deliveryComment: orderType==='delivery' ? $('cli-delivery-comment')?.value||'' : null,
-      cutlery: orderingSettings.askCutlery !== false ? {needed: cutleryNeeded, count: cutleryCount} : null,
+      deliveryComment: orderType === 'delivery' ? $('cli-delivery-comment')?.value || '' : null,
+      cutlery: orderingSettings.askCutlery !== false ? { needed: cutleryNeeded, count: cutleryCount } : null,
       paymentMethod: selectedPayment,
     };
-
-    const res = await fetch('https://us-central1-mageqrrest.cloudfunctions.net/createOrder',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(orderData),
+    const res = await fetch('https://us-central1-mageqrrest.cloudfunctions.net/createOrder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData),
     });
     const data = await res.json();
-    if(!res.ok) throw new Error(data.error||'Помилка замовлення');
-
-    cart={}; updateCart(); closeCart();
-    $('s-num').textContent = data.orderNum ? '#'+data.orderNum : '';
-
-    // Якщо онлайн оплата — зберігаємо orderId і переходимо
-    if(data.payUrl) {
-      // Зберігаємо дані для перевірки після повернення
-      localStorage.setItem('mq_pending_order', JSON.stringify({
-        orderId: data.orderId,
-        orderNum: data.orderNum,
-        venueId,
-      }));
+    if (!res.ok) throw new Error(data.error || 'Помилка замовлення');
+    cart = {}; updateCart(); closeCart();
+    if (data.payUrl) {
+      localStorage.setItem('mq_pending_order', JSON.stringify({ orderId: data.orderId, orderNum: data.orderNum, venueId }));
       window.location.href = data.payUrl;
       return;
     }
-
+    $('s-icon').textContent = '✅';
+    $('s-title').textContent = ui('orderDone');
+    $('s-sub').textContent = ui('waitConfirm');
+    $('back-btn').textContent = ui('backToMenu');
+    if (data.orderNum) { $('s-num').textContent = '#' + data.orderNum; $('s-num').style.display = ''; }
     $('success').classList.add('open');
-  } catch(e){ toast('Помилка: '+e.message); }
-  finally{ btn.textContent='Замовити'; btn.disabled=false; }
+  } catch(e) { toast('Помилка: ' + e.message); }
+  finally { btn.textContent = ui('placeOrder'); btn.disabled = false; }
 };
 window.resetSuccess = () => { $('success').classList.remove('open'); renderMenu(); };
 
-function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2500); }
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2500);
+}
+
+function applySettings(s) {
+  document.title = s.name || 'Меню';
+  $('venue-name').textContent = s.name || 'Меню закладу';
+  const line1 = [s.tagline, s.city].filter(Boolean).join(' · ');
+  const line2 = [s.phone, s.address].filter(Boolean).join(' · ');
+  const line3 = s.hours || '';
+  let tagHtml = '';
+  if (line1) tagHtml += `<div>${line1}</div>`;
+  if (line2) tagHtml += `<div style="margin-top:2px">${line2}</div>`;
+  if (line3) tagHtml += `<div style="margin-top:2px">🕐 ${line3}</div>`;
+  $('venue-tag').innerHTML = tagHtml;
+  if (s.city) { const cityEl = $('cli-city'); if (cityEl) cityEl.value = s.city; window._venueCity = s.city; }
+  if (tableId) $('venue-tag').innerHTML += `<div style="margin-top:3px"><span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Стіл №${tableId}</span></div>`;
+  if (s.logoUrl) { $('venue-logo').innerHTML = `<img src="${s.logoUrl}" alt="${s.name || ''}"/>`; }
+  else if (s.logoEmoji) { $('venue-logo').textContent = s.logoEmoji; }
+  if (s.bannerUrl) { const img = $('banner-img'); img.src = s.bannerUrl; img.style.display = 'block'; $('banner-placeholder').style.display = 'none'; }
+  else { $('banner-photo').style.display = 'none'; }
+}
+
+function applyDesign(d) {
+  const r = document.documentElement;
+  if (d.accent)     r.style.setProperty('--accent', d.accent);
+  if (d.bg)         r.style.setProperty('--bg', d.bg);
+  if (d.card)       r.style.setProperty('--card', d.card);
+  if (d.text)       r.style.setProperty('--text', d.text);
+  if (d.fontSize)   r.style.setProperty('--font-size', d.fontSize + 'px');
+  if (d.cardRadius) r.style.setProperty('--radius', d.cardRadius + 'px');
+  if (d.fontHead) {
+    r.style.setProperty('--font-head', `'${d.fontHead}',serif`);
+    $('font-link').href = `https://fonts.googleapis.com/css2?family=${d.fontHead.replace(/ /g, '+')}:wght@500;600&family=${(d.fontBody || 'DM Sans').replace(/ /g, '+')}:wght@300;400;500&display=swap`;
+  }
+}
 
 async function init() {
   try {
     const [sSnap, dSnap, cSnap, iSnap] = await Promise.all([
-      getDoc(doc(db,'venues',venueId,'settings','main')),
-      getDoc(doc(db,'venues',venueId,'design','main')),
-      getDocs(collection(db,'venues',venueId,'categories')),
-      getDocs(collection(db,'venues',venueId,'items')),
+      getDoc(doc(db, 'venues', venueId, 'settings', 'main')),
+      getDoc(doc(db, 'venues', venueId, 'design', 'main')),
+      getDocs(collection(db, 'venues', venueId, 'categories')),
+      getDocs(collection(db, 'venues', venueId, 'items')),
     ]);
     try {
-      const ordSnap = await getDoc(doc(db,'venues',venueId,'settings','ordering'));
+      const ordSnap = await getDoc(doc(db, 'venues', venueId, 'settings', 'ordering'));
       orderingSettings = ordSnap.exists() ? ordSnap.data() : {};
     } catch(e) { orderingSettings = {}; }
-    initOrderTypeBar();
-    try { applySettings(sSnap.exists() ? sSnap.data() : {}); } catch(e) {}
-    try { design = dSnap.exists() ? dSnap.data() : {}; applyDesign(design); } catch(e) {}
-    allCats  = cSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
-    allItems = iSnap.docs.map(d=>({id:d.id,...d.data()}));
+
+    try { applySettings(sSnap.exists() ? sSnap.data() : {}); } catch(e) { console.warn('applySettings:', e.message); }
+    try { design = dSnap.exists() ? dSnap.data() : {}; applyDesign(design); } catch(e) { console.warn('applyDesign:', e.message); }
+
+    allCats  = cSnap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.order || 0) - (b.order || 0));
+    allItems = iSnap.docs.map(d => ({ id: d.id, ...d.data() }));
     activeCat = allCats[0]?.name || null;
+
     initLangBar();
+    initOrderTypeBar();
     renderCats();
     renderMenu();
   } catch(e) {
     console.error('init error:', e);
-    $('menu-body').innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div style="font-size:13px;margin-top:.5rem">'+e.message+'</div></div>';
+    $('menu-body').innerHTML = `<div class="empty">
+      <div class="empty-icon">⚠️</div>
+      <div style="font-size:13px;margin-top:.5rem">Код помилки: <b>${e.code || 'unknown'}</b></div>
+      <div style="font-size:11px;color:#999;margin-top:.375rem;word-break:break-all">${e.message}</div>
+    </div>`;
   } finally {
     $('loader').classList.add('gone');
   }
 }
 
-
-// Перевіряємо чи повернулись після оплати
 async function checkPaymentAfterRedirect() {
   const urlParams = new URLSearchParams(location.search);
   let orderId = urlParams.get('order');
   let paid = urlParams.get('paid');
-
-  // Якщо немає в URL — перевіряємо localStorage (Mono/WFP можуть не передавати params)
   if (!orderId) {
     const pending = localStorage.getItem('mq_pending_order');
     if (pending) {
       try {
         const data = JSON.parse(pending);
-        // Перевіряємо тільки якщо це той самий заклад
-        if (data.venueId === venueId) {
-          orderId = data.orderId;
-          paid = '1';
-        }
+        if (data.venueId === venueId) { orderId = data.orderId; paid = '1'; }
       } catch(e) {}
     }
   }
-
   if (!orderId) return;
-
-  // Прибираємо параметри з URL
-  window.history.replaceState({}, '', location.pathname + '?v=' + venueId + (urlParams.get('t') ? '&t='+urlParams.get('t') : ''));
-  // Очищаємо localStorage
+  window.history.replaceState({}, '', location.pathname + '?v=' + venueId + (urlParams.get('t') ? '&t=' + urlParams.get('t') : ''));
   localStorage.removeItem('mq_pending_order');
-
-  // Показуємо екран очікування
   const success = $('success');
   const sIcon = $('s-icon');
   const sTitle = $('s-title');
   const sSub = $('s-sub');
-  if(sIcon) sIcon.textContent = '⏳';
-  if(sTitle) sTitle.textContent = 'Перевіряємо оплату...';
-  if(sSub) sSub.textContent = 'Зачекайте кілька секунд';
-  if(success) success.classList.add('open');
-
-  // Polling — перевіряємо статус кожні 2 секунди, максимум 30 секунд
+  if (sIcon)  sIcon.textContent  = '⏳';
+  if (sTitle) sTitle.textContent = 'Перевіряємо оплату...';
+  if (sSub)   sSub.textContent   = 'Зачекайте кілька секунд';
+  if (success) success.classList.add('open');
   let attempts = 0;
   const maxAttempts = 15;
-
   const poll = async () => {
     attempts++;
     try {
       const res = await fetch('https://us-central1-mageqrrest.cloudfunctions.net/checkPaymentStatus', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({venueId, orderId}),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ venueId, orderId }),
       });
       const data = await res.json();
-
-      if(data.status === 'paid' || data.status === 'success') {
-        // Оплата успішна
-        if(sIcon) sIcon.textContent = '✅';
-        if(sTitle) sTitle.textContent = 'Оплата успішна!';
-        if(sSub) sSub.textContent = 'Ваше замовлення прийнято та оплачено.';
+      if (data.status === 'paid' || data.status === 'success') {
+        if (sIcon)  sIcon.textContent  = '✅';
+        if (sTitle) sTitle.textContent = ui('orderDone');
+        if (sSub)   sSub.textContent   = ui('waitConfirm');
         const numEl = $('s-num');
-        if(numEl && data.order?.num) {
-          numEl.textContent = '#' + data.order.num;
-          numEl.style.display = '';
-        }
+        if (numEl && data.order?.num) { numEl.textContent = '#' + data.order.num; numEl.style.display = ''; }
+        $('back-btn').textContent = ui('backToMenu');
         return;
       }
-
-      if(data.status === 'failure' || data.status === 'expired') {
-        // Оплата не вдалась
-        if(sIcon) sIcon.textContent = '❌';
-        if(sTitle) sTitle.textContent = 'Оплата не вдалась';
-        if(sSub) sSub.textContent = 'Спробуйте ще раз або оберіть інший спосіб оплати.';
+      if (data.status === 'failure' || data.status === 'expired') {
+        if (sIcon)  sIcon.textContent  = '❌';
+        if (sTitle) sTitle.textContent = 'Оплата не вдалась';
+        if (sSub)   sSub.textContent   = 'Спробуйте ще раз або оберіть інший спосіб оплати.';
         return;
       }
-
-      // Ще pending — продовжуємо polling
-      if(attempts < maxAttempts) {
+      if (attempts < maxAttempts) {
         setTimeout(poll, 2000);
       } else {
-        if(sIcon) sIcon.textContent = '⏳';
-        if(sTitle) sTitle.textContent = 'Замовлення в обробці';
-        if(sSub) sSub.textContent = 'Оплата обробляється. Ви отримаєте підтвердження найближчим часом.';
+        if (sIcon)  sIcon.textContent  = '⏳';
+        if (sTitle) sTitle.textContent = 'Замовлення в обробці';
+        if (sSub)   sSub.textContent   = 'Оплата обробляється. Ви отримаєте підтвердження найближчим часом.';
       }
     } catch(e) {
-      if(attempts < maxAttempts) setTimeout(poll, 2000);
+      if (attempts < maxAttempts) setTimeout(poll, 2000);
     }
   };
-
   setTimeout(poll, 1500);
 }
 
-window.addEventListener('error', function(e) {
-  document.getElementById('loader').innerHTML = '<div style="padding:2rem;color:red;font-size:12px;word-break:break-all">JS ERROR: ' + e.message + ' (line ' + e.lineno + ')</div>';
-});
-init().then(() => checkPaymentAfterRedirect()).catch(e => {
-  document.getElementById('loader').innerHTML = '<div style="padding:2rem;color:red;font-size:12px;word-break:break-all">INIT ERROR: ' + e.message + '</div>';
-});
+init().then(() => checkPaymentAfterRedirect());
 </script>
-<!-- Google Maps Places API — завантажується динамічно -->
 <script>
 window.initGoogleMapsCallback = function() {
-  if(window.google?.maps?.places) {
+  if (window.google?.maps?.places) {
     window.autocompleteService = new google.maps.places.AutocompleteService();
-
   }
 };
 window.loadGoogleMaps = function() {
-  if(window.google?.maps?.places) { window.initGoogleMapsCallback(); return; }
-  if(document.getElementById('gmaps-script')) return; // вже завантажується
-  const dbg = document.getElementById('maps-debug');
-
+  if (window.google?.maps?.places) { window.initGoogleMapsCallback(); return; }
+  if (document.getElementById('gmaps-script')) return;
   const s = document.createElement('script');
   s.id = 'gmaps-script';
   s.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA&libraries=places&callback=initGoogleMapsCallback&language=uk&v=weekly';
   s.async = true;
-
   document.head.appendChild(s);
 };
 </script>
