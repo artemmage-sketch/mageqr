@@ -352,6 +352,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <div class="sb-brand">
       <div class="sb-brand-name">Mage QR Rest</div>
       <div class="sb-venue" id="sb-venue-name">Temari Sushi</div>
+      <div id="admin-lang-switcher" style="display:flex;gap:2px;margin-top:.375rem;flex-wrap:wrap"></div>
     </div>
     <div style="padding:.5rem 0;flex:1">
       <div class="nav-section">Меню</div>
@@ -404,7 +405,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <div id="t-items" class="tab-section">
       <div class="topbar">
         <div><div class="page-title">Страви</div><div class="page-sub" id="items-count-sub"></div></div>
-        <button class="btn btn-accent btn-sm" onclick="openItemModal()">+ Додати</button>
+        <div style="display:flex;gap:.375rem;align-items:center">
+          <button class="btn btn-outline btn-sm" id="translate-all-btn" onclick="translateAllMenu()">🌐 Перекласти все меню</button>
+          <button class="btn btn-accent btn-sm" onclick="openItemModal()">+ Додати</button>
+        </div>
       </div>
       <div class="content">
         <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
@@ -462,6 +466,20 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
           <h3>💸 Чайові — статистика по персоналу</h3>
           <div style="font-size:12px;color:var(--muted);margin-bottom:1rem">Чайові зараховуються на картку monobank співробітника одразу після оплати (комісія 4%)</div>
           <div class="staff-grid" id="staff-tips-grid"></div>
+        </div>
+
+        <!-- МОВА ІНТЕРФЕЙСУ -->
+        <div class="settings-section" id="lang-settings-section">
+          <h3>🌐 Мова інтерфейсу адмін панелі</h3>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
+            <button class="btn btn-outline btn-sm" onclick="applyAdminLang('uk');saveAdminLang('uk')">🇺🇦 Українська</button>
+            <button class="btn btn-outline btn-sm" onclick="applyAdminLang('en');saveAdminLang('en')">🇬🇧 English</button>
+            <button class="btn btn-outline btn-sm" onclick="applyAdminLang('pl');saveAdminLang('pl')">🇵🇱 Polski</button>
+            <button class="btn btn-outline btn-sm" onclick="applyAdminLang('de');saveAdminLang('de')">🇩🇪 Deutsch</button>
+            <button class="btn btn-outline btn-sm" onclick="applyAdminLang('ro');saveAdminLang('ro')">🇷🇴 Română</button>
+            <button class="btn btn-outline btn-sm" onclick="applyAdminLang('es');saveAdminLang('es')">🇪🇸 Español</button>
+            <button class="btn btn-outline btn-sm" onclick="applyAdminLang('cnr');saveAdminLang('cnr')">🇲🇪 Crnogorski</button>
+          </div>
         </div>
 
         <!-- TIPS SETTINGS -->
@@ -1971,6 +1989,8 @@ async function initFirebase() {
     renderPresetsRow();
     loadDesignSettings();
     loadTablesFromFirestore();
+    renderAdminLangSwitcher();
+    applyAdminLang(adminLang);
     setTimeout(() => loadBilling(), 500);
   });
 }
@@ -2385,6 +2405,7 @@ async function loadSettings(){
     if(!snap.exists())return;
     const d=snap.data();
     if(d.name){document.getElementById('set-name').value=d.name;document.getElementById('sb-venue-name').textContent=d.name;}
+    if(d.adminLang) { applyAdminLang(d.adminLang); renderAdminLangSwitcher(); }
     if(d.tagline)document.getElementById('set-tag').value=d.tagline;
     if(d.city)document.getElementById('set-city').value=d.city;
     if(d.phone)document.getElementById('set-phone').value=d.phone;
@@ -3698,6 +3719,156 @@ window.translateItemFields = async function() {
   } finally {
     btn.textContent = '✨ Перекласти автоматично';
     btn.disabled = false;
+  }
+};
+
+
+// ── i18n — Багатомовність адмін панелі ───────────────────
+const I18N = {
+  uk: {
+    orders:'🧾 Замовлення', dishes:'🍽️ Страви', categories:'📂 Категорії',
+    tables:'🪑 Столи та QR', design:'🎨 Дизайн меню', payments:'💳 Платежі',
+    pos:'🖥️ POS-інтеграція', customers:'👥 Клієнти', ordering:'📋 Налаш. замовлень',
+    settings:'⚙️ Налаштування', subscription:'💳 Підписка',
+    newOrder:'🆕 Нове', preparing:'👨‍🍳 Готується', done:'✅ Виконано', cancelled:'❌ Скасовано',
+    save:'💾 Зберегти', add:'+ Додати', edit:'Редагувати', delete:'Видалити',
+    translateAll:'🌐 Перекласти все меню', translating:'⏳ Перекладаємо...',
+    translateDone:'✅ Меню перекладено!', language:'Мова інтерфейсу',
+    name:'Назва', description:'Опис', price:'Ціна', category:'Категорія',
+  },
+  en: {
+    orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
+    tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
+    pos:'🖥️ POS Integration', customers:'👥 Customers', ordering:'📋 Order Settings',
+    settings:'⚙️ Settings', subscription:'💳 Subscription',
+    newOrder:'🆕 New', preparing:'👨‍🍳 Preparing', done:'✅ Done', cancelled:'❌ Cancelled',
+    save:'💾 Save', add:'+ Add', edit:'Edit', delete:'Delete',
+    translateAll:'🌐 Translate entire menu', translating:'⏳ Translating...',
+    translateDone:'✅ Menu translated!', language:'Interface language',
+    name:'Name', description:'Description', price:'Price', category:'Category',
+  },
+  pl: {
+    orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
+    tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
+    pos:'🖥️ Integracja POS', customers:'👥 Klienci', ordering:'📋 Ustawienia zamówień',
+    settings:'⚙️ Ustawienia', subscription:'💳 Subskrypcja',
+    newOrder:'🆕 Nowe', preparing:'👨‍🍳 Przygotowywanie', done:'✅ Gotowe', cancelled:'❌ Anulowane',
+    save:'💾 Zapisz', add:'+ Dodaj', edit:'Edytuj', delete:'Usuń',
+    translateAll:'🌐 Przetłumacz całe menu', translating:'⏳ Tłumaczenie...',
+    translateDone:'✅ Menu przetłumaczone!', language:'Język interfejsu',
+    name:'Nazwa', description:'Opis', price:'Cena', category:'Kategoria',
+  },
+  de: {
+    orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
+    tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
+    pos:'🖥️ POS-Integration', customers:'👥 Kunden', ordering:'📋 Bestelleinstellungen',
+    settings:'⚙️ Einstellungen', subscription:'💳 Abonnement',
+    newOrder:'🆕 Neu', preparing:'👨‍🍳 In Zubereitung', done:'✅ Erledigt', cancelled:'❌ Storniert',
+    save:'💾 Speichern', add:'+ Hinzufügen', edit:'Bearbeiten', delete:'Löschen',
+    translateAll:'🌐 Gesamtes Menü übersetzen', translating:'⏳ Übersetze...',
+    translateDone:'✅ Menü übersetzt!', language:'Oberflächensprache',
+    name:'Name', description:'Beschreibung', price:'Preis', category:'Kategorie',
+  },
+  ro: {
+    orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
+    tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
+    pos:'🖥️ Integrare POS', customers:'👥 Clienți', ordering:'📋 Setări comenzi',
+    settings:'⚙️ Setări', subscription:'💳 Abonament',
+    newOrder:'🆕 Nou', preparing:'👨‍🍳 Se prepară', done:'✅ Finalizat', cancelled:'❌ Anulat',
+    save:'💾 Salvează', add:'+ Adaugă', edit:'Editează', delete:'Șterge',
+    translateAll:'🌐 Traduce tot meniul', translating:'⏳ Se traduce...',
+    translateDone:'✅ Meniu tradus!', language:'Limba interfeței',
+    name:'Nume', description:'Descriere', price:'Preț', category:'Categorie',
+  },
+  es: {
+    orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
+    tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
+    pos:'🖥️ Integración POS', customers:'👥 Clientes', ordering:'📋 Config. pedidos',
+    settings:'⚙️ Ajustes', subscription:'💳 Suscripción',
+    newOrder:'🆕 Nuevo', preparing:'👨‍🍳 Preparando', done:'✅ Listo', cancelled:'❌ Cancelado',
+    save:'💾 Guardar', add:'+ Agregar', edit:'Editar', delete:'Eliminar',
+    translateAll:'🌐 Traducir todo el menú', translating:'⏳ Traduciendo...',
+    translateDone:'✅ ¡Menú traducido!', language:'Idioma de la interfaz',
+    name:'Nombre', description:'Descripción', price:'Precio', category:'Categoría',
+  },
+  cnr: {
+    orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
+    tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
+    pos:'🖥️ POS integracija', customers:'👥 Klijenti', ordering:'📋 Podešavanja',
+    settings:'⚙️ Podešavanja', subscription:'💳 Pretplata',
+    newOrder:'🆕 Novo', preparing:'👨‍🍳 Priprema', done:'✅ Završeno', cancelled:'❌ Otkazano',
+    save:'💾 Sačuvaj', add:'+ Dodaj', edit:'Uredi', delete:'Izbriši',
+    translateAll:'🌐 Prevedi cijeli meni', translating:'⏳ Prevođenje...',
+    translateDone:'✅ Meni preveden!', language:'Jezik interfejsa',
+    name:'Naziv', description:'Opis', price:'Cijena', category:'Kategorija',
+  },
+};
+
+let adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
+function t(key) { return (I18N[adminLang] || I18N.uk)[key] || key; }
+
+function applyAdminLang(lang) {
+  adminLang = lang;
+  localStorage.setItem('mq_admin_lang', lang);
+  // Оновлюємо навбар
+  const navMap = {
+    't-orders': 'orders', 't-dishes': 'dishes', 't-cats': 'categories',
+    't-tables': 'tables', 't-design': 'design', 't-payments': 'payments',
+    't-pos': 'pos', 't-customers': 'customers', 't-ordering': 'ordering',
+    't-settings': 'settings', 't-subscription': 'subscription',
+  };
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    const tab = btn.getAttribute('onclick')?.match(/nav\(this,'([^']+)'\)/)?.[1];
+    if(tab && navMap[tab]) btn.textContent = t(navMap[tab]);
+  });
+  // Оновлюємо кнопку перекладу меню
+  const btn = document.getElementById('translate-all-btn');
+  if(btn) btn.textContent = t('translateAll');
+}
+
+// Перемикач мови адмінки
+function renderAdminLangSwitcher() {
+  const el = document.getElementById('admin-lang-switcher');
+  if(!el) return;
+  const langs = [
+    {code:'uk',flag:'🇺🇦'},{code:'en',flag:'🇬🇧'},{code:'pl',flag:'🇵🇱'},
+    {code:'de',flag:'🇩🇪'},{code:'ro',flag:'🇷🇴'},{code:'es',flag:'🇪🇸'},{code:'cnr',flag:'🇲🇪'},
+  ];
+  el.innerHTML = langs.map(l =>
+    `<button onclick="applyAdminLang('${l.code}')" title="${l.code.toUpperCase()}"
+      style="background:none;border:none;cursor:pointer;font-size:1.2rem;opacity:${adminLang===l.code?1:.4};transition:.15s"
+      >${l.flag}</button>`
+  ).join('');
+}
+
+// Переклад всього меню
+window.saveAdminLang = async function(lang) {
+  if(!db||!window.__FS) return;
+  const {doc, updateDoc} = window.__FS;
+  try {
+    await updateDoc(doc(db,'venues',venueId,'settings','main'), { adminLang: lang });
+    renderAdminLangSwitcher();
+  } catch(e) { console.warn('saveAdminLang:', e.message); }
+};
+
+window.translateAllMenu = async function() {
+  const btn = document.getElementById('translate-all-btn');
+  if(btn) { btn.textContent = t('translating'); btn.disabled = true; }
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const res = await fetch(`${window.__CF_URL}/translateAllMenu`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify({ venueId, langs: ['en','pl','de','ro','es','cnr'] }),
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error);
+    notify(`✅ Перекладено: ${data.translatedItems} страв, ${data.translatedCats} категорій`, 'ok');
+    await loadItems();
+  } catch(e) { notify('Помилка: '+e.message, 'err'); }
+  finally {
+    if(btn) { btn.textContent = t('translateAll'); btn.disabled = false; }
   }
 };
 
