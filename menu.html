@@ -1034,7 +1034,12 @@ async function checkPaymentAfterRedirect() {
   setTimeout(poll, 1500);
 }
 
-init().then(() => checkPaymentAfterRedirect());
+window.addEventListener('error', function(e) {
+  document.getElementById('loader').innerHTML = '<div style="padding:2rem;color:red;font-size:12px;word-break:break-all">JS ERROR: ' + e.message + ' (line ' + e.lineno + ')</div>';
+});
+init().then(() => checkPaymentAfterRedirect()).catch(e => {
+  document.getElementById('loader').innerHTML = '<div style="padding:2rem;color:red;font-size:12px;word-break:break-all">INIT ERROR: ' + e.message + '</div>';
+});
 </script>
 <!-- Google Maps Places API — завантажується динамічно -->
 <script>
