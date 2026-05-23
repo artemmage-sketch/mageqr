@@ -369,433 +369,52 @@ window.__MQ_CFG = {
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, doc, getDoc, getDocs,
-         addDoc, serverTimestamp }
-  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const cfg = window.__MQ_CFG;
-const app = getApps().length ? getApps()[0] : initializeApp(cfg);
-const db  = getFirestore(app);
-
-const params  = new URLSearchParams(location.search);
-// Безпечно витягуємо venueId — тільки буквено-цифрові символи та дефіс
-const rawVenueId = params.get('v') || 'demo';
-const venueId = rawVenueId.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 50) || 'demo';
-const tableId = params.get('t') || null;
-
-let allItems = [], allCats = [], activeCat = null;
-let cart = {}, detItem = null, detQty = 1, design = {};
-let orderType = 'dine_in'; // 'dine_in' | 'takeaway' | 'delivery'
-let currentLang = 'uk'; // поточна мова меню
-let orderingSettings = {};  // налаштування з Firestore
-let selectedTime = null;
-let cutleryCount = 1;
-let cutleryNeeded = true;
-let selectedPayment = 'cash'; // 'cash' | 'online'
-
-const $ = id => document.getElementById(id);
-
-// Іконки алергенів (EU стандарт)
-// Нормалізація ваги — якщо тільки цифра, додаємо "г"
-function fmtWeight(w) {
-  if(!w) return '';
-  w = String(w).trim();
-  // Якщо рядок складається тільки з цифр (і крапки/коми) — додаємо "г"
-  if(/^[\d.,]+$/.test(w)) return w + ' г';
-  return w;
-}
-
-const ALLERGEN_ICONS = {
-  'Глютен': '🌾', 'Пшениця': '🌾',
-  'Молоко': '🥛', 'Лактоза': '🥛',
-  'Яйця': '🥚',
-  'Горіхи': '🥜', 'Арахіс': '🥜',
-  'Риба': '🐟',
-  'Молюски': '🦐', 'Ракоподібні': '🦞',
-  'Соя': '🫘',
-  'Селера': '🥬',
-  'Гірчиця': '🌶️',
-  'Кунжут': '🌰',
-  'Сірчистий ангідрид': '⚗️',
-  'Люпин': '🌸',
-  'Молюски': '🦑',
-};
-
+// ── ПЕРЕКЛАД UI ───────────────────────────────────────────
 const UI_STRINGS = {
-  uk: {
-    cart:'🛒 Кошик', orderType:'Тип замовлення', tableNum:'🪑 Номер столу',
-    tableInput:'Введіть номер столу', pickupTime:'🕐 Час самовиносу',
-    minTime:'Мін. 40 хвилин від зараз', deliveryAddress:'📍 Адреса доставки',
-    city:'Місто', street:'Вулиця та будинок', apt:'Квартира', entrance:"Під'їзд",
-    floor:'Поверх', courierComment:"Коментар для кур'єра", contacts:'👤 Контактні дані',
-    name:"Ім'я", phone:'Телефон', cutlery:'🍴 Прибори', persons:'осіб',
-    noCutlery:'Не потрібні', comment:'💬 Коментар для закладу',
-    payment:'💳 Спосіб оплати', cash:'💵 Готівкою при отриманні',
-    online:'💳 Карткою онлайн', order:'Оформити замовлення',
-    continue:'← Продовжити вибір', yourOrder:'🛒 Ваше замовлення',
-    total:'Разом:', dineIn:'🪑 В закладі', takeaway:'🥡 З собою', delivery:'🚗 Доставка',
-    orderDone:'Замовлення прийнято!', waitConfirm:'Очікуйте підтвердження від закладу.',
-    backToMenu:'← Назад до меню', noDishes:'У цій категорії немає страв',
-    cartEmpty:'Кошик порожній', add:'Додати',
-  },
-  en: {
-    cart:'🛒 Cart', orderType:'Order type', tableNum:'🪑 Table number',
-    tableInput:'Enter table number', pickupTime:'🕐 Pickup time',
-    minTime:'Min. 40 minutes from now', deliveryAddress:'📍 Delivery address',
-    city:'City', street:'Street and building', apt:'Apartment', entrance:'Entrance',
-    floor:'Floor', courierComment:'Comment for courier', contacts:'👤 Contact details',
-    name:'Name', phone:'Phone', cutlery:'🍴 Cutlery', persons:'persons',
-    noCutlery:'Not needed', comment:'💬 Comment for the venue',
-    payment:'💳 Payment method', cash:'💵 Cash on delivery',
-    online:'💳 Pay online', order:'Place order',
-    continue:'← Continue shopping', yourOrder:'🛒 Your order',
-    total:'Total:', dineIn:'🪑 Dine in', takeaway:'🥡 Takeaway', delivery:'🚗 Delivery',
-    orderDone:'Order accepted!', waitConfirm:'Please wait for confirmation.',
-    backToMenu:'← Back to menu', noDishes:'No dishes in this category',
-    cartEmpty:'Cart is empty', add:'Add',
-  },
-  pl: {
-    cart:'🛒 Koszyk', orderType:'Typ zamówienia', tableNum:'🪑 Numer stolika',
-    tableInput:'Wpisz numer stolika', pickupTime:'🕐 Czas odbioru',
-    minTime:'Min. 40 minut od teraz', deliveryAddress:'📍 Adres dostawy',
-    city:'Miasto', street:'Ulica i numer', apt:'Mieszkanie', entrance:'Klatka',
-    floor:'Piętro', courierComment:'Komentarz dla kuriera', contacts:'👤 Dane kontaktowe',
-    name:'Imię', phone:'Telefon', cutlery:'🍴 Sztućce', persons:'osób',
-    noCutlery:'Nie potrzeba', comment:'💬 Komentarz dla lokalu',
-    payment:'💳 Metoda płatności', cash:'💵 Gotówka przy odbiorze',
-    online:'💳 Płatność online', order:'Złóż zamówienie',
-    continue:'← Kontynuuj zakupy', yourOrder:'🛒 Twoje zamówienie',
-    total:'Razem:', dineIn:'🪑 Na miejscu', takeaway:'🥡 Na wynos', delivery:'🚗 Dostawa',
-    orderDone:'Zamówienie przyjęte!', waitConfirm:'Czekaj na potwierdzenie.',
-    backToMenu:'← Powrót do menu', noDishes:'Brak dań w tej kategorii',
-    cartEmpty:'Koszyk jest pusty', add:'Dodaj',
-  },
-  de: {
-    cart:'🛒 Warenkorb', orderType:'Bestellart', tableNum:'🪑 Tischnummer',
-    tableInput:'Tischnummer eingeben', pickupTime:'🕐 Abholzeit',
-    minTime:'Min. 40 Minuten ab jetzt', deliveryAddress:'📍 Lieferadresse',
-    city:'Stadt', street:'Straße und Hausnummer', apt:'Wohnung', entrance:'Eingang',
-    floor:'Etage', courierComment:'Kommentar für Kurier', contacts:'👤 Kontaktdaten',
-    name:'Name', phone:'Telefon', cutlery:'🍴 Besteck', persons:'Personen',
-    noCutlery:'Nicht nötig', comment:'💬 Kommentar für das Lokal',
-    payment:'💳 Zahlungsmethode', cash:'💵 Bar bei Lieferung',
-    online:'💳 Online bezahlen', order:'Bestellung aufgeben',
-    continue:'← Weiter einkaufen', yourOrder:'🛒 Ihre Bestellung',
-    total:'Gesamt:', dineIn:'🪑 Im Lokal', takeaway:'🥡 Zum Mitnehmen', delivery:'🚗 Lieferung',
-    orderDone:'Bestellung angenommen!', waitConfirm:'Bitte warten Sie auf Bestätigung.',
-    backToMenu:'← Zurück zum Menü', noDishes:'Keine Gerichte in dieser Kategorie',
-    cartEmpty:'Warenkorb ist leer', add:'Hinzufügen',
-  },
-  ro: {
-    cart:'🛒 Coș', orderType:'Tip comandă', tableNum:'🪑 Număr masă',
-    tableInput:'Introduceți numărul mesei', pickupTime:'🕐 Ora ridicării',
-    minTime:'Min. 40 minute de acum', deliveryAddress:'📍 Adresă livrare',
-    city:'Oraș', street:'Stradă și număr', apt:'Apartament', entrance:'Intrare',
-    floor:'Etaj', courierComment:'Comentariu pentru curier', contacts:'👤 Date contact',
-    name:'Nume', phone:'Telefon', cutlery:'🍴 Tacâmuri', persons:'persoane',
-    noCutlery:'Nu e nevoie', comment:'💬 Comentariu pentru local',
-    payment:'💳 Metodă de plată', cash:'💵 Numerar la livrare',
-    online:'💳 Plată online', order:'Plasează comanda',
-    continue:'← Continuă cumpărăturile', yourOrder:'🛒 Comanda ta',
-    total:'Total:', dineIn:'🪑 La local', takeaway:'🥡 De luat', delivery:'🚗 Livrare',
-    orderDone:'Comandă acceptată!', waitConfirm:'Așteptați confirmarea.',
-    backToMenu:'← Înapoi la meniu', noDishes:'Nu sunt preparate în această categorie',
-    cartEmpty:'Coșul este gol', add:'Adaugă',
-  },
-  es: {
-    cart:'🛒 Carrito', orderType:'Tipo de pedido', tableNum:'🪑 Número de mesa',
-    tableInput:'Ingrese número de mesa', pickupTime:'🕐 Hora de recogida',
-    minTime:'Mín. 40 minutos desde ahora', deliveryAddress:'📍 Dirección de entrega',
-    city:'Ciudad', street:'Calle y número', apt:'Apartamento', entrance:'Entrada',
-    floor:'Piso', courierComment:'Comentario para el repartidor', contacts:'👤 Datos de contacto',
-    name:'Nombre', phone:'Teléfono', cutlery:'🍴 Cubiertos', persons:'personas',
-    noCutlery:'No necesario', comment:'💬 Comentario para el local',
-    payment:'💳 Método de pago', cash:'💵 Efectivo al recibir',
-    online:'💳 Pago online', order:'Realizar pedido',
-    continue:'← Seguir comprando', yourOrder:'🛒 Tu pedido',
-    total:'Total:', dineIn:'🪑 En el local', takeaway:'🥡 Para llevar', delivery:'🚗 Entrega',
-    orderDone:'¡Pedido aceptado!', waitConfirm:'Espere la confirmación.',
-    backToMenu:'← Volver al menú', noDishes:'No hay platos en esta categoría',
-    cartEmpty:'El carrito está vacío', add:'Agregar',
-  },
-  cnr: {
-    cart:'🛒 Korpa', orderType:'Tip narudžbine', tableNum:'🪑 Broj stola',
-    tableInput:'Unesite broj stola', pickupTime:'🕐 Vrijeme preuzimanja',
-    minTime:'Min. 40 minuta od sada', deliveryAddress:'📍 Adresa dostave',
-    city:'Grad', street:'Ulica i broj', apt:'Stan', entrance:'Ulaz',
-    floor:'Sprat', courierComment:'Komentar za dostavljača', contacts:'👤 Kontakt podaci',
-    name:'Ime', phone:'Telefon', cutlery:'🍴 Pribor', persons:'osoba',
-    noCutlery:'Nije potrebno', comment:'💬 Komentar za lokal',
-    payment:'💳 Način plaćanja', cash:'💵 Gotovina pri preuzimanju',
-    online:'💳 Online plaćanje', order:'Naruči',
-    continue:'← Nastavi kupovinu', yourOrder:'🛒 Vaša narudžbina',
-    total:'Ukupno:', dineIn:'🪑 U lokalu', takeaway:'🥡 Za ponijeti', delivery:'🚗 Dostava',
-    orderDone:'Narudžbina prihvaćena!', waitConfirm:'Čekajte potvrdu.',
-    backToMenu:'← Nazad na meni', noDishes:'Nema jela u ovoj kategoriji',
-    cartEmpty:'Korpa je prazna', add:'Dodaj',
-  },
+  uk:{cart:'🛒 Кошик',yourOrder:'🛒 Ваше замовлення',orderType:'Тип замовлення',dineIn:'🪑 В закладі',takeaway:'🥡 З собою',delivery:'🚗 Доставка',contacts:'👤 Контактні дані',name:"Ім'я",phone:'Телефон',cutlery:'🍴 Прибори',persons:'осіб',noCutlery:'Не потрібні',comment:'💬 Коментар для закладу',payment:'💳 Спосіб оплати',cash:'💵 Готівкою при отриманні',online:'💳 Карткою онлайн',placeOrder:'Оформити замовлення',continueShopping:'← Продовжити вибір',total:'Разом:',tableNum:'🪑 Номер столу',tableInput:'Введіть номер столу',pickupTime:'🕐 Час самовиносу',minTime:'Мін. 40 хвилин від зараз',deliveryAddress:'📍 Адреса доставки',city:'Місто',street:'Вулиця та будинок',apt:'Квартира',entrance:"Під'їзд",floor:'Поверх',courierComment:"Коментар для кур'єра",orderDone:'Замовлення прийнято!',waitConfirm:'Очікуйте підтвердження.',backToMenu:'← Назад до меню',noDishes:'У цій категорії немає страв',empty:'Кошик порожній',add:'Додати'},
+  en:{cart:'🛒 Cart',yourOrder:'🛒 Your order',orderType:'Order type',dineIn:'🪑 Dine in',takeaway:'🥡 Takeaway',delivery:'🚗 Delivery',contacts:'👤 Contact details',name:'Name',phone:'Phone',cutlery:'🍴 Cutlery',persons:'persons',noCutlery:'Not needed',comment:'💬 Comment for venue',payment:'💳 Payment method',cash:'💵 Cash on delivery',online:'💳 Pay online',placeOrder:'Place order',continueShopping:'← Continue shopping',total:'Total:',tableNum:'🪑 Table number',tableInput:'Enter table number',pickupTime:'🕐 Pickup time',minTime:'Min. 40 minutes from now',deliveryAddress:'📍 Delivery address',city:'City',street:'Street and building',apt:'Apartment',entrance:'Entrance',floor:'Floor',courierComment:'Comment for courier',orderDone:'Order accepted!',waitConfirm:'Please wait for confirmation.',backToMenu:'← Back to menu',noDishes:'No dishes in this category',empty:'Cart is empty',add:'Add'},
+  pl:{cart:'🛒 Koszyk',yourOrder:'🛒 Twoje zamówienie',orderType:'Typ zamówienia',dineIn:'🪑 Na miejscu',takeaway:'🥡 Na wynos',delivery:'🚗 Dostawa',contacts:'👤 Dane kontaktowe',name:'Imię',phone:'Telefon',cutlery:'🍴 Sztućce',persons:'osób',noCutlery:'Nie potrzeba',comment:'💬 Komentarz dla lokalu',payment:'💳 Metoda płatności',cash:'💵 Gotówka przy odbiorze',online:'💳 Płatność online',placeOrder:'Złóż zamówienie',continueShopping:'← Kontynuuj zakupy',total:'Razem:',tableNum:'🪑 Numer stolika',tableInput:'Wpisz numer stolika',pickupTime:'🕐 Czas odbioru',minTime:'Min. 40 minut od teraz',deliveryAddress:'📍 Adres dostawy',city:'Miasto',street:'Ulica i numer',apt:'Mieszkanie',entrance:'Klatka',floor:'Piętro',courierComment:'Komentarz dla kuriera',orderDone:'Zamówienie przyjęte!',waitConfirm:'Czekaj na potwierdzenie.',backToMenu:'← Powrót do menu',noDishes:'Brak dań w tej kategorii',empty:'Koszyk jest pusty',add:'Dodaj'},
+  de:{cart:'🛒 Warenkorb',yourOrder:'🛒 Ihre Bestellung',orderType:'Bestellart',dineIn:'🪑 Im Lokal',takeaway:'🥡 Zum Mitnehmen',delivery:'🚗 Lieferung',contacts:'👤 Kontaktdaten',name:'Name',phone:'Telefon',cutlery:'🍴 Besteck',persons:'Personen',noCutlery:'Nicht nötig',comment:'💬 Kommentar für das Lokal',payment:'💳 Zahlungsmethode',cash:'💵 Bar bei Lieferung',online:'💳 Online bezahlen',placeOrder:'Bestellung aufgeben',continueShopping:'← Weiter einkaufen',total:'Gesamt:',tableNum:'🪑 Tischnummer',tableInput:'Tischnummer eingeben',pickupTime:'🕐 Abholzeit',minTime:'Min. 40 Minuten ab jetzt',deliveryAddress:'📍 Lieferadresse',city:'Stadt',street:'Straße und Nummer',apt:'Wohnung',entrance:'Eingang',floor:'Etage',courierComment:'Kommentar für Kurier',orderDone:'Bestellung angenommen!',waitConfirm:'Bitte warten Sie auf Bestätigung.',backToMenu:'← Zurück zum Menü',noDishes:'Keine Gerichte in dieser Kategorie',empty:'Warenkorb ist leer',add:'Hinzufügen'},
+  ro:{cart:'🛒 Cos',yourOrder:'🛒 Comanda ta',orderType:'Tip comanda',dineIn:'🪑 La local',takeaway:'🥡 De luat',delivery:'🚗 Livrare',contacts:'👤 Date contact',name:'Nume',phone:'Telefon',cutlery:'🍴 Tacamuri',persons:'persoane',noCutlery:'Nu e nevoie',comment:'💬 Comentariu pentru local',payment:'💳 Metoda de plata',cash:'💵 Numerar la livrare',online:'💳 Plata online',placeOrder:'Plaseaza comanda',continueShopping:'← Continua cumparaturile',total:'Total:',tableNum:'🪑 Numar masa',tableInput:'Introduceti numarul mesei',pickupTime:'🕐 Ora ridicarii',minTime:'Min. 40 minute de acum',deliveryAddress:'📍 Adresa livrare',city:'Oras',street:'Strada si numar',apt:'Apartament',entrance:'Intrare',floor:'Etaj',courierComment:'Comentariu pentru curier',orderDone:'Comanda acceptata!',waitConfirm:'Asteptati confirmarea.',backToMenu:'← Inapoi la meniu',noDishes:'Nu sunt preparate in aceasta categorie',empty:'Cosul este gol',add:'Adauga'},
+  es:{cart:'🛒 Carrito',yourOrder:'🛒 Tu pedido',orderType:'Tipo de pedido',dineIn:'🪑 En el local',takeaway:'🥡 Para llevar',delivery:'🚗 Entrega',contacts:'👤 Datos de contacto',name:'Nombre',phone:'Telefono',cutlery:'🍴 Cubiertos',persons:'personas',noCutlery:'No necesario',comment:'💬 Comentario para el local',payment:'💳 Metodo de pago',cash:'💵 Efectivo al recibir',online:'💳 Pago online',placeOrder:'Realizar pedido',continueShopping:'← Seguir comprando',total:'Total:',tableNum:'🪑 Numero de mesa',tableInput:'Ingrese numero de mesa',pickupTime:'🕐 Hora de recogida',minTime:'Min. 40 minutos desde ahora',deliveryAddress:'📍 Direccion de entrega',city:'Ciudad',street:'Calle y numero',apt:'Apartamento',entrance:'Entrada',floor:'Piso',courierComment:'Comentario para el repartidor',orderDone:'Pedido aceptado!',waitConfirm:'Espere la confirmacion.',backToMenu:'← Volver al menu',noDishes:'No hay platos en esta categoria',empty:'El carrito esta vacio',add:'Agregar'},
+  cnr:{cart:'🛒 Korpa',yourOrder:'🛒 Vasa narudzbina',orderType:'Tip narudzbine',dineIn:'🪑 U lokalu',takeaway:'🥡 Za ponijeti',delivery:'🚗 Dostava',contacts:'👤 Kontakt podaci',name:'Ime',phone:'Telefon',cutlery:'🍴 Pribor',persons:'osoba',noCutlery:'Nije potrebno',comment:'💬 Komentar za lokal',payment:'💳 Nacin placanja',cash:'💵 Gotovina pri preuzimanju',online:'💳 Online placanje',placeOrder:'Naruci',continueShopping:'← Nastavi kupovinu',total:'Ukupno:',tableNum:'🪑 Broj stola',tableInput:'Unesite broj stola',pickupTime:'🕐 Vrijeme preuzimanja',minTime:'Min. 40 minuta od sada',deliveryAddress:'📍 Adresa dostave',city:'Grad',street:'Ulica i broj',apt:'Stan',entrance:'Ulaz',floor:'Sprat',courierComment:'Komentar za dostavljaca',orderDone:'Narudzbina prihvacena!',waitConfirm:'Cekajte potvrdu.',backToMenu:'← Nazad na meni',noDishes:'Nema jela u ovoj kategoriji',empty:'Korpa je prazna',add:'Dodaj'},
 };
+function ui(key){return(UI_STRINGS[currentLang]||UI_STRINGS.uk)[key]||(UI_STRINGS.uk)[key]||key;}
 
-function ui(key) {
-  return (UI_STRINGS[currentLang] || UI_STRINGS.uk)[key] || (UI_STRINGS.uk)[key] || key;
-}
-
-function applyUILang() {
+function applyUILang(){
+  // Верхній бар
+  [['ot-dine','dineIn'],['ot-take','takeaway'],['ot-del','delivery']].forEach(([id,k])=>{
+    const el=document.getElementById(id);if(!el)return;
+    const disc={dineIn:orderingSettings.discounts?.dineIn,takeaway:orderingSettings.discounts?.takeaway,delivery:orderingSettings.discounts?.delivery}[k];
+    const dt=disc?.pct?' -'+disc.pct+'%':disc?.fix?' -'+disc.fix+'UAH':'';
+    el.textContent=ui(k)+dt;
+  });
   // Кошик FAB
-  const fab = document.getElementById('cart-fab');
-  if(fab) {
-    const badge = document.getElementById('cart-badge');
-    const badgeText = badge?.textContent || '';
-    fab.innerHTML = ui('cart') + ' <span class="cart-badge" id="cart-badge">'+badgeText+'</span>';
-  }
-  // Заголовок кошика
-  const cartTitle = document.querySelector('#cart-ov .sheet > div > div:first-child div');
-  if(cartTitle && cartTitle.style.fontFamily?.includes('font-head') || cartTitle?.className === '') {
-    // не чіпаємо
-  }
-
-  // Форма замовлення — секції
-  const setTitle = (id, key) => {
-    const el = document.getElementById(id);
-    if(el) { const t = el.querySelector('.form-section-title'); if(t) t.textContent = ui(key); }
-  };
-  setTitle('form-table', 'tableNum');
-  setTitle('form-time', 'pickupTime');
-  setTitle('form-address', 'deliveryAddress');
-  setTitle('form-cutlery', 'cutlery');
-  setTitle('form-comment', 'comment');
-
-  // Поле столу
-  const tableInput = document.getElementById('cli-table');
-  if(tableInput) tableInput.placeholder = ui('tableInput');
-
-  // Кнопка замовлення
-  const orderBtn = document.getElementById('order-btn');
-  if(orderBtn) orderBtn.textContent = ui('order');
-
-  // Кнопки оплати
-  const cashBtn = document.getElementById('pay-opt-cash');
-  if(cashBtn) cashBtn.textContent = ui('cash');
-  const onlineBtn = document.getElementById('pay-opt-online');
-  if(onlineBtn) onlineBtn.textContent = ui('online');
-
-  // Кнопка "Не потрібні" для приборів
-  const noCutlery = document.getElementById('cutlery-none-btn');
-  if(noCutlery) noCutlery.textContent = ui('noCutlery');
-
-  // Успіх екран
-  const sTitle = document.querySelector('.s-title');
-  if(sTitle && !sTitle.textContent.includes('⏳') && !sTitle.textContent.includes('✅')) {
-    sTitle.textContent = ui('orderDone');
-  }
-  const sSub = document.querySelector('.s-sub');
-  if(sSub) sSub.textContent = ui('waitConfirm');
-  const backBtn = document.querySelector('.back-btn');
-  if(backBtn) backBtn.textContent = ui('backToMenu');
-
-  // Лейбли полів
-  const labels = {
-    'cli-name': 'name', 'cli-phone': 'phone',
-    'cli-city': 'city', 'cli-address': 'street',
-    'cli-apt': 'apt', 'cli-entrance': 'entrance', 'cli-floor': 'floor',
-  };
-  Object.entries(labels).forEach(([inputId, key]) => {
-    const input = document.getElementById(inputId);
-    if(input) {
-      const label = input.closest('div')?.querySelector('label');
-      if(label) label.textContent = ui(key) + (inputId === 'cli-name' || inputId === 'cli-address' || inputId === 'cli-city' ? ' *' : '');
-    }
-  });
-
-  // Textarea коментар кур'єра
-  const delivComment = document.getElementById('cli-delivery-comment');
-  if(delivComment) {
-    const label = delivComment.closest('div')?.querySelector('label');
-    if(label) label.textContent = ui('courierComment');
-  }
-
-  // Осіб (прибори)
-  const personsEl = document.querySelector('#form-cutlery span[style*="color:var(--muted)"]');
-  if(personsEl) personsEl.textContent = ui('persons');
-
-  // Разом
-  const totalLabel = document.querySelector('.cart-total > span:first-child');
-  if(totalLabel) totalLabel.textContent = ui('total');
-
-  // Заголовок кошика
-  const cartTitle = document.getElementById('cart-title');
-  if(cartTitle) cartTitle.textContent = ui('cart');
-
-  // Тип замовлення
-  const orderTypeTitle = document.getElementById('order-type-title');
-  if(orderTypeTitle) orderTypeTitle.textContent = ui('orderType');
-
-  // Контактні дані
-  const contactsTitle = document.getElementById('contacts-title');
-  if(contactsTitle) contactsTitle.textContent = ui('contacts');
-
-  // Телефон
-  const phoneLabel = document.getElementById('phone-label');
-  if(phoneLabel) phoneLabel.textContent = ui('phone') + ' *';
-
-  // Спосіб оплати
-  const paymentTitle = document.getElementById('payment-title');
-  if(paymentTitle) paymentTitle.textContent = ui('payment');
-
-  // Продовжити вибір
-  const continueBtn = document.getElementById('continue-btn');
-  if(continueBtn) continueBtn.textContent = '← ' + ui('continue').replace('← ','');
-
-  // Коментар
-  const commentLabel = document.getElementById('comment-label');
-  if(commentLabel) commentLabel.textContent = ui('comment');
-
-  // Верхній бар — оновлюємо тексти
-  const discMap2 = {
-    'ot-dine': orderingSettings.discounts?.dineIn,
-    'ot-take': orderingSettings.discounts?.takeaway,
-    'ot-del':  orderingSettings.discounts?.delivery,
-  };
-  const labelMap2 = {'ot-dine': ui('dineIn'), 'ot-take': ui('takeaway'), 'ot-del': ui('delivery')};
-  Object.entries(labelMap2).forEach(([id, label]) => {
-    const el = document.getElementById(id);
-    if(!el) return;
-    const disc = discMap2[id];
-    const discText = disc?.pct ? ` −${disc.pct}%` : disc?.fix ? ` −${disc.fix}₴` : '';
-    el.textContent = label + discText;
-  });
+  const badge=document.getElementById('cart-badge');
+  const fab=document.getElementById('cart-fab');
+  if(fab&&badge){const bt=badge.textContent;fab.innerHTML=ui('cart')+' <span class="cart-badge" id="cart-badge">'+bt+'</span>';}
+  // IDs
+  const setId=(id,k)=>{const el=document.getElementById(id);if(el)el.textContent=ui(k);};
+  setId('cart-title','yourOrder');setId('order-type-title','orderType');
+  setId('contacts-title','contacts');setId('payment-title','payment');
+  setId('cart-continue','continueShopping');setId('comment-label','comment');
+  // Labels
+  const setLbl=(inputId,k)=>{const el=document.getElementById(inputId);if(!el)return;const l=el.closest('div')?.querySelector('label');if(l)l.textContent=ui(k);};
+  setLbl('cli-name','name');setLbl('cli-phone','phone');setLbl('cli-city','city');
+  setLbl('cli-address','street');setLbl('cli-apt','apt');setLbl('cli-entrance','entrance');setLbl('cli-floor','floor');
+  // Section titles
+  const setSection=(id,k)=>{const el=document.getElementById(id);if(!el)return;const t=el.querySelector('.form-section-title');if(t)t.textContent=ui(k);};
+  setSection('form-table','tableNum');setSection('form-time','pickupTime');
+  setSection('form-address','deliveryAddress');setSection('form-cutlery','cutlery');
+  // Buttons
+  [['order-btn','placeOrder'],['pay-opt-cash','cash'],['pay-opt-online','online'],['cutlery-none-btn','noCutlery']].forEach(([id,k])=>{const el=document.getElementById(id);if(el)el.textContent=ui(k);});
+  const tl=document.querySelector('.cart-total > span:first-child');if(tl)tl.textContent=ui('total');
 }
+// ─────────────────────────────────────────────────────────
 
-async function init() {
-  try {
-    // Завантажуємо всі дані паралельно
-    const [sSnap, dSnap, cSnap, iSnap] = await Promise.all([
-      getDoc(doc(db,'venues',venueId,'settings','main')),
-      getDoc(doc(db,'venues',venueId,'design','main')),
-      getDocs(collection(db,'venues',venueId,'categories')),
-      getDocs(collection(db,'venues',venueId,'items')),
-    ]);
-    // Завантажуємо налаштування замовлень окремо — може не бути доступу
-    try {
-      const ordSnap = await getDoc(doc(db,'venues',venueId,'settings','ordering'));
-      orderingSettings = ordSnap.exists() ? ordSnap.data() : {};
-    } catch(e) {
-      console.warn('ordering settings:', e.message);
-      orderingSettings = {};
-    }
-    initOrderTypeBar();
 
-    // Налаштування — окремий try щоб не блокував страви
-    try {
-      applySettings(sSnap.exists() ? sSnap.data() : {});
-    } catch(e) { console.warn('applySettings error:', e.message); }
-
-    // Дизайн — окремий try
-    try {
-      design = dSnap.exists() ? dSnap.data() : {};
-      applyDesign(design);
-    } catch(e) { console.warn('applyDesign error:', e.message); }
-
-    // Категорії і страви — головне
-    allCats  = cSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
-    allItems = iSnap.docs.map(d=>({id:d.id,...d.data()}));
-
-    activeCat = allCats[0]?.name || null;
-    initLangBar();
-    renderCats();
-    renderMenu();
-
-  } catch(e) {
-    console.error('init error:', e);
-    $('menu-body').innerHTML = `<div class="empty">
-      <div class="empty-icon">⚠️</div>
-      <div style="font-size:13px;margin-top:.5rem">Код помилки: <b>${e.code||'unknown'}</b></div>
-      <div style="font-size:11px;color:#999;margin-top:.375rem;padding:0 1rem;word-break:break-all">${e.message}</div>
-    </div>`;
-  } finally {
-    $('loader').classList.add('gone');
-  }
-}
-
-function applySettings(s) {
-  document.title = s.name || 'Меню';
-  $('venue-name').textContent = s.name || 'Меню закладу';
-
-  // Слоган і місто — перший рядок
-  const line1 = [s.tagline, s.city].filter(Boolean).join(' · ');
-  // Телефон і адреса — другий рядок
-  const line2 = [s.phone, s.address].filter(Boolean).join(' · ');
-  // Години — третій рядок
-  const line3 = s.hours || '';
-
-  let tagHtml = '';
-  if (line1) tagHtml += `<div>${line1}</div>`;
-  if (line2) tagHtml += `<div style="margin-top:2px">${line2}</div>`;
-  if (line3) tagHtml += `<div style="margin-top:2px">🕐 ${line3}</div>`;
-  $('venue-tag').innerHTML = tagHtml;
-
-  // Місто закладу — підставляємо в поле доставки
-  if(s.city) {
-    const cityEl = document.getElementById('cli-city');
-    if(cityEl) cityEl.value = s.city;
-    window._venueCity = s.city;
-  }
-
-  // Стіл
-  if (tableId) $('venue-tag').innerHTML += `<div style="margin-top:3px"><span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Стіл №${tableId}</span></div>`;
-
-  // Логотип
-  if (s.logoUrl) {
-    $('venue-logo').innerHTML = `<img src="${s.logoUrl}" alt="${s.name||''}"/>`;
-  } else if (s.logoEmoji) {
-    $('venue-logo').textContent = s.logoEmoji;
-  }
-
-  // Банер (окрема зона зверху)
-  if (s.bannerUrl) {
-    const img = $('banner-img');
-    img.src = s.bannerUrl;
-    img.style.display = 'block';
-    $('banner-placeholder').style.display = 'none';
-  } else {
-    // Якщо немає банеру — ховаємо зону фото
-    $('banner-photo').style.display = 'none';
-  }
-}
-
-function applyDesign(d) {
-  const r = document.documentElement;
-  if (d.accent)     r.style.setProperty('--accent', d.accent);
-  if (d.bg)         r.style.setProperty('--bg', d.bg);
-  if (d.card)       r.style.setProperty('--card', d.card);
-  if (d.text)       r.style.setProperty('--text', d.text);
-  if (d.fontSize)   r.style.setProperty('--font-size', d.fontSize+'px');
-  if (d.cardRadius) r.style.setProperty('--radius', d.cardRadius+'px');
-  if (d.fontHead) {
-    r.style.setProperty('--font-head', `'${d.fontHead}',serif`);
-    $('font-link').href = `https://fonts.googleapis.com/css2?family=${d.fontHead.replace(/ /g,'+')}:wght@500;600&family=${(d.fontBody||'DM Sans').replace(/ /g,'+')}:wght@300;400;500&display=swap`;
-  }
-  // Банер тепер керується через applySettings — тут не чіпаємо
-}
-
-function renderCats() {
-  $('cat-bar').innerHTML = allCats.map(c=> {
-    const catName = c[`name_${currentLang}`] || c.name || '';
-    return `<button class="cat-pill${c.name===activeCat?' active':''}" onclick="setCat('${c.name}')">${c.emoji?c.emoji+' ':''}${catName}</button>`;
-  }).join('');
-}
-window.setCat = name => { activeCat=name; renderCats(); renderMenu(); };
-
-// ── МОВА МЕНЮ ─────────────────────────────────────────────
-function itemName(it) {
-  if(!it) return '';
-  return it['name_'+currentLang] || it.name || '';
-}
-function itemDesc(it) {
-  if(!it) return '';
-  return it['desc_'+currentLang] || it.desc || '';
-}
+// ── ПЕРЕКЛАД UI ───────────────────────────────────────────
 
 window.setLang = function(lang) {
   currentLang = lang;
