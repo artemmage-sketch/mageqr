@@ -422,135 +422,6 @@ const ALLERGEN_ICONS = {
   'Молюски': '🦑',
 };
 
-async function init() {
-  try {
-    // Завантажуємо всі дані паралельно
-    const [sSnap, dSnap, cSnap, iSnap] = await Promise.all([
-      getDoc(doc(db,'venues',venueId,'settings','main')),
-      getDoc(doc(db,'venues',venueId,'design','main')),
-      getDocs(collection(db,'venues',venueId,'categories')),
-      getDocs(collection(db,'venues',venueId,'items')),
-    ]);
-    // Завантажуємо налаштування замовлень окремо — може не бути доступу
-    try {
-      const ordSnap = await getDoc(doc(db,'venues',venueId,'settings','ordering'));
-      orderingSettings = ordSnap.exists() ? ordSnap.data() : {};
-    } catch(e) {
-      console.warn('ordering settings:', e.message);
-      orderingSettings = {};
-    }
-    initOrderTypeBar();
-
-    // Налаштування — окремий try щоб не блокував страви
-    try {
-      applySettings(sSnap.exists() ? sSnap.data() : {});
-    } catch(e) { console.warn('applySettings error:', e.message); }
-
-    // Дизайн — окремий try
-    try {
-      design = dSnap.exists() ? dSnap.data() : {};
-      applyDesign(design);
-    } catch(e) { console.warn('applyDesign error:', e.message); }
-
-    // Категорії і страви — головне
-    allCats  = cSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
-    allItems = iSnap.docs.map(d=>({id:d.id,...d.data()}));
-
-    activeCat = allCats[0]?.name || null;
-    initLangBar();
-    renderCats();
-    renderMenu();
-
-  } catch(e) {
-    console.error('init error:', e);
-    $('menu-body').innerHTML = `<div class="empty">
-      <div class="empty-icon">⚠️</div>
-      <div style="font-size:13px;margin-top:.5rem">Код помилки: <b>${e.code||'unknown'}</b></div>
-      <div style="font-size:11px;color:#999;margin-top:.375rem;padding:0 1rem;word-break:break-all">${e.message}</div>
-    </div>`;
-  } finally {
-    $('loader').classList.add('gone');
-  }
-}
-
-function applySettings(s) {
-  document.title = s.name || 'Меню';
-  $('venue-name').textContent = s.name || 'Меню закладу';
-
-  // Слоган і місто — перший рядок
-  const line1 = [s.tagline, s.city].filter(Boolean).join(' · ');
-  // Телефон і адреса — другий рядок
-  const line2 = [s.phone, s.address].filter(Boolean).join(' · ');
-  // Години — третій рядок
-  const line3 = s.hours || '';
-
-  let tagHtml = '';
-  if (line1) tagHtml += `<div>${line1}</div>`;
-  if (line2) tagHtml += `<div style="margin-top:2px">${line2}</div>`;
-  if (line3) tagHtml += `<div style="margin-top:2px">🕐 ${line3}</div>`;
-  $('venue-tag').innerHTML = tagHtml;
-
-  // Місто закладу — підставляємо в поле доставки
-  if(s.city) {
-    const cityEl = document.getElementById('cli-city');
-    if(cityEl) cityEl.value = s.city;
-    window._venueCity = s.city;
-  }
-
-  // Стіл
-  if (tableId) $('venue-tag').innerHTML += `<div style="margin-top:3px"><span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Стіл №${tableId}</span></div>`;
-
-  // Логотип
-  if (s.logoUrl) {
-    $('venue-logo').innerHTML = `<img src="${s.logoUrl}" alt="${s.name||''}"/>`;
-  } else if (s.logoEmoji) {
-    $('venue-logo').textContent = s.logoEmoji;
-  }
-
-  // Банер (окрема зона зверху)
-  if (s.bannerUrl) {
-    const img = $('banner-img');
-    img.src = s.bannerUrl;
-    img.style.display = 'block';
-    $('banner-placeholder').style.display = 'none';
-  } else {
-    // Якщо немає банеру — ховаємо зону фото
-    $('banner-photo').style.display = 'none';
-  }
-}
-
-function applyDesign(d) {
-  const r = document.documentElement;
-  if (d.accent)     r.style.setProperty('--accent', d.accent);
-  if (d.bg)         r.style.setProperty('--bg', d.bg);
-  if (d.card)       r.style.setProperty('--card', d.card);
-  if (d.text)       r.style.setProperty('--text', d.text);
-  if (d.fontSize)   r.style.setProperty('--font-size', d.fontSize+'px');
-  if (d.cardRadius) r.style.setProperty('--radius', d.cardRadius+'px');
-  if (d.fontHead) {
-    r.style.setProperty('--font-head', `'${d.fontHead}',serif`);
-    $('font-link').href = `https://fonts.googleapis.com/css2?family=${d.fontHead.replace(/ /g,'+')}:wght@500;600&family=${(d.fontBody||'DM Sans').replace(/ /g,'+')}:wght@300;400;500&display=swap`;
-  }
-  // Банер тепер керується через applySettings — тут не чіпаємо
-}
-
-function renderCats() {
-  $('cat-bar').innerHTML = allCats.map(c=> {
-    const catName = c[`name_${currentLang}`] || c.name || '';
-    return `<button class="cat-pill${c.name===activeCat?' active':''}" onclick="setCat('${c.name}')">${c.emoji?c.emoji+' ':''}${catName}</button>`;
-  }).join('');
-}
-window.setCat = name => { activeCat=name; renderCats(); renderMenu(); };
-
-// ── МОВА МЕНЮ ─────────────────────────────────────────────
-function itemName(it) {
-  if(!it) return '';
-  return it['name_'+currentLang] || it.name || '';
-}
-function itemDesc(it) {
-  if(!it) return '';
-  return it['desc_'+currentLang] || it.desc || '';
-}
 const UI_STRINGS = {
   uk: {
     cart:'🛒 Кошик', orderType:'Тип замовлення', tableNum:'🪑 Номер столу',
@@ -780,9 +651,6 @@ function applyUILang() {
   const commentLabel = document.getElementById('comment-label');
   if(commentLabel) commentLabel.textContent = ui('comment');
 
-  // Кнопки типу замовлення — перерендеримо
-  renderOrderTypeBtns();
-
   // Верхній бар — оновлюємо тексти
   const discMap2 = {
     'ot-dine': orderingSettings.discounts?.dineIn,
@@ -797,6 +665,136 @@ function applyUILang() {
     const discText = disc?.pct ? ` −${disc.pct}%` : disc?.fix ? ` −${disc.fix}₴` : '';
     el.textContent = label + discText;
   });
+}
+
+async function init() {
+  try {
+    // Завантажуємо всі дані паралельно
+    const [sSnap, dSnap, cSnap, iSnap] = await Promise.all([
+      getDoc(doc(db,'venues',venueId,'settings','main')),
+      getDoc(doc(db,'venues',venueId,'design','main')),
+      getDocs(collection(db,'venues',venueId,'categories')),
+      getDocs(collection(db,'venues',venueId,'items')),
+    ]);
+    // Завантажуємо налаштування замовлень окремо — може не бути доступу
+    try {
+      const ordSnap = await getDoc(doc(db,'venues',venueId,'settings','ordering'));
+      orderingSettings = ordSnap.exists() ? ordSnap.data() : {};
+    } catch(e) {
+      console.warn('ordering settings:', e.message);
+      orderingSettings = {};
+    }
+    initOrderTypeBar();
+
+    // Налаштування — окремий try щоб не блокував страви
+    try {
+      applySettings(sSnap.exists() ? sSnap.data() : {});
+    } catch(e) { console.warn('applySettings error:', e.message); }
+
+    // Дизайн — окремий try
+    try {
+      design = dSnap.exists() ? dSnap.data() : {};
+      applyDesign(design);
+    } catch(e) { console.warn('applyDesign error:', e.message); }
+
+    // Категорії і страви — головне
+    allCats  = cSnap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));
+    allItems = iSnap.docs.map(d=>({id:d.id,...d.data()}));
+
+    activeCat = allCats[0]?.name || null;
+    initLangBar();
+    renderCats();
+    renderMenu();
+
+  } catch(e) {
+    console.error('init error:', e);
+    $('menu-body').innerHTML = `<div class="empty">
+      <div class="empty-icon">⚠️</div>
+      <div style="font-size:13px;margin-top:.5rem">Код помилки: <b>${e.code||'unknown'}</b></div>
+      <div style="font-size:11px;color:#999;margin-top:.375rem;padding:0 1rem;word-break:break-all">${e.message}</div>
+    </div>`;
+  } finally {
+    $('loader').classList.add('gone');
+  }
+}
+
+function applySettings(s) {
+  document.title = s.name || 'Меню';
+  $('venue-name').textContent = s.name || 'Меню закладу';
+
+  // Слоган і місто — перший рядок
+  const line1 = [s.tagline, s.city].filter(Boolean).join(' · ');
+  // Телефон і адреса — другий рядок
+  const line2 = [s.phone, s.address].filter(Boolean).join(' · ');
+  // Години — третій рядок
+  const line3 = s.hours || '';
+
+  let tagHtml = '';
+  if (line1) tagHtml += `<div>${line1}</div>`;
+  if (line2) tagHtml += `<div style="margin-top:2px">${line2}</div>`;
+  if (line3) tagHtml += `<div style="margin-top:2px">🕐 ${line3}</div>`;
+  $('venue-tag').innerHTML = tagHtml;
+
+  // Місто закладу — підставляємо в поле доставки
+  if(s.city) {
+    const cityEl = document.getElementById('cli-city');
+    if(cityEl) cityEl.value = s.city;
+    window._venueCity = s.city;
+  }
+
+  // Стіл
+  if (tableId) $('venue-tag').innerHTML += `<div style="margin-top:3px"><span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Стіл №${tableId}</span></div>`;
+
+  // Логотип
+  if (s.logoUrl) {
+    $('venue-logo').innerHTML = `<img src="${s.logoUrl}" alt="${s.name||''}"/>`;
+  } else if (s.logoEmoji) {
+    $('venue-logo').textContent = s.logoEmoji;
+  }
+
+  // Банер (окрема зона зверху)
+  if (s.bannerUrl) {
+    const img = $('banner-img');
+    img.src = s.bannerUrl;
+    img.style.display = 'block';
+    $('banner-placeholder').style.display = 'none';
+  } else {
+    // Якщо немає банеру — ховаємо зону фото
+    $('banner-photo').style.display = 'none';
+  }
+}
+
+function applyDesign(d) {
+  const r = document.documentElement;
+  if (d.accent)     r.style.setProperty('--accent', d.accent);
+  if (d.bg)         r.style.setProperty('--bg', d.bg);
+  if (d.card)       r.style.setProperty('--card', d.card);
+  if (d.text)       r.style.setProperty('--text', d.text);
+  if (d.fontSize)   r.style.setProperty('--font-size', d.fontSize+'px');
+  if (d.cardRadius) r.style.setProperty('--radius', d.cardRadius+'px');
+  if (d.fontHead) {
+    r.style.setProperty('--font-head', `'${d.fontHead}',serif`);
+    $('font-link').href = `https://fonts.googleapis.com/css2?family=${d.fontHead.replace(/ /g,'+')}:wght@500;600&family=${(d.fontBody||'DM Sans').replace(/ /g,'+')}:wght@300;400;500&display=swap`;
+  }
+  // Банер тепер керується через applySettings — тут не чіпаємо
+}
+
+function renderCats() {
+  $('cat-bar').innerHTML = allCats.map(c=> {
+    const catName = c[`name_${currentLang}`] || c.name || '';
+    return `<button class="cat-pill${c.name===activeCat?' active':''}" onclick="setCat('${c.name}')">${c.emoji?c.emoji+' ':''}${catName}</button>`;
+  }).join('');
+}
+window.setCat = name => { activeCat=name; renderCats(); renderMenu(); };
+
+// ── МОВА МЕНЮ ─────────────────────────────────────────────
+function itemName(it) {
+  if(!it) return '';
+  return it['name_'+currentLang] || it.name || '';
+}
+function itemDesc(it) {
+  if(!it) return '';
+  return it['desc_'+currentLang] || it.desc || '';
 }
 
 window.setLang = function(lang) {
