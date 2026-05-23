@@ -344,7 +344,7 @@ window.__MQ_CFG = {
 <div class="success" id="success">
   <div class="s-icon">✅</div>
   <div class="s-title">Замовлення прийнято!</div>
-  <div class="s-num" id="s-num">#0000</div>
+  <div class="s-num" id="s-num" style="display:none"></div>
   <div class="s-sub">Очікуйте підтвердження від закладу.<br/>Орієнтовний час — 20–35 хвилин.</div>
   <button class="back-btn" onclick="resetSuccess()">← Назад до меню</button>
 </div>
@@ -1087,7 +1087,10 @@ async function checkPaymentAfterRedirect() {
         if(sTitle) sTitle.textContent = 'Оплата успішна!';
         if(sSub) sSub.textContent = 'Ваше замовлення прийнято та оплачено.';
         const numEl = $('s-num');
-        if(numEl && data.order?.num) numEl.textContent = '#' + data.order.num;
+        if(numEl && data.order?.num) {
+          numEl.textContent = '#' + data.order.num;
+          numEl.style.display = '';
+        }
         return;
       }
 
