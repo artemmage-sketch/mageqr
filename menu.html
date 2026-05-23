@@ -164,9 +164,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 </div>
 
 <div id="order-type-bar" class="order-type-bar" style="display:none">
-  <button class="order-type-btn active" id="ot-dine">🪑 В закладі</button>
-  <button class="order-type-btn" id="ot-take">🥡 З собою</button>
-  <button class="order-type-btn" id="ot-del">🚗 Доставка</button>
+  <button class="order-type-btn active" id="ot-dine" onclick="setOrderType('dine_in')">🪑 В закладі</button>
+  <button class="order-type-btn" id="ot-take" onclick="setOrderType('takeaway')">🥡 З собою</button>
+  <button class="order-type-btn" id="ot-del" onclick="setOrderType('delivery')">🚗 Доставка</button>
 </div>
 <div class="cat-bar" id="cat-bar"></div>
 <div class="menu-body" id="menu-body"></div>
