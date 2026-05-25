@@ -356,18 +356,18 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     </div>
     <div style="padding:.5rem 0;flex:1">
       <div class="nav-section" data-i18n="menuGroup">Меню</div>
-      <button class="nav-item active" onclick="nav(this,'t-orders')">🧾 Замовлення<span id="new-badge" style="background:#EF4444;color:#fff;font-size:10px;border-radius:10px;padding:1px 7px;margin-left:auto;display:none"></span></button>
-      <button class="nav-item" onclick="nav(this,'t-items')">🍽️ Страви</button>
-      <button class="nav-item" onclick="nav(this,'t-cats')">📂 Категорії</button>
+      <button class="nav-item active" onclick="nav(this,'t-orders')" data-i18n="orders">🧾 Замовлення<span id="new-badge" style="background:#EF4444;color:#fff;font-size:10px;border-radius:10px;padding:1px 7px;margin-left:auto;display:none"></span></button>
+      <button class="nav-item" onclick="nav(this,'t-items')" data-i18n="dishes">🍽️ Страви</button>
+      <button class="nav-item" onclick="nav(this,'t-cats')" data-i18n="categories">📂 Категорії</button>
       <div class="nav-section" data-i18n="venueGroup">Заклад</div>
-      <button class="nav-item" onclick="nav(this,'t-tables')">🪑 Столи та QR</button>
+      <button class="nav-item" onclick="nav(this,'t-tables')" data-i18n="tables">🪑 Столи та QR</button>
       <button class="nav-item" onclick="nav(this,'t-design')" data-i18n="design">🎨 Дизайн меню</button>
       <button class="nav-item" onclick="nav(this,'t-payments')" data-i18n="payments">💳 Платежі</button>
       <button class="nav-item" onclick="nav(this,'t-pos')" data-i18n="pos">🖥️ POS-інтеграція</button>
       <button class="nav-item" onclick="nav(this,'t-customers')" data-i18n="customers">👥 Клієнти</button>
-      <button class="nav-item" onclick="nav(this,'t-billing')">💳 Підписка</button>
+      <button class="nav-item" onclick="nav(this,'t-billing')" data-i18n="subscription">💳 Підписка</button>
       <button class="nav-item" onclick="nav(this,'t-ordering')" data-i18n="ordering">📋 Налаш. замовлень</button>
-      <button class="nav-item" onclick="nav(this,'t-settings')">⚙️ Налаштування</button>
+      <button class="nav-item" onclick="nav(this,'t-settings')" data-i18n="settings">⚙️ Налаштування</button>
     </div>
     <div class="sb-bottom">
       <button class="btn btn-outline btn-sm" style="flex:1" onclick="window.open('menu.html?v=temari','_blank')">👁 Переглянути</button>
@@ -381,19 +381,19 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div><div class="page-title">Замовлення</div><div class="page-sub">Оновлюються автоматично</div></div>
         <div style="display:flex;gap:.5rem;align-items:center">
           <select id="order-filter" style="width:130px" onchange="renderOrders()">
-            <option value="">Всі</option>
-            <option value="new">Нові</option>
-            <option value="done">Виконані</option>
-            <option value="cancel">Скасовані</option>
+            <option value="" data-i18n="filterAll" data-i18n="vsi">Всі</option>
+            <option value="new" data-i18n="filterNew" data-i18n="novi">Нові</option>
+            <option value="done" data-i18n="filterDone" data-i18n="vykonani">Виконані</option>
+            <option value="cancel" data-i18n="filterCancelled" data-i18n="skasovani">Скасовані</option>
           </select>
           <button class="btn btn-outline btn-sm" onclick="renderOrders()">↺</button>
         </div>
       </div>
       <div class="content">
         <div class="stats-grid">
-          <div class="stat"><div class="stat-val" id="st-new-ord">—</div><div class="stat-lbl">Нових</div></div>
-          <div class="stat"><div class="stat-val" id="st-done-ord">—</div><div class="stat-lbl">Виконано</div></div>
-          <div class="stat"><div class="stat-val" id="st-today-rev">—</div><div class="stat-lbl">Виручка</div></div>
+          <div class="stat"><div class="stat-val" id="st-new-ord">—</div><div class="stat-lbl" data-i18n="noviKlienty">Нових</div></div>
+          <div class="stat"><div class="stat-val" id="st-done-ord">—</div><div class="stat-lbl" data-i18n="done" data-i18n="vykonano">Виконано</div></div>
+          <div class="stat"><div class="stat-val" id="st-today-rev">—</div><div class="stat-lbl" data-i18n="revenue" data-i18n="vyruchka">Виручка</div></div>
           <div class="stat"><div class="stat-val" id="st-avg">—</div><div class="stat-lbl" data-i18n="avgCheck">${t('avgCheck')}</div></div>
         </div>
         <div id="orders-wrap"></div>
@@ -411,7 +411,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       </div>
       <div class="content">
         <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
-          <select id="item-cat-filter" style="width:160px" onchange="renderItems()"><option value="">Всі категорії</option></select>
+          <select id="item-cat-filter" style="width:160px" onchange="renderItems()"><option value="" data-i18n="vsiKatehorii">Всі категорії</option></select>
           <input type="text" id="item-search" placeholder="${t('search')}" data-i18n-ph="search" style="width:200px" oninput="renderItems()"/>
         </div>
         <div class="items-list" id="items-list"></div>
@@ -432,7 +432,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <!-- SUBSCRIPTION -->
     <div id="t-tables" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title">🪑 Столи та QR-оплата</div><div class="page-sub">Управління залом, QR-коди, чайові</div></div>
+        <div><div class="page-title">🪑 Столи та QR-оплата</div><div class="page-sub" data-i18n="upravlinZalom">Управління залом, QR-коди, чайові</div></div>
         <div style="display:flex;gap:.5rem">
           <button class="btn btn-outline btn-sm" onclick="printAllQR()">🖨️ Друк всіх QR</button>
           <button class="btn btn-accent btn-sm" onclick="openAddTable()">+ Додати стіл</button>
@@ -449,7 +449,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <div class="tables-toolbar">
           <div class="zone-tabs" id="zone-tabs">
-            <button class="zone-tab active" onclick="filterZone(this,'')">Всі зали</button>
+            <button class="zone-tab active" onclick="filterZone(this,'')" data-i18n="allHalls" data-i18n="vsiZaly">Всі зали</button>
           </div>
           <button class="btn btn-outline btn-sm" onclick="openAddZone()">+ Зал</button>
           <div style="margin-left:auto;display:flex;gap:.5rem;align-items:center">
@@ -534,7 +534,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <!-- DESIGN STUDIO -->
     <div id="t-design" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title" data-i18n="design">🎨 Дизайн меню</div><div class="page-sub">Налаштуйте вигляд публічного меню</div></div>
+        <div><div class="page-title" data-i18n="design">🎨 Дизайн меню</div><div class="page-sub" data-i18n="nalashtuyteVyhliad">Налаштуйте вигляд публічного меню</div></div>
         <button class="btn btn-accent btn-sm" onclick="saveDesign()">💾 Зберегти дизайн</button>
       </div>
       <div class="content">
@@ -545,7 +545,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div class="ds-panel" style="margin-bottom:1rem">
               <div class="ds-panel-head"><div class="ds-panel-title">🎨 Готові палітри</div></div>
               <div class="ds-section">
-                <span class="ds-label">Оберіть готовий стиль</span>
+                <span class="ds-label" data-i18n="obereditStyle">Оберіть готовий стиль</span>
                 <div class="palette-row" id="presets-row"></div>
               </div>
             </div>
@@ -555,7 +555,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div class="ds-panel-head"><div class="ds-panel-title">🌈 Кольори</div></div>
               <div class="ds-section">
                 <div class="ds-row">
-                  <div style="flex:1"><span class="ds-label">Головний колір (акцент)</span>
+                  <div style="flex:1"><span class="ds-label" data-i18n="accentColorLbl" data-i18n="holovnyyKolir">Головний колір (акцент)</span>
                     <div class="color-input-wrap">
                       <label class="color-swatch"><input type="color" id="c-accent" value="#C1440E" oninput="livePreview()"/></label>
                       <input class="color-hex" id="c-accent-hex" type="text" value="#C1440E" oninput="hexToColor('c-accent')"/>
@@ -563,7 +563,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   </div>
                 </div>
                 <div class="ds-row">
-                  <div style="flex:1"><span class="ds-label">Фон сторінки</span>
+                  <div style="flex:1"><span class="ds-label" data-i18n="fonStor">Фон сторінки</span>
                     <div class="color-input-wrap">
                       <label class="color-swatch"><input type="color" id="c-bg" value="#FBF8F4" oninput="livePreview()"/></label>
                       <input class="color-hex" id="c-bg-hex" type="text" value="#FBF8F4" oninput="hexToColor('c-bg')"/>
@@ -571,7 +571,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   </div>
                 </div>
                 <div class="ds-row">
-                  <div style="flex:1"><span class="ds-label" data-i18n="cardColor">Колір карток</span>
+                  <div style="flex:1"><span class="ds-label" data-i18n="cardColor" data-i18n="kolidKartok">Колір карток</span>
                     <div class="color-input-wrap">
                       <label class="color-swatch"><input type="color" id="c-card" value="#FFFFFF" oninput="livePreview()"/></label>
                       <input class="color-hex" id="c-card-hex" type="text" value="#FFFFFF" oninput="hexToColor('c-card')"/>
@@ -579,7 +579,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   </div>
                 </div>
                 <div class="ds-row">
-                  <div style="flex:1"><span class="ds-label" data-i18n="textColor">Колір тексту</span>
+                  <div style="flex:1"><span class="ds-label" data-i18n="textColor" data-i18n="kolirTekstu">Колір тексту</span>
                     <div class="color-input-wrap">
                       <label class="color-swatch"><input type="color" id="c-text" value="#1A1208" oninput="livePreview()"/></label>
                       <input class="color-hex" id="c-text-hex" type="text" value="#1A1208" oninput="hexToColor('c-text')"/>
@@ -594,7 +594,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div class="ds-panel-head"><div class="ds-panel-title">🔤 Шрифти</div></div>
               <div class="ds-section">
                 <div class="field-row">
-                  <span class="ds-label" data-i18n="headFont">Шрифт заголовків</span>
+                  <span class="ds-label" data-i18n="headFont" data-i18n="shrShryftZahl">Шрифт заголовків</span>
                   <select id="font-head" onchange="livePreview()">
                     <option value="Playfair Display">Playfair Display — класичний</option>
                     <option value="Space Grotesk">Space Grotesk — сучасний</option>
@@ -607,7 +607,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   <div class="font-preview" id="font-head-preview">Смачна Їжа</div>
                 </div>
                 <div class="field-row">
-                  <span class="ds-label">Шрифт тексту</span>
+                  <span class="ds-label" data-i18n="shrShryftTekst">Шрифт тексту</span>
                   <select id="font-body" onchange="livePreview()">
                     <option value="DM Sans">DM Sans</option>
                     <option value="Inter">Inter</option>
@@ -618,7 +618,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   </select>
                 </div>
                 <div class="field-row">
-                  <span class="ds-label" data-i18n="fontSize">Розмір шрифту</span>
+                  <span class="ds-label" data-i18n="fontSize" data-i18n="rozmerShryft">Розмір шрифту</span>
                   <div class="range-row">
                     <input type="range" id="font-size" min="13" max="18" value="15" oninput="livePreview();document.getElementById('font-size-val').textContent=this.value+'px'"/>
                     <span class="range-val" id="font-size-val">15px</span>
@@ -631,12 +631,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div class="ds-panel" style="margin-bottom:1rem">
               <div class="ds-panel-head"><div class="ds-panel-title">🖼️ Логотип та банер</div></div>
               <div class="ds-section">
-                <span class="ds-label">Логотип (URL або emoji)</span>
+                <span class="ds-label" data-i18n="lohotypeURL">Логотип (URL або emoji)</span>
                 <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
                   <input id="logo-emoji" type="text" placeholder="🍣" maxlength="2" style="width:60px;text-align:center;font-size:1.3rem" oninput="livePreview()"/>
                   <input id="logo-url" type="text" placeholder="https://... (URL зображення)" oninput="livePreview()"/>
                 </div>
-                <span class="ds-label">Банер-зображення (URL)</span>
+                <span class="ds-label" data-i18n="banerURL">Банер-зображення (URL)</span>
                 <input id="banner-url" type="text" placeholder="https://... (широке фото закладу)" oninput="livePreview()" style="margin-bottom:.5rem"/>
                 <div style="display:flex;align-items:center;gap:.5rem;margin-top:.375rem">
                   <span class="ds-label" style="margin:0">Висота банера</span>
@@ -673,19 +673,19 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div class="ds-panel-head"><div class="ds-panel-title">📐 Розмітка</div></div>
               <div class="ds-section">
                 <div class="toggle-row">
-                  <span class="toggle-label" data-i18n="showPrices">Показувати ціни</span>
+                  <span class="toggle-label" data-i18n="showPrices" data-i18n="pokazTsiny">Показувати ціни</span>
                   <button class="toggle on" id="toggle-prices" onclick="this.classList.toggle('on');livePreview()"></button>
                 </div>
                 <div class="toggle-row" style="margin-top:.5rem">
-                  <span class="toggle-label">Показувати описи</span>
+                  <span class="toggle-label" data-i18n="pokazOpys">Показувати описи</span>
                   <button class="toggle on" id="toggle-desc" onclick="this.classList.toggle('on');livePreview()"></button>
                 </div>
                 <div class="toggle-row" style="margin-top:.5rem">
-                  <span class="toggle-label" data-i18n="showWeight">Показувати вагу/об'єм</span>
+                  <span class="toggle-label" data-i18n="showWeight" data-i18n="pokazVahu">Показувати вагу/об'єм</span>
                   <button class="toggle on" id="toggle-weight" onclick="this.classList.toggle('on');livePreview()"></button>
                 </div>
                 <div class="field-row" style="margin-top:.75rem">
-                  <span class="ds-label" data-i18n="cardRadius">Заокруглення карток</span>
+                  <span class="ds-label" data-i18n="cardRadius" data-i18n="zaokrKartok">Заокруглення карток</span>
                   <div class="range-row">
                     <input type="range" id="card-radius" min="0" max="24" value="12" oninput="livePreview();document.getElementById('radius-val').textContent=this.value+'px'"/>
                     <span class="range-val" id="radius-val">12px</span>
@@ -699,7 +699,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div class="preview-wrap">
             <div class="ds-panel">
               <div class="ds-panel-head">
-                <div class="ds-panel-title" data-i18n="preview">📱 Попередній перегляд</div>
+                <div class="ds-panel-title" data-i18n="preview" data-i18n="zhyvyyPerehliad">📱 Попередній перегляд</div>
                 <div style="font-size:11px;color:var(--muted)">Live</div>
               </div>
               <div style="padding:1rem">
@@ -737,10 +737,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                     </div>
                   </div>
                 </div>
-                <div class="preview-label" data-i18n="publicMenu">Публічне меню клієнта</div>
+                <div class="preview-label" data-i18n="publicMenu" data-i18n="publichneMenu">Публічне меню клієнта</div>
               </div>
               <div class="ds-save-bar">
-                <div style="font-size:12px;color:var(--muted)" data-i18n="unsavedChanges">Зміни не збережені</div>
+                <div style="font-size:12px;color:var(--muted)" data-i18n="unsavedChanges" data-i18n="unsavedChanges" data-i18n="zminyNezbereheni">Зміни не збережені</div>
                 <button class="btn btn-accent btn-sm" onclick="saveDesign()" data-i18n="save">${t('save')}</button>
               </div>
             </div>
@@ -752,9 +752,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <!-- PAYMENTS -->
     <div id="t-payments" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title" data-i18n="payments">💳 Платежі</div><div class="page-sub" data-i18n="paymentsDesc">Налаштуйте способи оплати для клієнтів</div></div>
+        <div><div class="page-title" data-i18n="payments">💳 Платежі</div><div class="page-sub" data-i18n="paymentsDesc" data-i18n="nalashtVyhliad">Налаштуйте способи оплати для клієнтів</div></div>
         <div style="display:flex;gap:.5rem">
-          <button class="btn btn-outline btn-sm" onclick="notify('Тест-замовлення відправлено!','ok')">🧪 Тест оплати</button>
+          <button class="btn btn-outline btn-sm" onclick="notify('Тест-замовлення відправлено!','ok')" data-i18n="testOplatu">🧪 Тест оплати</button>
           <button class="btn btn-accent btn-sm" onclick="savePayments()" data-i18n="save">${t('save')}</button>
         </div>
       </div>
@@ -772,18 +772,18 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div class="settings-section" style="margin-bottom:1rem">
           <h3>Режим оплати</h3>
           <div class="pay-mode-wrap">
-            <div class="pay-mode-title">Коли клієнт оплачує?</div>
+            <div class="pay-mode-title" data-i18n="kolyKlient">Коли клієнт оплачує?</div>
             <div class="mode-option selected" id="mode-instant" onclick="selectMode('instant')">
               <div class="mode-radio on" id="radio-instant"></div>
               <div class="mode-text">
-                <div class="mode-label">Одразу при замовленні</div>
+                <div class="mode-label" data-i18n="odrazu">Одразу при замовленні</div>
                 <div class="mode-sub">Клієнт обирає страви → обирає провайдера → оплачує → замовлення йде в касу. Рекомендовано для доставки.</div>
               </div>
             </div>
             <div class="mode-option" id="mode-after" onclick="selectMode('after')">
               <div class="mode-radio" id="radio-after"></div>
               <div class="mode-text">
-                <div class="mode-label">Після підтвердження закладом</div>
+                <div class="mode-label" data-i18n="pislyaPidtverdzh">Після підтвердження закладом</div>
                 <div class="mode-sub">Клієнт замовляє → заклад підтверджує → клієнт отримує посилання на оплату. Підходить для залів.</div>
               </div>
             </div>
@@ -797,7 +797,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           </div>
           <div class="toggle-row" style="margin-top:.75rem">
             <div>
-              <div style="font-size:13px;font-weight:500">Дозволити оплату готівкою / при отриманні</div>
+              <div style="font-size:13px;font-weight:500" data-i18n="allowCash" data-i18n="dozvolCash">Дозволити оплату готівкою / при отриманні</div>
               <div style="font-size:11px;color:var(--muted);margin-top:2px">Клієнт може обрати "Оплата при отриманні" замість онлайн-оплати</div>
             </div>
             <label class="sw"><input type="checkbox" id="allow-cash" checked/><span class="sw-slider"></span></label>
@@ -806,7 +806,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- PROVIDERS -->
         <div class="settings-section" style="margin-bottom:1rem">
-          <h3>Платіжні провайдери</h3>
+          <h3 data-i18n="platPayProvaydery">Платіжні провайдери</h3>
           <div class="pay-grid">
 
             <!-- LIQPAY -->
@@ -840,8 +840,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   <button class="copy-btn" onclick="copyWebhook('liqpay')">📋 Копіювати</button>
                 </div>
                 <div style="margin-top:.5rem">
-                  <button class="btn btn-outline btn-sm" onclick="testPayment('liqpay')">🧪 Тест оплати</button>
-                  <button class="btn btn-outline btn-sm" style="margin-left:.375rem" onclick="verifyProvider('liqpay')" data-i18n="verifyKeys">✓ Перевірити ключі</button>
+                  <button class="btn btn-outline btn-sm" onclick="testPayment('liqpay')" data-i18n="testOplatu">🧪 Тест оплати</button>
+                  <button class="btn btn-outline btn-sm" style="margin-left:.375rem" onclick="verifyProvider('liqpay')" data-i18n="verifyKeys" data-i18n="perevirKlyuchi">✓ Перевірити ключі</button>
                 </div>
                 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
                   <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Visa/MC</span>
@@ -867,7 +867,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               </div>
               <div class="pay-fields" id="fields-mono" style="display:none">
                 <div>
-                  <label class="pay-field-label" data-i18n="merchantToken">Merchant Token</label>
+                  <label class="pay-field-label" data-i18n="merchantToken" data-i18n="merchantToken">Merchant Token</label>
                   <input type="password" placeholder="••••••••••••••••" id="mono-token"/>
                 </div>
                 <div style="font-size:11px;color:var(--muted)">
@@ -879,8 +879,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   <button class="copy-btn" onclick="copyWebhook('mono')">📋 Копіювати</button>
                 </div>
                 <div style="margin-top:.5rem">
-                  <button class="btn btn-outline btn-sm" onclick="testPayment('mono')">🧪 Тест оплати</button>
-                  <button class="btn btn-outline btn-sm" style="margin-left:.375rem" onclick="verifyProvider('mono')" data-i18n="verifyToken">✓ Перевірити токен</button>
+                  <button class="btn btn-outline btn-sm" onclick="testPayment('mono')" data-i18n="testOplatu">🧪 Тест оплати</button>
+                  <button class="btn btn-outline btn-sm" style="margin-left:.375rem" onclick="verifyProvider('mono')" data-i18n="verifyToken" data-i18n="perevirToken">✓ Перевірити токен</button>
                 </div>
                 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
                   <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Visa/MC</span>
@@ -922,7 +922,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   <button class="copy-btn" onclick="copyWebhook('wfp')">📋 Копіювати</button>
                 </div>
                 <div style="margin-top:.5rem">
-                  <button class="btn btn-outline btn-sm" onclick="testPayment('wfp')">🧪 Тест оплати</button>
+                  <button class="btn btn-outline btn-sm" onclick="testPayment('wfp')" data-i18n="testOplatu">🧪 Тест оплати</button>
                 </div>
                 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
                   <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Visa/MC</span>
@@ -1062,7 +1062,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <!-- POS INTEGRATION -->
     <div id="t-pos" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title" data-i18n="pos">🖥️ POS-інтеграція</div><div class="page-sub">Синхронізація замовлень з касовими системами</div></div>
+        <div><div class="page-title" data-i18n="pos">🖥️ POS-інтеграція</div><div class="page-sub" data-i18n="synkhrZamov">Синхронізація замовлень з касовими системами</div></div>
         <button class="btn btn-accent btn-sm" onclick="savePOS()" data-i18n="save">${t('save')}</button>
       </div>
       <div class="content">
@@ -1074,10 +1074,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         </div>
 
         <div class="settings-section" style="margin-bottom:1rem">
-          <h3>Налаштування синхронізації</h3>
+          <h3 data-i18n="nalashtSynkh">Налаштування синхронізації</h3>
           <div class="sync-row">
             <div>
-              <div style="font-size:13px;font-weight:500">Передавати замовлення в POS</div>
+              <div style="font-size:13px;font-weight:500" data-i18n="peredatyVPOS">Передавати замовлення в POS</div>
               <div style="font-size:11px;color:var(--muted);margin-top:2px">Одразу після підтвердження оплати або розміщення замовлення</div>
             </div>
             <label class="sw"><input type="checkbox" id="pos-sync" checked/><span class="sw-slider"></span></label>
@@ -1107,14 +1107,14 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div class="pos-logo-row">
               <div class="pos-logo" style="background:#FEECDC">🍽️</div>
               <div>
-                <div class="pos-name" data-i18n="posterPOS">Poster POS</div>
+                <div class="pos-name" data-i18n="posterPOS" data-i18n="posterPOS">Poster POS</div>
                 <div class="pos-ver">joinposter.com · REST API v2</div>
               </div>
-              <span class="pos-status off" id="poster-status">Не підключено</span>
+              <span class="pos-status off" id="poster-status" data-i18n="nepidklyucheno">Не підключено</span>
             </div>
             <div class="pos-fields">
               <div>
-                <label class="pay-field-label">Обліковий запис Poster</label>
+                <label class="pay-field-label" data-i18n="oblZapysPoster">Обліковий запис Poster</label>
                 <input type="text" placeholder="myrestaurant (частина URL)" id="poster-account"/>
               </div>
               <div>
@@ -1135,12 +1135,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             </div>
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
               <button class="btn btn-outline btn-sm" onclick="testPOS('poster')">🧪 Тест</button>
-              <button class="btn btn-accent btn-sm" onclick="connectPOS('poster')">Підключити</button>
+              <button class="btn btn-accent btn-sm" onclick="connectPOS('poster')" data-i18n="pidklyuchyty">Підключити</button>
               <button class="btn btn-outline btn-sm" onclick="showPosterWebhook()">🔗 Webhook</button>
-              <button class="btn btn-outline btn-sm" onclick="syncTablesFromPoster()" data-i18n="syncTables">🪑 Синх. столи</button>
+              <button class="btn btn-outline btn-sm" onclick="syncTablesFromPoster()" data-i18n="syncTables" data-i18n="synkhrStoly">🪑 Синх. столи</button>
             </div>
             <div style="margin-top:.875rem">
-              <div class="pay-field-label">Журнал синхронізації</div>
+              <div class="pay-field-label" data-i18n="syncLog" data-i18n="synkhrLog">Журнал синхронізації</div>
               <div class="pos-sync-log" id="log-poster">
                 <div class="log-info">── Очікування підключення ──</div>
               </div>
@@ -1155,7 +1155,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <div class="pos-name">Syrve (iiko)</div>
                 <div class="pos-ver">syrve.online · REST API v1</div>
               </div>
-              <span class="pos-status off" id="syrve-status">Не підключено</span>
+              <span class="pos-status off" id="syrve-status" data-i18n="nepidklyucheno">Не підключено</span>
             </div>
             <div class="pos-fields">
               <div>
@@ -1184,12 +1184,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             </div>
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
               <button class="btn btn-outline btn-sm" onclick="testPOS('syrve')">🧪 Тест</button>
-              <button class="btn btn-accent btn-sm" onclick="connectPOS('syrve')">Підключити</button>
-              <button class="btn btn-outline btn-sm" onclick="syncSyrveTables()" data-i18n="syncTables">🪑 Синх. столи</button>
-              <button class="btn btn-outline btn-sm" onclick="syncSyrveMenu()" data-i18n="syncMenu">🍽️ Синх. меню</button>
+              <button class="btn btn-accent btn-sm" onclick="connectPOS('syrve')" data-i18n="pidklyuchyty">Підключити</button>
+              <button class="btn btn-outline btn-sm" onclick="syncSyrveTables()" data-i18n="syncTables" data-i18n="synkhrStoly">🪑 Синх. столи</button>
+              <button class="btn btn-outline btn-sm" onclick="syncSyrveMenu()" data-i18n="syncMenu" data-i18n="synkhrMenu">🍽️ Синх. меню</button>
             </div>
             <div style="margin-top:.875rem">
-              <div class="pay-field-label">Журнал синхронізації</div>
+              <div class="pay-field-label" data-i18n="syncLog" data-i18n="synkhrLog">Журнал синхронізації</div>
               <div class="pos-sync-log" id="log-syrve">
                 <div class="log-info">── Очікування підключення ──</div>
               </div>
@@ -1237,7 +1237,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div class="topbar">
         <div>
           <div class="page-title" data-i18n="customers" data-i18n="customers">👥 Клієнти</div>
-          <div class="page-sub" id="customers-sub" data-i18n="loading">Завантаження...</div>
+          <div class="page-sub" id="customers-sub" data-i18n="loading" data-i18n="zavantazhennya">Завантаження...</div>
         </div>
         <div style="display:flex;gap:.5rem">
           <input type="text" id="customer-search" placeholder="Пошук за ім'ям або телефоном..." style="width:220px" oninput="filterCustomers()"/>
@@ -1258,9 +1258,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <thead>
                 <tr>
                   <th data-i18n="clientCol">Клієнт</th>
-                  <th data-i18n="venuePhone">Телефон</th>
+                  <th data-i18n="venuePhone" data-i18n="telefon">Телефон</th>
                   <th>Замовлень</th>
-                  <th>Витрачено</th>
+                  <th data-i18n="vitracheno">Витрачено</th>
                   <th data-i18n="avgCheck" data-i18n="avgCheck">${t('avgCheck')}</th>
                   <th data-i18n="firstOrder">${t('firstOrder')}</th>
                   <th>${t('lastOrder')}</th>
@@ -1280,7 +1280,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
           <div>
             <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:600">💳 Підписка та білінг</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px" id="billing-sub" data-i18n="loading">Завантаження...</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px" id="billing-sub" data-i18n="loading" data-i18n="zavantazhennya">Завантаження...</div>
           </div>
         </div>
 
@@ -1357,7 +1357,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           </div>
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem">
             <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.5rem">📊 Використання</div>
-            <div style="font-size:13px;color:var(--muted)" id="usage-info" data-i18n="loading">Завантаження...</div>
+            <div style="font-size:13px;color:var(--muted)" id="usage-info" data-i18n="loading" data-i18n="zavantazhennya">Завантаження...</div>
           </div>
         </div>
 
@@ -1383,7 +1383,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
     <div id="t-ordering" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title">📋 Налаштування замовлень</div><div class="page-sub">Типи замовлень, доставка, години роботи</div></div>
+        <div><div class="page-title">📋 Налаштування замовлень</div><div class="page-sub" data-i18n="typy">Типи замовлень, доставка, години роботи</div></div>
         <button class="btn btn-accent btn-sm" onclick="saveOrderingSettings()" data-i18n="save">${t('save')}</button>
       </div>
       <div class="content">
@@ -1422,11 +1422,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div id="takeaway-fields">
               <div class="grid-2">
                 <div class="field-row">
-                  <label class="field-label">Мін. час готовності (хв)</label>
+                  <label class="field-label" data-i18n="minChasGot">Мін. час готовності (хв)</label>
                   <input type="number" id="ord-takeaway-min" value="40" placeholder="40"/>
                 </div>
                 <div class="field-row">
-                  <label class="field-label">Крок вибору часу (хв)</label>
+                  <label class="field-label" data-i18n="krokVybChas">Крок вибору часу (хв)</label>
                   <input type="number" id="ord-takeaway-step" value="15" placeholder="15"/>
                 </div>
               </div>
@@ -1437,7 +1437,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div id="takeaway-hours-fields" style="display:none;margin-top:.75rem">
                 <div class="grid-2">
                   <div class="field-row">
-                    <label class="field-label">Від</label>
+                    <label class="field-label" data-i18n="vid">Від</label>
                     <input type="time" id="ord-takeaway-from" value="10:00"/>
                   </div>
                   <div class="field-row">
@@ -1461,11 +1461,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div id="delivery-fields" style="display:none">
               <div class="grid-2">
                 <div class="field-row">
-                  <label class="field-label">Мінімальна сума замовлення (грн)</label>
+                  <label class="field-label" data-i18n="minSumaZamov">Мінімальна сума замовлення (грн)</label>
                   <input type="number" id="ord-delivery-min" placeholder="200"/>
                 </div>
                 <div class="field-row">
-                  <label class="field-label">Вартість доставки (грн)</label>
+                  <label class="field-label" data-i18n="deliveryCostGrn" data-i18n="varDostavky">Вартість доставки (грн)</label>
                   <input type="number" id="ord-delivery-price" placeholder="50"/>
                 </div>
               </div>
@@ -1474,7 +1474,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <input type="number" id="ord-delivery-time" value="60" placeholder="60"/>
               </div>
               <div class="toggle-row" style="margin-top:.5rem">
-                <div style="font-size:13px">Безкоштовна доставка від суми</div>
+                <div style="font-size:13px" data-i18n="freeDeliveryFrom" data-i18n="bezkoshtVid">Безкоштовна доставка від суми</div>
                 <label class="sw"><input type="checkbox" id="ord-delivery-free-toggle" onchange="toggleFreeDelivery(this.checked)"/><span class="sw-slider"></span></label>
               </div>
               <div id="free-delivery-field" style="display:none;margin-top:.5rem">
@@ -1490,7 +1490,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div id="delivery-hours-fields" style="display:none;margin-top:.75rem">
                 <div class="grid-2">
                   <div class="field-row">
-                    <label class="field-label">Від</label>
+                    <label class="field-label" data-i18n="vid">Від</label>
                     <input type="time" id="ord-delivery-from" value="10:00"/>
                   </div>
                   <div class="field-row">
@@ -1501,7 +1501,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               </div>
               <!-- ЗОНИ ДОСТАВКИ -->
               <div style="margin-top:1rem">
-                <label class="field-label">Зони доставки</label>
+                <label class="field-label" data-i18n="deliveryZones" data-i18n="zonyDost">Зони доставки</label>
                 <div id="delivery-zones-list" style="margin-bottom:.5rem"></div>
                 <button class="btn btn-outline btn-sm" onclick="addDeliveryZone()">+ Додати зону</button>
                 <div style="font-size:11px;color:var(--muted);margin-top:.375rem">
@@ -1517,7 +1517,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <h3>🍴 Прибори</h3>
           <div class="toggle-row">
             <div>
-              <div style="font-size:13px;font-weight:500">Запитувати кількість приборів</div>
+              <div style="font-size:13px;font-weight:500" data-i18n="askCutlery" data-i18n="zapy">Запитувати кількість приборів</div>
               <div style="font-size:11px;color:var(--muted);margin-top:2px">Клієнт вкаже скільки приборів потрібно або відмовиться від них</div>
             </div>
             <label class="sw"><input type="checkbox" id="ord-ask-cutlery" checked/><span class="sw-slider"></span></label>
@@ -1533,7 +1533,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div style="font-size:14px;font-weight:600;margin-bottom:.75rem">🪑 В закладі</div>
             <div class="grid-2">
               <div class="field-row">
-                <label class="field-label">Знижка (%)</label>
+                <label class="field-label" data-i18n="discountPct" data-i18n="znyzhdkaPct">Знижка (%)</label>
                 <input type="number" id="disc-dine-pct" placeholder="0" min="0" max="100"/>
               </div>
               <div class="field-row">
@@ -1542,7 +1542,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               </div>
             </div>
             <div class="field-row">
-              <label class="field-label">Назва знижки (відображається клієнту)</label>
+              <label class="field-label" data-i18n="nazvaZnyzhky">Назва знижки (відображається клієнту)</label>
               <input type="text" id="disc-dine-name" placeholder="Знижка в закладі"/>
             </div>
           </div>
@@ -1551,7 +1551,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div style="font-size:14px;font-weight:600;margin-bottom:.75rem">🥡 З собою</div>
             <div class="grid-2">
               <div class="field-row">
-                <label class="field-label">Знижка (%)</label>
+                <label class="field-label" data-i18n="discountPct" data-i18n="znyzhdkaPct">Знижка (%)</label>
                 <input type="number" id="disc-take-pct" placeholder="0" min="0" max="100"/>
               </div>
               <div class="field-row">
@@ -1569,7 +1569,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div style="font-size:14px;font-weight:600;margin-bottom:.75rem">🚗 Доставка</div>
             <div class="grid-2">
               <div class="field-row">
-                <label class="field-label">Знижка (%)</label>
+                <label class="field-label" data-i18n="discountPct" data-i18n="znyzhdkaPct">Знижка (%)</label>
                 <input type="number" id="disc-del-pct" placeholder="0" min="0" max="100"/>
               </div>
               <div class="field-row">
@@ -1589,7 +1589,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <h3>💳 Способи оплати замовлень</h3>
           <div class="toggle-row" style="margin-bottom:.625rem">
             <div>
-              <div style="font-size:13px;font-weight:500">Онлайн оплата (через підключений провайдер)</div>
+              <div style="font-size:13px;font-weight:500" data-i18n="dozvolOnline">Онлайн оплата (через підключений провайдер)</div>
             </div>
             <label class="sw"><input type="checkbox" id="ord-pay-online" checked/><span class="sw-slider"></span></label>
           </div>
@@ -1607,7 +1607,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <!-- SETTINGS -->
     <div id="t-settings" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title" data-i18n="settingsVenue">⚙️ Налаштування закладу</div><div class="page-sub">Інформація відображається у публічному меню</div></div>
+        <div><div class="page-title" data-i18n="settingsVenue">⚙️ Налаштування закладу</div><div class="page-sub" data-i18n="informatVidob">Інформація відображається у публічному меню</div></div>
         <button class="btn btn-accent btn-sm" onclick="saveSettings()">💾 Зберегти все</button>
       </div>
       <div class="content">
@@ -1617,27 +1617,27 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <h3>📋 Інформація про заклад</h3>
           <div class="grid-2">
             <div class="field-row span2">
-              <label class="field-label" data-i18n="venueName">Назва закладу</label>
+              <label class="field-label" data-i18n="venueName" data-i18n="nazvaZakladu">Назва закладу</label>
               <input id="set-name" type="text" placeholder="Моє Меню" oninput="document.getElementById('sb-venue-name').textContent=this.value"/>
             </div>
             <div class="field-row">
-              <label class="field-label">Слоган / кухня</label>
+              <label class="field-label" data-i18n="slohanKukhnya">Слоган / кухня</label>
               <input id="set-tag" type="text" placeholder="Японська кухня · Тернопіль"/>
             </div>
             <div class="field-row">
-              <label class="field-label" data-i18n="venueCity">Місто</label>
+              <label class="field-label" data-i18n="venueCity" data-i18n="misto">Місто</label>
               <input id="set-city" type="text" placeholder="Тернопіль"/>
             </div>
             <div class="field-row">
-              <label class="field-label" data-i18n="venuePhone">Телефон</label>
+              <label class="field-label" data-i18n="venuePhone" data-i18n="telefon">Телефон</label>
               <input id="set-phone" type="text" placeholder="+380 XX XXX XX XX"/>
             </div>
             <div class="field-row">
-              <label class="field-label" data-i18n="venueAddress">Адреса</label>
+              <label class="field-label" data-i18n="venueAddress" data-i18n="adresa">Адреса</label>
               <input id="set-addr" type="text" placeholder="вул. Руська, 12"/>
             </div>
             <div class="field-row span2">
-              <label class="field-label" data-i18n="venueHours">Години роботи</label>
+              <label class="field-label" data-i18n="venueHours" data-i18n="workHours" data-i18n="hodRoboty">Години роботи</label>
               <input id="set-hours" type="text" placeholder="Пн-Нд: 10:00 — 22:00"/>
             </div>
           </div>
@@ -1715,12 +1715,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 <div class="overlay" id="modal-item" onclick="closeModal('modal-item')">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-head">
-      <div class="modal-title" id="item-modal-t">Нова страва</div>
+      <div class="modal-title" id="item-modal-t" data-i18n="newDish" data-i18n="novaStrava">Нова страва</div>
       <button class="close-btn" onclick="closeModal('modal-item')">✕</button>
     </div>
     <div class="modal-grid">
       <div class="span2">
-        <label class="field-label">Фото страви</label>
+        <label class="field-label" data-i18n="fotoStravi">Фото страви</label>
         <div class="photo-upload-wrap" id="photo-wrap" onclick="document.getElementById('if-photo').click()">
           <img id="photo-preview" src="" alt="" style="display:none;width:100%;height:140px;object-fit:cover;border-radius:8px"/>
           <div id="photo-placeholder">
@@ -1729,7 +1729,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div style="font-size:10px;color:var(--muted);margin-top:2px">JPG, PNG, WebP — до 5 МБ</div>
           </div>
           <div id="photo-progress" style="display:none">
-            <div style="font-size:12px;color:var(--muted);margin-bottom:.5rem" data-i18n="loading">Завантаження...</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:.5rem" data-i18n="loading" data-i18n="zavantazhennya">Завантаження...</div>
             <div style="height:4px;background:var(--border);border-radius:2px">
               <div id="photo-progress-bar" style="height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .3s"></div>
             </div>
@@ -1744,16 +1744,16 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div style="font-size:11px;color:var(--muted);margin-top:.375rem">або вставте URL зображення:</div>
         <input id="if-photo-url-input" type="text" placeholder="https://..." style="margin-top:.25rem;font-size:12px" oninput="setPhotoFromUrl(this.value)"/>
       </div>
-      <div class="span2"><label class="field-label">Назва страви</label><input id="if-name" type="text" placeholder="Філадельфія класик"/></div>
-      <div class="span2"><label class="field-label">Опис</label><textarea id="if-desc" rows="2" placeholder="Свіжий лосось, вершковий сир..."></textarea></div>
-      <div><label class="field-label">Ціна (грн)</label><input id="if-price" type="number" placeholder="189"/></div>
-      <div><label class="field-label">Вага / обєм</label><input id="if-weight" type="text" placeholder="250 г"/></div>
+      <div class="span2"><label class="field-label" data-i18n="dishName" data-i18n="nazvaStravi">Назва страви</label><input id="if-name" type="text" placeholder="Філадельфія класик"/></div>
+      <div class="span2"><label class="field-label" data-i18n="opys">Опис</label><textarea id="if-desc" rows="2" placeholder="Свіжий лосось, вершковий сир..."></textarea></div>
+      <div><label class="field-label" data-i18n="tsina">Ціна (грн)</label><input id="if-price" type="number" placeholder="189"/></div>
+      <div><label class="field-label" data-i18n="weightVol">Вага / обєм</label><input id="if-weight" type="text" placeholder="250 г"/></div>
       <div><label class="field-label">Категорія</label><select id="if-cat"></select></div>
-      <div><label class="field-label">Артикул / код</label><input id="if-sku" type="text" placeholder="необовязково"/></div>
+      <div><label class="field-label" data-i18n="skuCode" data-i18n="artykulKod">Артикул / код</label><input id="if-sku" type="text" placeholder="необовязково"/></div>
 
       <!-- ДОСТУПНІСТЬ ПО ТИПАХ ЗАМОВЛЕННЯ -->
       <div class="span2">
-        <label class="field-label">Доступність та ціна за типом замовлення</label>
+        <label class="field-label" data-i18n="availByType" data-i18n="dostupnistTsina">Доступність та ціна за типом замовлення</label>
         <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.375rem">
 
           <!-- В ЗАКЛАДІ -->
@@ -1763,9 +1763,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <label class="sw"><input type="checkbox" id="if-avail-dine" checked/><span class="sw-slider"></span></label>
             </div>
             <div style="display:flex;align-items:center;gap:.5rem">
-              <span style="font-size:12px;color:var(--muted);white-space:nowrap">Окрема ціна:</span>
+              <span style="font-size:12px;color:var(--muted);white-space:nowrap" data-i18n="okremaTs">Окрема ціна:</span>
               <input id="if-price-dine" type="number" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
-              <span style="font-size:11px;color:var(--muted)">грн</span>
+              <span style="font-size:11px;color:var(--muted)" data-i18n="hrn">грн</span>
             </div>
           </div>
 
@@ -1776,9 +1776,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <label class="sw"><input type="checkbox" id="if-avail-take" checked/><span class="sw-slider"></span></label>
             </div>
             <div style="display:flex;align-items:center;gap:.5rem">
-              <span style="font-size:12px;color:var(--muted);white-space:nowrap">Окрема ціна:</span>
+              <span style="font-size:12px;color:var(--muted);white-space:nowrap" data-i18n="okremaTs">Окрема ціна:</span>
               <input id="if-price-take" type="number" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
-              <span style="font-size:11px;color:var(--muted)">грн</span>
+              <span style="font-size:11px;color:var(--muted)" data-i18n="hrn">грн</span>
             </div>
           </div>
 
@@ -1789,16 +1789,16 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <label class="sw"><input type="checkbox" id="if-avail-del" checked/><span class="sw-slider"></span></label>
             </div>
             <div style="display:flex;align-items:center;gap:.5rem">
-              <span style="font-size:12px;color:var(--muted);white-space:nowrap">Окрема ціна:</span>
+              <span style="font-size:12px;color:var(--muted);white-space:nowrap" data-i18n="okremaTs">Окрема ціна:</span>
               <input id="if-price-del" type="number" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
-              <span style="font-size:11px;color:var(--muted)">грн</span>
+              <span style="font-size:11px;color:var(--muted)" data-i18n="hrn">грн</span>
             </div>
           </div>
         </div>
       </div>
 
       <div class="span2">
-        <label class="field-label">Алергени (оберіть всі що є)</label>
+        <label class="field-label" data-i18n="allergensPick" data-i18n="alerhenyOberit">Алергени (оберіть всі що є)</label>
         <div id="allergen-checkboxes" style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.375rem"></div>
       </div>
 
@@ -1838,7 +1838,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         </div>
       </div>
     </div>
-    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveItem()">Зберегти страву</button>
+    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveItem()" data-i18n="saveDish" data-i18n="zberhStravu">Зберегти страву</button>
   </div>
 </div>
 
@@ -1848,7 +1848,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 <div class="overlay" id="modal-table-detail" onclick="if(event.target===this)closeModal('modal-table-detail')">
   <div class="modal" style="max-width:480px">
     <div class="modal-head">
-      <div class="modal-title" id="table-detail-title">Стіл</div>
+      <div class="modal-title" id="table-detail-title" data-i18n="stiltsi">Стіл</div>
       <button class="modal-close" onclick="closeModal('modal-table-detail')">✕</button>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding:1rem">
@@ -1864,13 +1864,13 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
       <!-- СТАТУС І ДІЇ -->
       <div>
-        <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem">Статус столу</div>
+        <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem" data-i18n="statusStolu">Статус столу</div>
         <div id="table-status-display" style="font-weight:600;font-size:15px;margin-bottom:1rem"></div>
 
         <div style="display:flex;flex-direction:column;gap:.375rem">
           <button class="btn btn-success btn-sm" onclick="setTableStatus('occupied')">🪑 Відкрити стіл</button>
           <button class="btn btn-outline btn-sm" onclick="setTableStatus('free')" data-i18n="tableFreeBtn">${t('tableFreeBtn')}</button>
-          <button class="btn btn-accent btn-sm" onclick="markPaid()" data-i18n="tablePaid">💳 Оплачено</button>
+          <button class="btn btn-accent btn-sm" onclick="markPaid()" data-i18n="tablePaid" data-i18n="oplaCheno">💳 Оплачено</button>
         </div>
       </div>
     </div>
@@ -1880,7 +1880,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem" data-i18n="activeOrders">${t('activeOrders')}</div>
       <div id="table-order-lines"></div>
       <div style="display:flex;justify-content:space-between;font-weight:600;border-top:1px solid var(--border);padding-top:.5rem;margin-top:.5rem">
-        <span>Разом:</span><span id="table-order-total">—</span>
+        <span data-i18n="razom">Разом:</span><span id="table-order-total">—</span>
       </div>
     </div>
   </div>
@@ -1889,15 +1889,15 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 <div class="overlay" id="modal-cat" onclick="closeModal('modal-cat')">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-head">
-      <div class="modal-title" id="cat-modal-t">Нова категорія</div>
+      <div class="modal-title" id="cat-modal-t" data-i18n="newCat" data-i18n="novaKatehoriya">Нова категорія</div>
       <button class="close-btn" onclick="closeModal('modal-cat')">✕</button>
     </div>
     <div class="modal-grid">
-      <div class="span2"><label class="field-label">Назва</label><input id="cf-name" type="text" placeholder="Роли"/></div>
+      <div class="span2"><label class="field-label" data-i18n="nazva">Назва</label><input id="cf-name" type="text" placeholder="Роли"/></div>
       <div><label class="field-label">Emoji</label><input id="cf-emoji" type="text" placeholder="🌀" maxlength="2"/></div>
       <div><label class="field-label">Порядок</label><input id="cf-order" type="number" placeholder="1"/></div>
     </div>
-    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveCat()">Зберегти</button>
+    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveCat()" data-i18n="zberehty">Зберегти</button>
   </div>
 </div>
 
@@ -1916,7 +1916,7 @@ var I18N = {
     translateAll:'🌐 Перекласти все меню', translating:'⏳ Перекладаємо...',
     translateDone:'✅ Меню перекладено!', language:'Мова інтерфейсу',
     name:'Назва', description:'Опис', price:'Ціна (грн)', category:'Категорія',
-    allCategories:'Всі категорії', search:'Пошук страви...',
+    allCategories:t('vsiKatehorii'), search:'Пошук страви...',
     addDish:'+ Страва', addCategory:'+ Категорія',
     refresh:'↺ Оновити', export:'📥 Excel',
     total:'Разом', noOrders:'Замовлень немає',
@@ -2007,16 +2007,16 @@ var I18N = {
     avgCheck:'Сер. чек',
     clientCol:'Клієнт',
     firstOrder:'Перше замовлення',
-    editDish:'Редагувати страву',
-    addItem:'Нова страва',
+    editDish:t('redahStravu'),
+    addItem:t('novaStrava'),
     saveDish:'💾 Зберегти страву',
-    editCat:'Редагувати категорію',
-    addCat:'Нова категорія',
+    editCat:t('redahKat'),
+    addCat:t('novaKatehoriya'),
     saveCat:'💾 Зберегти категорію',
-    itemsCount:'позицій',
+    itemsCount:t('itemsCount'),
     ordersCount:'замовлень',
     tablesCount:'столів',
-    clientsCount:'клієнтів'
+    clientsCount:t('povtornykh')
   },
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
@@ -2705,9 +2705,8 @@ async function initFirebase() {
     renderPresetsRow();
     loadDesignSettings();
     loadTablesFromFirestore();
-    // applyAdminLang вже викликається в loadSettings після читання Firestore
-    // Якщо мова не в Firestore — застосовуємо з localStorage
-    if(!document._langApplied) applyAdminLang(adminLang);
+    // Застосовуємо мову ПІСЛЯ того як весь контент відрендерено
+    applyAdminLang(adminLang);
     setTimeout(() => loadBilling(), 500);
   });
 }
@@ -2891,7 +2890,7 @@ async function loadItems(){
   try{const snap=await getDocs(collection(db,'venues',venueId,'items'));
   items=snap.docs.map(d=>({id:d.id,...d.data()}));
   renderItems();
-  document.getElementById('items-count-sub').textContent=items.length+' '+(t('itemsCount')||'позицій');}
+  document.getElementById('items-count-sub').textContent=items.length+' '+t('itemsCount');}
   catch(e){console.warn('loadItems:',e.message);}
 }
 
@@ -3016,7 +3015,7 @@ function renderItems(){
   const cf=document.getElementById('item-cat-filter').value;
   const q=document.getElementById('item-search').value.toLowerCase();
   const list=items.filter(i=>(!cf||i.category===cf)&&(!q||i.name.toLowerCase().includes(q)));
-  document.getElementById('items-count-sub').textContent=items.length+' '+(t('itemsCount')||'позицій');
+  document.getElementById('items-count-sub').textContent=items.length+' '+t('itemsCount');
   const sel=document.getElementById('item-cat-filter');
   const prev=sel.value;
   sel.innerHTML=`<option value="">${t('allCategories')}</option>`+cats.map(c=>`<option${c.name===prev?' selected':''}>${c.name}</option>`).join('');
@@ -3125,9 +3124,6 @@ async function loadSettings(){
     if(d.adminLang) {
       adminLang = d.adminLang;
       localStorage.setItem('mq_admin_lang', d.adminLang);
-      applyAdminLang(d.adminLang);
-      renderAdminLangSwitcher();
-      document._langApplied = true;
     }
     if(d.tagline)document.getElementById('set-tag').value=d.tagline;
     if(d.city)document.getElementById('set-city').value=d.city;
@@ -3357,14 +3353,14 @@ async function loadExistingMapping() {
 
 function renderMappingRows() {
   if(!items.length) {
-    document.getElementById('mapping-rows').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:.5rem">Спочатку додайте страви в меню</div>';
+    document.getElementById('mapping-rows').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:.5rem" data-i18n="spochatku">Спочатку додайте страви в меню</div>';
     return;
   }
 
   const posterOptions = posProducts.poster.length
     ? '<option value="">— не вибрано —</option>' + posProducts.poster.map(p =>
         `<option value="${p.id}">${p.name} (${p.category})</option>`).join('')
-    : '<option value="">Завантажте продукти з Poster</option>';
+    : '<option value="" data-i18n="zavantProduPoster">Завантажте продукти з Poster</option>';
 
   document.getElementById('mapping-rows').innerHTML = items.map(item => {
     const existing = currentMapping[item.id] || {};
@@ -3480,7 +3476,7 @@ let editStaffId=null;
 function renderTables(){
   const filtered=activeZone?tables.filter(t=>t.zone===activeZone):tables;
   const stMap={free:'ts-free',occupied:'ts-occupied',ordered:'ts-ordered',paid:'ts-paid'};
-  const stLabel={free:t('tableFree'),occupied:t('tableOccupied'),ordered:'Замовлено',paid:'Оплачено'};
+  const stLabel={free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('aktyvniZamovlennya'),paid:'Оплачено'};
   document.getElementById('tables-grid').innerHTML=filtered.map(t=>`
     <div class="table-card ${t.status}" onclick="openTableDetail('${t.id}')">
       <div class="table-num">${t.num}</div>
@@ -3501,7 +3497,7 @@ function filterZone(btn,zone){
 }
 function renderZoneTabs(){
   const wrap=document.getElementById('zone-tabs');
-  wrap.innerHTML=`<button class="zone-tab active" onclick="filterZone(this,'')">Всі зали</button>`
+  wrap.innerHTML=`<button class="zone-tab active" onclick="filterZone(this,'')" data-i18n="allHalls" data-i18n="vsiZaly">Всі зали</button>`
     +zones.map(z=>`<button class="zone-tab" onclick="filterZone(this,'${z}')">${z}</button>`).join('');
 }
 window.filterZone=filterZone;
@@ -3543,7 +3539,7 @@ window.openTableDetail = function(id) {
         <div style="font-size:11px;color:var(--muted);margin-bottom:.375rem">
           ${(o.items||[]).map(i=>`${i.name} ×${i.qty}`).join(', ')}
         </div>`).join('')
-    : '<div style="font-size:13px;color:var(--muted);text-align:center;padding:.75rem">Активних замовлень немає</div>';
+    : '<div style="font-size:13px;color:var(--muted);text-align:center;padding:.75rem" data-i18n="noActiveOrders" data-i18n="aktyvnZamovNemaye">Активних замовлень немає</div>';
 
   const totalAmount = tableOrders.reduce((s,o) => s + (o.total||0), 0);
   document.getElementById('table-order-total').textContent = totalAmount ? '₴' + totalAmount : '—';
@@ -3570,7 +3566,7 @@ window.setTableStatus = function(status) {
   if(!selectedTable) return;
   selectedTable.status = status;
   document.getElementById('table-status-display').textContent = 
-    {free:t('tableFree'),occupied:t('tableOccupied'),ordered:'Замовлено',paid:'Оплачено'}[status] || status;
+    {free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('aktyvniZamovlennya'),paid:'Оплачено'}[status] || status;
   renderTables();
   updateTableStatus(selectedTable.id, {status});
   notify({free:'Стіл звільнено',occupied:'Стіл відкрито',paid:'Стіл оплачено'}[status]||'Оновлено','ok');
@@ -3766,14 +3762,14 @@ async function loadPOSSettings(){
       document.getElementById('poster-account')&&(document.getElementById('poster-account').value=d.poster.account||'');
       document.getElementById('poster-token')&&(document.getElementById('poster-token').value=d.poster.token||'');
       document.getElementById('poster-spot')&&(document.getElementById('poster-spot').value=d.poster.spotId||'');
-      if(d.poster.enabled){document.getElementById('poster-status').textContent='Підключено';document.getElementById('poster-status').className='pos-status ok';document.getElementById('pos-card-poster').classList.add('connected');}
+      if(d.poster.enabled){document.getElementById('poster-status').textContent=t('pidklyucheno');document.getElementById('poster-status').className='pos-status ok';document.getElementById('pos-card-poster').classList.add('connected');}
     }
     if(d.syrve){
       document.getElementById('syrve-url')&&(document.getElementById('syrve-url').value=d.syrve.serverUrl||'');
       document.getElementById('syrve-login')&&(document.getElementById('syrve-login').value=d.syrve.login||'');
       document.getElementById('syrve-org')&&(document.getElementById('syrve-org').value=d.syrve.organizationId||'');
       document.getElementById('syrve-term')&&(document.getElementById('syrve-term').value=d.syrve.terminalGroupId||'');
-      if(d.syrve.enabled){document.getElementById('syrve-status').textContent='Підключено';document.getElementById('syrve-status').className='pos-status ok';document.getElementById('pos-card-syrve').classList.add('connected');}
+      if(d.syrve.enabled){document.getElementById('syrve-status').textContent=t('pidklyucheno');document.getElementById('syrve-status').className='pos-status ok';document.getElementById('pos-card-syrve').classList.add('connected');}
     }
   }catch(e){console.warn('loadPOSSettings:',e.message);}
 }
@@ -3795,7 +3791,7 @@ window.connectPOS=async function(sys){
     const res=await fetch(`${window.__CF_URL}/testPOSConnection`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,posSystem:sys})});
     const data=await res.json();
     if(!res.ok)throw new Error(data.error||'Помилка');
-    document.getElementById(sys+'-status').textContent='Підключено';
+    document.getElementById(sys+'-status').textContent=t('pidklyucheno');
     document.getElementById(sys+'-status').className='pos-status ok';
     document.getElementById('pos-card-'+sys).classList.add('connected');
     logEl.innerHTML+=`<div class="log-ok">[${now}] Підключено: ${data.name||sys}</div>`;
@@ -4062,7 +4058,7 @@ async function loadCustomers() {
     document.getElementById('cst-new').textContent = newCount;
     document.getElementById('cst-repeat').textContent = repeatCount;
     document.getElementById('cst-avg').textContent = avgSpend + ' ₴';
-    document.getElementById('customers-sub').textContent = allCustomers.length + ' '+(t('clientsCount')||'клієнтів');
+    document.getElementById('customers-sub').textContent = allCustomers.length + ' '+(t('clientsCount')||t('povtornykh'));
   } catch(e) { console.warn('loadCustomers:', e.message); }
 }
 
@@ -4080,7 +4076,7 @@ function renderCustomers(list) {
       <td style="color:var(--muted);font-size:12px">${fmt(c.firstOrderAt)}</td>
       <td style="color:var(--muted);font-size:12px">${fmt(c.lastOrderAt)}</td>
       <td><button class="btn btn-outline btn-sm" onclick="showCustomerOrders('${c.phone}','${c.name||'Гість'}')">Замовлення</button></td>
-    </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">Клієнтів ще немає</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem" data-i18n="klientivNemaye">Клієнтів ще немає</td></tr>';
 }
 
 window.filterCustomers = function() {
@@ -4452,29 +4448,19 @@ function applyAdminLang(lang) {
   adminLang = lang;
   localStorage.setItem('mq_admin_lang', lang);
 
-  // Навбар
-  const navMap = {
-    't-orders':'orders','t-items':'dishes','t-cats':'categories',
-    't-tables':'tables','t-design':'design','t-payments':'payments',
-    't-pos':'pos','t-customers':'customers','t-ordering':'ordering',
-    't-settings':'settings','t-subscription':'subscription',
-  };
-  document.querySelectorAll('.nav-item').forEach(btn => {
-    const raw = btn.getAttribute('onclick') || '';
-    const match = raw.match(/nav\(this,'([^']+)'\)/);
-    const tab = match ? match[1] : null;
-    if(tab && navMap[tab]) {
-      const badge = btn.querySelector('#new-badge');
-      btn.textContent = t(navMap[tab]);
-      if(badge) btn.appendChild(badge);
-    }
+  // Навбар — через data-i18n (badge зберігаємо)
+  document.querySelectorAll('.nav-item[data-i18n]').forEach(btn => {
+    const key = btn.getAttribute('data-i18n');
+    const badge = btn.querySelector('[id]');
+    btn.textContent = t(key);
+    if(badge) btn.appendChild(badge);
   });
 
   // data-i18n елементи
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     const val = t(key);
-    if(val !== key) el.textContent = val;
+    el.textContent = val; // завжди оновлюємо
   });
 
   // Кнопка перекладу меню
@@ -4550,12 +4536,12 @@ function renderAdminLangSwitcher() {
 
 // Переклад всього меню
 window.saveAdminLang = async function(lang) {
+  adminLang = lang;
   localStorage.setItem('mq_admin_lang', lang);
-  if(!db||!window.__FS) return;
-  const {doc, updateDoc} = window.__FS;
+  applyAdminLang(lang);
   try {
+    const {doc, updateDoc} = window.__FS;
     await updateDoc(doc(db,'venues',venueId,'settings','main'), { adminLang: lang });
-    renderAdminLangSwitcher();
   } catch(e) { console.warn('saveAdminLang:', e.message); }
 };
 
@@ -4593,7 +4579,7 @@ initFirebase();
       Після налаштування — коли ви позначаєте замовлення як виконане в Poster, статус автоматично оновиться в Mage QR.
     </div>
     <div style="background:var(--bg2);border-radius:8px;padding:1rem;margin-bottom:1rem">
-      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Ваш Webhook URL</div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem" data-i18n="webhookUrl" data-i18n="vasheWebhookURL">Ваш Webhook URL</div>
       <div id="poster-webhook-url" style="font-family:monospace;font-size:12px;word-break:break-all;color:var(--accent);cursor:pointer" onclick="copyWebhookUrl()">
         https://us-central1-mageqrrest.cloudfunctions.net/posterWebhook
       </div>
