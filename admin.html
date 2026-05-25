@@ -444,7 +444,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div class="stat"><div class="stat-val" id="st-tables-free">—</div><div class="stat-lbl" data-i18n="freeTablesLbl">${t('freeTablesLbl')}</div></div>
           <div class="stat"><div class="stat-val" id="st-tables-occ">—</div><div class="stat-lbl" data-i18n="occTablesLbl">${t('occTablesLbl')}</div></div>
           <div class="stat"><div class="stat-val" id="st-tables-rev">—</div><div class="stat-lbl" data-i18n="revenueToday">${t('revenueToday')}</div></div>
-          <div class="stat"><div class="stat-val" id="st-tips-today">—</div><div class="stat-lbl">Чайові сьогодні</div></div>
+          <div class="stat"><div class="stat-val" id="st-tips-today">—</div><div class="stat-lbl" data-i18n="tipsToday">Чайові сьогодні</div></div>
         </div>
 
         <div class="tables-toolbar">
@@ -453,7 +453,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           </div>
           <button class="btn btn-outline btn-sm" onclick="openAddZone()">+ Зал</button>
           <div style="margin-left:auto;display:flex;gap:.5rem;align-items:center">
-            <span style="font-size:12px;color:var(--muted)">Автооновлення:</span>
+            <span style="font-size:12px;color:var(--muted)" data-i18n="autoUpdateLbl">Автооновлення:</span>
             <label class="sw"><input type="checkbox" id="auto-refresh" checked/><span class="sw-slider"></span></label>
           </div>
         </div>
@@ -486,37 +486,37 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <h3>⚙️ Налаштування чайових</h3>
           <div class="toggle-row" style="margin-bottom:.875rem">
             <div>
-              <div style="font-size:13px;font-weight:500">Пропонувати чайові клієнтам</div>
+              <div style="font-size:13px;font-weight:500" data-i18n="offerTips">Пропонувати чайові клієнтам</div>
               <div style="font-size:11px;color:var(--muted);margin-top:2px">Після успішної оплати клієнт побачить пропозицію залишити чайові</div>
             </div>
             <label class="sw"><input type="checkbox" id="tips-enabled" checked/><span class="sw-slider"></span></label>
           </div>
           <div class="toggle-row" style="margin-bottom:.875rem">
             <div>
-              <div style="font-size:13px;font-weight:500">Клієнт обирає офіціанта</div>
+              <div style="font-size:13px;font-weight:500" data-i18n="clientChoosesWaiter">Клієнт обирає офіціанта</div>
               <div style="font-size:11px;color:var(--muted);margin-top:2px">Показувати список персоналу з фото для вибору отримувача чайових</div>
             </div>
             <label class="sw"><input type="checkbox" id="tips-choose-staff" checked/><span class="sw-slider"></span></label>
           </div>
           <div class="toggle-row" style="margin-bottom:.875rem">
             <div>
-              <div style="font-size:13px;font-weight:500">Автоматично призначати по столу</div>
+              <div style="font-size:13px;font-weight:500" data-i18n="autoAssignTable">Автоматично призначати по столу</div>
               <div style="font-size:11px;color:var(--muted);margin-top:2px">Якщо за столом закріплений офіціант — чайові йдуть автоматично йому</div>
             </div>
             <label class="sw"><input type="checkbox" id="tips-auto-assign"/><span class="sw-slider"></span></label>
           </div>
           <div class="field-row">
-            <label class="field-label">Розміри чайових за замовчуванням (%)</label>
+            <label class="field-label" data-i18n="tipSizes">Розміри чайових за замовчуванням (%)</label>
             <div style="display:flex;gap:.5rem">
               <input type="number" value="5" placeholder="%" style="width:70px"/>
               <input type="number" value="10" placeholder="%" style="width:70px"/>
               <input type="number" value="15" placeholder="%" style="width:70px"/>
               <input type="number" value="20" placeholder="%" style="width:70px"/>
             </div>
-            <div style="font-size:11px;color:var(--muted);margin-top:.25rem">Клієнт бачить ці варіанти плюс поле "Довільна сума"</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:.25rem" data-i18n="tipVariants">Клієнт бачить ці варіанти плюс поле "Довільна сума"</div>
           </div>
           <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:.75rem;font-size:12px;color:#92400E;margin-top:.75rem">
-            ⚠️ <strong>Чайові через Monobank:</strong> Додайте співробітників у кабінеті monobank acquiring → зверніться у підтримку mono → після підтвердження вкажіть <code>tipsEmployeeId</code> кожного офіціанта нижче. Мінімальна сума замовлення для показу чайових — 100 грн.
+            ⚠️ <strong data-i18n="tipsMonobank">Чайові через Monobank:</strong> Додайте співробітників у кабінеті monobank acquiring → зверніться у підтримку mono → після підтвердження вкажіть <code>tipsEmployeeId</code> кожного офіціанта нижче. Мінімальна сума замовлення для показу чайових — 100 грн.
           </div>
         </div>
 
@@ -594,7 +594,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div class="ds-panel-head"><div class="ds-panel-title">🔤 Шрифти</div></div>
               <div class="ds-section">
                 <div class="field-row">
-                  <span class="ds-label" data-i18n="headFont" data-i18n="headFont">Шрифт заголовків</span>
+                  <span class="ds-label" data-i18n="headFont" data-i18n="headFont" data-i18n="headFont">Шрифт заголовків</span>
                   <select id="font-head" onchange="livePreview()">
                     <option value="Playfair Display">Playfair Display — класичний</option>
                     <option value="Space Grotesk">Space Grotesk — сучасний</option>
@@ -607,7 +607,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   <div class="font-preview" id="font-head-preview">Смачна Їжа</div>
                 </div>
                 <div class="field-row">
-                  <span class="ds-label" data-i18n="bodyFont">Шрифт тексту</span>
+                  <span class="ds-label" data-i18n="bodyFont" data-i18n="bodyFont">Шрифт тексту</span>
                   <select id="font-body" onchange="livePreview()">
                     <option value="DM Sans">DM Sans</option>
                     <option value="Inter">Inter</option>
@@ -639,7 +639,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <span class="ds-label" data-i18n="bannerLbl">Банер-зображення (URL)</span>
                 <input id="banner-url" type="text" placeholder="https://... (широке фото закладу)" oninput="livePreview()" style="margin-bottom:.5rem"/>
                 <div style="display:flex;align-items:center;gap:.5rem;margin-top:.375rem">
-                  <span class="ds-label" style="margin:0">Висота банера</span>
+                  <span class="ds-label" style="margin:0" data-i18n="bannerHeight">Висота банера</span>
                   <div class="range-row" style="flex:1">
                     <input type="range" id="banner-h" min="60" max="200" value="120" oninput="livePreview();document.getElementById('banner-h-val').textContent=this.value+'px'"/>
                     <span class="range-val" id="banner-h-val">120px</span>
@@ -653,16 +653,16 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div class="ds-panel-head"><div class="ds-panel-title">🌄 Фон меню</div></div>
               <div class="ds-section">
                 <div class="toggle-row">
-                  <span class="toggle-label">Фонове зображення</span>
+                  <span class="toggle-label" data-i18n="bgImage">Фонове зображення</span>
                   <button class="toggle" id="toggle-bgimg" onclick="this.classList.toggle('on');livePreview()"></button>
                 </div>
                 <input id="bg-img-url" type="text" placeholder="https://... (URL фону)" oninput="livePreview()" style="margin:.5rem 0"/>
                 <div class="toggle-row" style="margin-top:.5rem">
-                  <span class="toggle-label">Розмита підложка (blur)</span>
+                  <span class="toggle-label" data-i18n="bgBlur">Розмита підложка (blur)</span>
                   <button class="toggle on" id="toggle-blur" onclick="this.classList.toggle('on');livePreview()"></button>
                 </div>
                 <div class="toggle-row" style="margin-top:.5rem">
-                  <span class="toggle-label">Темне затемнення</span>
+                  <span class="toggle-label" data-i18n="darkOverlay">Темне затемнення</span>
                   <button class="toggle" id="toggle-overlay" onclick="this.classList.toggle('on');livePreview()"></button>
                 </div>
               </div>
@@ -763,14 +763,14 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div class="test-badge">🔶 Тестовий режим активний — реальні платежі не проводяться</div>
 
         <div class="pay-stats">
-          <div class="pay-stat"><div class="pay-stat-val">₴48 290</div><div class="pay-stat-lbl">Оплачено онлайн (місяць)</div></div>
-          <div class="pay-stat"><div class="pay-stat-val">342</div><div class="pay-stat-lbl">Транзакцій</div></div>
-          <div class="pay-stat"><div class="pay-stat-val">96.4%</div><div class="pay-stat-lbl">Успішних платежів</div></div>
+          <div class="pay-stat"><div class="pay-stat-val">₴48 290</div><div class="pay-stat-lbl" data-i18n="paidOnlineMonth">Оплачено онлайн (місяць)</div></div>
+          <div class="pay-stat"><div class="pay-stat-val">342</div><div class="pay-stat-lbl" data-i18n="transactions">Транзакцій</div></div>
+          <div class="pay-stat"><div class="pay-stat-val">96.4%</div><div class="pay-stat-lbl" data-i18n="successPayments">Успішних платежів</div></div>
         </div>
 
         <!-- PAYMENT MODE -->
         <div class="settings-section" style="margin-bottom:1rem">
-          <h3>Режим оплати</h3>
+          <h3 data-i18n="paymentMode">Режим оплати</h3>
           <div class="pay-mode-wrap">
             <div class="pay-mode-title" data-i18n="paymentMode">Коли клієнт оплачує?</div>
             <div class="mode-option selected" id="mode-instant" onclick="selectMode('instant')">
@@ -790,7 +790,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div class="mode-option" id="mode-both" onclick="selectMode('both')">
               <div class="mode-radio" id="radio-both"></div>
               <div class="mode-text">
-                <div class="mode-label">Клієнт обирає сам</div>
+                <div class="mode-label" data-i18n="clientChoosesSelf">Клієнт обирає сам</div>
                 <div class="mode-sub">Обидва варіанти доступні. Клієнт бачить кнопки "Оплатити онлайн" та "Оплатити при отриманні".</div>
               </div>
             </div>
@@ -978,14 +978,14 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <h3>🧾 Фіскалізація та чеки</h3>
           <div class="toggle-row" style="margin-bottom:.875rem">
             <div>
-              <div style="font-size:13px;font-weight:500">Надсилати email-квитанцію клієнту</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:2px">Після успішної оплати клієнт отримає PDF-квитанцію</div>
+              <div style="font-size:13px;font-weight:500" data-i18n="sendEmailReceipt">Надсилати email-квитанцію клієнту</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="pdfReceiptNote">Після успішної оплати клієнт отримає PDF-квитанцію</div>
             </div>
             <label class="sw"><input type="checkbox" id="send-receipt" checked/><span class="sw-slider"></span></label>
           </div>
 
           <div style="background:var(--bg2);border-radius:10px;padding:1rem;margin-top:.875rem">
-            <div style="font-size:13px;font-weight:600;margin-bottom:.875rem">ПРРО — оберіть спосіб фіскалізації</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:.875rem" data-i18n="prroTitle">ПРРО — оберіть спосіб фіскалізації</div>
 
             <!-- Варіант 1: Через POS -->
             <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.875rem;margin-bottom:.625rem">
@@ -1006,7 +1006,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div class="toggle-row">
                 <div>
                   <div style="font-size:13px;font-weight:500">✅ Checkbox ПРРО</div>
-                  <div style="font-size:11px;color:var(--muted);margin-top:2px">Автоматичний фіскальний чек через API Checkbox</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="checkboxFiscal">Автоматичний фіскальний чек через API Checkbox</div>
                 </div>
                 <label class="sw"><input type="checkbox" id="fiscal-checkbox" onchange="toggleFiscalMethod('checkbox',this.checked)"/><span class="sw-slider"></span></label>
               </div>
@@ -1020,7 +1020,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   <input type="password" placeholder="••••••••" id="checkbox-pass"/>
                 </div>
                 <div class="field-row">
-                  <label class="field-label">Каса ID (cashier_id)</label>
+                  <label class="field-label" data-i18n="cashierId">Каса ID (cashier_id)</label>
                   <input type="text" placeholder="UUID каси з кабінету Checkbox" id="checkbox-cashier"/>
                 </div>
                 <div style="font-size:11px;color:var(--muted);margin-top:.25rem">
@@ -1035,7 +1035,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div class="toggle-row">
                 <div>
                   <div style="font-size:13px;font-weight:500">🕐 Vchasno ПРРО</div>
-                  <div style="font-size:11px;color:var(--muted);margin-top:2px">Фіскалізація через сервіс Vchasno.ua</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="vchasnoFiscal">Фіскалізація через сервіс Vchasno.ua</div>
                 </div>
                 <label class="sw"><input type="checkbox" id="fiscal-vchasno" onchange="toggleFiscalMethod('vchasno',this.checked)"/><span class="sw-slider"></span></label>
               </div>
@@ -1045,7 +1045,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   <input type="password" placeholder="••••••••••••••••" id="vchasno-key"/>
                 </div>
                 <div class="field-row">
-                  <label class="field-label">Касовий апарат ID</label>
+                  <label class="field-label" data-i18n="rroId">Касовий апарат ID</label>
                   <input type="text" placeholder="ID з кабінету Vchasno" id="vchasno-rro"/>
                 </div>
                 <div style="font-size:11px;color:var(--muted);margin-top:.25rem">
@@ -1068,9 +1068,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div class="content">
 
         <div class="pay-stats">
-          <div class="pay-stat"><div class="pay-stat-val">1 243</div><div class="pay-stat-lbl">Передано в POS (місяць)</div></div>
-          <div class="pay-stat"><div class="pay-stat-val">99.2%</div><div class="pay-stat-lbl">Успішних передач</div></div>
-          <div class="pay-stat"><div class="pay-stat-val">&lt;1s</div><div class="pay-stat-lbl">Середній час передачі</div></div>
+          <div class="pay-stat"><div class="pay-stat-val">1 243</div><div class="pay-stat-lbl" data-i18n="sentToPOSMonth">Передано в POS (місяць)</div></div>
+          <div class="pay-stat"><div class="pay-stat-val">99.2%</div><div class="pay-stat-lbl" data-i18n="successTransfers">Успішних передач</div></div>
+          <div class="pay-stat"><div class="pay-stat-val">&lt;1s</div><div class="pay-stat-lbl" data-i18n="avgTransferTime">Середній час передачі</div></div>
         </div>
 
         <div class="settings-section" style="margin-bottom:1rem">
@@ -1083,15 +1083,15 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <label class="sw"><input type="checkbox" id="pos-sync" checked/><span class="sw-slider"></span></label>
           </div>
           <div style="margin-top:1rem">
-            <label class="field-label">Передавати тільки оплачені замовлення</label>
+            <label class="field-label" data-i18n="sendOnlyPaid">Передавати тільки оплачені замовлення</label>
             <select id="pos-when">
-              <option value="paid">Тільки після підтвердження оплати</option>
-              <option value="placed">Одразу після розміщення (навіть без оплати)</option>
-              <option value="confirmed">Після підтвердження адміном</option>
+              <option value="paid" data-i18n="payAfterPayment">Тільки після підтвердження оплати</option>
+              <option value="placed" data-i18n="sendImmediately">Одразу після розміщення (навіть без оплати)</option>
+              <option value="confirmed" data-i18n="payAfterConfirm">Після підтвердження адміном</option>
             </select>
           </div>
           <div style="margin-top:.875rem">
-            <label class="field-label">Коментар до замовлення в POS</label>
+            <label class="field-label" data-i18n="posComment">Коментар до замовлення в POS</label>
             <select id="pos-comment-fmt">
               <option>Mage QR Rest #{{order_id}} · {{payment_method}}</option>
               <option>Онлайн-замовлення · стіл {{table}}</option>
@@ -1131,7 +1131,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               </div>
             </div>
             <div style="font-size:11px;color:var(--muted);margin-bottom:.75rem;background:var(--bg2);padding:.625rem;border-radius:6px;line-height:1.6">
-              <strong>Як підключити:</strong> Poster Admin → Додатки → Маркет → Mage QR Rest → Встановити → Скопіювати токен
+              <strong data-i18n="howToConnect">Як підключити:</strong> Poster Admin → Додатки → Маркет → Mage QR Rest → Встановити → Скопіювати токен
             </div>
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
               <button class="btn btn-outline btn-sm" onclick="testPOS('poster')">🧪 Тест</button>
@@ -1163,11 +1163,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <input type="text" placeholder="https://myrestaurant.syrve.online" id="syrve-url"/>
               </div>
               <div>
-                <label class="pay-field-label">Логін</label>
+                <label class="pay-field-label" data-i18n="loginLbl">Логін</label>
                 <input type="text" placeholder="api_user" id="syrve-login"/>
               </div>
               <div>
-                <label class="pay-field-label">Пароль</label>
+                <label class="pay-field-label" data-i18n="passwordLbl">Пароль</label>
                 <input type="password" placeholder="••••••••" id="syrve-pass"/>
               </div>
               <div>
@@ -1180,7 +1180,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               </div>
             </div>
             <div style="font-size:11px;color:var(--muted);margin-bottom:.75rem;background:var(--bg2);padding:.625rem;border-radius:6px;line-height:1.6">
-              <strong>Токен живе 1 год.</strong> Система автоматично оновлює його. Organization і Terminal ID знайдіть в Syrve Office → Ресторани → Загальні налаштування.
+              <strong data-i18n="tokenExpiry">Токен живе 1 год.</strong> Система автоматично оновлює його. Organization і Terminal ID знайдіть в Syrve Office → Ресторани → Загальні налаштування.
             </div>
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
               <button class="btn btn-outline btn-sm" onclick="testPOS('syrve')">🧪 Тест</button>
@@ -1220,7 +1220,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div id="mapping-status" style="font-size:12px;color:var(--muted);margin-bottom:.75rem"></div>
           <div id="mapping-table">
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem;padding:0 .5rem">
-              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Страва в меню</div>
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em" data-i18n="dishInMenu">Страва в меню</div>
               <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Poster (оберіть)</div>
               <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Syrve UUID</div>
             </div>
@@ -1240,7 +1240,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div class="page-sub" id="customers-sub" data-i18n="loading">Завантаження...</div>
         </div>
         <div style="display:flex;gap:.5rem">
-          <input type="text" id="customer-search" placeholder="Пошук за ім'ям або телефоном..." style="width:220px" oninput="filterCustomers()"/>
+          <input type="text" id="customer-search" data-i18n-ph="customerSearch" placeholder="Пошук за ім'ям або телефоном..." style="width:220px" oninput="filterCustomers()"/>
           <button class="btn btn-outline btn-sm" onclick="exportCustomersExcel()">📊 Excel</button>
           <button class="btn btn-outline btn-sm" onclick="loadCustomers()">↺</button>
         </div>
@@ -1279,7 +1279,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div class="content" style="padding-top:1.5rem">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
           <div>
-            <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:600">💳 Підписка та білінг</div>
+            <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:600" data-i18n="subscription">💳 Підписка та білінг</div>
             <div style="font-size:12px;color:var(--muted);margin-top:2px" id="billing-sub" data-i18n="loading" data-i18n="loading">Завантаження...</div>
           </div>
         </div>
@@ -1292,9 +1292,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.875rem">
               <div style="font-size:2rem">⏳</div>
               <div>
-                <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#92400E">Пробний період</div>
+                <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#92400E" data-i18n="trialPeriod">Пробний період</div>
                 <div style="font-family:var(--font-head);font-size:1.75rem;font-weight:700;color:#92400E;line-height:1" id="trial-days-big">—</div>
-                <div style="font-size:12px;color:#B45309" id="trial-days-label">днів залишилось</div>
+                <div style="font-size:12px;color:#B45309" id="trial-days-label" data-i18n="daysLeft">днів залишилось</div>
               </div>
             </div>
             <div style="height:8px;background:rgba(180,83,9,.15);border-radius:4px;margin-bottom:.75rem">
@@ -1308,14 +1308,14 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
           <!-- КАРТКА -->
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem">
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.875rem">💳 Спосіб оплати</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.875rem" data-i18n="paymentMethod">💳 Спосіб оплати</div>
 
             <!-- Немає картки -->
             <div id="no-card-block">
               <div style="background:var(--bg2);border:2px dashed var(--border2);border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:.875rem">
                 <div style="font-size:2rem;margin-bottom:.375rem">💳</div>
                 <div style="font-size:13px;font-weight:500">Картка не прив'язана</div>
-                <div style="font-size:11px;color:var(--muted);margin-top:.25rem">Для автоматичних щомісячних списань</div>
+                <div style="font-size:11px;color:var(--muted);margin-top:.25rem" data-i18n="autoMonthlyDesc">Для автоматичних щомісячних списань</div>
               </div>
               <button class="btn btn-accent" style="width:100%" onclick="bindCard()">
                 💳 Прив'язати картку
@@ -1346,33 +1346,33 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <!-- РЯД 2: Поточний тариф + Наступне списання -->
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem">
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem">
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.5rem">📦 Поточний тариф</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.5rem" data-i18n="currentPlan">📦 Поточний тариф</div>
             <div style="font-family:var(--font-head);font-size:1.3rem;font-weight:700" id="cur-plan-name">—</div>
             <div style="font-size:12px;color:var(--muted);margin-top:.25rem" id="cur-plan-desc">—</div>
           </div>
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem">
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.5rem">📅 Наступне списання</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.5rem" data-i18n="nextCharge">📅 Наступне списання</div>
             <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:700" id="next-charge-date">—</div>
             <div style="font-size:12px;color:var(--muted);margin-top:.25rem" id="next-charge-amount">—</div>
           </div>
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem">
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.5rem">📊 Використання</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.5rem" data-i18n="usageStats">📊 Використання</div>
             <div style="font-size:13px;color:var(--muted)" id="usage-info" data-i18n="loading" data-i18n="loading">Завантаження...</div>
           </div>
         </div>
 
         <!-- ВИБІР ТАРИФУ -->
         <div class="settings-section" id="plan-select-section">
-          <h3>🚀 Оберіть тариф</h3>
+          <h3 data-i18n="choosePlanTitle">🚀 Оберіть тариф</h3>
           <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Після вибору тарифу ви будете перенаправлені на сторінку оплати Monobank. Картка зберігається для автоматичних щомісячних списань.</p>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.875rem" id="billing-plan-cards"></div>
         </div>
 
         <!-- ІСТОРІЯ ПЛАТЕЖІВ -->
         <div class="settings-section">
-          <h3>🧾 Історія платежів</h3>
+          <h3 data-i18n="paymentHistory">🧾 Історія платежів</h3>
           <div id="billing-history-wrap">
-            <div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px">Платежів ще немає</div>
+            <div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px" data-i18n="noPayments">Платежів ще немає</div>
           </div>
         </div>
 
@@ -1391,20 +1391,20 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <!-- ТИПИ ЗАМОВЛЕНЬ -->
         <div class="settings-section">
           <h3>🍽️ Типи замовлень</h3>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Оберіть які типи замовлень приймає ваш заклад</p>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:1rem" data-i18n="chooseOrderTypes">Оберіть які типи замовлень приймає ваш заклад</p>
 
           <!-- В ЗАКЛАДІ -->
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.75rem">
             <div class="toggle-row" style="margin-bottom:.75rem">
               <div>
                 <div style="font-size:14px;font-weight:600">🪑 В закладі</div>
-                <div style="font-size:12px;color:var(--muted);margin-top:2px">Клієнт замовляє за столом</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px" data-i18n="dineInDesc">Клієнт замовляє за столом</div>
               </div>
               <label class="sw"><input type="checkbox" id="ord-dine-in" checked/><span class="sw-slider"></span></label>
             </div>
             <div id="dine-in-fields">
               <div class="field-row">
-                <label class="field-label">Кількість столів (для вибору столу клієнтом)</label>
+                <label class="field-label" data-i18n="tableCount">Кількість столів (для вибору столу клієнтом)</label>
                 <input type="number" id="ord-tables-count" placeholder="0 = не показувати вибір столу" value="0"/>
               </div>
             </div>
@@ -1415,7 +1415,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div class="toggle-row" style="margin-bottom:.75rem">
               <div>
                 <div style="font-size:14px;font-weight:600">🥡 З собою (самовинос)</div>
-                <div style="font-size:12px;color:var(--muted);margin-top:2px">Клієнт забирає замовлення сам</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px" data-i18n="takeawayDesc">Клієнт забирає замовлення сам</div>
               </div>
               <label class="sw"><input type="checkbox" id="ord-takeaway" checked/><span class="sw-slider"></span></label>
             </div>
@@ -1431,7 +1431,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 </div>
               </div>
               <div class="toggle-row" style="margin-top:.5rem">
-                <div style="font-size:13px">Окремі години роботи самовиносу</div>
+                <div style="font-size:13px" data-i18n="separateTakeawayHours">Окремі години роботи самовиносу</div>
                 <label class="sw"><input type="checkbox" id="ord-takeaway-custom-hours" onchange="toggleTakeawayHours(this.checked)"/><span class="sw-slider"></span></label>
               </div>
               <div id="takeaway-hours-fields" style="display:none;margin-top:.75rem">
@@ -1454,7 +1454,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div class="toggle-row" style="margin-bottom:.75rem">
               <div>
                 <div style="font-size:14px;font-weight:600">🚗 Доставка</div>
-                <div style="font-size:12px;color:var(--muted);margin-top:2px">Доставка кур'єром до клієнта</div>
+                <div style="font-size:12px;color:var(--muted);margin-top:2px" data-i18n="deliveryDesc">Доставка кур'єром до клієнта</div>
               </div>
               <label class="sw"><input type="checkbox" id="ord-delivery" onchange="toggleDeliveryFields(this.checked)"/><span class="sw-slider"></span></label>
             </div>
@@ -1470,7 +1470,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 </div>
               </div>
               <div class="field-row">
-                <label class="field-label">Мін. час доставки (хв від моменту замовлення)</label>
+                <label class="field-label" data-i18n="minDeliveryTime">Мін. час доставки (хв від моменту замовлення)</label>
                 <input type="number" id="ord-delivery-time" value="60" placeholder="60"/>
               </div>
               <div class="toggle-row" style="margin-top:.5rem">
@@ -1479,12 +1479,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               </div>
               <div id="free-delivery-field" style="display:none;margin-top:.5rem">
                 <div class="field-row">
-                  <label class="field-label">Безкоштовна доставка від (грн)</label>
+                  <label class="field-label" data-i18n="freeDeliveryFrom">Безкоштовна доставка від (грн)</label>
                   <input type="number" id="ord-delivery-free-from" placeholder="500"/>
                 </div>
               </div>
               <div class="toggle-row" style="margin-top:.5rem">
-                <div style="font-size:13px">Окремі години доставки</div>
+                <div style="font-size:13px" data-i18n="separateDeliveryHours">Окремі години доставки</div>
                 <label class="sw"><input type="checkbox" id="ord-delivery-custom-hours" onchange="toggleDeliveryHours(this.checked)"/><span class="sw-slider"></span></label>
               </div>
               <div id="delivery-hours-fields" style="display:none;margin-top:.75rem">
@@ -1537,7 +1537,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <input type="number" id="disc-dine-pct" placeholder="0" min="0" max="100"/>
               </div>
               <div class="field-row">
-                <label class="field-label">або фіксована сума (грн)</label>
+                <label class="field-label" data-i18n="orFixedSum">або фіксована сума (грн)</label>
                 <input type="number" id="disc-dine-fix" placeholder="0" min="0"/>
               </div>
             </div>
@@ -1555,12 +1555,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <input type="number" id="disc-take-pct" placeholder="0" min="0" max="100"/>
               </div>
               <div class="field-row">
-                <label class="field-label">або фіксована сума (грн)</label>
+                <label class="field-label" data-i18n="orFixedSum">або фіксована сума (грн)</label>
                 <input type="number" id="disc-take-fix" placeholder="0" min="0"/>
               </div>
             </div>
             <div class="field-row">
-              <label class="field-label">Назва знижки</label>
+              <label class="field-label" data-i18n="discountName">Назва знижки</label>
               <input type="text" id="disc-take-name" placeholder="Знижка на самовинос"/>
             </div>
           </div>
@@ -1573,12 +1573,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <input type="number" id="disc-del-pct" placeholder="0" min="0" max="100"/>
               </div>
               <div class="field-row">
-                <label class="field-label">або фіксована сума (грн)</label>
+                <label class="field-label" data-i18n="orFixedSum">або фіксована сума (грн)</label>
                 <input type="number" id="disc-del-fix" placeholder="0" min="0"/>
               </div>
             </div>
             <div class="field-row">
-              <label class="field-label">Назва знижки</label>
+              <label class="field-label" data-i18n="discountName">Назва знижки</label>
               <input type="text" id="disc-del-name" placeholder="Знижка на доставку"/>
             </div>
           </div>
@@ -1595,7 +1595,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           </div>
           <div class="toggle-row">
             <div>
-              <div style="font-size:13px;font-weight:500">Готівка / картка при отриманні</div>
+              <div style="font-size:13px;font-weight:500" data-i18n="cashOnDelivery">Готівка / картка при отриманні</div>
             </div>
             <label class="sw"><input type="checkbox" id="ord-pay-cash" checked/><span class="sw-slider"></span></label>
           </div>
@@ -1657,11 +1657,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div style="display:flex;flex-direction:column;gap:.75rem">
               <button class="btn btn-outline btn-sm" onclick="document.getElementById('logo-file').click()">📁 Завантажити фото</button>
               <div>
-                <label class="field-label">або URL зображення</label>
+                <label class="field-label" data-i18n="orImageURL">або URL зображення</label>
                 <input id="set-logo-url" type="text" placeholder="https://..." oninput="previewLogoUrl(this.value)"/>
               </div>
               <div>
-                <label class="field-label">або Emoji (якщо без фото)</label>
+                <label class="field-label" data-i18n="orEmoji">або Emoji (якщо без фото)</label>
                 <input id="set-logo-emoji" type="text" placeholder="🍣" maxlength="2" style="width:80px" oninput="previewLogoEmoji(this.value)"/>
               </div>
               <div id="logo-upload-status" style="font-size:12px;color:var(--muted)"></div>
@@ -1677,7 +1677,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <img id="banner-preview-img" src="" style="display:none;width:100%;height:100%;object-fit:cover"/>
               <div id="banner-placeholder" style="text-align:center;color:rgba(255,255,255,.7)">
                 <div style="font-size:1.5rem">📷</div>
-                <div style="font-size:12px;margin-top:.25rem">Натисніть щоб завантажити банер</div>
+                <div style="font-size:12px;margin-top:.25rem" data-i18n="clickUploadBanner">Натисніть щоб завантажити банер</div>
               </div>
             </div>
             <input type="file" id="banner-file" accept="image/*" style="display:none" onchange="handleBannerFile(this)"/>
@@ -1687,7 +1687,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <button class="btn btn-outline btn-sm" onclick="clearBanner()">✕ Видалити</button>
           </div>
           <div class="field-row">
-            <label class="field-label">або URL банеру</label>
+            <label class="field-label" data-i18n="orBannerURL">або URL банеру</label>
             <input id="set-banner-url" type="text" placeholder="https://..." oninput="previewBannerUrl(this.value)"/>
           </div>
           <div id="banner-upload-status" style="font-size:12px;color:var(--muted)"></div>
@@ -1725,7 +1725,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <img id="photo-preview" src="" alt="" style="display:none;width:100%;height:140px;object-fit:cover;border-radius:8px"/>
           <div id="photo-placeholder">
             <div style="font-size:2rem;margin-bottom:.375rem">📷</div>
-            <div style="font-size:12px;color:var(--muted)">Натисніть щоб завантажити фото</div>
+            <div style="font-size:12px;color:var(--muted)" data-i18n="clickUploadPhoto">Натисніть щоб завантажити фото</div>
             <div style="font-size:10px;color:var(--muted);margin-top:2px">JPG, PNG, WebP — до 5 МБ</div>
           </div>
           <div id="photo-progress" style="display:none">
@@ -1741,7 +1741,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <button class="btn btn-outline btn-sm" type="button" onclick="document.getElementById('if-photo').click()">📁 Вибрати файл</button>
           <button class="btn btn-outline btn-sm" type="button" id="photo-clear-btn" onclick="clearPhoto()" style="display:none">✕ Видалити фото</button>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:.375rem">або вставте URL зображення:</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:.375rem" data-i18n="orPasteURL">або вставте URL зображення:</div>
         <input id="if-photo-url-input" type="text" placeholder="https://..." style="margin-top:.25rem;font-size:12px" oninput="setPhotoFromUrl(this.value)"/>
       </div>
       <div class="span2"><label class="field-label" data-i18n="nazvaStravi" data-i18n="nazvaStravi">Назва страви</label><input id="if-name" type="text" placeholder="Філадельфія класик"/></div>
@@ -2003,7 +2003,75 @@ var I18N = {
     tableStatus:'Статус столу',
     tablesDesc:'Управління залом, QR-коди, чайові',
     venueInfoNote:'Інформація відображається у публічному меню',
-    autoUpdate:'Оновлюються автоматично'},
+    autoUpdate:'Оновлюються автоматично',
+    tipsToday:'Чайові сьогодні',
+    autoUpdateLbl:'Автооновлення:',
+    offerTips:'Пропонувати чайові клієнтам',
+    clientChoosesWaiter:'Клієнт обирає офіціанта',
+    autoAssignTable:'Автоматично призначати по столу',
+    tipSizes:'Розміри чайових за замовчуванням (%)',
+    tipVariants:'Клієнт бачить ці варіанти плюс поле "Довільна сума"',
+    tipsMonobank:'Чайові через Monobank:',
+    printAllQR:'Друк всіх QR',
+    addTable:'Додати стіл',
+    tipsStaff:'Чайові — статистика по персоналу',
+    bannerHeight:'Висота банера',
+    bgImage:'Фонове зображення',
+    bgBlur:'Розмита підложка (blur)',
+    darkOverlay:'Темне затемнення',
+    paidOnlineMonth:'Оплачено онлайн (місяць)',
+    transactions:'Транзакцій',
+    successPayments:'Успішних платежів',
+    clientChoosesSelf:'Клієнт обирає сам',
+    sendEmailReceipt:'Надсилати email-квитанцію клієнту',
+    pdfReceiptNote:'Після успішної оплати клієнт отримає PDF-квитанцію',
+    prroTitle:'ПРРО — оберіть спосіб фіскалізації',
+    checkboxFiscal:'Автоматичний фіскальний чек через API Checkbox',
+    cashierId:'Каса ID (cashier_id)',
+    vchasnoFiscal:'Фіскалізація через сервіс Vchasno.ua',
+    rroId:'Касовий апарат ID',
+    sentToPOSMonth:'Передано в POS (місяць)',
+    successTransfers:'Успішних передач',
+    avgTransferTime:'Середній час передачі',
+    sendOnlyPaid:'Передавати тільки оплачені замовлення',
+    payAfterPayment:'Тільки після підтвердження оплати',
+    sendImmediately:'Одразу після розміщення (навіть без оплати)',
+    posComment:'Коментар до замовлення в POS',
+    howToConnect:'Як підключити:',
+    loginLbl:'Логін',
+    passwordLbl:'Пароль',
+    tokenExpiry:'Токен живе 1 год.',
+    dishInMenu:'Страва в меню',
+    posMapping:'Привʼязка страв до POS',
+    posMappingDesc:'Зіставте страви вашого меню з позиціями в касовій системі',
+    customerSearch:'Пошук за імʼям або телефоном',
+    trialPeriod:'Пробний період',
+    daysLeft:'днів залишилось',
+    autoMonthlyDesc:'Для автоматичних щомісячних списань',
+    noPayments:'Платежів ще немає',
+    choosePlan:'🚀 Обрати тариф і оплатити',
+    paymentMethod:'💳 Спосіб оплати',
+    currentPlan:'📦 Поточний тариф',
+    nextCharge:'📅 Наступне списання',
+    usageStats:'📊 Використання',
+    choosePlanTitle:'🚀 Оберіть тариф',
+    paymentHistory:'🧾 Історія платежів',
+    chooseOrderTypes:'Оберіть які типи замовлень приймає ваш заклад',
+    dineInDesc:'Клієнт замовляє за столом',
+    takeawayDesc:'Клієнт забирає замовлення сам',
+    deliveryDesc:'Доставка курʼєром до клієнта',
+    minDeliveryTime:'Мін. час доставки (хв від моменту замовлення)',
+    separateDeliveryHours:'Окремі години доставки',
+    separateTakeawayHours:'Окремі години роботи самовиносу',
+    orFixedSum:'або фіксована сума (грн)',
+    cashOnDelivery:'Готівка / картка при отриманні',
+    orImageURL:'або URL зображення',
+    orEmoji:'або Emoji (якщо без фото)',
+    clickUploadBanner:'Натисніть щоб завантажити банер',
+    orBannerURL:'або URL банеру',
+    clickUploadPhoto:'Натисніть щоб завантажити фото',
+    orPasteURL:'або вставте URL зображення:',
+    tableCount:'Кількість столів (для вибору столу клієнтом)'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2086,7 +2154,75 @@ var I18N = {
     tableStatus:'Table status',
     tablesDesc:'Hall management, QR codes, tips',
     venueInfoNote:'Information shown in public menu',
-    autoUpdate:'Auto-updating'},
+    autoUpdate:'Auto-updating',
+    tipsToday:'Tips today',
+    autoUpdateLbl:'Auto-update:',
+    offerTips:'Offer tips to clients',
+    clientChoosesWaiter:'Client chooses waiter',
+    autoAssignTable:'Auto-assign by table',
+    tipSizes:'Default tip sizes (%)',
+    tipVariants:'Client sees these options plus custom amount',
+    tipsMonobank:'Tips via Monobank:',
+    printAllQR:'Print all QR',
+    addTable:'Add table',
+    tipsStaff:'Tips — staff statistics',
+    bannerHeight:'Banner height',
+    bgImage:'Background image',
+    bgBlur:'Background blur',
+    darkOverlay:'Dark overlay',
+    paidOnlineMonth:'Paid online (month)',
+    transactions:'Transactions',
+    successPayments:'Successful payments',
+    clientChoosesSelf:'Client chooses',
+    sendEmailReceipt:'Send email receipt to client',
+    pdfReceiptNote:'After successful payment client receives PDF receipt',
+    prroTitle:'PRRO — choose fiscalization method',
+    checkboxFiscal:'Automatic fiscal receipt via Checkbox API',
+    cashierId:'Cashier ID',
+    vchasnoFiscal:'Fiscalization via Vchasno.ua',
+    rroId:'RRO ID',
+    sentToPOSMonth:'Sent to POS (month)',
+    successTransfers:'Successful transfers',
+    avgTransferTime:'Avg. transfer time',
+    sendOnlyPaid:'Send only paid orders',
+    payAfterPayment:'Only after payment confirmation',
+    sendImmediately:'Immediately after placing (even without payment)',
+    posComment:'Order comment in POS',
+    howToConnect:'How to connect:',
+    loginLbl:'Login',
+    passwordLbl:'Password',
+    tokenExpiry:'Token expires in 1 hour',
+    dishInMenu:'Dish in menu',
+    posMapping:'Dish mapping to POS',
+    posMappingDesc:'Map your menu dishes to POS positions',
+    customerSearch:'Search by name or phone',
+    trialPeriod:'Trial period',
+    daysLeft:'days left',
+    autoMonthlyDesc:'For automatic monthly charges',
+    noPayments:'No payments yet',
+    choosePlan:'🚀 Choose plan and pay',
+    paymentMethod:'💳 Payment method',
+    currentPlan:'📦 Current plan',
+    nextCharge:'📅 Next charge',
+    usageStats:'📊 Usage',
+    choosePlanTitle:'🚀 Choose a plan',
+    paymentHistory:'🧾 Payment history',
+    chooseOrderTypes:'Choose which order types your venue accepts',
+    dineInDesc:'Client orders at the table',
+    takeawayDesc:'Client picks up the order',
+    deliveryDesc:'Courier delivery to client',
+    minDeliveryTime:'Min. delivery time (min from order)',
+    separateDeliveryHours:'Separate delivery hours',
+    separateTakeawayHours:'Separate takeaway hours',
+    orFixedSum:'or fixed amount (UAH)',
+    cashOnDelivery:'Cash / card on delivery',
+    orImageURL:'or image URL',
+    orEmoji:'or Emoji (if no photo)',
+    clickUploadBanner:'Click to upload banner',
+    orBannerURL:'or banner URL',
+    clickUploadPhoto:'Click to upload photo',
+    orPasteURL:'or paste image URL:',
+    tableCount:'Number of tables (for client table selection)'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -2169,7 +2305,75 @@ var I18N = {
     tableStatus:'Status stolika',
     tablesDesc:'Zarządzanie salą, kody QR, napiwki',
     venueInfoNote:'Informacje widoczne w menu',
-    autoUpdate:'Aktualizuje się automatycznie'},
+    autoUpdate:'Aktualizuje się automatycznie',
+    tipsToday:'Napiwki dziś',
+    autoUpdateLbl:'Auto-aktualizacja:',
+    offerTips:'Proponuj napiwki',
+    clientChoosesWaiter:'Klient wybiera kelnera',
+    autoAssignTable:'Auto-przypisanie do stolika',
+    tipSizes:'Domyślne napiwki (%)',
+    tipVariants:'Klient widzi te opcje plus dowolna kwota',
+    tipsMonobank:'Napiwki przez Monobank:',
+    printAllQR:'Drukuj wszystkie QR',
+    addTable:'Dodaj stolik',
+    tipsStaff:'Napiwki — statystyki personelu',
+    bannerHeight:'Wysokość baneru',
+    bgImage:'Obraz tła',
+    bgBlur:'Rozmyte tło',
+    darkOverlay:'Ciemne przyciemnienie',
+    paidOnlineMonth:'Opłacono online (miesiąc)',
+    transactions:'Transakcji',
+    successPayments:'Udanych płatności',
+    clientChoosesSelf:'Klient wybiera',
+    sendEmailReceipt:'Wyślij paragon emailem',
+    pdfReceiptNote:'Po płatności klient otrzyma paragon PDF',
+    prroTitle:'PRRO — wybierz metodę fiskalizacji',
+    checkboxFiscal:'Automatyczny paragon przez Checkbox API',
+    cashierId:'ID kasy',
+    vchasnoFiscal:'Fiskalizacja przez Vchasno.ua',
+    rroId:'ID kasy fiskalnej',
+    sentToPOSMonth:'Wysłano do POS (miesiąc)',
+    successTransfers:'Udanych transferów',
+    avgTransferTime:'Śr. czas transferu',
+    sendOnlyPaid:'Wysyłaj tylko opłacone',
+    payAfterPayment:'Tylko po potwierdzeniu płatności',
+    sendImmediately:'Natychmiast po złożeniu',
+    posComment:'Komentarz zamówienia w POS',
+    howToConnect:'Jak podłączyć:',
+    loginLbl:'Login',
+    passwordLbl:'Hasło',
+    tokenExpiry:'Token wygasa po 1 godz.',
+    dishInMenu:'Danie w menu',
+    posMapping:'Mapowanie dań do POS',
+    posMappingDesc:'Dopasuj dania menu do pozycji w POS',
+    customerSearch:'Szukaj po imieniu lub telefonie',
+    trialPeriod:'Okres próbny',
+    daysLeft:'dni pozostało',
+    autoMonthlyDesc:'Dla automatycznych miesięcznych opłat',
+    noPayments:'Brak płatności',
+    choosePlan:'🚀 Wybierz plan i zapłać',
+    paymentMethod:'💳 Metoda płatności',
+    currentPlan:'📦 Aktualny plan',
+    nextCharge:'📅 Następne pobranie',
+    usageStats:'📊 Użycie',
+    choosePlanTitle:'🚀 Wybierz plan',
+    paymentHistory:'🧾 Historia płatności',
+    chooseOrderTypes:'Wybierz typy zamówień akceptowane przez lokal',
+    dineInDesc:'Klient zamawia przy stoliku',
+    takeawayDesc:'Klient odbiera zamówienie',
+    deliveryDesc:'Dostawa kurierem do klienta',
+    minDeliveryTime:'Min. czas dostawy (min od zamówienia)',
+    separateDeliveryHours:'Osobne godziny dostawy',
+    separateTakeawayHours:'Osobne godziny odbioru',
+    orFixedSum:'lub stała kwota (UAH)',
+    cashOnDelivery:'Gotówka / karta przy odbiorze',
+    orImageURL:'lub URL obrazu',
+    orEmoji:'lub Emoji (jeśli bez zdjęcia)',
+    clickUploadBanner:'Kliknij by przesłać baner',
+    orBannerURL:'lub URL baneru',
+    clickUploadPhoto:'Kliknij by przesłać zdjęcie',
+    orPasteURL:'lub wklej URL obrazu:',
+    tableCount:'Liczba stolików'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -2252,7 +2456,75 @@ var I18N = {
     tableStatus:'Tischstatus',
     tablesDesc:'Saalbewirtschaftung, QR, Trinkgeld',
     venueInfoNote:'Im öffentlichen Menü angezeigt',
-    autoUpdate:'Automatische Aktualisierung'},
+    autoUpdate:'Automatische Aktualisierung',
+    tipsToday:'Trinkgeld heute',
+    autoUpdateLbl:'Automatische Aktualisierung:',
+    offerTips:'Trinkgeld anbieten',
+    clientChoosesWaiter:'Kunde wählt Kellner',
+    autoAssignTable:'Auto nach Tisch zuweisen',
+    tipSizes:'Standard-Trinkgelder (%)',
+    tipVariants:'Kunde sieht diese Optionen plus beliebiger Betrag',
+    tipsMonobank:'Trinkgeld über Monobank:',
+    printAllQR:'Alle QR drucken',
+    addTable:'Tisch hinzufügen',
+    tipsStaff:'Trinkgeld — Personalstatistik',
+    bannerHeight:'Bannerhöhe',
+    bgImage:'Hintergrundbild',
+    bgBlur:'Hintergrundunschärfe',
+    darkOverlay:'Dunkle Überlagerung',
+    paidOnlineMonth:'Online bezahlt (Monat)',
+    transactions:'Transaktionen',
+    successPayments:'Erfolgreiche Zahlungen',
+    clientChoosesSelf:'Kunde wählt',
+    sendEmailReceipt:'E-Mail-Beleg senden',
+    pdfReceiptNote:'Nach Zahlung erhält Kunde PDF-Beleg',
+    prroTitle:'PRRO — Fiskalisierungsmethode wählen',
+    checkboxFiscal:'Automatischer Kassenbon über Checkbox API',
+    cashierId:'Kassen-ID',
+    vchasnoFiscal:'Fiskalisierung über Vchasno.ua',
+    rroId:'Kassengerät-ID',
+    sentToPOSMonth:'An POS gesendet (Monat)',
+    successTransfers:'Erfolgreiche Übertragungen',
+    avgTransferTime:'Ø Übertragungszeit',
+    sendOnlyPaid:'Nur bezahlte senden',
+    payAfterPayment:'Nur nach Zahlungsbestätigung',
+    sendImmediately:'Sofort nach Aufgabe',
+    posComment:'Bestellkommentar in POS',
+    howToConnect:'Wie verbinden:',
+    loginLbl:'Anmeldung',
+    passwordLbl:'Passwort',
+    tokenExpiry:'Token läuft nach 1 Std. ab',
+    dishInMenu:'Gericht im Menü',
+    posMapping:'Gerichte-Mapping zu POS',
+    posMappingDesc:'Menügerichte den POS-Positionen zuordnen',
+    customerSearch:'Nach Name oder Telefon suchen',
+    trialPeriod:'Testzeitraum',
+    daysLeft:'Tage verbleibend',
+    autoMonthlyDesc:'Für automatische Monatsabbuchungen',
+    noPayments:'Noch keine Zahlungen',
+    choosePlan:'🚀 Tarif wählen und bezahlen',
+    paymentMethod:'💳 Zahlungsmethode',
+    currentPlan:'📦 Aktueller Tarif',
+    nextCharge:'📅 Nächste Abbuchung',
+    usageStats:'📊 Nutzung',
+    choosePlanTitle:'🚀 Tarif wählen',
+    paymentHistory:'🧾 Zahlungshistorie',
+    chooseOrderTypes:'Wählen Sie die Bestellarten',
+    dineInDesc:'Kunde bestellt am Tisch',
+    takeawayDesc:'Kunde holt die Bestellung ab',
+    deliveryDesc:'Kurierlieferung an Kunden',
+    minDeliveryTime:'Mind. Lieferzeit (Min ab Bestellung)',
+    separateDeliveryHours:'Eigene Lieferzeiten',
+    separateTakeawayHours:'Eigene Abholzeiten',
+    orFixedSum:'oder fester Betrag (UAH)',
+    cashOnDelivery:'Bar / Karte bei Lieferung',
+    orImageURL:'oder Bild-URL',
+    orEmoji:'oder Emoji (wenn kein Foto)',
+    clickUploadBanner:'Klicken zum Banner hochladen',
+    orBannerURL:'oder Banner-URL',
+    clickUploadPhoto:'Klicken zum Foto hochladen',
+    orPasteURL:'oder Bild-URL einfügen:',
+    tableCount:'Anzahl Tische'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -2335,7 +2607,75 @@ var I18N = {
     tableStatus:'Status masă',
     tablesDesc:'Management sală, QR, bacșiș',
     venueInfoNote:'Informații afișate în meniu',
-    autoUpdate:'Actualizare automată'},
+    autoUpdate:'Actualizare automată',
+    tipsToday:'Bacșiș azi',
+    autoUpdateLbl:'Actualizare automată:',
+    offerTips:'Oferă bacșiș',
+    clientChoosesWaiter:'Clientul alege chelnerul',
+    autoAssignTable:'Atribuire automată',
+    tipSizes:'Mărimi bacșiș (%))',
+    tipVariants:'Clientul vede aceste opțiuni plus sumă personalizată',
+    tipsMonobank:'Bacșiș via Monobank:',
+    printAllQR:'Tipărește toate QR',
+    addTable:'Adaugă masă',
+    tipsStaff:'Bacșiș — statistici personal',
+    bannerHeight:'Înălțime banner',
+    bgImage:'Imagine fundal',
+    bgBlur:'Fundal estompat',
+    darkOverlay:'Suprapunere închisă',
+    paidOnlineMonth:'Plătit online (lună)',
+    transactions:'Tranzacții',
+    successPayments:'Plăți reușite',
+    clientChoosesSelf:'Clientul alege',
+    sendEmailReceipt:'Trimite chitanță email',
+    pdfReceiptNote:'După plată clientul primește chitanță PDF',
+    prroTitle:'PRRO — alegeți metoda de fiscalizare',
+    checkboxFiscal:'Bon fiscal automat prin Checkbox API',
+    cashierId:'ID casă de marcat',
+    vchasnoFiscal:'Fiscalizare prin Vchasno.ua',
+    rroId:'ID aparat fiscal',
+    sentToPOSMonth:'Trimis la POS (lună)',
+    successTransfers:'Transferuri reușite',
+    avgTransferTime:'Timp mediu transfer',
+    sendOnlyPaid:'Trimite doar plătite',
+    payAfterPayment:'Doar după confirmarea plății',
+    sendImmediately:'Imediat după plasare',
+    posComment:'Comentariu comandă în POS',
+    howToConnect:'Cum se conectează:',
+    loginLbl:'Login',
+    passwordLbl:'Parolă',
+    tokenExpiry:'Token expiră în 1 oră',
+    dishInMenu:'Preparat în meniu',
+    posMapping:'Mapare preparate la POS',
+    posMappingDesc:'Asociați preparatele cu pozițiile din POS',
+    customerSearch:'Caută după nume sau telefon',
+    trialPeriod:'Perioadă de probă',
+    daysLeft:'zile rămase',
+    autoMonthlyDesc:'Pentru taxe lunare automate',
+    noPayments:'Nicio plată încă',
+    choosePlan:'🚀 Alegeți planul și plătiți',
+    paymentMethod:'💳 Metodă de plată',
+    currentPlan:'📦 Plan curent',
+    nextCharge:'📅 Următoarea taxare',
+    usageStats:'📊 Utilizare',
+    choosePlanTitle:'🚀 Alegeți un plan',
+    paymentHistory:'🧾 Istoricul plăților',
+    chooseOrderTypes:'Alegeți tipurile de comenzi acceptate',
+    dineInDesc:'Clientul comandă la masă',
+    takeawayDesc:'Clientul ridică comanda',
+    deliveryDesc:'Livrare curier la client',
+    minDeliveryTime:'Timp min. livrare (min de la comandă)',
+    separateDeliveryHours:'Ore separate de livrare',
+    separateTakeawayHours:'Ore separate pentru ridicare',
+    orFixedSum:'sau sumă fixă (UAH)',
+    cashOnDelivery:'Numerar / card la primire',
+    orImageURL:'sau URL imagine',
+    orEmoji:'sau Emoji (dacă fără foto)',
+    clickUploadBanner:'Clic pentru a încărca banner',
+    orBannerURL:'sau URL banner',
+    clickUploadPhoto:'Clic pentru a încărca foto',
+    orPasteURL:'sau inserați URL imagine:',
+    tableCount:'Număr de mese'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -2418,7 +2758,75 @@ var I18N = {
     tableStatus:'Estado de mesa',
     tablesDesc:'Gestión sala, QR, propinas',
     venueInfoNote:'Información mostrada en menú',
-    autoUpdate:'Actualización automática'},
+    autoUpdate:'Actualización automática',
+    tipsToday:'Propinas hoy',
+    autoUpdateLbl:'Actualización automática:',
+    offerTips:'Ofrecer propinas',
+    clientChoosesWaiter:'Cliente elige camarero',
+    autoAssignTable:'Asignación automática',
+    tipSizes:'Tamaños de propina (%)',
+    tipVariants:'El cliente ve estas opciones más monto personalizado',
+    tipsMonobank:'Propinas via Monobank:',
+    printAllQR:'Imprimir todos los QR',
+    addTable:'Agregar mesa',
+    tipsStaff:'Propinas — estadísticas del personal',
+    bannerHeight:'Altura del banner',
+    bgImage:'Imagen de fondo',
+    bgBlur:'Fondo difuminado',
+    darkOverlay:'Superposición oscura',
+    paidOnlineMonth:'Pagado online (mes)',
+    transactions:'Transacciones',
+    successPayments:'Pagos exitosos',
+    clientChoosesSelf:'Cliente elige',
+    sendEmailReceipt:'Enviar recibo por email',
+    pdfReceiptNote:'Tras el pago el cliente recibe recibo PDF',
+    prroTitle:'PRRO — elija método de fiscalización',
+    checkboxFiscal:'Recibo fiscal automático via Checkbox API',
+    cashierId:'ID de caja',
+    vchasnoFiscal:'Fiscalización via Vchasno.ua',
+    rroId:'ID caja registradora',
+    sentToPOSMonth:'Enviado a POS (mes)',
+    successTransfers:'Transferencias exitosas',
+    avgTransferTime:'Tiempo medio de transferencia',
+    sendOnlyPaid:'Enviar solo pedidos pagados',
+    payAfterPayment:'Solo tras confirmación de pago',
+    sendImmediately:'Inmediatamente tras hacer el pedido',
+    posComment:'Comentario de pedido en POS',
+    howToConnect:'Cómo conectar:',
+    loginLbl:'Login',
+    passwordLbl:'Contraseña',
+    tokenExpiry:'Token expira en 1 hora',
+    dishInMenu:'Plato en el menú',
+    posMapping:'Mapeo de platos a POS',
+    posMappingDesc:'Mapee los platos con las posiciones del POS',
+    customerSearch:'Buscar por nombre o teléfono',
+    trialPeriod:'Período de prueba',
+    daysLeft:'días restantes',
+    autoMonthlyDesc:'Para cargos mensuales automáticos',
+    noPayments:'Sin pagos aún',
+    choosePlan:'🚀 Elegir plan y pagar',
+    paymentMethod:'💳 Método de pago',
+    currentPlan:'📦 Plan actual',
+    nextCharge:'📅 Próximo cargo',
+    usageStats:'📊 Uso',
+    choosePlanTitle:'🚀 Elige un plan',
+    paymentHistory:'🧾 Historial de pagos',
+    chooseOrderTypes:'Elija qué tipos de pedidos acepta su local',
+    dineInDesc:'Cliente pide en la mesa',
+    takeawayDesc:'Cliente recoge el pedido',
+    deliveryDesc:'Entrega a domicilio',
+    minDeliveryTime:'Tiempo mín. entrega (min desde pedido)',
+    separateDeliveryHours:'Horas de entrega separadas',
+    separateTakeawayHours:'Horas de recogida separadas',
+    orFixedSum:'o monto fijo (UAH)',
+    cashOnDelivery:'Efectivo / tarjeta al recibir',
+    orImageURL:'o URL de imagen',
+    orEmoji:'o Emoji (si no hay foto)',
+    clickUploadBanner:'Haga clic para subir banner',
+    orBannerURL:'o URL del banner',
+    clickUploadPhoto:'Haga clic para subir foto',
+    orPasteURL:'o pegue URL de imagen:',
+    tableCount:'Número de mesas'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -2501,7 +2909,75 @@ var I18N = {
     tableStatus:'Status stola',
     tablesDesc:'Upravljanje salom, QR, napojnica',
     venueInfoNote:'Informacije prikazane u meniju',
-    autoUpdate:'Automatsko ažuriranje'},
+    autoUpdate:'Automatsko ažuriranje',
+    tipsToday:'Napojnica danas',
+    autoUpdateLbl:'Automatsko ažuriranje:',
+    offerTips:'Ponudi napojnicu',
+    clientChoosesWaiter:'Klijent bira konobara',
+    autoAssignTable:'Automatska dodjela',
+    tipSizes:'Veličine napojnice (%)',
+    tipVariants:'Klijent vidi ove opcije plus proizvoljni iznos',
+    tipsMonobank:'Napojnica putem Monobanka:',
+    printAllQR:'Štampaj sve QR',
+    addTable:'Dodaj sto',
+    tipsStaff:'Napojnica — statistika osoblja',
+    bannerHeight:'Visina banera',
+    bgImage:'Pozadinska slika',
+    bgBlur:'Zamagljena pozadina',
+    darkOverlay:'Tamno prekrivanje',
+    paidOnlineMonth:'Plaćeno online (mjesec)',
+    transactions:'Transakcija',
+    successPayments:'Uspješnih plaćanja',
+    clientChoosesSelf:'Klijent bira',
+    sendEmailReceipt:'Šalji email račun',
+    pdfReceiptNote:'Nakon plaćanja klijent dobija PDF račun',
+    prroTitle:'PRRO — odaberite metodu fiskalizacije',
+    checkboxFiscal:'Automatski fiskalni račun putem Checkbox API',
+    cashierId:'ID kase',
+    vchasnoFiscal:'Fiskalizacija putem Vchasno.ua',
+    rroId:'ID fiskalnog uređaja',
+    sentToPOSMonth:'Poslano u POS (mjesec)',
+    successTransfers:'Uspješnih prijenosa',
+    avgTransferTime:'Prosj. vrijeme prijenosa',
+    sendOnlyPaid:'Slati samo plaćene narudžbine',
+    payAfterPayment:'Samo nakon potvrde plaćanja',
+    sendImmediately:'Odmah nakon narudžbine',
+    posComment:'Komentar narudžbine u POS',
+    howToConnect:'Kako povezati:',
+    loginLbl:'Login',
+    passwordLbl:'Lozinka',
+    tokenExpiry:'Token važi 1 sat',
+    dishInMenu:'Jelo u meniju',
+    posMapping:'Mapiranje jela na POS',
+    posMappingDesc:'Mapirajte jela menija na pozicije u POS-u',
+    customerSearch:'Traži po imenu ili telefonu',
+    trialPeriod:'Probni period',
+    daysLeft:'dana preostalo',
+    autoMonthlyDesc:'Za automatska mesečna naplaćivanja',
+    noPayments:'Nema plaćanja još',
+    choosePlan:'🚀 Odaberi plan i plati',
+    paymentMethod:'💳 Način plaćanja',
+    currentPlan:'📦 Trenutni plan',
+    nextCharge:'📅 Sljedeće naplaćivanje',
+    usageStats:'📊 Korišćenje',
+    choosePlanTitle:'🚀 Odaberi plan',
+    paymentHistory:'🧾 Istorija plaćanja',
+    chooseOrderTypes:'Odaberite tipove narudžbina',
+    dineInDesc:'Klijent naručuje za stolom',
+    takeawayDesc:'Klijent preuzima narudžbinu',
+    deliveryDesc:'Dostava kurira klijentu',
+    minDeliveryTime:'Min. vrijeme dostave',
+    separateDeliveryHours:'Posebno radno vrijeme dostave',
+    separateTakeawayHours:'Posebno radno vrijeme za ponijeti',
+    orFixedSum:'ili fiksni iznos (UAH)',
+    cashOnDelivery:'Gotovina / kartica pri preuzimanju',
+    orImageURL:'ili URL slike',
+    orEmoji:'ili Emoji (ako bez slike)',
+    clickUploadBanner:'Kliknite za upload banera',
+    orBannerURL:'ili URL banera',
+    clickUploadPhoto:'Kliknite za upload slike',
+    orPasteURL:'ili zalijepite URL slike:',
+    tableCount:'Broj stolova'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -3927,7 +4403,7 @@ function renderCustomers(list) {
       <td>${c.ordersCount ? Math.round((c.totalSpent||0)/(c.ordersCount)) + ' ₴' : '—'}</td>
       <td style="color:var(--muted);font-size:12px">${fmt(c.firstOrderAt)}</td>
       <td style="color:var(--muted);font-size:12px">${fmt(c.lastOrderAt)}</td>
-      <td><button class="btn btn-outline btn-sm" onclick="showCustomerOrders('${c.phone}','${c.name||'Гість'}')">Замовлення</button></td>
+      <td><button class="btn btn-outline btn-sm" onclick="showCustomerOrders('${c.phone}','${c.name||'Гість'}')" data-i18n="orders">Замовлення</button></td>
     </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem" data-i18n="noClients">Клієнтів ще немає</td></tr>';
 }
 
