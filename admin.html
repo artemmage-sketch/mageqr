@@ -378,7 +378,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <!-- ORDERS -->
     <div id="t-orders" class="tab-section active">
       <div class="topbar">
-        <div><div class="page-title">Замовлення</div><div class="page-sub">Оновлюються автоматично</div></div>
+        <div><div class="page-title" data-i18n="orders">Замовлення</div><div class="page-sub" data-i18n="autoUpdate">Оновлюються автоматично</div></div>
         <div style="display:flex;gap:.5rem;align-items:center">
           <select id="order-filter" style="width:130px" onchange="renderOrders()">
             <option value="" data-i18n="filterAll" data-i18n="filterAll">Всі</option>
@@ -421,7 +421,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <!-- CATEGORIES -->
     <div id="t-cats" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title">Категорії</div></div>
+        <div><div class="page-title" data-i18n="categories">Категорії</div></div>
         <button class="btn btn-accent btn-sm" onclick="openCatModal()" data-i18n="add">+ Додати</button>
       </div>
       <div class="content">
@@ -432,7 +432,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <!-- SUBSCRIPTION -->
     <div id="t-tables" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title">🪑 Столи та QR-оплата</div><div class="page-sub" data-i18n="tablesDesc">Управління залом, QR-коди, чайові</div></div>
+        <div><div class="page-title" data-i18n="tables">🪑 Столи та QR-оплата</div><div class="page-sub" data-i18n="tablesDesc">Управління залом, QR-коди, чайові</div></div>
         <div style="display:flex;gap:.5rem">
           <button class="btn btn-outline btn-sm" onclick="printAllQR()">🖨️ Друк всіх QR</button>
           <button class="btn btn-accent btn-sm" onclick="openAddTable()">+ Додати стіл</button>
@@ -752,7 +752,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <!-- PAYMENTS -->
     <div id="t-payments" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title" data-i18n="payments">💳 Платежі</div><div class="page-sub" data-i18n="paymentsDesc" data-i18n="paymentsDesc">Налаштуйте способи оплати для клієнтів</div></div>
+        <div><div class="page-title" data-i18n="payments">💳 Платежі</div><div class="page-sub" data-i18n="paymentsDesc">Налаштуйте способи оплати для клієнтів</div></div>
         <div style="display:flex;gap:.5rem">
           <button class="btn btn-outline btn-sm" onclick="notify('Тест-замовлення відправлено!','ok')" data-i18n="testPayment">🧪 Тест оплати</button>
           <button class="btn btn-accent btn-sm" onclick="savePayments()" data-i18n="save">${t('save')}</button>
@@ -1236,8 +1236,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <div id="t-customers" class="tab-section">
       <div class="topbar">
         <div>
-          <div class="page-title" data-i18n="customers" data-i18n="customers">👥 Клієнти</div>
-          <div class="page-sub" id="customers-sub" data-i18n="loading" data-i18n="loading">Завантаження...</div>
+          <div class="page-title" data-i18n="customers">👥 Клієнти</div>
+          <div class="page-sub" id="customers-sub" data-i18n="loading">Завантаження...</div>
         </div>
         <div style="display:flex;gap:.5rem">
           <input type="text" id="customer-search" placeholder="Пошук за ім'ям або телефоном..." style="width:220px" oninput="filterCustomers()"/>
@@ -1383,7 +1383,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
     <div id="t-ordering" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title">📋 Налаштування замовлень</div><div class="page-sub" data-i18n="orderingDesc">Типи замовлень, доставка, години роботи</div></div>
+        <div><div class="page-title" data-i18n="ordering">📋 Налаштування замовлень</div><div class="page-sub" data-i18n="orderingDesc">Типи замовлень, доставка, години роботи</div></div>
         <button class="btn btn-accent btn-sm" onclick="saveOrderingSettings()" data-i18n="save">${t('save')}</button>
       </div>
       <div class="content">
@@ -2002,7 +2002,8 @@ var I18N = {
     syncSettings:'Налаштування синхронізації',
     tableStatus:'Статус столу',
     tablesDesc:'Управління залом, QR-коди, чайові',
-    venueInfoNote:'Інформація відображається у публічному меню'},
+    venueInfoNote:'Інформація відображається у публічному меню',
+    autoUpdate:'Оновлюються автоматично'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2084,7 +2085,8 @@ var I18N = {
     syncSettings:'Sync settings',
     tableStatus:'Table status',
     tablesDesc:'Hall management, QR codes, tips',
-    venueInfoNote:'Information shown in public menu'},
+    venueInfoNote:'Information shown in public menu',
+    autoUpdate:'Auto-updating'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -2166,7 +2168,8 @@ var I18N = {
     syncSettings:'Ustawienia synchronizacji',
     tableStatus:'Status stolika',
     tablesDesc:'Zarządzanie salą, kody QR, napiwki',
-    venueInfoNote:'Informacje widoczne w menu'},
+    venueInfoNote:'Informacje widoczne w menu',
+    autoUpdate:'Aktualizuje się automatycznie'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -2248,7 +2251,8 @@ var I18N = {
     syncSettings:'Synchronisationseinstellungen',
     tableStatus:'Tischstatus',
     tablesDesc:'Saalbewirtschaftung, QR, Trinkgeld',
-    venueInfoNote:'Im öffentlichen Menü angezeigt'},
+    venueInfoNote:'Im öffentlichen Menü angezeigt',
+    autoUpdate:'Automatische Aktualisierung'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -2330,7 +2334,8 @@ var I18N = {
     syncSettings:'Setări sincronizare',
     tableStatus:'Status masă',
     tablesDesc:'Management sală, QR, bacșiș',
-    venueInfoNote:'Informații afișate în meniu'},
+    venueInfoNote:'Informații afișate în meniu',
+    autoUpdate:'Actualizare automată'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -2412,7 +2417,8 @@ var I18N = {
     syncSettings:'Configuración de sincronización',
     tableStatus:'Estado de mesa',
     tablesDesc:'Gestión sala, QR, propinas',
-    venueInfoNote:'Información mostrada en menú'},
+    venueInfoNote:'Información mostrada en menú',
+    autoUpdate:'Actualización automática'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -2494,7 +2500,8 @@ var I18N = {
     syncSettings:'Podešavanja sinhronizacije',
     tableStatus:'Status stola',
     tablesDesc:'Upravljanje salom, QR, napojnica',
-    venueInfoNote:'Informacije prikazane u meniju'},
+    venueInfoNote:'Informacije prikazane u meniju',
+    autoUpdate:'Automatsko ažuriranje'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -4347,7 +4354,7 @@ function renderAdminLangSwitcher() {
     {code:'de',flag:'🇩🇪'},{code:'ro',flag:'🇷🇴'},{code:'es',flag:'🇪🇸'},{code:'cnr',flag:'🇲🇪'},
   ];
   el.innerHTML = langs.map(l =>
-    `<button onclick="applyAdminLang('${l.code}')" title="${l.code.toUpperCase()}"
+    `<button onclick="applyAdminLang('${l.code}');saveAdminLang('${l.code}')" title="${l.code.toUpperCase()}"
       style="background:none;border:none;cursor:pointer;font-size:1.2rem;opacity:${adminLang===l.code?1:.4};transition:.15s"
       >${l.flag}</button>`
   ).join('');
