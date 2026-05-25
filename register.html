@@ -91,17 +91,21 @@ h1{font-size:1.8rem;font-weight:700;letter-spacing:-.5px;margin-bottom:.5rem}
 .success-title{font-size:1.3rem;font-weight:700;margin-bottom:.5rem}
 .success-sub{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:1.5rem}
 .venue-url{background:#0D0D0D;border:1px solid var(--border2);border-radius:8px;padding:.75rem 1rem;font-family:monospace;font-size:13px;color:var(--accent);word-break:break-all;cursor:pointer;margin-bottom:1rem}
+
+.lang-sel-btn{padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
+.lang-sel-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
 </style>
 </head>
 <body>
 <script>
 window.__MQ_CFG = {
   apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-  authDomain: "mageqrrest.firebaseapp.com",
-  projectId: "mageqrrest",
-  storageBucket: "mageqrrest.firebasestorage.app",
-  messagingSenderId: "207231972557",
-  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+    authDomain: "mageqrrest.firebaseapp.com",
+    projectId: "mageqrrest",
+    storageBucket: "mageqrrest.firebasestorage.app",
+    messagingSenderId: "207231972557",
+    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 // Cloud Functions URL (після деплою)
 window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
@@ -253,6 +257,20 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       </div>
     </div>
 
+    <!-- ВИБІР МОВИ АДМІНКИ -->
+    <div style="margin-bottom:1rem">
+      <label style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.5rem">🌐 Мова адмін панелі</label>
+      <div style="display:flex;flex-wrap:wrap;gap:.375rem" id="lang-select-btns">
+        <button type="button" class="lang-sel-btn active" data-lang="uk" onclick="selectRegLang('uk')">🇺🇦 UK</button>
+        <button type="button" class="lang-sel-btn" data-lang="en" onclick="selectRegLang('en')">🇬🇧 EN</button>
+        <button type="button" class="lang-sel-btn" data-lang="pl" onclick="selectRegLang('pl')">🇵🇱 PL</button>
+        <button type="button" class="lang-sel-btn" data-lang="de" onclick="selectRegLang('de')">🇩🇪 DE</button>
+        <button type="button" class="lang-sel-btn" data-lang="ro" onclick="selectRegLang('ro')">🇷🇴 RO</button>
+        <button type="button" class="lang-sel-btn" data-lang="es" onclick="selectRegLang('es')">🇪🇸 ES</button>
+        <button type="button" class="lang-sel-btn" data-lang="cnr" onclick="selectRegLang('cnr')">🇲🇪 MNE</button>
+      </div>
+    </div>
+
     <div class="err" id="step3-err"></div>
     <button class="btn btn-accent" id="register-btn" onclick="doRegister()">
       Розпочати 14 днів безкоштовно 🚀
@@ -304,6 +322,18 @@ window.__signIn = signInWithEmailAndPassword;
 let currentStep    = 1;
 let selectedPlan   = 'pro';
 let registeredSlug = '';
+let selectedAdminLang = localStorage.getItem('mq_admin_lang') || 'uk';
+
+window.selectRegLang = function(lang) {
+  selectedAdminLang = lang;
+  document.querySelectorAll('.lang-sel-btn').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+  });
+};
+// Відновлюємо збережену мову при завантаженні
+document.querySelectorAll('.lang-sel-btn').forEach(b => {
+  b.classList.toggle('active', b.getAttribute('data-lang') === selectedAdminLang);
+});
 
 // ── SLUG ──────────────────────────────────────────────────
 window.generateSlug = function() {
@@ -400,10 +430,13 @@ window.doRegister = async function() {
   const pass  = document.getElementById('r-pass').value;
 
   try {
+    // Зберігаємо мову
+    localStorage.setItem('mq_admin_lang', selectedAdminLang);
+
     const res = await fetch(`${window.__CF_URL}/createVenue`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ name, slug, city, phone, email, password: pass }),
+      body:    JSON.stringify({ name, slug, city, phone, email, password: pass, adminLang: selectedAdminLang }),
     });
 
     const data = await res.json();
