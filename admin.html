@@ -335,12 +335,12 @@ button{cursor:pointer}
 <script>
 // ⚠️ ЗАМІНІТЬ на свої ключі (такі самі як у login.html)
 window.__MQ_CFG = window.__MQ_CFG || {
- apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
- authDomain: "mageqrrest.firebaseapp.com",
- projectId: "mageqrrest",
- storageBucket: "mageqrrest.firebasestorage.app",
- messagingSenderId: "207231972557",
- appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+  apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
+    authDomain: "mageqrrest.firebaseapp.com",
+    projectId: "mageqrrest",
+    storageBucket: "mageqrrest.firebasestorage.app",
+    messagingSenderId: "207231972557",
+    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 </head>
@@ -469,7 +469,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- МОВА ІНТЕРФЕЙСУ -->
         <div class="settings-section" id="lang-settings-section">
-          <h3>🌐 data-i18n="venueLanguage">Мова інтерфейсу адмін панелі</h3>
+          <h3 data-i18n="venueLanguage">🌐 Мова інтерфейсу адмін панелі</h3>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
             <button class="btn btn-outline btn-sm" onclick="applyAdminLang('uk');saveAdminLang('uk')">🇺🇦 Українська</button>
             <button class="btn btn-outline btn-sm" onclick="applyAdminLang('en');saveAdminLang('en')">🇬🇧 English</button>
@@ -634,10 +634,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <span class="ds-label" data-i18n="logoLbl">Логотип (URL або emoji)</span>
                 <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
                   <input id="logo-emoji" type="text" placeholder="🍣" maxlength="2" style="width:60px;text-align:center;font-size:1.3rem" oninput="livePreview()"/>
-                  <input id="logo-url" type="text" placeholder="https://... (URL зображення)" oninput="livePreview()"/>
+                  <input id="logo-url" type="text" placeholder="https://... (URL зображення)" data-i18n-ph="phImageURL" oninput="livePreview()"/>
                 </div>
                 <span class="ds-label" data-i18n="bannerLbl">Банер-зображення (URL)</span>
-                <input id="banner-url" type="text" placeholder="https://... (широке фото закладу)" oninput="livePreview()" style="margin-bottom:.5rem"/>
+                <input id="banner-url" type="text" placeholder="https://... (широке фото закладу)" data-i18n-ph="phWidePhoto" oninput="livePreview()" style="margin-bottom:.5rem"/>
                 <div style="display:flex;align-items:center;gap:.5rem;margin-top:.375rem">
                   <span class="ds-label" style="margin:0" data-i18n="bannerHeight">Висота банера</span>
                   <div class="range-row" style="flex:1">
@@ -656,7 +656,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   <span class="toggle-label" data-i18n="bgImage">Фонове зображення</span>
                   <button class="toggle" id="toggle-bgimg" onclick="this.classList.toggle('on');livePreview()"></button>
                 </div>
-                <input id="bg-img-url" type="text" placeholder="https://... (URL фону)" oninput="livePreview()" style="margin:.5rem 0"/>
+                <input id="bg-img-url" type="text" placeholder="https://... (URL фону)" data-i18n-ph="phBgURL" oninput="livePreview()" style="margin:.5rem 0"/>
                 <div class="toggle-row" style="margin-top:.5rem">
                   <span class="toggle-label" data-i18n="bgBlur">Розмита підложка (blur)</span>
                   <button class="toggle on" id="toggle-blur" onclick="this.classList.toggle('on');livePreview()"></button>
@@ -952,7 +952,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 </div>
                 <div>
                   <label class="pay-field-label">Merchant ID</label>
-                  <input type="text" placeholder="Отримайте від банку" id="abank-mid"/>
+                  <input type="text" placeholder="Отримайте від банку" data-i18n-ph="phGetFromBank" id="abank-mid"/>
                 </div>
                 <div>
                   <label class="pay-field-label">Secret Key</label>
@@ -991,7 +991,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.875rem;margin-bottom:.625rem">
               <div class="toggle-row">
                 <div>
-                  <div style="font-size:13px;font-weight:500">🖥️ Через POS систему (Poster / Syrve)</div>
+                  <div style="font-size:13px;font-weight:500" data-i18n="viaPOS">🖥️ Через POS систему (Poster / Syrve)</div>
                   <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="posAutoFiscal">Якщо підключено Poster або Syrve — фіскалізація відбувається автоматично в касі. Додаткових налаштувань не потрібно.</div>
                 </div>
                 <label class="sw"><input type="checkbox" id="fiscal-pos" onchange="toggleFiscalMethod('pos',this.checked)"/><span class="sw-slider"></span></label>
@@ -1021,7 +1021,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 </div>
                 <div class="field-row">
                   <label class="field-label" data-i18n="cashierId">Каса ID (cashier_id)</label>
-                  <input type="text" placeholder="UUID каси з кабінету Checkbox" id="checkbox-cashier"/>
+                  <input type="text" placeholder="UUID каси з кабінету Checkbox" data-i18n-ph="phCheckboxUUID" id="checkbox-cashier"/>
                 </div>
                 <div style="font-size:11px;color:var(--muted);margin-top:.25rem">
                   Отримайте дані на <a href="https://my.checkbox.ua" target="_blank" style="color:var(--accent)">my.checkbox.ua</a> → Каси → API
@@ -1046,7 +1046,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 </div>
                 <div class="field-row">
                   <label class="field-label" data-i18n="rroId">Касовий апарат ID</label>
-                  <input type="text" placeholder="ID з кабінету Vchasno" id="vchasno-rro"/>
+                  <input type="text" placeholder="ID з кабінету Vchasno" data-i18n-ph="phVchasnoID" id="vchasno-rro"/>
                 </div>
                 <div style="font-size:11px;color:var(--muted);margin-top:.25rem">
                   Отримайте дані на <a href="https://vchasno.ua" target="_blank" style="color:var(--accent)">vchasno.ua</a> → Налаштування → API
@@ -1115,7 +1115,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div class="pos-fields">
               <div>
                 <label class="pay-field-label" data-i18n="posterPOS">Обліковий запис Poster</label>
-                <input type="text" placeholder="myrestaurant (частина URL)" id="poster-account"/>
+                <input type="text" placeholder="myrestaurant (частина URL)" data-i18n-ph="phPosterAccount" id="poster-account"/>
               </div>
               <div>
                 <label class="pay-field-label">Access Token</label>
@@ -1127,7 +1127,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               </div>
               <div>
                 <label class="pay-field-label" data-i18n="tableserviceId">Tableservice ID (зал, якщо є)</label>
-                <input type="number" placeholder="0 = без залу" id="poster-table"/>
+                <input type="number" placeholder="0 = без залу" data-i18n-ph="phNoHall" id="poster-table"/>
               </div>
             </div>
             <div style="font-size:11px;color:var(--muted);margin-bottom:.75rem;background:var(--bg2);padding:.625rem;border-radius:6px;line-height:1.6">
@@ -1172,11 +1172,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               </div>
               <div>
                 <label class="pay-field-label" data-i18n="organizationId">Organization ID</label>
-                <input type="text" placeholder="UUID організації" id="syrve-org"/>
+                <input type="text" placeholder="UUID організації" data-i18n-ph="phOrgUUID" id="syrve-org"/>
               </div>
               <div>
                 <label class="pay-field-label" data-i18n="terminalGroupId">Terminal Group ID</label>
-                <input type="text" placeholder="UUID терміналу" id="syrve-term"/>
+                <input type="text" placeholder="UUID терміналу" data-i18n-ph="phTermUUID" id="syrve-term"/>
               </div>
             </div>
             <div style="font-size:11px;color:var(--muted);margin-bottom:.75rem;background:var(--bg2);padding:.625rem;border-radius:6px;line-height:1.6">
@@ -1204,16 +1204,16 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <span data-i18n="posMappingFullDesc">Зіставте страви вашого меню з позиціями в касовій системі. Замовлення передаватимуться з правильними ID.</span>
           </div>
           <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
-            <button class="btn btn-outline btn-sm" onclick="loadPOSProductsForMapping('poster')">
+            <button class="btn btn-outline btn-sm" onclick="loadPOSProductsForMapping('poster')" data-i18n="loadFromPoster">
               🍽️ Завантажити з Poster
             </button>
-            <button class="btn btn-outline btn-sm" onclick="loadPOSProductsForMapping('syrve')">
+            <button class="btn btn-outline btn-sm" onclick="loadPOSProductsForMapping('syrve')" data-i18n="loadFromSyrve">
               🖥️ Завантажити з Syrve
             </button>
-            <button class="btn btn-outline btn-sm" onclick="autoMapProducts()">
+            <button class="btn btn-outline btn-sm" onclick="autoMapProducts()" data-i18n="autoMapping">
               ⚡ Авто-зіставлення за назвою
             </button>
-            <button class="btn btn-accent btn-sm" onclick="savePOSMapping()" style="margin-left:auto">
+            <button class="btn btn-accent btn-sm" onclick="savePOSMapping()" style="margin-left:auto" data-i18n="saveMapping">
               💾 Зберегти маппінг
             </button>
           </div>
@@ -1317,10 +1317,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <div style="font-size:13px;font-weight:500" data-i18n="cardNotLinked">Картка не прив'язана</div>
                 <div style="font-size:11px;color:var(--muted);margin-top:.25rem" data-i18n="autoMonthlyDesc">Для автоматичних щомісячних списань</div>
               </div>
-              <button class="btn btn-accent" style="width:100%" onclick="bindCard()">
+              <button class="btn btn-accent" style="width:100%" onclick="bindCard()" data-i18n="bindCard">
                 💳 Прив'язати картку
               </button>
-              <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:.5rem">
+              <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:.5rem" data-i18n="monoSecure">
                 🔒 Безпечно через Monobank · Картка зберігається у зашифрованому вигляді
               </div>
             </div>
@@ -1397,7 +1397,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.75rem">
             <div class="toggle-row" style="margin-bottom:.75rem">
               <div>
-                <div style="font-size:14px;font-weight:600">🪑 В закладі</div>
+                <div style="font-size:14px;font-weight:600" data-i18n="dineIn">🪑 В закладі</div>
                 <div style="font-size:12px;color:var(--muted);margin-top:2px" data-i18n="dineInDesc">Клієнт замовляє за столом</div>
               </div>
               <label class="sw"><input type="checkbox" id="ord-dine-in" checked/><span class="sw-slider"></span></label>
@@ -1405,7 +1405,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div id="dine-in-fields">
               <div class="field-row">
                 <label class="field-label" data-i18n="tableCount">Кількість столів (для вибору столу клієнтом)</label>
-                <input type="number" id="ord-tables-count" placeholder="0 = не показувати вибір столу" value="0"/>
+                <input type="number" id="ord-tables-count" placeholder="0 = не показувати вибір столу" data-i18n-ph="phNoTableSelect" value="0"/>
               </div>
             </div>
           </div>
@@ -1453,7 +1453,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem">
             <div class="toggle-row" style="margin-bottom:.75rem">
               <div>
-                <div style="font-size:14px;font-weight:600">🚗 Доставка</div>
+                <div style="font-size:14px;font-weight:600" data-i18n="delivery">🚗 Доставка</div>
                 <div style="font-size:12px;color:var(--muted);margin-top:2px" data-i18n="deliveryDesc">Доставка кур'єром до клієнта</div>
               </div>
               <label class="sw"><input type="checkbox" id="ord-delivery" onchange="toggleDeliveryFields(this.checked)"/><span class="sw-slider"></span></label>
@@ -1530,10 +1530,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <p style="font-size:13px;color:var(--muted);margin-bottom:1rem" data-i18n="discountsDesc">Встановіть знижку для кожного типу замовлення. Клієнт побачить знижену ціну автоматично.</p>
 
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.75rem">
-            <div style="font-size:14px;font-weight:600;margin-bottom:.75rem">🪑 В закладі</div>
+            <div style="font-size:14px;font-weight:600;margin-bottom:.75rem" data-i18n="dineIn">🪑 В закладі</div>
             <div class="grid-2">
               <div class="field-row">
-                <label class="field-label" data-i18n="discountPct" data-i18n="discountPct">Знижка (%)</label>
+                <label class="field-label" data-i18n="discountPct">Знижка (%)</label>
                 <input type="number" id="disc-dine-pct" placeholder="0" min="0" max="100"/>
               </div>
               <div class="field-row">
@@ -1543,15 +1543,15 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             </div>
             <div class="field-row">
               <label class="field-label" data-i18n="discountName">Назва знижки (відображається клієнту)</label>
-              <input type="text" id="disc-dine-name" placeholder="Знижка в закладі"/>
+              <input type="text" id="disc-dine-name" data-i18n-ph="phDiscountDineIn" placeholder="Знижка в закладі"/>
             </div>
           </div>
 
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.75rem">
-            <div style="font-size:14px;font-weight:600;margin-bottom:.75rem">🥡 З собою</div>
+            <div style="font-size:14px;font-weight:600;margin-bottom:.75rem" data-i18n="takeaway">🥡 З собою</div>
             <div class="grid-2">
               <div class="field-row">
-                <label class="field-label" data-i18n="discountPct" data-i18n="discountPct">Знижка (%)</label>
+                <label class="field-label" data-i18n="discountPct">Знижка (%)</label>
                 <input type="number" id="disc-take-pct" placeholder="0" min="0" max="100"/>
               </div>
               <div class="field-row">
@@ -1561,15 +1561,15 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             </div>
             <div class="field-row">
               <label class="field-label" data-i18n="discountName">Назва знижки</label>
-              <input type="text" id="disc-take-name" placeholder="Знижка на самовинос"/>
+              <input type="text" id="disc-take-name" data-i18n-ph="phDiscountTakeaway" placeholder="Знижка на самовинос"/>
             </div>
           </div>
 
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem">
-            <div style="font-size:14px;font-weight:600;margin-bottom:.75rem">🚗 Доставка</div>
+            <div style="font-size:14px;font-weight:600;margin-bottom:.75rem" data-i18n="delivery">🚗 Доставка</div>
             <div class="grid-2">
               <div class="field-row">
-                <label class="field-label" data-i18n="discountPct" data-i18n="discountPct">Знижка (%)</label>
+                <label class="field-label" data-i18n="discountPct">Знижка (%)</label>
                 <input type="number" id="disc-del-pct" placeholder="0" min="0" max="100"/>
               </div>
               <div class="field-row">
@@ -1579,7 +1579,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             </div>
             <div class="field-row">
               <label class="field-label" data-i18n="discountName">Назва знижки</label>
-              <input type="text" id="disc-del-name" placeholder="Знижка на доставку"/>
+              <input type="text" id="disc-del-name" data-i18n-ph="phDiscountDelivery" placeholder="Знижка на доставку"/>
             </div>
           </div>
         </div>
@@ -2223,7 +2223,23 @@ var I18N = {
     notifTipsSaved:'Налаштування чайових збережено!',
     notifLangSaved:'Мову збережено!',
     notifPaletteApplied:'Палітру застосовано!',
-    notifLoadPOSFirst:'Спочатку завантажте продукти з POS'},
+    notifLoadPOSFirst:'Спочатку завантажте продукти з POS',
+    viaPOS:'🖥️ Через POS систему (Poster / Syrve)',
+    phDiscountDineIn:'Знижка в закладі',
+    phDiscountTakeaway:'Знижка на самовинос',
+    phDiscountDelivery:'Знижка на доставку',
+    phImageURL:'https://... (URL зображення)',
+    phWidePhoto:'https://... (широке фото закладу)',
+    phBgURL:'https://... (URL фону)',
+    phGetFromBank:'Отримайте від банку',
+    phCheckboxUUID:'UUID каси з кабінету Checkbox',
+    phVchasnoID:'ID з кабінету Vchasno',
+    phPosterAccount:'myrestaurant (частина URL)',
+    phNoHall:'0 = без залу',
+    phOrgUUID:'UUID організації',
+    phTermUUID:'UUID терміналу',
+    phNoTableSelect:'0 = не показувати вибір столу',
+    al_sulphites:'Сульфіти'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2546,7 +2562,23 @@ var I18N = {
     notifTipsSaved:'Tips settings saved!',
     notifLangSaved:'Language saved!',
     notifPaletteApplied:'Palette applied!',
-    notifLoadPOSFirst:'First load products from POS'},
+    notifLoadPOSFirst:'First load products from POS',
+    viaPOS:'🖥️ Via POS system (Poster / Syrve)',
+    phDiscountDineIn:'Dine-in discount',
+    phDiscountTakeaway:'Takeaway discount',
+    phDiscountDelivery:'Delivery discount',
+    phImageURL:'https://... (image URL)',
+    phWidePhoto:'https://... (wide venue photo)',
+    phBgURL:'https://... (background URL)',
+    phGetFromBank:'Get from bank',
+    phCheckboxUUID:'Cash register UUID from Checkbox cabinet',
+    phVchasnoID:'ID from Vchasno cabinet',
+    phPosterAccount:'myrestaurant (URL part)',
+    phNoHall:'0 = no hall',
+    phOrgUUID:'Organization UUID',
+    phTermUUID:'Terminal UUID',
+    phNoTableSelect:'0 = do not show table selection',
+    al_sulphites:'Sulphites'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -2869,7 +2901,23 @@ var I18N = {
     notifTipsSaved:'Ustawienia napiwkow zapisane!',
     notifLangSaved:'Jezyk zapisany!',
     notifPaletteApplied:'Paleta zastosowana!',
-    notifLoadPOSFirst:'Najpierw zaladuj produkty z POS'},
+    notifLoadPOSFirst:'Najpierw zaladuj produkty z POS',
+    viaPOS:'🖥️ Przez system POS (Poster / Syrve)',
+    phDiscountDineIn:'Zniżka w lokalu',
+    phDiscountTakeaway:'Zniżka na wynos',
+    phDiscountDelivery:'Zniżka na dostawę',
+    phImageURL:'https://... (URL obrazu)',
+    phWidePhoto:'https://... (szerokie zdjęcie lokalu)',
+    phBgURL:'https://... (URL tła)',
+    phGetFromBank:'Pobierz z banku',
+    phCheckboxUUID:'UUID kasy z panelu Checkbox',
+    phVchasnoID:'ID z panelu Vchasno',
+    phPosterAccount:'myrestaurant (część URL)',
+    phNoHall:'0 = bez sali',
+    phOrgUUID:'UUID organizacji',
+    phTermUUID:'UUID terminalu',
+    phNoTableSelect:'0 = nie pokazuj wyboru stolika',
+    al_sulphites:'Siarczyny'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -3192,7 +3240,23 @@ var I18N = {
     notifTipsSaved:'Trinkgeld-Einstellungen gespeichert!',
     notifLangSaved:'Sprache gespeichert!',
     notifPaletteApplied:'Palette angewendet!',
-    notifLoadPOSFirst:'Laden Sie zuerst Produkte aus POS'},
+    notifLoadPOSFirst:'Laden Sie zuerst Produkte aus POS',
+    viaPOS:'🖥️ Über POS-System (Poster / Syrve)',
+    phDiscountDineIn:'Rabatt im Lokal',
+    phDiscountTakeaway:'Rabatt zum Mitnehmen',
+    phDiscountDelivery:'Rabatt auf Lieferung',
+    phImageURL:'https://... (Bild-URL)',
+    phWidePhoto:'https://... (breites Lokal-Foto)',
+    phBgURL:'https://... (Hintergrund-URL)',
+    phGetFromBank:'Von der Bank erhalten',
+    phCheckboxUUID:'Kassen-UUID aus Checkbox-Konto',
+    phVchasnoID:'ID aus Vchasno-Konto',
+    phPosterAccount:'myrestaurant (URL-Teil)',
+    phNoHall:'0 = kein Saal',
+    phOrgUUID:'Organisations-UUID',
+    phTermUUID:'Terminal-UUID',
+    phNoTableSelect:'0 = Tischauswahl nicht anzeigen',
+    al_sulphites:'Sulfite'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -3515,7 +3579,23 @@ var I18N = {
     notifTipsSaved:'Setari bacs is salvate!',
     notifLangSaved:'Limba salvata!',
     notifPaletteApplied:'Paleta aplicata!',
-    notifLoadPOSFirst:'Mai intai incarcati produse din POS'},
+    notifLoadPOSFirst:'Mai intai incarcati produse din POS',
+    viaPOS:'🖥️ Prin sistem POS (Poster / Syrve)',
+    phDiscountDineIn:'Reducere la local',
+    phDiscountTakeaway:'Reducere de luat',
+    phDiscountDelivery:'Reducere livrare',
+    phImageURL:'https://... (URL imagine)',
+    phWidePhoto:'https://... (fotografie largă local)',
+    phBgURL:'https://... (URL fundal)',
+    phGetFromBank:'Obțineți de la bancă',
+    phCheckboxUUID:'UUID casei din cabinetul Checkbox',
+    phVchasnoID:'ID din cabinetul Vchasno',
+    phPosterAccount:'myrestaurant (parte URL)',
+    phNoHall:'0 = fără sală',
+    phOrgUUID:'UUID organizație',
+    phTermUUID:'UUID terminal',
+    phNoTableSelect:'0 = nu arăta selecția mesei',
+    al_sulphites:'Sulfiți'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -3838,7 +3918,23 @@ var I18N = {
     notifTipsSaved:'Ajustes de propinas guardados!',
     notifLangSaved:'Idioma guardado!',
     notifPaletteApplied:'Paleta aplicada!',
-    notifLoadPOSFirst:'Primero cargue productos desde POS'},
+    notifLoadPOSFirst:'Primero cargue productos desde POS',
+    viaPOS:'🖥️ Via sistema POS (Poster / Syrve)',
+    phDiscountDineIn:'Descuento en local',
+    phDiscountTakeaway:'Descuento para llevar',
+    phDiscountDelivery:'Descuento de entrega',
+    phImageURL:'https://... (URL de imagen)',
+    phWidePhoto:'https://... (foto ancha del local)',
+    phBgURL:'https://... (URL de fondo)',
+    phGetFromBank:'Obtener del banco',
+    phCheckboxUUID:'UUID de caja del gabinete Checkbox',
+    phVchasnoID:'ID del gabinete Vchasno',
+    phPosterAccount:'myrestaurant (parte de URL)',
+    phNoHall:'0 = sin sala',
+    phOrgUUID:'UUID de organización',
+    phTermUUID:'UUID de terminal',
+    phNoTableSelect:'0 = no mostrar selección de mesa',
+    al_sulphites:'Sulfitos'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -4161,7 +4257,23 @@ var I18N = {
     notifTipsSaved:'Podesavanja napojnice sacuvana!',
     notifLangSaved:'Jezik sacuvan!',
     notifPaletteApplied:'Paleta primijenjena!',
-    notifLoadPOSFirst:'Prvo ucitajte proizvode iz POS-a'},
+    notifLoadPOSFirst:'Prvo ucitajte proizvode iz POS-a',
+    viaPOS:'🖥️ Putem POS sistema (Poster / Syrve)',
+    phDiscountDineIn:'Popust u lokalu',
+    phDiscountTakeaway:'Popust za ponijeti',
+    phDiscountDelivery:'Popust na dostavu',
+    phImageURL:'https://... (URL slike)',
+    phWidePhoto:'https://... (široka slika lokala)',
+    phBgURL:'https://... (URL pozadine)',
+    phGetFromBank:'Dobijte od banke',
+    phCheckboxUUID:'UUID kase iz Checkbox kabineta',
+    phVchasnoID:'ID iz Vchasno kabineta',
+    phPosterAccount:'myrestaurant (dio URL-a)',
+    phNoHall:'0 = bez sale',
+    phOrgUUID:'UUID organizacije',
+    phTermUUID:'UUID terminala',
+    phNoTableSelect:'0 = ne prikazuj izbor stola',
+    al_sulphites:'Sulfiti'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -4467,23 +4579,23 @@ window.handlePhotoSelect=handlePhotoSelect;window.clearPhoto=clearPhoto;window.s
 
 // ── АЛЕРГЕНИ ──
 const ALLERGENS_LIST=[
-  {id:'gluten',icon:'🌾',name:'Глютен'},{id:'milk',icon:'🥛',name:'Молоко'},
-  {id:'eggs',icon:'🥚',name:'Яйця'},{id:'nuts',icon:'🥜',name:'Горіхи'},
-  {id:'fish',icon:'🐟',name:'Риба'},{id:'seafood',icon:'🦐',name:'Морепродукти'},
-  {id:'soy',icon:'🫘',name:'Соя'},{id:'celery',icon:'🥬',name:'Селера'},
-  {id:'mustard',icon:'🌶️',name:'Гірчиця'},{id:'sesame',icon:'🌰',name:'Кунжут'},
-  {id:'sulphites',icon:'⚗️',name:'Сульфіти'},{id:'lupin',icon:'🌸',name:'Люпин'},
-  {id:'peanuts',icon:'🥜',name:'Арахіс'},
+  {id:'gluten',icon:'🌾'},{id:'milk',icon:'🥛'},
+  {id:'eggs',icon:'🥚'},{id:'nuts',icon:'🥜'},
+  {id:'fish',icon:'🐟'},{id:'seafood',icon:'🦐'},
+  {id:'soy',icon:'🫘'},{id:'celery',icon:'🥬'},
+  {id:'mustard',icon:'🌶️'},{id:'sesame',icon:'🌰'},
+  {id:'sulphites',icon:'⚗️'},{id:'lupin',icon:'🌸'},
+  {id:'peanuts',icon:'🥜'},
 ];
 function renderAllergenCheckboxes(selected=[]){
   const wrap=document.getElementById('allergen-checkboxes');if(!wrap)return;
   wrap.innerHTML=ALLERGENS_LIST.map(a=>`
-    <label class="allergen-cb${selected.includes(a.name)?' selected':''}" onclick="toggleAllergen(this,'${a.name}')">
-      <input type="checkbox" value="${a.name}"${selected.includes(a.name)?' checked':''}/>
-      ${a.icon} ${a.name}
+    <label class="allergen-cb${selected.includes(a.id)?' selected':''}" onclick="toggleAllergen(this,'${a.id}')">
+      <input type="checkbox" value="${a.id}"${selected.includes(a.id)?' checked':''}/>
+      ${a.icon} ${t('al_'+a.id)}
     </label>`).join('');
 }
-window.toggleAllergen=function(el,name){el.classList.toggle('selected');el.querySelector('input').checked=!el.querySelector('input').checked;};
+window.toggleAllergen=function(el,id){el.classList.toggle('selected');el.querySelector('input').checked=!el.querySelector('input').checked;};
 function getSelectedAllergens(){return Array.from(document.querySelectorAll('#allergen-checkboxes input:checked')).map(i=>i.value);}
 
 window.saveItem=async function(){
@@ -4796,7 +4908,7 @@ function renderBillingPlanCards(currentPlan){
     <div style="background:var(--card);border:1.5px solid ${p.key===currentPlan?'var(--accent)':'var(--border)'};border-radius:var(--radius);padding:1rem;position:relative;${p.key===currentPlan?'background:var(--accent-soft)':''}">
       ${p.popular?`<div style="position:absolute;top:.5rem;right:.5rem;background:var(--accent);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600">${t('popular')}</div>`:''}
       <div style="font-family:var(--font-head);font-size:.95rem;font-weight:600;margin-bottom:.25rem">${p.name}</div>
-      <div style="font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:.5rem">${p.price?'₴'+p.price+'<span style="font-size:11px;font-weight:400;color:var(--muted)">/${t("perMonth")}</span>':t('free')}</div>
+      <div style="font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:.5rem">${p.price?'₴'+p.price+'<span style="font-size:11px;font-weight:400;color:var(--muted)">/'+t('perMonth')+'</span>':t('free')}</div>
       <div style="font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:.75rem">${p.features.join('<br/>')}</div>
       ${p.key!==currentPlan?`<button class="btn btn-accent btn-sm" style="width:100%" onclick="subscribePlan('${p.key}')">${currentPlan==='trial'||currentPlan==='free'?t('choosePlanBtn'):t('switchPlan')}</button>`:`<div style="text-align:center;font-size:12px;color:var(--accent);font-weight:600">✓ ${t('currentPlanLbl')}</div>`}
     </div>`).join('');
@@ -4846,7 +4958,7 @@ async function loadPOSProductsForMapping(posSystem) {
     const data = await res.json();
     if(!res.ok) throw new Error(data.error);
     posProducts[posSystem] = data.products || [];
-    statusEl.textContent = `Завантажено ${posProducts[posSystem].length} продуктів з ${posSystem === 'poster' ? 'Poster' : 'Syrve'}`;
+    statusEl.textContent = t('loadedProducts').replace('{n}', posProducts[posSystem].length).replace('{pos}', posSystem === 'poster' ? 'Poster' : 'Syrve');
     renderMappingRows();
   } catch(e) {
     statusEl.textContent = 'Помилка: ' + e.message;
