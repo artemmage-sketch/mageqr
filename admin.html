@@ -1301,7 +1301,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div id="trial-fill" style="height:100%;background:var(--amber);border-radius:4px;width:100%;transition:width .5s"></div>
             </div>
             <div style="font-size:12px;color:#92400E" id="trial-end-date"></div>
-            <button class="btn btn-accent btn-sm" style="margin-top:.875rem;width:100%" onclick="bindCard()">
+            <button class="btn btn-accent btn-sm" style="margin-top:.875rem;width:100%" onclick="bindCard()" data-i18n="choosePlan">
               🚀 Обрати тариф і оплатити
             </button>
           </div>
@@ -5386,14 +5386,14 @@ async function loadPOSSettings(){
       document.getElementById('poster-account')&&(document.getElementById('poster-account').value=d.poster.account||'');
       document.getElementById('poster-token')&&(document.getElementById('poster-token').value=d.poster.token||'');
       document.getElementById('poster-spot')&&(document.getElementById('poster-spot').value=d.poster.spotId||'');
-      if(d.poster.enabled){document.getElementById('poster-status').textContent=t('pidklyucheno');document.getElementById('poster-status').className='pos-status ok';document.getElementById('pos-card-poster').classList.add('connected');}
+      if(d.poster.enabled){document.getElementById('poster-status').textContent=t('connected');document.getElementById('poster-status').className='pos-status ok';document.getElementById('pos-card-poster').classList.add('connected');}
     }
     if(d.syrve){
       document.getElementById('syrve-url')&&(document.getElementById('syrve-url').value=d.syrve.serverUrl||'');
       document.getElementById('syrve-login')&&(document.getElementById('syrve-login').value=d.syrve.login||'');
       document.getElementById('syrve-org')&&(document.getElementById('syrve-org').value=d.syrve.organizationId||'');
       document.getElementById('syrve-term')&&(document.getElementById('syrve-term').value=d.syrve.terminalGroupId||'');
-      if(d.syrve.enabled){document.getElementById('syrve-status').textContent=t('pidklyucheno');document.getElementById('syrve-status').className='pos-status ok';document.getElementById('pos-card-syrve').classList.add('connected');}
+      if(d.syrve.enabled){document.getElementById('syrve-status').textContent=t('connected');document.getElementById('syrve-status').className='pos-status ok';document.getElementById('pos-card-syrve').classList.add('connected');}
     }
   }catch(e){console.warn('loadPOSSettings:',e.message);}
 }
@@ -5415,7 +5415,7 @@ window.connectPOS=async function(sys){
     const res=await fetch(`${window.__CF_URL}/testPOSConnection`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,posSystem:sys})});
     const data=await res.json();
     if(!res.ok)throw new Error(data.error||'Помилка');
-    document.getElementById(sys+'-status').textContent=t('pidklyucheno');
+    document.getElementById(sys+'-status').textContent=t('connected');
     document.getElementById(sys+'-status').className='pos-status ok';
     document.getElementById('pos-card-'+sys).classList.add('connected');
     logEl.innerHTML+=`<div class="log-ok">[${now}] Підключено: ${data.name||sys}</div>`;
