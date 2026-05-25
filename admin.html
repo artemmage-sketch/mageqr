@@ -6122,14 +6122,20 @@ function renderAdminLangSwitcher() {
   const el = document.getElementById('admin-lang-switcher');
   if(!el) return;
   const langs = [
-    {code:'uk',flag:'🇺🇦'},{code:'en',flag:'🇬🇧'},{code:'pl',flag:'🇵🇱'},
-    {code:'de',flag:'🇩🇪'},{code:'ro',flag:'🇷🇴'},{code:'es',flag:'🇪🇸'},{code:'cnr',flag:'🇲🇪'},
+    {code:'uk',flag:'🇺🇦',label:'UK'},
+    {code:'en',flag:'🇬🇧',label:'EN'},
+    {code:'pl',flag:'🇵🇱',label:'PL'},
+    {code:'de',flag:'🇩🇪',label:'DE'},
+    {code:'ro',flag:'🇷🇴',label:'RO'},
+    {code:'es',flag:'🇪🇸',label:'ES'},
+    {code:'cnr',flag:'🇲🇪',label:'MNE'},
   ];
-  el.innerHTML = langs.map(l =>
-    `<button onclick="applyAdminLang('${l.code}');saveAdminLang('${l.code}')" title="${l.code.toUpperCase()}"
-      style="background:none;border:none;cursor:pointer;font-size:1.2rem;opacity:${adminLang===l.code?1:.4};transition:.15s"
-      >${l.flag}</button>`
-  ).join('');
+  el.innerHTML = langs.map(l => {
+    const active = adminLang === l.code;
+    return `<button onclick="applyAdminLang('${l.code}');saveAdminLang('${l.code}')" title="${l.label}"
+      style="display:inline-flex;align-items:center;gap:3px;padding:3px 7px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:${active?'700':'400'};transition:all .15s;border:${active?'1.5px solid var(--accent)':'1.5px solid transparent'};background:${active?'var(--accent-soft)':'none'};color:${active?'var(--accent)':'var(--muted)'};"
+      ><span style="font-size:1.1rem;line-height:1">${l.flag}</span><span>${l.label}</span></button>`;
+  }).join('');
 }
 
 // Переклад всього меню
