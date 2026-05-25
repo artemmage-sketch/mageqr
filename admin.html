@@ -355,19 +355,19 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       <div id="admin-lang-switcher" style="display:flex;gap:2px;margin-top:.375rem;flex-wrap:wrap"></div>
     </div>
     <div style="padding:.5rem 0;flex:1">
-      <div class="nav-section">Меню</div>
+      <div class="nav-section" data-i18n="menuGroup">Меню</div>
       <button class="nav-item active" onclick="nav(this,'t-orders')">🧾 Замовлення<span id="new-badge" style="background:#EF4444;color:#fff;font-size:10px;border-radius:10px;padding:1px 7px;margin-left:auto;display:none"></span></button>
       <button class="nav-item" onclick="nav(this,'t-items')">🍽️ Страви</button>
       <button class="nav-item" onclick="nav(this,'t-cats')">📂 Категорії</button>
-      <div class="nav-section">Заклад</div>
+      <div class="nav-section" data-i18n="venueGroup">Заклад</div>
       <button class="nav-item" onclick="nav(this,'t-tables')">🪑 Столи та QR</button>
-      <button class="nav-item" onclick="nav(this,'t-design')">🎨 Дизайн меню</button>
-      <button class="nav-item" onclick="nav(this,'t-payments')">💳 Платежі</button>
-      <button class="nav-item" onclick="nav(this,'t-pos')">🖥️ POS-інтеграція</button>
-      <button class="nav-item" onclick="nav(this,'t-customers')">👥 Клієнти</button>
+      <button class="nav-item" onclick="nav(this,'t-design')" data-i18n="design">🎨 Дизайн меню</button>
+      <button class="nav-item" onclick="nav(this,'t-payments')" data-i18n="payments">💳 Платежі</button>
+      <button class="nav-item" onclick="nav(this,'t-pos')" data-i18n="pos">🖥️ POS-інтеграція</button>
+      <button class="nav-item" onclick="nav(this,'t-customers')" data-i18n="customers">👥 Клієнти</button>
       <button class="nav-item" onclick="nav(this,'t-billing')">💳 Підписка</button>
-      <button class="nav-item" onclick="nav(this,'t-customers')">👥 Клієнти</button>
-      <button class="nav-item" onclick="nav(this,'t-ordering')">📋 Налаш. замовлень</button>
+      <button class="nav-item" onclick="nav(this,'t-customers')" data-i18n="customers">👥 Клієнти</button>
+      <button class="nav-item" onclick="nav(this,'t-ordering')" data-i18n="ordering">📋 Налаш. замовлень</button>
       <button class="nav-item" onclick="nav(this,'t-settings')">⚙️ Налаштування</button>
     </div>
     <div class="sb-bottom">
@@ -395,7 +395,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
           <div class="stat"><div class="stat-val" id="st-new-ord">—</div><div class="stat-lbl">Нових</div></div>
           <div class="stat"><div class="stat-val" id="st-done-ord">—</div><div class="stat-lbl">Виконано</div></div>
           <div class="stat"><div class="stat-val" id="st-today-rev">—</div><div class="stat-lbl">Виручка</div></div>
-          <div class="stat"><div class="stat-val" id="st-avg">—</div><div class="stat-lbl">Сер. чек</div></div>
+          <div class="stat"><div class="stat-val" id="st-avg">—</div><div class="stat-lbl" data-i18n="avgCheck">Сер. чек</div></div>
         </div>
         <div id="orders-wrap"></div>
       </div>
@@ -442,9 +442,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       <div class="content">
 
         <div class="stats-grid" style="margin-bottom:1.25rem">
-          <div class="stat"><div class="stat-val" id="st-tables-free">—</div><div class="stat-lbl">Вільних столів</div></div>
-          <div class="stat"><div class="stat-val" id="st-tables-occ">—</div><div class="stat-lbl">Зайнятих</div></div>
-          <div class="stat"><div class="stat-val" id="st-tables-rev">—</div><div class="stat-lbl">Виручка зали (сьогодні)</div></div>
+          <div class="stat"><div class="stat-val" id="st-tables-free">—</div><div class="stat-lbl" data-i18n="freeTablesLbl">Вільних столів</div></div>
+          <div class="stat"><div class="stat-val" id="st-tables-occ">—</div><div class="stat-lbl" data-i18n="occTablesLbl">Зайнятих</div></div>
+          <div class="stat"><div class="stat-val" id="st-tables-rev">—</div><div class="stat-lbl" data-i18n="revenueToday">Виручка зали (сьогодні)</div></div>
           <div class="stat"><div class="stat-val" id="st-tips-today">—</div><div class="stat-lbl">Чайові сьогодні</div></div>
         </div>
 
@@ -535,7 +535,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <!-- DESIGN STUDIO -->
     <div id="t-design" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title">🎨 Дизайн меню</div><div class="page-sub">Налаштуйте вигляд публічного меню</div></div>
+        <div><div class="page-title" data-i18n="design">🎨 Дизайн меню</div><div class="page-sub">Налаштуйте вигляд публічного меню</div></div>
         <button class="btn btn-accent btn-sm" onclick="saveDesign()">💾 Зберегти дизайн</button>
       </div>
       <div class="content">
@@ -572,7 +572,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
                   </div>
                 </div>
                 <div class="ds-row">
-                  <div style="flex:1"><span class="ds-label">Колір карток</span>
+                  <div style="flex:1"><span class="ds-label" data-i18n="cardColor">Колір карток</span>
                     <div class="color-input-wrap">
                       <label class="color-swatch"><input type="color" id="c-card" value="#FFFFFF" oninput="livePreview()"/></label>
                       <input class="color-hex" id="c-card-hex" type="text" value="#FFFFFF" oninput="hexToColor('c-card')"/>
@@ -580,7 +580,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
                   </div>
                 </div>
                 <div class="ds-row">
-                  <div style="flex:1"><span class="ds-label">Колір тексту</span>
+                  <div style="flex:1"><span class="ds-label" data-i18n="textColor">Колір тексту</span>
                     <div class="color-input-wrap">
                       <label class="color-swatch"><input type="color" id="c-text" value="#1A1208" oninput="livePreview()"/></label>
                       <input class="color-hex" id="c-text-hex" type="text" value="#1A1208" oninput="hexToColor('c-text')"/>
@@ -595,7 +595,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
               <div class="ds-panel-head"><div class="ds-panel-title">🔤 Шрифти</div></div>
               <div class="ds-section">
                 <div class="field-row">
-                  <span class="ds-label">Шрифт заголовків</span>
+                  <span class="ds-label" data-i18n="headFont">Шрифт заголовків</span>
                   <select id="font-head" onchange="livePreview()">
                     <option value="Playfair Display">Playfair Display — класичний</option>
                     <option value="Space Grotesk">Space Grotesk — сучасний</option>
@@ -619,7 +619,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
                   </select>
                 </div>
                 <div class="field-row">
-                  <span class="ds-label">Розмір шрифту</span>
+                  <span class="ds-label" data-i18n="fontSize">Розмір шрифту</span>
                   <div class="range-row">
                     <input type="range" id="font-size" min="13" max="18" value="15" oninput="livePreview();document.getElementById('font-size-val').textContent=this.value+'px'"/>
                     <span class="range-val" id="font-size-val">15px</span>
@@ -674,7 +674,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
               <div class="ds-panel-head"><div class="ds-panel-title">📐 Розмітка</div></div>
               <div class="ds-section">
                 <div class="toggle-row">
-                  <span class="toggle-label">Показувати ціни</span>
+                  <span class="toggle-label" data-i18n="showPrices">Показувати ціни</span>
                   <button class="toggle on" id="toggle-prices" onclick="this.classList.toggle('on');livePreview()"></button>
                 </div>
                 <div class="toggle-row" style="margin-top:.5rem">
@@ -682,11 +682,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
                   <button class="toggle on" id="toggle-desc" onclick="this.classList.toggle('on');livePreview()"></button>
                 </div>
                 <div class="toggle-row" style="margin-top:.5rem">
-                  <span class="toggle-label">Показувати вагу/об'єм</span>
+                  <span class="toggle-label" data-i18n="showWeight">Показувати вагу/об'єм</span>
                   <button class="toggle on" id="toggle-weight" onclick="this.classList.toggle('on');livePreview()"></button>
                 </div>
                 <div class="field-row" style="margin-top:.75rem">
-                  <span class="ds-label">Заокруглення карток</span>
+                  <span class="ds-label" data-i18n="cardRadius">Заокруглення карток</span>
                   <div class="range-row">
                     <input type="range" id="card-radius" min="0" max="24" value="12" oninput="livePreview();document.getElementById('radius-val').textContent=this.value+'px'"/>
                     <span class="range-val" id="radius-val">12px</span>
@@ -700,14 +700,14 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
           <div class="preview-wrap">
             <div class="ds-panel">
               <div class="ds-panel-head">
-                <div class="ds-panel-title">📱 Попередній перегляд</div>
+                <div class="ds-panel-title" data-i18n="preview">📱 Попередній перегляд</div>
                 <div style="font-size:11px;color:var(--muted)">Live</div>
               </div>
               <div style="padding:1rem">
                 <div class="device-frame" id="preview-frame">
                   <div class="preview-inner" id="preview-inner">
                     <div class="pv-banner" id="pv-banner">
-                      <div style="font-size:.7rem;color:rgba(255,255,255,.7)">Банер</div>
+                      <div style="font-size:.7rem;color:rgba(255,255,255,.7)" data-i18n="bannerLbl">Банер</div>
                     </div>
                     <div class="pv-header" id="pv-header">
                       <div class="pv-logo" id="pv-logo">🍣</div>
@@ -738,10 +738,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
                     </div>
                   </div>
                 </div>
-                <div class="preview-label">Публічне меню клієнта</div>
+                <div class="preview-label" data-i18n="publicMenu">Публічне меню клієнта</div>
               </div>
               <div class="ds-save-bar">
-                <div style="font-size:12px;color:var(--muted)">Зміни не збережені</div>
+                <div style="font-size:12px;color:var(--muted)" data-i18n="unsavedChanges">Зміни не збережені</div>
                 <button class="btn btn-accent btn-sm" onclick="saveDesign()" data-i18n="save">💾 Зберегти</button>
               </div>
             </div>
@@ -753,7 +753,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <!-- PAYMENTS -->
     <div id="t-payments" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title">💳 Платежі</div><div class="page-sub">Налаштуйте способи оплати для клієнтів</div></div>
+        <div><div class="page-title" data-i18n="payments">💳 Платежі</div><div class="page-sub" data-i18n="paymentsDesc">Налаштуйте способи оплати для клієнтів</div></div>
         <div style="display:flex;gap:.5rem">
           <button class="btn btn-outline btn-sm" onclick="notify('Тест-замовлення відправлено!','ok')">🧪 Тест оплати</button>
           <button class="btn btn-accent btn-sm" onclick="savePayments()" data-i18n="save">💾 Зберегти</button>
@@ -842,7 +842,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
                 </div>
                 <div style="margin-top:.5rem">
                   <button class="btn btn-outline btn-sm" onclick="testPayment('liqpay')">🧪 Тест оплати</button>
-                  <button class="btn btn-outline btn-sm" style="margin-left:.375rem" onclick="verifyProvider('liqpay')">✓ Перевірити ключі</button>
+                  <button class="btn btn-outline btn-sm" style="margin-left:.375rem" onclick="verifyProvider('liqpay')" data-i18n="verifyKeys">✓ Перевірити ключі</button>
                 </div>
                 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
                   <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Visa/MC</span>
@@ -868,7 +868,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
               </div>
               <div class="pay-fields" id="fields-mono" style="display:none">
                 <div>
-                  <label class="pay-field-label">Merchant Token</label>
+                  <label class="pay-field-label" data-i18n="merchantToken">Merchant Token</label>
                   <input type="password" placeholder="••••••••••••••••" id="mono-token"/>
                 </div>
                 <div style="font-size:11px;color:var(--muted)">
@@ -881,7 +881,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
                 </div>
                 <div style="margin-top:.5rem">
                   <button class="btn btn-outline btn-sm" onclick="testPayment('mono')">🧪 Тест оплати</button>
-                  <button class="btn btn-outline btn-sm" style="margin-left:.375rem" onclick="verifyProvider('mono')">✓ Перевірити токен</button>
+                  <button class="btn btn-outline btn-sm" style="margin-left:.375rem" onclick="verifyProvider('mono')" data-i18n="verifyToken">✓ Перевірити токен</button>
                 </div>
                 <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
                   <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Visa/MC</span>
@@ -1063,7 +1063,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <!-- POS INTEGRATION -->
     <div id="t-pos" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title">🖥️ POS-інтеграція</div><div class="page-sub">Синхронізація замовлень з касовими системами</div></div>
+        <div><div class="page-title" data-i18n="pos">🖥️ POS-інтеграція</div><div class="page-sub">Синхронізація замовлень з касовими системами</div></div>
         <button class="btn btn-accent btn-sm" onclick="savePOS()" data-i18n="save">💾 Зберегти</button>
       </div>
       <div class="content">
@@ -1108,7 +1108,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
             <div class="pos-logo-row">
               <div class="pos-logo" style="background:#FEECDC">🍽️</div>
               <div>
-                <div class="pos-name">Poster POS</div>
+                <div class="pos-name" data-i18n="posterPOS">Poster POS</div>
                 <div class="pos-ver">joinposter.com · REST API v2</div>
               </div>
               <span class="pos-status off" id="poster-status">Не підключено</span>
@@ -1138,7 +1138,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
               <button class="btn btn-outline btn-sm" onclick="testPOS('poster')">🧪 Тест</button>
               <button class="btn btn-accent btn-sm" onclick="connectPOS('poster')">Підключити</button>
               <button class="btn btn-outline btn-sm" onclick="showPosterWebhook()">🔗 Webhook</button>
-              <button class="btn btn-outline btn-sm" onclick="syncTablesFromPoster()">🪑 Синх. столи</button>
+              <button class="btn btn-outline btn-sm" onclick="syncTablesFromPoster()" data-i18n="syncTables">🪑 Синх. столи</button>
             </div>
             <div style="margin-top:.875rem">
               <div class="pay-field-label">Журнал синхронізації</div>
@@ -1186,8 +1186,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
               <button class="btn btn-outline btn-sm" onclick="testPOS('syrve')">🧪 Тест</button>
               <button class="btn btn-accent btn-sm" onclick="connectPOS('syrve')">Підключити</button>
-              <button class="btn btn-outline btn-sm" onclick="syncSyrveTables()">🪑 Синх. столи</button>
-              <button class="btn btn-outline btn-sm" onclick="syncSyrveMenu()">🍽️ Синх. меню</button>
+              <button class="btn btn-outline btn-sm" onclick="syncSyrveTables()" data-i18n="syncTables">🪑 Синх. столи</button>
+              <button class="btn btn-outline btn-sm" onclick="syncSyrveMenu()" data-i18n="syncMenu">🍽️ Синх. меню</button>
             </div>
             <div style="margin-top:.875rem">
               <div class="pay-field-label">Журнал синхронізації</div>
@@ -1237,8 +1237,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <div id="t-customers" class="tab-section">
       <div class="topbar">
         <div>
-          <div class="page-title" data-i18n="customers">👥 Клієнти</div>
-          <div class="page-sub" id="customers-sub">Завантаження...</div>
+          <div class="page-title" data-i18n="customers" data-i18n="customers">👥 Клієнти</div>
+          <div class="page-sub" id="customers-sub" data-i18n="loading">Завантаження...</div>
         </div>
         <div style="display:flex;gap:.5rem">
           <input type="text" id="customer-search" placeholder="Пошук за ім'ям або телефоном..." style="width:220px" oninput="filterCustomers()"/>
@@ -1248,22 +1248,22 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       </div>
       <div class="content">
         <div class="stats-grid" style="margin-bottom:1.25rem">
-          <div class="stat"><div class="stat-val" id="cst-total">—</div><div class="stat-lbl">Всього клієнтів</div></div>
-          <div class="stat"><div class="stat-val" id="cst-new">—</div><div class="stat-lbl">Нових за місяць</div></div>
-          <div class="stat"><div class="stat-val" id="cst-repeat">—</div><div class="stat-lbl">Повторних</div></div>
-          <div class="stat"><div class="stat-val" id="cst-avg">—</div><div class="stat-lbl">Сер. чек</div></div>
+          <div class="stat"><div class="stat-val" id="cst-total">—</div><div class="stat-lbl" data-i18n="totalClients">Всього клієнтів</div></div>
+          <div class="stat"><div class="stat-val" id="cst-new">—</div><div class="stat-lbl" data-i18n="newThisMonth">Нових за місяць</div></div>
+          <div class="stat"><div class="stat-val" id="cst-repeat">—</div><div class="stat-lbl" data-i18n="returnClients">Повторних</div></div>
+          <div class="stat"><div class="stat-val" id="cst-avg">—</div><div class="stat-lbl" data-i18n="avgCheck">Сер. чек</div></div>
         </div>
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
           <div style="overflow-x:auto">
             <table class="customers-table">
               <thead>
                 <tr>
-                  <th>Клієнт</th>
-                  <th>Телефон</th>
+                  <th data-i18n="clientCol">Клієнт</th>
+                  <th data-i18n="venuePhone">Телефон</th>
                   <th>Замовлень</th>
                   <th>Витрачено</th>
-                  <th>Сер. чек</th>
-                  <th>Перше замовлення</th>
+                  <th data-i18n="avgCheck" data-i18n="avgCheck">Сер. чек</th>
+                  <th data-i18n="firstOrder">Перше замовлення</th>
                   <th>Останнє замовлення</th>
                   <th></th>
                 </tr>
@@ -1281,7 +1281,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
           <div>
             <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:600">💳 Підписка та білінг</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px" id="billing-sub">Завантаження...</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px" id="billing-sub" data-i18n="loading">Завантаження...</div>
           </div>
         </div>
 
@@ -1358,7 +1358,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
           </div>
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem">
             <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.5rem">📊 Використання</div>
-            <div style="font-size:13px;color:var(--muted)" id="usage-info">Завантаження...</div>
+            <div style="font-size:13px;color:var(--muted)" id="usage-info" data-i18n="loading">Завантаження...</div>
           </div>
         </div>
 
@@ -1382,47 +1382,6 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
 
 
-    <!-- CUSTOMERS -->
-    <div id="t-customers" class="tab-section">
-      <div class="topbar">
-        <div><div class="page-title" data-i18n="customers">👥 Клієнти</div><div class="page-sub" id="customers-sub">Завантаження...</div></div>
-        <div style="display:flex;gap:.5rem">
-          <input type="text" id="cust-search" placeholder="Пошук за ім'ям або телефоном..." style="width:220px" oninput="filterCustomers()"/>
-          <button class="btn btn-outline btn-sm" onclick="exportCustomersExcel()">📥 Excel</button>
-          <button class="btn btn-outline btn-sm" onclick="loadCustomers()">↺</button>
-        </div>
-      </div>
-      <div class="content">
-        <div class="stats-grid" style="margin-bottom:1.25rem">
-          <div class="stat"><div class="stat-val" id="cust-total-count">—</div><div class="stat-lbl">Всього клієнтів</div></div>
-          <div class="stat"><div class="stat-val" id="cust-new-month">—</div><div class="stat-lbl">Нових за місяць</div></div>
-          <div class="stat"><div class="stat-val" id="cust-repeat">—</div><div class="stat-lbl">Постійних (2+ замовлень)</div></div>
-          <div class="stat"><div class="stat-val" id="cust-avg-check">—</div><div class="stat-lbl">Середній чек</div></div>
-        </div>
-        <div class="settings-section" style="padding:0;overflow:hidden">
-          <div id="customers-table-wrap" style="overflow-x:auto">
-            <table class="customers-table">
-              <thead>
-                <tr>
-                  <th>Клієнт</th>
-                  <th>Телефон</th>
-                  <th>Замовлень</th>
-                  <th>Загальна сума</th>
-                  <th>Останнє замовлення</th>
-                  <th>Тип</th>
-                </tr>
-              </thead>
-              <tbody id="customers-tbody"></tbody>
-            </table>
-          </div>
-          <div id="customers-empty" style="display:none;text-align:center;padding:2rem;color:var(--muted)">
-            Замовлень ще немає
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ORDERING SETTINGS -->
     <div id="t-ordering" class="tab-section">
       <div class="topbar">
         <div><div class="page-title">📋 Налаштування замовлень</div><div class="page-sub">Типи замовлень, доставка, години роботи</div></div>
@@ -1649,7 +1608,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <!-- SETTINGS -->
     <div id="t-settings" class="tab-section">
       <div class="topbar">
-        <div><div class="page-title">⚙️ Налаштування закладу</div><div class="page-sub">Інформація відображається у публічному меню</div></div>
+        <div><div class="page-title" data-i18n="settingsVenue">⚙️ Налаштування закладу</div><div class="page-sub">Інформація відображається у публічному меню</div></div>
         <button class="btn btn-accent btn-sm" onclick="saveSettings()">💾 Зберегти все</button>
       </div>
       <div class="content">
@@ -1659,7 +1618,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
           <h3>📋 Інформація про заклад</h3>
           <div class="grid-2">
             <div class="field-row span2">
-              <label class="field-label">Назва закладу</label>
+              <label class="field-label" data-i18n="venueName">Назва закладу</label>
               <input id="set-name" type="text" placeholder="Моє Меню" oninput="document.getElementById('sb-venue-name').textContent=this.value"/>
             </div>
             <div class="field-row">
@@ -1667,19 +1626,19 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
               <input id="set-tag" type="text" placeholder="Японська кухня · Тернопіль"/>
             </div>
             <div class="field-row">
-              <label class="field-label">Місто</label>
+              <label class="field-label" data-i18n="venueCity">Місто</label>
               <input id="set-city" type="text" placeholder="Тернопіль"/>
             </div>
             <div class="field-row">
-              <label class="field-label">Телефон</label>
+              <label class="field-label" data-i18n="venuePhone">Телефон</label>
               <input id="set-phone" type="text" placeholder="+380 XX XXX XX XX"/>
             </div>
             <div class="field-row">
-              <label class="field-label">Адреса</label>
+              <label class="field-label" data-i18n="venueAddress">Адреса</label>
               <input id="set-addr" type="text" placeholder="вул. Руська, 12"/>
             </div>
             <div class="field-row span2">
-              <label class="field-label">Години роботи</label>
+              <label class="field-label" data-i18n="venueHours">Години роботи</label>
               <input id="set-hours" type="text" placeholder="Пн-Нд: 10:00 — 22:00"/>
             </div>
           </div>
@@ -1771,7 +1730,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
             <div style="font-size:10px;color:var(--muted);margin-top:2px">JPG, PNG, WebP — до 5 МБ</div>
           </div>
           <div id="photo-progress" style="display:none">
-            <div style="font-size:12px;color:var(--muted);margin-bottom:.5rem">Завантаження...</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:.5rem" data-i18n="loading">Завантаження...</div>
             <div style="height:4px;background:var(--border);border-radius:2px">
               <div id="photo-progress-bar" style="height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .3s"></div>
             </div>
@@ -1900,8 +1859,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
           <canvas id="table-qr-canvas" width="160" height="160"></canvas>
         </div>
         <div id="table-qr-url" style="font-size:10px;color:var(--muted);margin-top:.375rem;word-break:break-all"></div>
-        <button class="btn btn-outline btn-sm" style="margin-top:.5rem;width:100%" onclick="downloadTableQR()">⬇️ Завантажити QR</button>
-        <button class="btn btn-outline btn-sm" style="margin-top:.375rem;width:100%" onclick="copyTableQRUrl()">🔗 Копіювати URL</button>
+        <button class="btn btn-outline btn-sm" style="margin-top:.5rem;width:100%" onclick="downloadTableQR()" data-i18n="downloadQR">⬇️ Завантажити QR</button>
+        <button class="btn btn-outline btn-sm" style="margin-top:.375rem;width:100%" onclick="copyTableQRUrl()" data-i18n="copyURL">🔗 Копіювати URL</button>
       </div>
 
       <!-- СТАТУС І ДІЇ -->
@@ -1911,15 +1870,15 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
         <div style="display:flex;flex-direction:column;gap:.375rem">
           <button class="btn btn-success btn-sm" onclick="setTableStatus('occupied')">🪑 Відкрити стіл</button>
-          <button class="btn btn-outline btn-sm" onclick="setTableStatus('free')">✓ Звільнити стіл</button>
-          <button class="btn btn-accent btn-sm" onclick="markPaid()">💳 Оплачено</button>
+          <button class="btn btn-outline btn-sm" onclick="setTableStatus('free')" data-i18n="tableFreeBtn">✓ Звільнити стіл</button>
+          <button class="btn btn-accent btn-sm" onclick="markPaid()" data-i18n="tablePaid">💳 Оплачено</button>
         </div>
       </div>
     </div>
 
     <!-- ЗАМОВЛЕННЯ НА СТОЛІ -->
     <div style="padding:0 1rem 1rem">
-      <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem">Активні замовлення</div>
+      <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem" data-i18n="activeOrders">Активні замовлення</div>
       <div id="table-order-lines"></div>
       <div style="display:flex;justify-content:space-between;font-weight:600;border-top:1px solid var(--border);padding-top:.5rem;margin-top:.5rem">
         <span>Разом:</span><span id="table-order-total">—</span>
@@ -3768,6 +3727,64 @@ const I18N = {
     cancel:'Скасувати', close:'Закрити', yes:'Так', no:'Ні',
     success:'Успішно!', error:'Помилка', warning:'Увага',
     required:'обовʼязкове поле', optional:'необовʼязково',
+    menuGroup:'Меню',
+    venueGroup:'Заклад',
+    noCats:'📂 Немає категорій',
+    searchOrder:'Пошук замовлення',
+    freeTablesLbl:'Вільних столів',
+    occTablesLbl:'Зайнятих',
+    revenueToday:'Виручка зали (сьогодні)',
+    allZones:'Всі зони',
+    tableFree:'Вільний',
+    tableOccupied:'Зайнятий',
+    tableOpen:'Відкрити стіл',
+    tableFreeBtn:'✓ Звільнити стіл',
+    tablePaid:'💳 Оплачено',
+    downloadQR:'⬇️ Завантажити QR',
+    copyURL:'🔗 Копіювати URL',
+    activeOrders:'Активні замовлення',
+    colorsAndFonts:'Кольори та шрифти',
+    accentColor:'Акцентний колір',
+    bgColor:'Колір фону',
+    cardColor:'Колір карток',
+    textColor:'Колір тексту',
+    fontSize:'Розмір шрифту',
+    headFont:'Шрифт заголовків',
+    cardRadius:'Заокруглення карток',
+    showPrices:'Показувати ціни',
+    showDesc:'Показувати опис',
+    showWeight:'Показувати вагу/обʼєм',
+    preview:'📱 Попередній перегляд',
+    unsavedChanges:'Зміни не збережені',
+    publicMenu:'Публічне меню клієнта',
+    paymentsDesc:'Налаштуйте способи оплати',
+    publicKey:'Публічний ключ',
+    privateKey:'Приватний ключ',
+    merchantToken:'Merchant Token',
+    testPayment:'🧪 Тест оплати',
+    verifyKeys:'✓ Перевірити ключі',
+    verifyToken:'✓ Перевірити токен',
+    orderTypes:'Типи замовлень',
+    discounts:'Знижки',
+    minOrder:'Мінімальне замовлення',
+    deliveryCost:'Вартість доставки',
+    freeFrom:'Безкоштовно від',
+    minTime:'Мінімальний час',
+    settingsVenue:'⚙️ Налаштування закладу',
+    logoLbl:'Логотип',
+    bannerLbl:'Банер',
+    posterPOS:'Poster POS',
+    accessToken:'Токен доступу',
+    account:'Аккаунт',
+    testOrder:'🧪 Тест-замовлення',
+    syncTables:'🪑 Синх. столи',
+    syncMenu:'🍽️ Синх. меню',
+    totalClients:'Всього клієнтів',
+    newThisMonth:'Нових за місяць',
+    returnClients:'Повторних',
+    avgCheck:'Сер. чек',
+    clientCol:'Клієнт',
+    firstOrder:'Перше замовлення',
   },
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
@@ -3806,6 +3823,64 @@ const I18N = {
     cancel:'Cancel', close:'Close', yes:'Yes', no:'No',
     success:'Success!', error:'Error', warning:'Warning',
     required:'required', optional:'optional',
+    menuGroup:'Menu',
+    venueGroup:'Venue',
+    noCats:'📂 No categories',
+    searchOrder:'Search order',
+    freeTablesLbl:'Free tables',
+    occTablesLbl:'Occupied',
+    revenueToday:'Hall revenue (today)',
+    allZones:'All zones',
+    tableFree:'Free',
+    tableOccupied:'Occupied',
+    tableOpen:'Open table',
+    tableFreeBtn:'✓ Free table',
+    tablePaid:'💳 Paid',
+    downloadQR:'⬇️ Download QR',
+    copyURL:'🔗 Copy URL',
+    activeOrders:'Active orders',
+    colorsAndFonts:'Colors & fonts',
+    accentColor:'Accent color',
+    bgColor:'Background color',
+    cardColor:'Card color',
+    textColor:'Text color',
+    fontSize:'Font size',
+    headFont:'Heading font',
+    cardRadius:'Card radius',
+    showPrices:'Show prices',
+    showDesc:'Show description',
+    showWeight:'Show weight/volume',
+    preview:'📱 Preview',
+    unsavedChanges:'Unsaved changes',
+    publicMenu:'Public client menu',
+    paymentsDesc:'Set up payment methods',
+    publicKey:'Public key',
+    privateKey:'Private key',
+    merchantToken:'Merchant Token',
+    testPayment:'🧪 Test payment',
+    verifyKeys:'✓ Verify keys',
+    verifyToken:'✓ Verify token',
+    orderTypes:'Order types',
+    discounts:'Discounts',
+    minOrder:'Minimum order',
+    deliveryCost:'Delivery cost',
+    freeFrom:'Free from',
+    minTime:'Minimum time',
+    settingsVenue:'⚙️ Venue settings',
+    logoLbl:'Logo',
+    bannerLbl:'Banner',
+    posterPOS:'Poster POS',
+    accessToken:'Access token',
+    account:'Account',
+    testOrder:'🧪 Test order',
+    syncTables:'🪑 Sync tables',
+    syncMenu:'🍽️ Sync menu',
+    totalClients:'Total clients',
+    newThisMonth:'New this month',
+    returnClients:'Returning',
+    avgCheck:'Avg. check',
+    clientCol:'Client',
+    firstOrder:'First order',
   },
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
@@ -3844,6 +3919,64 @@ const I18N = {
     cancel:'Anuluj', close:'Zamknij', yes:'Tak', no:'Nie',
     success:'Sukces!', error:'Błąd', warning:'Uwaga',
     required:'wymagane', optional:'opcjonalne',
+    menuGroup:'Menu',
+    venueGroup:'Lokal',
+    noCats:'📂 Brak kategorii',
+    searchOrder:'Szukaj zamówienia',
+    freeTablesLbl:'Wolne stoły',
+    occTablesLbl:'Zajęte',
+    revenueToday:'Przychód sali (dziś)',
+    allZones:'Wszystkie strefy',
+    tableFree:'Wolny',
+    tableOccupied:'Zajęty',
+    tableOpen:'Otwórz stolik',
+    tableFreeBtn:'✓ Zwolnij stolik',
+    tablePaid:'💳 Zapłacono',
+    downloadQR:'⬇️ Pobierz QR',
+    copyURL:'🔗 Kopiuj URL',
+    activeOrders:'Aktywne zamówienia',
+    colorsAndFonts:'Kolory i czcionki',
+    accentColor:'Kolor akcentu',
+    bgColor:'Kolor tła',
+    cardColor:'Kolor kart',
+    textColor:'Kolor tekstu',
+    fontSize:'Rozmiar czcionki',
+    headFont:'Czcionka nagłówków',
+    cardRadius:'Zaokrąglenie kart',
+    showPrices:'Pokaż ceny',
+    showDesc:'Pokaż opis',
+    showWeight:'Pokaż wagę/objętość',
+    preview:'📱 Podgląd',
+    unsavedChanges:'Niezapisane zmiany',
+    publicMenu:'Publiczne menu klienta',
+    paymentsDesc:'Skonfiguruj metody płatności',
+    publicKey:'Klucz publiczny',
+    privateKey:'Klucz prywatny',
+    merchantToken:'Merchant Token',
+    testPayment:'🧪 Test płatności',
+    verifyKeys:'✓ Weryfikuj klucze',
+    verifyToken:'✓ Weryfikuj token',
+    orderTypes:'Typy zamówień',
+    discounts:'Rabaty',
+    minOrder:'Minimalne zamówienie',
+    deliveryCost:'Koszt dostawy',
+    freeFrom:'Bezpłatnie od',
+    minTime:'Minimalny czas',
+    settingsVenue:'⚙️ Ustawienia lokalu',
+    logoLbl:'Logo',
+    bannerLbl:'Baner',
+    posterPOS:'Poster POS',
+    accessToken:'Token dostępu',
+    account:'Konto',
+    testOrder:'🧪 Testowe zamówienie',
+    syncTables:'🪑 Sync stoły',
+    syncMenu:'🍽️ Sync menu',
+    totalClients:'Wszyscy klienci',
+    newThisMonth:'Nowych w tym miesiącu',
+    returnClients:'Powracających',
+    avgCheck:'Śr. rachunek',
+    clientCol:'Klient',
+    firstOrder:'Pierwsze zamówienie',
   },
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
@@ -3881,6 +4014,64 @@ const I18N = {
     cancel:'Abbrechen', close:'Schließen', yes:'Ja', no:'Nein',
     success:'Erfolg!', error:'Fehler', warning:'Warnung',
     required:'erforderlich', optional:'optional',
+    menuGroup:'Menü',
+    venueGroup:'Lokal',
+    noCats:'📂 Keine Kategorien',
+    searchOrder:'Bestellung suchen',
+    freeTablesLbl:'Freie Tische',
+    occTablesLbl:'Belegt',
+    revenueToday:'Saalumsatz (heute)',
+    allZones:'Alle Bereiche',
+    tableFree:'Frei',
+    tableOccupied:'Belegt',
+    tableOpen:'Tisch öffnen',
+    tableFreeBtn:'✓ Tisch freigeben',
+    tablePaid:'💳 Bezahlt',
+    downloadQR:'⬇️ QR herunterladen',
+    copyURL:'🔗 URL kopieren',
+    activeOrders:'Aktive Bestellungen',
+    colorsAndFonts:'Farben & Schriften',
+    accentColor:'Akzentfarbe',
+    bgColor:'Hintergrundfarbe',
+    cardColor:'Kartenfarbe',
+    textColor:'Textfarbe',
+    fontSize:'Schriftgröße',
+    headFont:'Überschriftsschrift',
+    cardRadius:'Kartenradius',
+    showPrices:'Preise anzeigen',
+    showDesc:'Beschreibung anzeigen',
+    showWeight:'Gewicht/Volumen anzeigen',
+    preview:'📱 Vorschau',
+    unsavedChanges:'Ungespeicherte Änderungen',
+    publicMenu:'Öffentliches Kundenmenü',
+    paymentsDesc:'Zahlungsmethoden einrichten',
+    publicKey:'Öffentlicher Schlüssel',
+    privateKey:'Privater Schlüssel',
+    merchantToken:'Merchant Token',
+    testPayment:'🧪 Zahlung testen',
+    verifyKeys:'✓ Schlüssel prüfen',
+    verifyToken:'✓ Token prüfen',
+    orderTypes:'Bestellarten',
+    discounts:'Rabatte',
+    minOrder:'Mindestbestellung',
+    deliveryCost:'Lieferkosten',
+    freeFrom:'Kostenlos ab',
+    minTime:'Mindestzeit',
+    settingsVenue:'⚙️ Lokalkeinstellungen',
+    logoLbl:'Logo',
+    bannerLbl:'Banner',
+    posterPOS:'Poster POS',
+    accessToken:'Zugriffstoken',
+    account:'Konto',
+    testOrder:'🧪 Testbestellung',
+    syncTables:'🪑 Tische sync',
+    syncMenu:'🍽️ Menü sync',
+    totalClients:'Kunden gesamt',
+    newThisMonth:'Neu diesen Monat',
+    returnClients:'Stammkunden',
+    avgCheck:'Ø Rechnung',
+    clientCol:'Kunde',
+    firstOrder:'Erste Bestellung',
   },
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
@@ -3918,6 +4109,64 @@ const I18N = {
     cancel:'Anulează', close:'Închide', yes:'Da', no:'Nu',
     success:'Succes!', error:'Eroare', warning:'Atenție',
     required:'obligatoriu', optional:'opțional',
+    menuGroup:'Meniu',
+    venueGroup:'Local',
+    noCats:'📂 Fără categorii',
+    searchOrder:'Caută comandă',
+    freeTablesLbl:'Mese libere',
+    occTablesLbl:'Ocupate',
+    revenueToday:'Venit sală (azi)',
+    allZones:'Toate zonele',
+    tableFree:'Liberă',
+    tableOccupied:'Ocupată',
+    tableOpen:'Deschide masă',
+    tableFreeBtn:'✓ Eliberează masa',
+    tablePaid:'💳 Plătit',
+    downloadQR:'⬇️ Descarcă QR',
+    copyURL:'🔗 Copiază URL',
+    activeOrders:'Comenzi active',
+    colorsAndFonts:'Culori și fonturi',
+    accentColor:'Culoare accent',
+    bgColor:'Culoare fundal',
+    cardColor:'Culoare card',
+    textColor:'Culoare text',
+    fontSize:'Dimensiune font',
+    headFont:'Font titluri',
+    cardRadius:'Raza cardului',
+    showPrices:'Afișează prețuri',
+    showDesc:'Afișează descriere',
+    showWeight:'Afișează greutate/volum',
+    preview:'📱 Previzualizare',
+    unsavedChanges:'Modificări nesalvate',
+    publicMenu:'Meniu public client',
+    paymentsDesc:'Configurați metodele de plată',
+    publicKey:'Cheie publică',
+    privateKey:'Cheie privată',
+    merchantToken:'Merchant Token',
+    testPayment:'🧪 Test plată',
+    verifyKeys:'✓ Verifică chei',
+    verifyToken:'✓ Verifică token',
+    orderTypes:'Tipuri de comenzi',
+    discounts:'Reduceri',
+    minOrder:'Comandă minimă',
+    deliveryCost:'Cost livrare',
+    freeFrom:'Gratuit de la',
+    minTime:'Timp minim',
+    settingsVenue:'⚙️ Setări local',
+    logoLbl:'Logo',
+    bannerLbl:'Banner',
+    posterPOS:'Poster POS',
+    accessToken:'Token acces',
+    account:'Cont',
+    testOrder:'🧪 Comandă test',
+    syncTables:'🪑 Sync mese',
+    syncMenu:'🍽️ Sync meniu',
+    totalClients:'Total clienți',
+    newThisMonth:'Noi luna aceasta',
+    returnClients:'Revenitori',
+    avgCheck:'Bon mediu',
+    clientCol:'Client',
+    firstOrder:'Prima comandă',
   },
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
@@ -3955,6 +4204,64 @@ const I18N = {
     cancel:'Cancelar', close:'Cerrar', yes:'Sí', no:'No',
     success:'¡Éxito!', error:'Error', warning:'Advertencia',
     required:'obligatorio', optional:'opcional',
+    menuGroup:'Menú',
+    venueGroup:'Local',
+    noCats:'📂 Sin categorías',
+    searchOrder:'Buscar pedido',
+    freeTablesLbl:'Mesas libres',
+    occTablesLbl:'Ocupadas',
+    revenueToday:'Ingresos sala (hoy)',
+    allZones:'Todas las zonas',
+    tableFree:'Libre',
+    tableOccupied:'Ocupada',
+    tableOpen:'Abrir mesa',
+    tableFreeBtn:'✓ Liberar mesa',
+    tablePaid:'💳 Pagado',
+    downloadQR:'⬇️ Descargar QR',
+    copyURL:'🔗 Copiar URL',
+    activeOrders:'Pedidos activos',
+    colorsAndFonts:'Colores y fuentes',
+    accentColor:'Color de acento',
+    bgColor:'Color de fondo',
+    cardColor:'Color de tarjeta',
+    textColor:'Color de texto',
+    fontSize:'Tamaño de fuente',
+    headFont:'Fuente de títulos',
+    cardRadius:'Radio de tarjeta',
+    showPrices:'Mostrar precios',
+    showDesc:'Mostrar descripción',
+    showWeight:'Mostrar peso/volumen',
+    preview:'📱 Vista previa',
+    unsavedChanges:'Cambios no guardados',
+    publicMenu:'Menú público del cliente',
+    paymentsDesc:'Configure los métodos de pago',
+    publicKey:'Clave pública',
+    privateKey:'Clave privada',
+    merchantToken:'Merchant Token',
+    testPayment:'🧪 Probar pago',
+    verifyKeys:'✓ Verificar claves',
+    verifyToken:'✓ Verificar token',
+    orderTypes:'Tipos de pedido',
+    discounts:'Descuentos',
+    minOrder:'Pedido mínimo',
+    deliveryCost:'Costo de entrega',
+    freeFrom:'Gratis desde',
+    minTime:'Tiempo mínimo',
+    settingsVenue:'⚙️ Ajustes del local',
+    logoLbl:'Logo',
+    bannerLbl:'Banner',
+    posterPOS:'Poster POS',
+    accessToken:'Token de acceso',
+    account:'Cuenta',
+    testOrder:'🧪 Pedido de prueba',
+    syncTables:'🪑 Sync mesas',
+    syncMenu:'🍽️ Sync menú',
+    totalClients:'Total clientes',
+    newThisMonth:'Nuevos este mes',
+    returnClients:'Recurrentes',
+    avgCheck:'Ticket medio',
+    clientCol:'Cliente',
+    firstOrder:'Primer pedido',
   },
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
@@ -3992,6 +4299,64 @@ const I18N = {
     cancel:'Otkaži', close:'Zatvori', yes:'Da', no:'Ne',
     success:'Uspjeh!', error:'Greška', warning:'Upozorenje',
     required:'obavezno', optional:'opcionalno',
+    menuGroup:'Meni',
+    venueGroup:'Lokal',
+    noCats:'📂 Nema kategorija',
+    searchOrder:'Pretraži narudžbinu',
+    freeTablesLbl:'Slobodni stolovi',
+    occTablesLbl:'Zauzeti',
+    revenueToday:'Prihod sale (danas)',
+    allZones:'Sve zone',
+    tableFree:'Slobodan',
+    tableOccupied:'Zauzet',
+    tableOpen:'Otvori sto',
+    tableFreeBtn:'✓ Oslobodi sto',
+    tablePaid:'💳 Plaćeno',
+    downloadQR:'⬇️ Preuzmi QR',
+    copyURL:'🔗 Kopiraj URL',
+    activeOrders:'Aktivne narudžbine',
+    colorsAndFonts:'Boje i fontovi',
+    accentColor:'Boja akcenta',
+    bgColor:'Boja pozadine',
+    cardColor:'Boja kartice',
+    textColor:'Boja teksta',
+    fontSize:'Veličina fonta',
+    headFont:'Font naslova',
+    cardRadius:'Radijus kartice',
+    showPrices:'Prikaži cijene',
+    showDesc:'Prikaži opis',
+    showWeight:'Prikaži težinu/zapreminu',
+    preview:'📱 Pregled',
+    unsavedChanges:'Nespremljene promjene',
+    publicMenu:'Javni meni klijenta',
+    paymentsDesc:'Podesite načine plaćanja',
+    publicKey:'Javni ključ',
+    privateKey:'Privatni ključ',
+    merchantToken:'Merchant Token',
+    testPayment:'🧪 Test plaćanja',
+    verifyKeys:'✓ Provjeri ključeve',
+    verifyToken:'✓ Provjeri token',
+    orderTypes:'Tipovi narudžbina',
+    discounts:'Popusti',
+    minOrder:'Minimalna narudžbina',
+    deliveryCost:'Cijena dostave',
+    freeFrom:'Besplatno od',
+    minTime:'Minimalno vrijeme',
+    settingsVenue:'⚙️ Podešavanja lokala',
+    logoLbl:'Logo',
+    bannerLbl:'Baner',
+    posterPOS:'Poster POS',
+    accessToken:'Token pristupa',
+    account:'Nalog',
+    testOrder:'🧪 Testna narudžbina',
+    syncTables:'🪑 Sync stolovi',
+    syncMenu:'🍽️ Sync meni',
+    totalClients:'Ukupno klijenata',
+    newThisMonth:'Novih ovog mjeseca',
+    returnClients:'Povratnih',
+    avgCheck:'Prosj. račun',
+    clientCol:'Klijent',
+    firstOrder:'Prva narudžbina',
   },
 };
 
