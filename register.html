@@ -124,11 +124,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
 <div class="header">
   <div class="logo">✦ Mage <span>QR</span> Rest</div>
-  <h1>Почніть безкоштовно</h1>
-  <p class="subtitle">Цифрове меню для вашого закладу<br/>за 5 хвилин</p>
+  <h1 data-i18n="r_startBtn">Почніть безкоштовно</h1>
+  <p class="subtitle">Цифрове меню для вашого закладу<br/ data-i18n="r_in5min">за 5 хвилин</p>
 </div>
 
-<div class="trial-badge" data-i18n="r_trialBadge">🎁 14 днів безкоштовно — будь-який тариф</div>
+<div class="trial-badge" data-i18n="r_trialBadge" data-i18n="r_trialBadge">🎁 14 днів безкоштовно — будь-який тариф</div>
 
 <div class="steps-wrap">
   <div class="step-item">
@@ -221,11 +221,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
   <!-- STEP 3: Вибір тарифу -->
   <div class="form-step" id="step3">
-    <div style="font-size:16px;font-weight:600;margin-bottom:.75rem">💎 Оберіть тариф</div>
+    <div style="font-size:16px;font-weight:600;margin-bottom:.75rem" data-i18n="r_step3title">💎 Оберіть тариф</div>
 
     <div class="trial-note">
-      <strong>🎁 14 днів безкоштовного тестування</strong>
-      Будь-який тариф — без оплати. Картка не потрібна зараз. Після пробного періоду ви зможете оплатити або перейти на Free.
+      <strong data-i18n="r_trialNote">🎁 14 днів безкоштовного тестування</strong>
+      <span data-i18n="r_trialNoteDesc">Будь-який тариф — без оплати. Картка не потрібна зараз. Після пробного періоду ви зможете оплатити або перейти на Free.</span>
     </div>
 
     <div class="plans-grid">
@@ -237,11 +237,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
           <div style="flex:1;margin-left:.75rem">
             <div class="plan-name">Free</div>
             <div class="plan-features" style="margin-top:.25rem">
-              <span class="plan-feat">20 страв</span>
-              <span class="plan-feat">100 замовлень/міс</span>
+              <span class="plan-feat" data-i18n="r_feat20">20 страв</span>
+              <span class="plan-feat" data-i18n="r_feat100">100 замовлень/міс</span>
             </div>
           </div>
-          <div class="plan-price">Безкоштовно</div>
+          <div class="plan-price" data-i18n="r_free">Безкоштовно</div>
         </div>
       </div>
 
@@ -251,29 +251,29 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
           <div style="flex:1;margin-left:.75rem">
             <div class="plan-name">Starter</div>
             <div class="plan-features" style="margin-top:.25rem">
-              <span class="plan-feat">80 страв</span>
-              <span class="plan-feat">500 замовлень/міс</span>
-              <span class="plan-feat">Кольори+шрифт</span>
+              <span class="plan-feat" data-i18n="r_feat80">80 страв</span>
+              <span class="plan-feat" data-i18n="r_feat500">500 замовлень/міс</span>
+              <span class="plan-feat" data-i18n="r_featColors">Кольори+шрифт</span>
             </div>
           </div>
-          <div class="plan-price">299₴<span class="per">/міс</span></div>
+          <div class="plan-price">299₴<span class="per" data-i18n="r_perMonth">/міс</span></div>
         </div>
       </div>
 
       <div class="plan-option featured selected" id="plan-pro" onclick="selectPlan('pro')">
-        <div class="plan-pop">ПОПУЛЯРНИЙ</div>
+        <div class="plan-pop" data-i18n="r_popular">ПОПУЛЯРНИЙ</div>
         <div class="plan-top">
           <div><div class="plan-radio"></div></div>
           <div style="flex:1;margin-left:.75rem">
             <div class="plan-name" style="color:#A78BFA">Pro</div>
             <div class="plan-features" style="margin-top:.25rem">
-              <span class="plan-feat">500 страв</span>
-              <span class="plan-feat">5000 замовлень/міс</span>
-              <span class="plan-feat">Повний дизайн</span>
-              <span class="plan-feat">Фото+банер</span>
+              <span class="plan-feat" data-i18n="r_feat500d">500 страв</span>
+              <span class="plan-feat" data-i18n="r_feat5000">5000 замовлень/міс</span>
+              <span class="plan-feat" data-i18n="r_featFullDesign">Повний дизайн</span>
+              <span class="plan-feat" data-i18n="r_featPhotoBanner">Фото+банер</span>
             </div>
           </div>
-          <div class="plan-price" style="color:#A78BFA">699₴<span class="per">/міс</span></div>
+          <div class="plan-price" style="color:#A78BFA">699₴<span class="per" data-i18n="r_perMonth">/міс</span></div>
         </div>
       </div>
 
@@ -283,12 +283,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
           <div style="flex:1;margin-left:.75rem">
             <div class="plan-name">Enterprise</div>
             <div class="plan-features" style="margin-top:.25rem">
-              <span class="plan-feat">Необмежено</span>
+              <span class="plan-feat" data-i18n="r_featUnlimited">Необмежено</span>
               <span class="plan-feat">POS інтеграція</span>
-              <span class="plan-feat">Власний домен</span>
+              <span class="plan-feat" data-i18n="r_featDomain">Власний домен</span>
             </div>
           </div>
-          <div class="plan-price">1999₴<span class="per">/міс</span></div>
+          <div class="plan-price">1999₴<span class="per" data-i18n="r_perMonth">/міс</span></div>
         </div>
       </div>
     </div>
@@ -308,12 +308,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
   <div class="form-step" id="step-success">
     <div class="success-wrap">
       <div class="success-icon">🎉</div>
-      <div class="success-title">Заклад зареєстровано!</div>
+      <div class="success-title" data-i18n="r_successTitle">Заклад зареєстровано!</div>
       <div class="success-sub">
-        Ваш пробний період розпочато.<br/>
-        Увійдіть в адмін-панель щоб додати страви та налаштувати меню.
+        <span data-i18n="r_successDesc">Ваш пробний період розпочато. Увійдіть в адмін-панель щоб додати страви та налаштувати меню.</span>
       </div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:.375rem">Ваше публічне меню:</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:.375rem" data-i18n="r_yourMenu">Ваше публічне меню:</div>
       <div class="venue-url" id="success-url" onclick="copyUrl()">
         mageqrrest.com/menu/?v=...
       </div>
@@ -329,7 +328,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 </div>
 
 <div style="text-align:center;margin-top:1.5rem;font-size:13px;color:var(--muted)">
-  Вже є акаунт? <a href="login.html" style="color:var(--accent)">Увійти</a>
+  Вже є акаунт? <a href="login.html" style="color:var(--accent)" data-i18n="r_loginBtn">Увійти</a>
 </div>
 
 <script type="module">
@@ -360,7 +359,32 @@ const REG_I18N = {
     r_confirmPass:'Підтвердити пароль *', r_startBtn:'Розпочати 14 днів безкоштовно 🚀',
     r_trialBadge:'🎁 14 днів безкоштовно — будь-який тариф',
     r_stepLang:'Мова', r_stepVenue:'Заклад', r_stepAccount:'Акаунт', r_stepPlan:'Тариф',
-  },
+    'pageTitle':'Реєстрація',
+    'r_step3title':'💎 Оберіть тариф',
+    'r_trialNote':'🎁 14 днів безкоштовного тестування',
+    'r_trialNoteDesc':'Будь-який тариф — без оплати. Картка не потрібна зараз. Після пробного періоду ви зможете оплатити або перейти на Free.',
+    'r_feat20':'20 страв',
+    'r_feat100':'100 замовлень/міс',
+    'r_feat80':'80 страв',
+    'r_feat500':'500 замовлень/міс',
+    'r_featColors':'Кольори+шрифт',
+    'r_feat500d':'500 страв',
+    'r_feat5000':'5000 замовлень/міс',
+    'r_featFullDesign':'Повний дизайн',
+    'r_featPhotoBanner':'Фото+банер',
+    'r_featUnlimited':'Необмежено',
+    'r_featDomain':'Власний домен',
+    'r_popular':'ПОПУЛЯРНИЙ',
+    'r_free':'Безкоштовно',
+    'r_perMonth':'/міс',
+    'r_successTitle':'Заклад зареєстровано!',
+    'r_successDesc':'Ваш пробний період розпочато. Увійдіть в адмін-панель щоб додати страви та налаштувати меню.',
+    'r_yourMenu':'Ваше публічне меню:',
+    'r_loginBtn':'Увійти',
+    'r_in5min':'за 5 хвилин',
+    'phVenueName':'Кафе «Смачно»',
+    'phCity':'Тернопіль',
+    'phSlug':'miy-zaklad'},
   en: {
     langTitle:'Choose your language', langSubtitle:'For comfortable work with admin panel',
     langNext:'Continue →', stepLang:'Language', stepVenue:'Venue',
@@ -372,7 +396,32 @@ const REG_I18N = {
     r_confirmPass:'Confirm password *', r_startBtn:'Start 14 days free 🚀',
     r_trialBadge:'🎁 14 days free — any plan',
     r_stepLang:'Language', r_stepVenue:'Venue', r_stepAccount:'Account', r_stepPlan:'Plan',
-  },
+    'pageTitle':'Registration',
+    'r_step3title':'💎 Choose a plan',
+    'r_trialNote':'🎁 14 days free trial',
+    'r_trialNoteDesc':'Any plan — no payment needed now. No card required. After the trial you can pay or switch to Free.',
+    'r_feat20':'20 dishes',
+    'r_feat100':'100 orders/mo',
+    'r_feat80':'80 dishes',
+    'r_feat500':'500 orders/mo',
+    'r_featColors':'Colors+font',
+    'r_feat500d':'500 dishes',
+    'r_feat5000':'5000 orders/mo',
+    'r_featFullDesign':'Full design',
+    'r_featPhotoBanner':'Photo+banner',
+    'r_featUnlimited':'Unlimited',
+    'r_featDomain':'Custom domain',
+    'r_popular':'POPULAR',
+    'r_free':'Free',
+    'r_perMonth':'/mo',
+    'r_successTitle':'Venue registered!',
+    'r_successDesc':'Your trial period has started. Log in to the admin panel to add dishes and set up your menu.',
+    'r_yourMenu':'Your public menu:',
+    'r_loginBtn':'Log in',
+    'r_in5min':'in 5 minutes',
+    'phVenueName':'My Cafe',
+    'phCity':'London',
+    'phSlug':'my-cafe'},
   pl: {
     langTitle:'Wybierz język', langSubtitle:'Dla wygodnej pracy z panelem administracyjnym',
     langNext:'Kontynuuj →', stepLang:'Język', stepVenue:'Lokal',
@@ -384,7 +433,32 @@ const REG_I18N = {
     r_confirmPass:'Potwierdź hasło *', r_startBtn:'Zacznij 14 dni za darmo 🚀',
     r_trialBadge:'🎁 14 dni za darmo — dowolny plan',
     r_stepLang:'Język', r_stepVenue:'Lokal', r_stepAccount:'Konto', r_stepPlan:'Plan',
-  },
+    'pageTitle':'Rejestracja',
+    'r_step3title':'💎 Wybierz plan',
+    'r_trialNote':'🎁 14 dni bezpłatnego testowania',
+    'r_trialNoteDesc':'Dowolny plan — bez płatności. Karta nie jest teraz potrzebna. Po okresie próbnym możesz zapłacić lub przejść na Free.',
+    'r_feat20':'20 dań',
+    'r_feat100':'100 zamówień/mies',
+    'r_feat80':'80 dań',
+    'r_feat500':'500 zamówień/mies',
+    'r_featColors':'Kolory+czcionka',
+    'r_feat500d':'500 dań',
+    'r_feat5000':'5000 zamówień/mies',
+    'r_featFullDesign':'Pełny wygląd',
+    'r_featPhotoBanner':'Zdjęcie+baner',
+    'r_featUnlimited':'Nieograniczone',
+    'r_featDomain':'Własna domena',
+    'r_popular':'POPULARNY',
+    'r_free':'Bezpłatnie',
+    'r_perMonth':'/mies',
+    'r_successTitle':'Lokal zarejestrowany!',
+    'r_successDesc':'Twój okres próbny rozpoczął się. Zaloguj się do panelu administracyjnego, aby dodać dania i skonfigurować menu.',
+    'r_yourMenu':'Twoje publiczne menu:',
+    'r_loginBtn':'Zaloguj się',
+    'r_in5min':'w 5 minut',
+    'phVenueName':'Moja Restauracja',
+    'phCity':'Warszawa',
+    'phSlug':'moja-restauracja'},
   de: {
     langTitle:'Sprache wählen', langSubtitle:'Für komfortable Arbeit mit dem Admin-Panel',
     langNext:'Weiter →', stepLang:'Sprache', stepVenue:'Lokal',
@@ -396,7 +470,32 @@ const REG_I18N = {
     r_confirmPass:'Passwort bestätigen *', r_startBtn:'14 Tage kostenlos starten 🚀',
     r_trialBadge:'🎁 14 Tage kostenlos — jeder Tarif',
     r_stepLang:'Sprache', r_stepVenue:'Lokal', r_stepAccount:'Konto', r_stepPlan:'Tarif',
-  },
+    'pageTitle':'Registrierung',
+    'r_step3title':'💎 Tarif wählen',
+    'r_trialNote':'🎁 14 Tage kostenlos testen',
+    'r_trialNoteDesc':'Beliebiger Tarif — keine Zahlung jetzt. Keine Karte erforderlich. Nach der Testphase können Sie bezahlen oder zu Free wechseln.',
+    'r_feat20':'20 Gerichte',
+    'r_feat100':'100 Bestellungen/Mo',
+    'r_feat80':'80 Gerichte',
+    'r_feat500':'500 Bestellungen/Mo',
+    'r_featColors':'Farben+Schrift',
+    'r_feat500d':'500 Gerichte',
+    'r_feat5000':'5000 Bestellungen/Mo',
+    'r_featFullDesign':'Vollständiges Design',
+    'r_featPhotoBanner':'Foto+Banner',
+    'r_featUnlimited':'Unbegrenzt',
+    'r_featDomain':'Eigene Domain',
+    'r_popular':'BELIEBT',
+    'r_free':'Kostenlos',
+    'r_perMonth':'/Mo',
+    'r_successTitle':'Lokal registriert!',
+    'r_successDesc':'Ihr Testzeitraum hat begonnen. Melden Sie sich im Admin-Panel an, um Gerichte hinzuzufügen und das Menü einzurichten.',
+    'r_yourMenu':'Ihr öffentliches Menü:',
+    'r_loginBtn':'Anmelden',
+    'r_in5min':'in 5 Minuten',
+    'phVenueName':'Mein Restaurant',
+    'phCity':'Berlin',
+    'phSlug':'mein-restaurant'},
   ro: {
     langTitle:'Alegeți limba', langSubtitle:'Pentru lucru comod cu panoul de administrare',
     langNext:'Continuați →', stepLang:'Limbă', stepVenue:'Local',
@@ -408,7 +507,32 @@ const REG_I18N = {
     r_confirmPass:'Confirmați parola *', r_startBtn:'Începeți 14 zile gratuit 🚀',
     r_trialBadge:'🎁 14 zile gratuit — orice plan',
     r_stepLang:'Limbă', r_stepVenue:'Local', r_stepAccount:'Cont', r_stepPlan:'Plan',
-  },
+    'pageTitle':'Înregistrare',
+    'r_step3title':'💎 Alegeți un plan',
+    'r_trialNote':'🎁 14 zile de testare gratuită',
+    'r_trialNoteDesc':'Orice plan — fără plată acum. Nu este nevoie de card. După perioada de probă puteți plăti sau trece la Free.',
+    'r_feat20':'20 preparate',
+    'r_feat100':'100 comenzi/lună',
+    'r_feat80':'80 preparate',
+    'r_feat500':'500 comenzi/lună',
+    'r_featColors':'Culori+font',
+    'r_feat500d':'500 preparate',
+    'r_feat5000':'5000 comenzi/lună',
+    'r_featFullDesign':'Design complet',
+    'r_featPhotoBanner':'Foto+banner',
+    'r_featUnlimited':'Nelimitat',
+    'r_featDomain':'Domeniu propriu',
+    'r_popular':'POPULAR',
+    'r_free':'Gratuit',
+    'r_perMonth':'/lună',
+    'r_successTitle':'Local înregistrat!',
+    'r_successDesc':'Perioada dvs. de probă a început. Conectați-vă la panoul de administrare pentru a adăuga preparate și a configura meniul.',
+    'r_yourMenu':'Meniul dvs. public:',
+    'r_loginBtn':'Conectați-vă',
+    'r_in5min':'în 5 minute',
+    'phVenueName':'Restaurantul meu',
+    'phCity':'București',
+    'phSlug':'restaurantul-meu'},
   es: {
     langTitle:'Elige tu idioma', langSubtitle:'Para trabajar cómodamente con el panel de administración',
     langNext:'Continuar →', stepLang:'Idioma', stepVenue:'Local',
@@ -420,7 +544,32 @@ const REG_I18N = {
     r_confirmPass:'Confirmar contraseña *', r_startBtn:'Empezar 14 días gratis 🚀',
     r_trialBadge:'🎁 14 días gratis — cualquier plan',
     r_stepLang:'Idioma', r_stepVenue:'Local', r_stepAccount:'Cuenta', r_stepPlan:'Plan',
-  },
+    'pageTitle':'Registro',
+    'r_step3title':'💎 Elige un plan',
+    'r_trialNote':'🎁 14 días de prueba gratuita',
+    'r_trialNoteDesc':'Cualquier plan — sin pago ahora. No se necesita tarjeta. Después del período de prueba puede pagar o cambiar a Free.',
+    'r_feat20':'20 platos',
+    'r_feat100':'100 pedidos/mes',
+    'r_feat80':'80 platos',
+    'r_feat500':'500 pedidos/mes',
+    'r_featColors':'Colores+fuente',
+    'r_feat500d':'500 platos',
+    'r_feat5000':'5000 pedidos/mes',
+    'r_featFullDesign':'Diseño completo',
+    'r_featPhotoBanner':'Foto+banner',
+    'r_featUnlimited':'Ilimitado',
+    'r_featDomain':'Dominio propio',
+    'r_popular':'POPULAR',
+    'r_free':'Gratis',
+    'r_perMonth':'/mes',
+    'r_successTitle':'¡Local registrado!',
+    'r_successDesc':'Su período de prueba ha comenzado. Inicie sesión en el panel de administración para agregar platos y configurar el menú.',
+    'r_yourMenu':'Su menú público:',
+    'r_loginBtn':'Iniciar sesión',
+    'r_in5min':'en 5 minutos',
+    'phVenueName':'Mi Restaurante',
+    'phCity':'Madrid',
+    'phSlug':'mi-restaurante'},
   cnr: {
     langTitle:'Odaberite jezik', langSubtitle:'Za udoban rad s admin panelom',
     langNext:'Nastavi →', stepLang:'Jezik', stepVenue:'Lokal',
@@ -432,35 +581,65 @@ const REG_I18N = {
     r_confirmPass:'Potvrdite lozinku *', r_startBtn:'Počnite 14 dana besplatno 🚀',
     r_trialBadge:'🎁 14 dana besplatno — bilo koji plan',
     r_stepLang:'Jezik', r_stepVenue:'Lokal', r_stepAccount:'Nalog', r_stepPlan:'Plan',
-  },
+    'pageTitle':'Registracija',
+    'r_step3title':'💎 Odaberite plan',
+    'r_trialNote':'🎁 14 dana besplatnog testiranja',
+    'r_trialNoteDesc':'Bilo koji plan — bez plaćanja sada. Kartica nije potrebna. Nakon probnog perioda možete platiti ili prijeći na Free.',
+    'r_feat20':'20 jela',
+    'r_feat100':'100 narudžbina/mj',
+    'r_feat80':'80 jela',
+    'r_feat500':'500 narudžbina/mj',
+    'r_featColors':'Boje+font',
+    'r_feat500d':'500 jela',
+    'r_feat5000':'5000 narudžbina/mj',
+    'r_featFullDesign':'Puni dizajn',
+    'r_featPhotoBanner':'Slika+baner',
+    'r_featUnlimited':'Neograničeno',
+    'r_featDomain':'Vlastita domena',
+    'r_popular':'POPULARNO',
+    'r_free':'Besplatno',
+    'r_perMonth':'/mj',
+    'r_successTitle':'Lokal registrovan!',
+    'r_successDesc':'Vaš probni period je počeo. Prijavite se u admin panel da dodate jela i podesite meni.',
+    'r_yourMenu':'Vaš javni meni:',
+    'r_loginBtn':'Prijavite se',
+    'r_in5min':'za 5 minuta',
+    'phVenueName':'Moj Restoran',
+    'phCity':'Podgorica',
+    'phSlug':'moj-restoran'},
 }
 
 function applyRegLang(lang) {
   const s = REG_I18N[lang] || REG_I18N.uk;
 
-  // Перекладаємо через data-i18n атрибути
+  // Всі data-i18n елементи
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
-    if(s[key]) el.textContent = s[key];
+    if(s[key] !== undefined) el.textContent = s[key];
   });
 
   // Placeholders
   const phs = {
-    'r-name': 'Кафе «Смачно»',
-    'r-city': lang==='en'?'London':lang==='de'?'Berlin':lang==='pl'?'Warszawa':'Тернопіль',
+    'r-name': s.phVenueName || 'Кафе «Смачно»',
+    'r-city': s.phCity || 'Тернопіль',
+    'r-slug': s.phSlug || 'my-cafe',
+    'r-email': 'email@example.com',
   };
   Object.entries(phs).forEach(([id, ph]) => {
     const el = document.getElementById(id);
     if(el) el.placeholder = ph;
   });
 
-  // Явно перекладаємо заголовки кроків (без data-i18n)
+  // Заголовки кроків
   const set = (id, key) => { const el = document.getElementById(id); if(el && s[key]) el.textContent = s[key]; };
   set('lang-title', 'langTitle');
   set('lang-subtitle', 'langSubtitle');
   set('lang-next-btn', 'langNext');
 
-  // Заголовки кроків у формі
+  // document title
+  document.title = (s.pageTitle || 'Реєстрація') + ' — Mage QR Rest';
+
+  // Заголовки кроків у формі (font-size:16px)
   const stepHeads = document.querySelectorAll('.form-step > div[style*="font-size:16px"]');
   const stepTitles = [null, s.step1title, s.step2title, s.step3title];
   stepHeads.forEach(el => {
@@ -469,6 +648,10 @@ function applyRegLang(lang) {
     const n = parseInt(step.id.replace('step',''));
     if(stepTitles[n]) el.textContent = stepTitles[n];
   });
+
+  // Кнопки goStep (← Назад / Далі)
+  document.querySelectorAll('[data-i18n="r_next"]').forEach(el => { el.textContent = s.r_next || 'Далі →'; });
+  document.querySelectorAll('[data-i18n="r_back"]').forEach(el => { el.textContent = s.r_back || '← Назад'; });
 }
 
 window._selectRegLang = window.selectRegLang = function(lang) {
