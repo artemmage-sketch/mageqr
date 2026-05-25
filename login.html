@@ -302,7 +302,39 @@ function applyLoginLang() {
   set('footer-text', s.footer);
 }
 
-document.addEventListener('DOMContentLoaded', applyLoginLang);
+function renderLoginLangSwitcher() {
+  var el = document.getElementById('login-lang-switcher');
+  if(!el) return;
+  var langs = [
+    {code:'uk',flag:'🇺🇦',label:'UK'},
+    {code:'en',flag:'🇬🇧',label:'EN'},
+    {code:'pl',flag:'🇵🇱',label:'PL'},
+    {code:'de',flag:'🇩🇪',label:'DE'},
+    {code:'ro',flag:'🇷🇴',label:'RO'},
+    {code:'es',flag:'🇪🇸',label:'ES'},
+    {code:'cnr',flag:'🇲🇪',label:'MNE'},
+  ];
+  el.innerHTML = langs.map(function(l) {
+    var active = LOGIN_LANG === l.code;
+    return '<button onclick="setLoginLang(\'' + l.code + '\')" ' +
+      'style="display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:' + (active?'700':'400') + ';border:' + (active?'1.5px solid var(--accent)':'1.5px solid #2A2A2A') + ';background:' + (active?'rgba(193,68,14,.15)':'transparent') + ';color:' + (active?'var(--accent)':'#555') + ';font-family:var(--font);transition:all .15s">' +
+      '<span style="font-size:1rem;line-height:1">' + l.flag + '</span>' +
+      '<span>' + l.label + '</span>' +
+      '</button>';
+  }).join('');
+}
+
+function setLoginLang(lang) {
+  LOGIN_LANG = lang;
+  localStorage.setItem('mq_admin_lang', lang);
+  applyLoginLang();
+  renderLoginLangSwitcher();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderLoginLangSwitcher();
+  applyLoginLang();
+});
 </script>
 </head>
 <body>
@@ -315,6 +347,9 @@ document.addEventListener('DOMContentLoaded', applyLoginLang);
 </div>
 
 <div class="card">
+  <!-- Перемикач мови -->
+  <div id="login-lang-switcher" style="display:flex;justify-content:center;gap:4px;margin-bottom:1.25rem;flex-wrap:wrap"></div>
+
   <div class="brand">
     <div class="brand-logo">✦ Mage <span>QR</span> Rest</div>
     <div class="brand-sub" id="brand-sub">Платформа управління рестораном</div>
