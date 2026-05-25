@@ -370,7 +370,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <button class="nav-item" onclick="nav(this,'t-settings')" data-i18n="settings">⚙️ Налаштування</button>
     </div>
     <div class="sb-bottom">
-      <button class="btn btn-outline btn-sm" style="flex:1" onclick="window.open('menu.html?v=temari','_blank')">👁 Переглянути</button>
+      <button class="btn btn-outline btn-sm" style="flex:1" data-i18n="viewMenuBtn" onclick="window.open('menu.html?v=temari','_blank')">👁 Переглянути</button>
     </div>
   </div>
 
@@ -462,8 +462,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- TIPS STATS -->
         <div class="settings-section">
-          <h3>💸 Чайові — статистика по персоналу</h3>
-          <div style="font-size:12px;color:var(--muted);margin-bottom:1rem">Чайові зараховуються на картку monobank співробітника одразу після оплати (комісія 4%)</div>
+          <h3 data-i18n="tipsStaff">💸 Чайові — статистика по персоналу</h3>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:1rem" data-i18n="tipsMonobankDesc">Чайові зараховуються на картку monobank співробітника одразу після оплати (комісія 4%)</div>
           <div class="staff-grid" id="staff-tips-grid"></div>
         </div>
 
@@ -483,25 +483,25 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- TIPS SETTINGS -->
         <div class="settings-section" style="margin-top:1rem">
-          <h3>⚙️ Налаштування чайових</h3>
+          <h3 data-i18n="tipsSettings">⚙️ Налаштування чайових</h3>
           <div class="toggle-row" style="margin-bottom:.875rem">
             <div>
               <div style="font-size:13px;font-weight:500" data-i18n="offerTips">Пропонувати чайові клієнтам</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:2px">Після успішної оплати клієнт побачить пропозицію залишити чайові</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="tipsOfferDesc">Після успішної оплати клієнт побачить пропозицію залишити чайові</div>
             </div>
             <label class="sw"><input type="checkbox" id="tips-enabled" checked/><span class="sw-slider"></span></label>
           </div>
           <div class="toggle-row" style="margin-bottom:.875rem">
             <div>
               <div style="font-size:13px;font-weight:500" data-i18n="clientChoosesWaiter">Клієнт обирає офіціанта</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:2px">Показувати список персоналу з фото для вибору отримувача чайових</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="tipsChooseWaiterDesc">Показувати список персоналу з фото для вибору отримувача чайових</div>
             </div>
             <label class="sw"><input type="checkbox" id="tips-choose-staff" checked/><span class="sw-slider"></span></label>
           </div>
           <div class="toggle-row" style="margin-bottom:.875rem">
             <div>
               <div style="font-size:13px;font-weight:500" data-i18n="autoAssignTable">Автоматично призначати по столу</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:2px">Якщо за столом закріплений офіціант — чайові йдуть автоматично йому</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="tipsAutoAssignDesc">Якщо за столом закріплений офіціант — чайові йдуть автоматично йому</div>
             </div>
             <label class="sw"><input type="checkbox" id="tips-auto-assign"/><span class="sw-slider"></span></label>
           </div>
@@ -522,10 +522,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- STAFF MANAGEMENT -->
         <div class="settings-section" style="margin-top:1rem">
-          <h3>👨‍🍳 Персонал та Monobank ID</h3>
-          <div style="font-size:12px;color:var(--muted);margin-bottom:1rem">Додайте офіціантів та вкажіть їх tipsEmployeeId з кабінету monobank для нарахування чайових</div>
+          <h3 data-i18n="staffMonoID">👨‍🍳 Персонал та Monobank ID</h3>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:1rem" data-i18n="tipsStaffDesc">Додайте офіціантів та вкажіть їх tipsEmployeeId з кабінету monobank для нарахування чайових</div>
           <div id="staff-list"></div>
-          <button class="btn btn-outline btn-sm" style="margin-top:.75rem" onclick="openAddStaff()">+ Додати офіціанта</button>
+          <button class="btn btn-outline btn-sm" style="margin-top:.75rem" onclick="openAddStaff()" data-i18n="addStaff">+ Додати офіціанта</button>
         </div>
 
       </div>
@@ -535,7 +535,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <div id="t-design" class="tab-section">
       <div class="topbar">
         <div><div class="page-title" data-i18n="design">🎨 Дизайн меню</div><div class="page-sub" data-i18n="designDesc">Налаштуйте вигляд публічного меню</div></div>
-        <button class="btn btn-accent btn-sm" onclick="saveDesign()">💾 Зберегти дизайн</button>
+        <button class="btn btn-accent btn-sm" onclick="saveDesign()" data-i18n="saveDesign">💾 Зберегти дизайн</button>
       </div>
       <div class="content">
         <div class="design-studio">
@@ -543,7 +543,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div>
             <!-- PALETTE PRESETS -->
             <div class="ds-panel" style="margin-bottom:1rem">
-              <div class="ds-panel-head"><div class="ds-panel-title">🎨 Готові палітри</div></div>
+              <div class="ds-panel-head"><div class="ds-panel-title" data-i18n="presets">🎨 Готові палітри</div></div>
               <div class="ds-section">
                 <span class="ds-label" data-i18n="chooseStyle">Оберіть готовий стиль</span>
                 <div class="palette-row" id="presets-row"></div>
@@ -552,7 +552,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
             <!-- COLORS -->
             <div class="ds-panel" style="margin-bottom:1rem">
-              <div class="ds-panel-head"><div class="ds-panel-title">🌈 Кольори</div></div>
+              <div class="ds-panel-head"><div class="ds-panel-title" data-i18n="colorsTitle">🌈 Кольори</div></div>
               <div class="ds-section">
                 <div class="ds-row">
                   <div style="flex:1"><span class="ds-label" data-i18n="accentColor" data-i18n="accentColor">Головний колір (акцент)</span>
@@ -591,7 +591,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
             <!-- TYPOGRAPHY -->
             <div class="ds-panel" style="margin-bottom:1rem">
-              <div class="ds-panel-head"><div class="ds-panel-title">🔤 Шрифти</div></div>
+              <div class="ds-panel-head"><div class="ds-panel-title" data-i18n="fontsTitle">🔤 Шрифти</div></div>
               <div class="ds-section">
                 <div class="field-row">
                   <span class="ds-label" data-i18n="headFont" data-i18n="headFont" data-i18n="headFont">Шрифт заголовків</span>
@@ -629,7 +629,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
             <!-- LOGO & BANNER -->
             <div class="ds-panel" style="margin-bottom:1rem">
-              <div class="ds-panel-head"><div class="ds-panel-title">🖼️ Логотип та банер</div></div>
+              <div class="ds-panel-head"><div class="ds-panel-title" data-i18n="logoBannerTitle">🖼️ Логотип та банер</div></div>
               <div class="ds-section">
                 <span class="ds-label" data-i18n="logoLbl">Логотип (URL або emoji)</span>
                 <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
@@ -650,7 +650,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
             <!-- BACKGROUND -->
             <div class="ds-panel" style="margin-bottom:1rem">
-              <div class="ds-panel-head"><div class="ds-panel-title">🌄 Фон меню</div></div>
+              <div class="ds-panel-head"><div class="ds-panel-title" data-i18n="bgMenuTitle">🌄 Фон меню</div></div>
               <div class="ds-section">
                 <div class="toggle-row">
                   <span class="toggle-label" data-i18n="bgImage">Фонове зображення</span>
@@ -670,7 +670,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
             <!-- LAYOUT OPTIONS -->
             <div class="ds-panel">
-              <div class="ds-panel-head"><div class="ds-panel-title">📐 Розмітка</div></div>
+              <div class="ds-panel-head"><div class="ds-panel-title" data-i18n="layoutTitle">📐 Розмітка</div></div>
               <div class="ds-section">
                 <div class="toggle-row">
                   <span class="toggle-label" data-i18n="showPrices" data-i18n="showPrices">Показувати ціни</span>
@@ -760,7 +760,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       </div>
       <div class="content">
 
-        <div class="test-badge">🔶 Тестовий режим активний — реальні платежі не проводяться</div>
+        <div class="test-badge" data-i18n="testModeActive">🔶 Тестовий режим активний — реальні платежі не проводяться</div>
 
         <div class="pay-stats">
           <div class="pay-stat"><div class="pay-stat-val">₴48 290</div><div class="pay-stat-lbl" data-i18n="paidOnlineMonth">Оплачено онлайн (місяць)</div></div>
@@ -777,7 +777,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div class="mode-radio on" id="radio-instant"></div>
               <div class="mode-text">
                 <div class="mode-label" data-i18n="payImmediately">Одразу при замовленні</div>
-                <div class="mode-sub">Клієнт обирає страви → обирає провайдера → оплачує → замовлення йде в касу. Рекомендовано для доставки.</div>
+                <div class="mode-sub" data-i18n="payFlowDesc">Клієнт обирає страви → обирає провайдера → оплачує → замовлення йде в касу. Рекомендовано для доставки.</div>
               </div>
             </div>
             <div class="mode-option" id="mode-after" onclick="selectMode('after')">
@@ -837,7 +837,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <div>
                   <label class="pay-field-label">Webhook URL (скопіюйте в LiqPay)</label>
                   <div class="webhook-box" id="webhook-url-liqpay">https://us-central1-mageqrrest.cloudfunctions.net/orderPaymentWebhook?provider=liqpay&venue=VENUE_ID</div>
-                  <button class="copy-btn" onclick="copyWebhook('liqpay')">📋 Копіювати</button>
+                  <button class="copy-btn" onclick="copyWebhook('liqpay')" data-i18n="copyLink">📋 Копіювати</button>
                 </div>
                 <div style="margin-top:.5rem">
                   <button class="btn btn-outline btn-sm" onclick="testPayment('liqpay')" data-i18n="testPayment">🧪 Тест оплати</button>
@@ -876,7 +876,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <div>
                   <label class="pay-field-label">Webhook URL</label>
                   <div class="webhook-box" id="webhook-url-mono">https://us-central1-mageqrrest.cloudfunctions.net/orderPaymentWebhook?provider=mono&venue=VENUE_ID</div>
-                  <button class="copy-btn" onclick="copyWebhook('mono')">📋 Копіювати</button>
+                  <button class="copy-btn" onclick="copyWebhook('mono')" data-i18n="copyLink">📋 Копіювати</button>
                 </div>
                 <div style="margin-top:.5rem">
                   <button class="btn btn-outline btn-sm" onclick="testPayment('mono')" data-i18n="testPayment">🧪 Тест оплати</button>
@@ -919,7 +919,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <div>
                   <label class="pay-field-label">Service URL (webhook)</label>
                   <div class="webhook-box" id="webhook-url-wfp">https://us-central1-mageqrrest.cloudfunctions.net/orderPaymentWebhook?provider=wayforpay&venue=VENUE_ID</div>
-                  <button class="copy-btn" onclick="copyWebhook('wfp')">📋 Копіювати</button>
+                  <button class="copy-btn" onclick="copyWebhook('wfp')" data-i18n="copyLink">📋 Копіювати</button>
                 </div>
                 <div style="margin-top:.5rem">
                   <button class="btn btn-outline btn-sm" onclick="testPayment('wfp')" data-i18n="testPayment">🧪 Тест оплати</button>
@@ -965,7 +965,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <div>
                   <label class="pay-field-label">Webhook URL</label>
                   <div class="webhook-box" id="webhook-url-abank">https://us-central1-mageqrrest.cloudfunctions.net/orderPaymentWebhook?provider=abank&venue=VENUE_ID</div>
-                  <button class="copy-btn" onclick="copyWebhook('abank')">📋 Копіювати</button>
+                  <button class="copy-btn" onclick="copyWebhook('abank')" data-i18n="copyLink">📋 Копіювати</button>
                 </div>
               </div>
             </div>
@@ -975,7 +975,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- RECEIPTS -->
         <div class="settings-section">
-          <h3>🧾 Фіскалізація та чеки</h3>
+          <h3 data-i18n="fiscalTitle">🧾 Фіскалізація та чеки</h3>
           <div class="toggle-row" style="margin-bottom:.875rem">
             <div>
               <div style="font-size:13px;font-weight:500" data-i18n="sendEmailReceipt">Надсилати email-квитанцію клієнту</div>
@@ -1199,7 +1199,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- PRODUCT MAPPING -->
         <div class="settings-section">
-          <h3>🔗 Прив'язка страв до POS</h3>
+          <h3 data-i18n="posMapping">🔗 Прив'язка страв до POS</h3>
           <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">
             Зіставте страви вашого меню з позиціями в касовій системі. Замовлення передаватимуться з правильними ID.
           </div>
@@ -1390,7 +1390,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- ТИПИ ЗАМОВЛЕНЬ -->
         <div class="settings-section">
-          <h3>🍽️ Типи замовлень</h3>
+          <h3 data-i18n="orderTypesTitle">🍽️ Типи замовлень</h3>
           <p style="font-size:13px;color:var(--muted);margin-bottom:1rem" data-i18n="chooseOrderTypes">Оберіть які типи замовлень приймає ваш заклад</p>
 
           <!-- В ЗАКЛАДІ -->
@@ -1414,7 +1414,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.75rem">
             <div class="toggle-row" style="margin-bottom:.75rem">
               <div>
-                <div style="font-size:14px;font-weight:600">🥡 З собою (самовинос)</div>
+                <div style="font-size:14px;font-weight:600" data-i18n="takeawayFull">🥡 З собою (самовинос)</div>
                 <div style="font-size:12px;color:var(--muted);margin-top:2px" data-i18n="takeawayDesc">Клієнт забирає замовлення сам</div>
               </div>
               <label class="sw"><input type="checkbox" id="ord-takeaway" checked/><span class="sw-slider"></span></label>
@@ -1503,7 +1503,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div style="margin-top:1rem">
                 <label class="field-label" data-i18n="deliveryZones" data-i18n="deliveryZones">Зони доставки</label>
                 <div id="delivery-zones-list" style="margin-bottom:.5rem"></div>
-                <button class="btn btn-outline btn-sm" onclick="addDeliveryZone()">+ Додати зону</button>
+                <button class="btn btn-outline btn-sm" onclick="addDeliveryZone()" data-i18n="addZone">+ Додати зону</button>
                 <div style="font-size:11px;color:var(--muted);margin-top:.375rem">
                   Приклад: Центр — 30 грн, Передмістя — 80 грн
                 </div>
@@ -1514,11 +1514,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- ПРИБОРИ -->
         <div class="settings-section">
-          <h3>🍴 Прибори</h3>
+          <h3 data-i18n="cutleryTitle">🍴 Прибори</h3>
           <div class="toggle-row">
             <div>
               <div style="font-size:13px;font-weight:500" data-i18n="askCutlery" data-i18n="askCutlery">Запитувати кількість приборів</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:2px">Клієнт вкаже скільки приборів потрібно або відмовиться від них</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="cutleryDesc">Клієнт вкаже скільки приборів потрібно або відмовиться від них</div>
             </div>
             <label class="sw"><input type="checkbox" id="ord-ask-cutlery" checked/><span class="sw-slider"></span></label>
           </div>
@@ -1526,8 +1526,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- ЗНИЖКИ -->
         <div class="settings-section">
-          <h3>🏷️ Знижки</h3>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Встановіть знижку для кожного типу замовлення. Клієнт побачить знижену ціну автоматично.</p>
+          <h3 data-i18n="discountsTitle">🏷️ Знижки</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:1rem" data-i18n="discountsDesc">Встановіть знижку для кожного типу замовлення. Клієнт побачить знижену ціну автоматично.</p>
 
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;margin-bottom:.75rem">
             <div style="font-size:14px;font-weight:600;margin-bottom:.75rem">🪑 В закладі</div>
@@ -1586,7 +1586,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- ОПЛАТА -->
         <div class="settings-section">
-          <h3>💳 Способи оплати замовлень</h3>
+          <h3 data-i18n="paymentMethodsTitle">💳 Способи оплати замовлень</h3>
           <div class="toggle-row" style="margin-bottom:.625rem">
             <div>
               <div style="font-size:13px;font-weight:500" data-i18n="allowOnline">Онлайн оплата (через підключений провайдер)</div>
@@ -1608,13 +1608,13 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <div id="t-settings" class="tab-section">
       <div class="topbar">
         <div><div class="page-title" data-i18n="settingsVenue">⚙️ Налаштування закладу</div><div class="page-sub" data-i18n="venueInfoNote">Інформація відображається у публічному меню</div></div>
-        <button class="btn btn-accent btn-sm" onclick="saveSettings()">💾 Зберегти все</button>
+        <button class="btn btn-accent btn-sm" onclick="saveSettings()" data-i18n="saveAll">💾 Зберегти все</button>
       </div>
       <div class="content">
 
         <!-- ОСНОВНА ІНФОРМАЦІЯ -->
         <div class="settings-section">
-          <h3>📋 Інформація про заклад</h3>
+          <h3 data-i18n="venueInfoTitle">📋 Інформація про заклад</h3>
           <div class="grid-2">
             <div class="field-row span2">
               <label class="field-label" data-i18n="venueName" data-i18n="venueName">Назва закладу</label>
@@ -1645,7 +1645,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- ЛОГОТИП -->
         <div class="settings-section">
-          <h3>🖼️ Логотип закладу</h3>
+          <h3 data-i18n="venueLogoTitle">🖼️ Логотип закладу</h3>
           <div style="display:grid;grid-template-columns:120px 1fr;gap:1.25rem;align-items:start">
             <div>
               <div id="logo-preview-wrap" style="width:100px;height:100px;border-radius:50%;background:var(--bg2);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:2.5rem;cursor:pointer;overflow:hidden;transition:border-color .15s" onclick="document.getElementById('logo-file').click()">
@@ -1655,7 +1655,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <input type="file" id="logo-file" accept="image/*" style="display:none" onchange="handleLogoFile(this)"/>
             </div>
             <div style="display:flex;flex-direction:column;gap:.75rem">
-              <button class="btn btn-outline btn-sm" onclick="document.getElementById('logo-file').click()">📁 Завантажити фото</button>
+              <button class="btn btn-outline btn-sm" onclick="document.getElementById('logo-file').click()" data-i18n="uploadPhoto">📁 Завантажити фото</button>
               <div>
                 <label class="field-label" data-i18n="orImageURL">або URL зображення</label>
                 <input id="set-logo-url" type="text" placeholder="https://..." oninput="previewLogoUrl(this.value)"/>
@@ -1671,7 +1671,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- БАНЕР -->
         <div class="settings-section">
-          <h3>🌄 Банер меню</h3>
+          <h3 data-i18n="venueBannerTitle">🌄 Банер меню</h3>
           <div style="margin-bottom:.875rem">
             <div id="banner-preview-wrap" style="width:100%;height:120px;border-radius:var(--radius);background:var(--accent);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;transition:all .15s" onclick="document.getElementById('banner-file').click()">
               <img id="banner-preview-img" src="" style="display:none;width:100%;height:100%;object-fit:cover"/>
@@ -1683,8 +1683,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <input type="file" id="banner-file" accept="image/*" style="display:none" onchange="handleBannerFile(this)"/>
           </div>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.875rem">
-            <button class="btn btn-outline btn-sm" onclick="document.getElementById('banner-file').click()">📁 Завантажити банер</button>
-            <button class="btn btn-outline btn-sm" onclick="clearBanner()">✕ Видалити</button>
+            <button class="btn btn-outline btn-sm" onclick="document.getElementById('banner-file').click()" data-i18n="uploadBanner">📁 Завантажити банер</button>
+            <button class="btn btn-outline btn-sm" onclick="clearBanner()" data-i18n="deleteBtn">✕ Видалити</button>
           </div>
           <div class="field-row">
             <label class="field-label" data-i18n="orBannerURL">або URL банеру</label>
@@ -1695,12 +1695,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- QR ПОСИЛАННЯ -->
         <div class="settings-section">
-          <h3>📲 QR-посилання для клієнтів</h3>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:.75rem">Поділіться цим посиланням або роздрукуйте QR-код і розмістіть на столах</p>
+          <h3 data-i18n="qrLinkTitle">📲 QR-посилання для клієнтів</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:.75rem" data-i18n="qrLinkDesc">Поділіться цим посиланням або роздрукуйте QR-код і розмістіть на столах</p>
           <div class="qr-url" id="venue-qr-url" onclick="copyMenuUrl()">mageqrrest.com/menu.html?v=demo</div>
           <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap">
-            <button class="btn btn-outline btn-sm" onclick="copyMenuUrl()">📋 Копіювати</button>
-            <button class="btn btn-outline btn-sm" onclick="openMenuUrl()">👁️ Переглянути меню</button>
+            <button class="btn btn-outline btn-sm" onclick="copyMenuUrl()" data-i18n="copyLink">📋 Копіювати</button>
+            <button class="btn btn-outline btn-sm" onclick="openMenuUrl()" data-i18n="viewMenu">👁️ Переглянути меню</button>
           </div>
         </div>
 
@@ -1715,7 +1715,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 <div class="overlay" id="modal-item" onclick="closeModal('modal-item')">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-head">
-      <div class="modal-title" id="item-modal-t" data-i18n="novaStrava" data-i18n="novaStrava">Нова страва</div>
+      <div class="modal-title" id="item-modal-t" data-i18n="novaStrava">Нова страва</div>
       <button class="close-btn" onclick="closeModal('modal-item')">✕</button>
     </div>
     <div class="modal-grid">
@@ -1744,16 +1744,16 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div style="font-size:11px;color:var(--muted);margin-top:.375rem" data-i18n="orPasteURL">або вставте URL зображення:</div>
         <input id="if-photo-url-input" type="text" placeholder="https://..." style="margin-top:.25rem;font-size:12px" oninput="setPhotoFromUrl(this.value)"/>
       </div>
-      <div class="span2"><label class="field-label" data-i18n="nazvaStravi" data-i18n="nazvaStravi">Назва страви</label><input id="if-name" type="text" placeholder="Філадельфія класик"/></div>
+      <div class="span2"><label class="field-label" data-i18n="nazvaStravi">Назва страви</label><input id="if-name" type="text" placeholder="Філадельфія класик"/></div>
       <div class="span2"><label class="field-label" data-i18n="description">Опис</label><textarea id="if-desc" rows="2" placeholder="Свіжий лосось, вершковий сир..."></textarea></div>
       <div><label class="field-label" data-i18n="price">Ціна (грн)</label><input id="if-price" type="number" placeholder="189"/></div>
       <div><label class="field-label" data-i18n="vahyObem">Вага / обєм</label><input id="if-weight" type="text" placeholder="250 г"/></div>
       <div><label class="field-label">Категорія</label><select id="if-cat"></select></div>
-      <div><label class="field-label" data-i18n="artykulKod" data-i18n="artykulKod">Артикул / код</label><input id="if-sku" type="text" placeholder="необовязково"/></div>
+      <div><label class="field-label" data-i18n="artykulKod">Артикул / код</label><input id="if-sku" type="text" placeholder="необовязково"/></div>
 
       <!-- ДОСТУПНІСТЬ ПО ТИПАХ ЗАМОВЛЕННЯ -->
       <div class="span2">
-        <label class="field-label" data-i18n="dostupnistTsina" data-i18n="dostupnistTsina">Доступність та ціна за типом замовлення</label>
+        <label class="field-label" data-i18n="dostupnistTsina">Доступність та ціна за типом замовлення</label>
         <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.375rem">
 
           <!-- В ЗАКЛАДІ -->
@@ -1838,7 +1838,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         </div>
       </div>
     </div>
-    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveItem()" data-i18n="zberhStravu" data-i18n="zberhStravu">Зберегти страву</button>
+    <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveItem()" data-i18n="zberhStravu">Зберегти страву</button>
   </div>
 </div>
 
@@ -1889,13 +1889,13 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 <div class="overlay" id="modal-cat" onclick="closeModal('modal-cat')">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-head">
-      <div class="modal-title" id="cat-modal-t" data-i18n="novaKatehoriya" data-i18n="novaKatehoriya">Нова категорія</div>
+      <div class="modal-title" id="cat-modal-t" data-i18n="novaKatehoriya">Нова категорія</div>
       <button class="close-btn" onclick="closeModal('modal-cat')">✕</button>
     </div>
     <div class="modal-grid">
-      <div class="span2"><label class="field-label" data-i18n="name">Назва</label><input id="cf-name" type="text" placeholder="Роли"/></div>
+      <div class="span2"><label class="field-label" data-i18n="name">Назва</label><input id="cf-name" type="text" data-i18n-ph="catNamePh" placeholder="Роли"/></div>
       <div><label class="field-label">Emoji</label><input id="cf-emoji" type="text" placeholder="🌀" maxlength="2"/></div>
-      <div><label class="field-label">Порядок</label><input id="cf-order" type="number" placeholder="1"/></div>
+      <div><label class="field-label" data-i18n="sortOrder">Порядок</label><input id="cf-order" type="number" placeholder="1"/></div>
     </div>
     <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveCat()" data-i18n="save">Зберегти</button>
   </div>
@@ -2071,7 +2071,62 @@ var I18N = {
     orBannerURL:'або URL банеру',
     clickUploadPhoto:'Натисніть щоб завантажити фото',
     orPasteURL:'або вставте URL зображення:',
-    tableCount:'Кількість столів (для вибору столу клієнтом)'},
+    tableCount:'Кількість столів (для вибору столу клієнтом)',
+    tipsMonobankDesc:'Чайові зараховуються на картку monobank співробітника одразу після оплати (комісія 4%)',
+    tipsSettings:'⚙️ Налаштування чайових',
+    tipsChooseWaiterDesc:'Показувати список персоналу з фото для вибору отримувача чайових',
+    tipsAutoAssignDesc:'Якщо за столом закріплений офіціант — чайові йдуть автоматично йому',
+    tipsOfferDesc:'Після успішної оплати клієнт побачить пропозицію залишити чайові',
+    tipsStaffDesc:'Додайте офіціантів та вкажіть їх tipsEmployeeId з кабінету monobank для нарахування чайових',
+    addStaff:'+ Додати офіціанта',
+    staffMonoID:'👨‍🍳 Персонал та Monobank ID',
+    notSet:'не вказано',
+    noStaff:'Персонал не додано',
+    tipsWord:'чайових',
+    noMonoId:'⚠️ Без Mono ID',
+    sortOrder:'Порядок',
+    catNamePh:'Роли',
+    presets:'🎨 Готові палітри',
+    colorsTitle:'🌈 Кольори',
+    fontsTitle:'🔤 Шрифти',
+    logoBannerTitle:'🖼️ Логотип та банер',
+    bgMenuTitle:'🌄 Фон меню',
+    layoutTitle:'📐 Розмітка',
+    saveDesign:'💾 Зберегти дизайн',
+    testModeActive:'🔶 Тестовий режим активний — реальні платежі не проводяться',
+    payFlowDesc:'Клієнт обирає страви → обирає провайдера → оплачує → замовлення йде в касу. Рекомендовано для доставки.',
+    fiscalTitle:'🧾 Фіскалізація та чеки',
+    loadFromPoster:'Завантажте продукти з Poster',
+    loadFromPosterUp:'Завантажте продукти з Poster ↑',
+    orderTypesTitle:'🍽️ Типи замовлень',
+    takeawayFull:'🥡 З собою (самовинос)',
+    addZone:'+ Додати зону',
+    zoneExample:'Приклад: Центр — 30 грн, Передмістя — 80 грн',
+    cutleryTitle:'🍴 Прибори',
+    cutleryDesc:'Клієнт вкаже скільки приборів потрібно або відмовиться від них',
+    discountsTitle:'🏷️ Знижки',
+    discountsDesc:'Встановіть знижку для кожного типу замовлення. Клієнт побачить знижену ціну автоматично.',
+    paymentMethodsTitle:'💳 Способи оплати замовлень',
+    venueInfoTitle:'📋 Інформація про заклад',
+    venueLogoTitle:'🖼️ Логотип закладу',
+    venueBannerTitle:'🌄 Банер меню',
+    qrLinkTitle:'📲 QR-посилання для клієнтів',
+    qrLinkDesc:'Поділіться цим посиланням або роздрукуйте QR-код і розмістіть на столах',
+    copyLink:'📋 Копіювати',
+    viewMenu:'👁️ Переглянути меню',
+    saveAll:'💾 Зберегти все',
+    uploadPhoto:'📁 Завантажити фото',
+    uploadBanner:'📁 Завантажити банер',
+    deleteBtn:'✕ Видалити',
+    viewMenuBtn:'👁 Переглянути',
+    free:'Безкоштовно',
+    paid:'Оплачено',
+    pending:'Очікує',
+    switchPlan:'Перейти',
+    unlimited:'Необмежено',
+    afterTrialFree:'Після закінчення trial → Free',
+    trialEnded:'Пробний період закінчився!',
+    onlyAfterPlan:'Тільки після оплати тарифу'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2222,7 +2277,62 @@ var I18N = {
     orBannerURL:'or banner URL',
     clickUploadPhoto:'Click to upload photo',
     orPasteURL:'or paste image URL:',
-    tableCount:'Number of tables (for client table selection)'},
+    tableCount:'Number of tables (for client table selection)',
+    tipsMonobankDesc:'Tips are credited to the employeeʼs monobank card immediately after payment (4% fee)',
+    tipsSettings:'⚙️ Tips settings',
+    tipsChooseWaiterDesc:'Show staff list with photos for tip recipient selection',
+    tipsAutoAssignDesc:'If a waiter is assigned to the table — tips go to them automatically',
+    tipsOfferDesc:'After successful payment the client will see an offer to leave a tip',
+    tipsStaffDesc:'Add waiters and specify their tipsEmployeeId from monobank cabinet for tip processing',
+    addStaff:'+ Add waiter',
+    staffMonoID:'👨‍🍳 Staff and Monobank ID',
+    notSet:'not set',
+    noStaff:'No staff added',
+    tipsWord:'in tips',
+    noMonoId:'⚠️ No Mono ID',
+    sortOrder:'Order',
+    catNamePh:'Rolls',
+    presets:'🎨 Preset palettes',
+    colorsTitle:'🌈 Colors',
+    fontsTitle:'🔤 Fonts',
+    logoBannerTitle:'🖼️ Logo and banner',
+    bgMenuTitle:'🌄 Menu background',
+    layoutTitle:'📐 Layout',
+    saveDesign:'💾 Save design',
+    testModeActive:'🔶 Test mode active — real payments are not processed',
+    payFlowDesc:'Client chooses dishes → chooses provider → pays → order goes to POS. Recommended for delivery.',
+    fiscalTitle:'🧾 Fiscalization and receipts',
+    loadFromPoster:'Load products from Poster',
+    loadFromPosterUp:'Load products from Poster ↑',
+    orderTypesTitle:'🍽️ Order types',
+    takeawayFull:'🥡 Takeaway',
+    addZone:'+ Add zone',
+    zoneExample:'Example: Center — 30 UAH, Suburbs — 80 UAH',
+    cutleryTitle:'🍴 Cutlery',
+    cutleryDesc:'Client will indicate how many sets of cutlery are needed or decline them',
+    discountsTitle:'🏷️ Discounts',
+    discountsDesc:'Set a discount for each order type. The client will see the discounted price automatically.',
+    paymentMethodsTitle:'💳 Order payment methods',
+    venueInfoTitle:'📋 Venue information',
+    venueLogoTitle:'🖼️ Venue logo',
+    venueBannerTitle:'🌄 Menu banner',
+    qrLinkTitle:'📲 QR link for clients',
+    qrLinkDesc:'Share this link or print the QR code and place it on tables',
+    copyLink:'📋 Copy',
+    viewMenu:'👁️ View menu',
+    saveAll:'💾 Save all',
+    uploadPhoto:'📁 Upload photo',
+    uploadBanner:'📁 Upload banner',
+    deleteBtn:'✕ Delete',
+    viewMenuBtn:'👁 View',
+    free:'Free',
+    paid:'Paid',
+    pending:'Pending',
+    switchPlan:'Switch',
+    unlimited:'Unlimited',
+    afterTrialFree:'After trial ends → Free',
+    trialEnded:'Trial period ended!',
+    onlyAfterPlan:'Only after plan payment'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -2373,7 +2483,62 @@ var I18N = {
     orBannerURL:'lub URL baneru',
     clickUploadPhoto:'Kliknij by przesłać zdjęcie',
     orPasteURL:'lub wklej URL obrazu:',
-    tableCount:'Liczba stolików'},
+    tableCount:'Liczba stolików',
+    tipsMonobankDesc:'Napiwki trafiają na kartę monobank pracownika natychmiast po płatności (prowizja 4%)',
+    tipsSettings:'⚙️ Ustawienia napiwków',
+    tipsChooseWaiterDesc:'Pokaż listę personelu ze zdjęciami do wyboru odbiorcy napiwku',
+    tipsAutoAssignDesc:'Jeśli do stolika przypisany jest kelner — napiwki trafiają do niego automatycznie',
+    tipsOfferDesc:'Po udanej płatności klient zobaczy ofertę pozostawienia napiwku',
+    tipsStaffDesc:'Dodaj kelnerów i podaj ich tipsEmployeeId z panelu monobank do naliczania napiwków',
+    addStaff:'+ Dodaj kelnera',
+    staffMonoID:'👨‍🍳 Personel i Monobank ID',
+    notSet:'nie podano',
+    noStaff:'Brak personelu',
+    tipsWord:'napiwków',
+    noMonoId:'⚠️ Brak Mono ID',
+    sortOrder:'Kolejność',
+    catNamePh:'Role',
+    presets:'🎨 Gotowe palety',
+    colorsTitle:'🌈 Kolory',
+    fontsTitle:'🔤 Czcionki',
+    logoBannerTitle:'🖼️ Logo i baner',
+    bgMenuTitle:'🌄 Tło menu',
+    layoutTitle:'📐 Układ',
+    saveDesign:'💾 Zapisz projekt',
+    testModeActive:'🔶 Tryb testowy aktywny — prawdziwe płatności nie są przetwarzane',
+    payFlowDesc:'Klient wybiera dania → wybiera dostawcę → płaci → zamówienie trafia do kasy. Zalecane dla dostawy.',
+    fiscalTitle:'🧾 Fiskalizacja i paragony',
+    loadFromPoster:'Załaduj produkty z Poster',
+    loadFromPosterUp:'Załaduj produkty z Poster ↑',
+    orderTypesTitle:'🍽️ Typy zamówień',
+    takeawayFull:'🥡 Na wynos',
+    addZone:'+ Dodaj strefę',
+    zoneExample:'Przykład: Centrum — 30 UAH, Przedmieście — 80 UAH',
+    cutleryTitle:'🍴 Sztućce',
+    cutleryDesc:'Klient wskaże ile sztućców potrzeba lub zrezygnuje',
+    discountsTitle:'🏷️ Rabaty',
+    discountsDesc:'Ustaw rabat dla każdego typu zamówienia. Klient automatycznie zobaczy obniżoną cenę.',
+    paymentMethodsTitle:'💳 Metody płatności zamówień',
+    venueInfoTitle:'📋 Informacje o lokalu',
+    venueLogoTitle:'🖼️ Logo lokalu',
+    venueBannerTitle:'🌄 Baner menu',
+    qrLinkTitle:'📲 Link QR dla klientów',
+    qrLinkDesc:'Udostępnij ten link lub wydrukuj kod QR i umieść go na stolikach',
+    copyLink:'📋 Kopiuj',
+    viewMenu:'👁️ Zobacz menu',
+    saveAll:'💾 Zapisz wszystko',
+    uploadPhoto:'📁 Prześlij zdjęcie',
+    uploadBanner:'📁 Prześlij baner',
+    deleteBtn:'✕ Usuń',
+    viewMenuBtn:'👁 Podgląd',
+    free:'Bezpłatnie',
+    paid:'Opłacono',
+    pending:'Oczekuje',
+    switchPlan:'Przejdź',
+    unlimited:'Nieograniczone',
+    afterTrialFree:'Po zakończeniu trial → Free',
+    trialEnded:'Okres próbny zakończony!',
+    onlyAfterPlan:'Tylko po opłaceniu planu'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -2524,7 +2689,62 @@ var I18N = {
     orBannerURL:'oder Banner-URL',
     clickUploadPhoto:'Klicken zum Foto hochladen',
     orPasteURL:'oder Bild-URL einfügen:',
-    tableCount:'Anzahl Tische'},
+    tableCount:'Anzahl Tische',
+    tipsMonobankDesc:'Trinkgelder werden sofort nach der Zahlung auf die Monobank-Karte des Mitarbeiters überwiesen (4% Gebühr)',
+    tipsSettings:'⚙️ Trinkgeld-Einstellungen',
+    tipsChooseWaiterDesc:'Mitarbeiterliste mit Fotos für die Trinkgeldempfänger-Auswahl anzeigen',
+    tipsAutoAssignDesc:'Wenn dem Tisch ein Kellner zugewiesen ist — geht das Trinkgeld automatisch an ihn',
+    tipsOfferDesc:'Nach erfolgreicher Zahlung sieht der Kunde ein Angebot, Trinkgeld zu hinterlassen',
+    tipsStaffDesc:'Fügen Sie Kellner hinzu und geben Sie ihre tipsEmployeeId aus dem Monobank-Konto für die Trinkgeldabrechnung an',
+    addStaff:'+ Kellner hinzufügen',
+    staffMonoID:'👨‍🍳 Personal und Monobank-ID',
+    notSet:'nicht angegeben',
+    noStaff:'Kein Personal hinzugefügt',
+    tipsWord:'Trinkgeld',
+    noMonoId:'⚠️ Keine Mono-ID',
+    sortOrder:'Reihenfolge',
+    catNamePh:'Rollen',
+    presets:'🎨 Vorgefertigte Paletten',
+    colorsTitle:'🌈 Farben',
+    fontsTitle:'🔤 Schriften',
+    logoBannerTitle:'🖼️ Logo und Banner',
+    bgMenuTitle:'🌄 Menühintergrund',
+    layoutTitle:'📐 Layout',
+    saveDesign:'💾 Design speichern',
+    testModeActive:'🔶 Testmodus aktiv — echte Zahlungen werden nicht verarbeitet',
+    payFlowDesc:'Kunde wählt Gerichte → wählt Anbieter → zahlt → Bestellung geht zur Kasse. Empfohlen für Lieferung.',
+    fiscalTitle:'🧾 Fiskalisierung und Belege',
+    loadFromPoster:'Produkte von Poster laden',
+    loadFromPosterUp:'Produkte von Poster laden ↑',
+    orderTypesTitle:'🍽️ Bestellarten',
+    takeawayFull:'🥡 Zum Mitnehmen',
+    addZone:'+ Zone hinzufügen',
+    zoneExample:'Beispiel: Zentrum — 30 UAH, Vorstadt — 80 UAH',
+    cutleryTitle:'🍴 Besteck',
+    cutleryDesc:'Der Kunde gibt an, wie viel Besteck benötigt wird oder lehnt ab',
+    discountsTitle:'🏷️ Rabatte',
+    discountsDesc:'Legen Sie einen Rabatt für jeden Bestelltyp fest. Der Kunde sieht den ermäßigten Preis automatisch.',
+    paymentMethodsTitle:'💳 Bestellzahlungsmethoden',
+    venueInfoTitle:'📋 Lokal-Informationen',
+    venueLogoTitle:'🖼️ Lokal-Logo',
+    venueBannerTitle:'🌄 Menü-Banner',
+    qrLinkTitle:'📲 QR-Link für Kunden',
+    qrLinkDesc:'Teilen Sie diesen Link oder drucken Sie den QR-Code aus und platzieren Sie ihn auf den Tischen',
+    copyLink:'📋 Kopieren',
+    viewMenu:'👁️ Menü anzeigen',
+    saveAll:'💾 Alles speichern',
+    uploadPhoto:'📁 Foto hochladen',
+    uploadBanner:'📁 Banner hochladen',
+    deleteBtn:'✕ Löschen',
+    viewMenuBtn:'👁 Anzeigen',
+    free:'Kostenlos',
+    paid:'Bezahlt',
+    pending:'Ausstehend',
+    switchPlan:'Wechseln',
+    unlimited:'Unbegrenzt',
+    afterTrialFree:'Nach Trial-Ende → Free',
+    trialEnded:'Testzeitraum abgelaufen!',
+    onlyAfterPlan:'Nur nach Tarifzahlung'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -2675,7 +2895,62 @@ var I18N = {
     orBannerURL:'sau URL banner',
     clickUploadPhoto:'Clic pentru a încărca foto',
     orPasteURL:'sau inserați URL imagine:',
-    tableCount:'Număr de mese'},
+    tableCount:'Număr de mese',
+    tipsMonobankDesc:'Bacșișul se creditează pe cardul monobank al angajatului imediat după plată (comision 4%)',
+    tipsSettings:'⚙️ Setări bacșiș',
+    tipsChooseWaiterDesc:'Afișați lista personalului cu fotografii pentru selectarea beneficiarului bacșișului',
+    tipsAutoAssignDesc:'Dacă chelnerul este atribuit la masă — bacșișul merge automat la el',
+    tipsOfferDesc:'După plata reușită clientul va vedea oferta de a lăsa bacșiș',
+    tipsStaffDesc:'Adăugați chelneri și specificați tipsEmployeeId din cabinetul monobank pentru procesarea bacșișului',
+    addStaff:'+ Adaugă chelner',
+    staffMonoID:'👨‍🍳 Personal și Monobank ID',
+    notSet:'nespecificat',
+    noStaff:'Niciun personal adăugat',
+    tipsWord:'bacșiș',
+    noMonoId:'⚠️ Fără Mono ID',
+    sortOrder:'Ordine',
+    catNamePh:'Rulouri',
+    presets:'🎨 Palete predefinite',
+    colorsTitle:'🌈 Culori',
+    fontsTitle:'🔤 Fonturi',
+    logoBannerTitle:'🖼️ Logo și banner',
+    bgMenuTitle:'🌄 Fundal meniu',
+    layoutTitle:'📐 Aspect',
+    saveDesign:'💾 Salvează designul',
+    testModeActive:'🔶 Modul de testare activ — plățile reale nu sunt procesate',
+    payFlowDesc:'Clientul alege preparate → alege furnizorul → plătește → comanda merge la casă. Recomandat pentru livrare.',
+    fiscalTitle:'🧾 Fiscalizare și chitanțe',
+    loadFromPoster:'Încarcă produse din Poster',
+    loadFromPosterUp:'Încarcă produse din Poster ↑',
+    orderTypesTitle:'🍽️ Tipuri de comenzi',
+    takeawayFull:'🥡 De luat',
+    addZone:'+ Adaugă zonă',
+    zoneExample:'Exemplu: Centru — 30 UAH, Suburbie — 80 UAH',
+    cutleryTitle:'🍴 Tacâmuri',
+    cutleryDesc:'Clientul va indica câte seturi de tacâmuri sunt necesare sau va refuza',
+    discountsTitle:'🏷️ Reduceri',
+    discountsDesc:'Setați o reducere pentru fiecare tip de comandă. Clientul va vedea prețul redus automat.',
+    paymentMethodsTitle:'💳 Metode de plată comenzi',
+    venueInfoTitle:'📋 Informații local',
+    venueLogoTitle:'🖼️ Logo local',
+    venueBannerTitle:'🌄 Banner meniu',
+    qrLinkTitle:'📲 Link QR pentru clienți',
+    qrLinkDesc:'Distribuiți acest link sau imprimați codul QR și plasați-l pe mese',
+    copyLink:'📋 Copiază',
+    viewMenu:'👁️ Vizualizează meniu',
+    saveAll:'💾 Salvează tot',
+    uploadPhoto:'📁 Încarcă fotografie',
+    uploadBanner:'📁 Încarcă banner',
+    deleteBtn:'✕ Șterge',
+    viewMenuBtn:'👁 Vizualizează',
+    free:'Gratuit',
+    paid:'Plătit',
+    pending:'În așteptare',
+    switchPlan:'Comută',
+    unlimited:'Nelimitat',
+    afterTrialFree:'După trial → Free',
+    trialEnded:'Perioada de probă s-a încheiat!',
+    onlyAfterPlan:'Doar după plata planului'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -2826,7 +3101,62 @@ var I18N = {
     orBannerURL:'o URL del banner',
     clickUploadPhoto:'Haga clic para subir foto',
     orPasteURL:'o pegue URL de imagen:',
-    tableCount:'Número de mesas'},
+    tableCount:'Número de mesas',
+    tipsMonobankDesc:'Las propinas se acreditan en la tarjeta monobank del empleado inmediatamente después del pago (comisión 4%)',
+    tipsSettings:'⚙️ Ajustes de propinas',
+    tipsChooseWaiterDesc:'Mostrar lista de personal con fotos para selección del destinatario de propina',
+    tipsAutoAssignDesc:'Si un camarero está asignado a la mesa — las propinas van a él automáticamente',
+    tipsOfferDesc:'Tras el pago exitoso el cliente verá una oferta para dejar propina',
+    tipsStaffDesc:'Agregue camareros y especifique su tipsEmployeeId del gabinete monobank para el procesamiento de propinas',
+    addStaff:'+ Agregar camarero',
+    staffMonoID:'👨‍🍳 Personal y Monobank ID',
+    notSet:'no especificado',
+    noStaff:'Sin personal agregado',
+    tipsWord:'en propinas',
+    noMonoId:'⚠️ Sin Mono ID',
+    sortOrder:'Orden',
+    catNamePh:'Rollos',
+    presets:'🎨 Paletas prediseñadas',
+    colorsTitle:'🌈 Colores',
+    fontsTitle:'🔤 Fuentes',
+    logoBannerTitle:'🖼️ Logo y banner',
+    bgMenuTitle:'🌄 Fondo del menú',
+    layoutTitle:'📐 Diseño',
+    saveDesign:'💾 Guardar diseño',
+    testModeActive:'🔶 Modo de prueba activo — no se procesan pagos reales',
+    payFlowDesc:'El cliente elige platos → elige proveedor → paga → el pedido va a caja. Recomendado para entrega.',
+    fiscalTitle:'🧾 Fiscalización y recibos',
+    loadFromPoster:'Cargar productos de Poster',
+    loadFromPosterUp:'Cargar productos de Poster ↑',
+    orderTypesTitle:'🍽️ Tipos de pedido',
+    takeawayFull:'🥡 Para llevar',
+    addZone:'+ Agregar zona',
+    zoneExample:'Ejemplo: Centro — 30 UAH, Suburbios — 80 UAH',
+    cutleryTitle:'🍴 Cubiertos',
+    cutleryDesc:'El cliente indicará cuántos cubiertos necesita o los rechazará',
+    discountsTitle:'🏷️ Descuentos',
+    discountsDesc:'Establezca un descuento para cada tipo de pedido. El cliente verá el precio descontado automáticamente.',
+    paymentMethodsTitle:'💳 Métodos de pago de pedidos',
+    venueInfoTitle:'📋 Información del local',
+    venueLogoTitle:'🖼️ Logo del local',
+    venueBannerTitle:'🌄 Banner del menú',
+    qrLinkTitle:'📲 Enlace QR para clientes',
+    qrLinkDesc:'Comparta este enlace o imprima el código QR y colóquelo en las mesas',
+    copyLink:'📋 Copiar',
+    viewMenu:'👁️ Ver menú',
+    saveAll:'💾 Guardar todo',
+    uploadPhoto:'📁 Subir foto',
+    uploadBanner:'📁 Subir banner',
+    deleteBtn:'✕ Eliminar',
+    viewMenuBtn:'👁 Ver',
+    free:'Gratis',
+    paid:'Pagado',
+    pending:'Pendiente',
+    switchPlan:'Cambiar',
+    unlimited:'Ilimitado',
+    afterTrialFree:'Tras el trial → Free',
+    trialEnded:'¡Período de prueba finalizado!',
+    onlyAfterPlan:'Solo tras el pago del plan'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -2977,7 +3307,62 @@ var I18N = {
     orBannerURL:'ili URL banera',
     clickUploadPhoto:'Kliknite za upload slike',
     orPasteURL:'ili zalijepite URL slike:',
-    tableCount:'Broj stolova'},
+    tableCount:'Broj stolova',
+    tipsMonobankDesc:'Napojnica se uplaćuje na monobank karticu zaposlenog odmah nakon plaćanja (provizija 4%)',
+    tipsSettings:'⚙️ Podešavanja napojnice',
+    tipsChooseWaiterDesc:'Prikaži listu osoblja sa slikama za izbor primaoca napojnice',
+    tipsAutoAssignDesc:'Ako je konobar dodijeljen stolu — napojnica automatski ide njemu',
+    tipsOfferDesc:'Nakon uspješnog plaćanja klijent će vidjeti ponudu za ostavljanje napojnice',
+    tipsStaffDesc:'Dodajte konobare i navedite njihov tipsEmployeeId iz monobank kabineta za obradu napojnice',
+    addStaff:'+ Dodaj konobara',
+    staffMonoID:'👨‍🍳 Osoblje i Monobank ID',
+    notSet:'nije navedeno',
+    noStaff:'Nije dodano osoblje',
+    tipsWord:'napojnice',
+    noMonoId:'⚠️ Bez Mono ID',
+    sortOrder:'Redoslijed',
+    catNamePh:'Rolovi',
+    presets:'🎨 Gotove palete',
+    colorsTitle:'🌈 Boje',
+    fontsTitle:'🔤 Fontovi',
+    logoBannerTitle:'🖼️ Logo i baner',
+    bgMenuTitle:'🌄 Pozadina menija',
+    layoutTitle:'📐 Raspored',
+    saveDesign:'💾 Sačuvaj dizajn',
+    testModeActive:'🔶 Test mod aktivan — realna plaćanja se ne obrađuju',
+    payFlowDesc:'Klijent bira jela → bira provajdera → plaća → narudžbina ide na kasu. Preporučeno za dostavu.',
+    fiscalTitle:'🧾 Fiskalizacija i računi',
+    loadFromPoster:'Učitaj proizvode iz Poster',
+    loadFromPosterUp:'Učitaj proizvode iz Poster ↑',
+    orderTypesTitle:'🍽️ Tipovi narudžbina',
+    takeawayFull:'🥡 Za ponijeti',
+    addZone:'+ Dodaj zonu',
+    zoneExample:'Primjer: Centar — 30 UAH, Predgrađe — 80 UAH',
+    cutleryTitle:'🍴 Pribor',
+    cutleryDesc:'Klijent će navesti koliko pribora treba ili će odbiti',
+    discountsTitle:'🏷️ Popusti',
+    discountsDesc:'Postavite popust za svaki tip narudžbine. Klijent će automatski vidjeti sniženu cijenu.',
+    paymentMethodsTitle:'💳 Načini plaćanja narudžbina',
+    venueInfoTitle:'📋 Informacije o lokalu',
+    venueLogoTitle:'🖼️ Logo lokala',
+    venueBannerTitle:'🌄 Baner menija',
+    qrLinkTitle:'📲 QR link za klijente',
+    qrLinkDesc:'Podijelite ovaj link ili ispišite QR kod i postavite ga na stolove',
+    copyLink:'📋 Kopiraj',
+    viewMenu:'👁️ Pogledaj meni',
+    saveAll:'💾 Sačuvaj sve',
+    uploadPhoto:'📁 Upload slike',
+    uploadBanner:'📁 Upload banera',
+    deleteBtn:'✕ Izbriši',
+    viewMenuBtn:'👁 Pregled',
+    free:'Besplatno',
+    paid:'Plaćeno',
+    pending:'Na čekanju',
+    switchPlan:'Prebaci',
+    unlimited:'Neograničeno',
+    afterTrialFree:'Nakon triala → Free',
+    trialEnded:'Probni period je završen!',
+    onlyAfterPlan:'Samo nakon plaćanja plana'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -3948,7 +4333,7 @@ function renderStaff(){
       <div class="staff-avatar">${s.emoji||'👤'}</div>
       <div class="staff-name">${s.name}</div>
       <div class="staff-role">${s.role}</div>
-      <div class="staff-tips-total">₴${s.tipsToday} чайових</div>
+      <div class="staff-tips-total">₴${s.tipsToday} ${t('tipsWord')}</div>
       ${!s.monoId?'<div style="font-size:10px;color:var(--amber)">⚠️ Без Mono ID</div>':''}
     </div>`).join('');
 }
