@@ -89,13 +89,220 @@ body::before{
      ═══════════════════════════════════════════════════════ -->
 <script>
 window.__MQ_CFG = {
-  apiKey:            "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-  authDomain:        "mageqrrest.firebaseapp.com",
-  projectId:         "mageqrrest",
-  storageBucket:     "mageqrrest.firebasestorage.app",
-  messagingSenderId: "207231972557",
-  appId:             "1:207231972557:web:f8234c22e6b32a0a2ee584"
+  apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
+    authDomain: "mageqrrest.firebaseapp.com",
+    projectId: "mageqrrest",
+    storageBucket: "mageqrrest.firebasestorage.app",
+    messagingSenderId: "207231972557",
+    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
+</script>
+
+<script>
+// ── LOGIN I18N ──────────────────────────────────────────────
+var LOGIN_LANG = localStorage.getItem('mq_admin_lang') || 'uk';
+
+var LOGIN_I18N = {
+  uk: {
+    title:'Mage QR Rest — Вхід',
+    brandSub:'Платформа управління рестораном',
+    tabVenue:'Заклад', tabSuper:'Платформа',
+    emailLabel:'Email', passLabel:'Пароль',
+    emailPh:'admin@myrestaurant.ua',
+    loginBtn:'Увійти',
+    superEmailLabel:'Системний email', superPassLabel:'Системний пароль',
+    superLoginBtn:'Системний вхід',
+    errWrongPass:'Невірний email або пароль',
+    errNotFound:'Користувача не знайдено',
+    errTooMany:'Забагато спроб. Спробуйте пізніше.',
+    errDisabled:'Акаунт заблоковано. Зверніться до підтримки.',
+    errNetwork:"Немає з'єднання з інтернетом.",
+    errGeneral:'Помилка входу. Перевірте дані і спробуйте ще раз.',
+    errFillAll:'Заповніть усі поля',
+    errDenied:'Доступ заборонено',
+    errDeniedAccount:'Доступ заборонено для цього акаунту',
+    attemptsLeft:'залишилось спроб',
+    lockedMsg:'🔒 Забагато невдалих спроб.',
+    tryAfter:'Спробуйте через',
+    seconds:'с.',
+    footer:'✦ Mage QR Rest · Захищена платформа',
+  },
+  en: {
+    title:'Mage QR Rest — Login',
+    brandSub:'Restaurant management platform',
+    tabVenue:'Venue', tabSuper:'Platform',
+    emailLabel:'Email', passLabel:'Password',
+    emailPh:'admin@myrestaurant.com',
+    loginBtn:'Sign in',
+    superEmailLabel:'System email', superPassLabel:'System password',
+    superLoginBtn:'System login',
+    errWrongPass:'Invalid email or password',
+    errNotFound:'User not found',
+    errTooMany:'Too many attempts. Try again later.',
+    errDisabled:'Account disabled. Contact support.',
+    errNetwork:'No internet connection.',
+    errGeneral:'Login error. Check your credentials and try again.',
+    errFillAll:'Fill in all fields',
+    errDenied:'Access denied',
+    errDeniedAccount:'Access denied for this account',
+    attemptsLeft:'attempts left',
+    lockedMsg:'🔒 Too many failed attempts.',
+    tryAfter:'Try again in',
+    seconds:'s.',
+    footer:'✦ Mage QR Rest · Secure platform',
+  },
+  pl: {
+    title:'Mage QR Rest — Logowanie',
+    brandSub:'Platforma zarządzania restauracją',
+    tabVenue:'Lokal', tabSuper:'Platforma',
+    emailLabel:'Email', passLabel:'Hasło',
+    emailPh:'admin@mojarestauracja.pl',
+    loginBtn:'Zaloguj się',
+    superEmailLabel:'Email systemowy', superPassLabel:'Hasło systemowe',
+    superLoginBtn:'Logowanie systemowe',
+    errWrongPass:'Nieprawidłowy email lub hasło',
+    errNotFound:'Użytkownik nie znaleziony',
+    errTooMany:'Zbyt wiele prób. Spróbuj później.',
+    errDisabled:'Konto zablokowane. Skontaktuj się z pomocą.',
+    errNetwork:'Brak połączenia z internetem.',
+    errGeneral:'Błąd logowania. Sprawdź dane i spróbuj ponownie.',
+    errFillAll:'Uzupełnij wszystkie pola',
+    errDenied:'Dostęp zabroniony',
+    errDeniedAccount:'Dostęp zabroniony dla tego konta',
+    attemptsLeft:'prób pozostało',
+    lockedMsg:'🔒 Zbyt wiele nieudanych prób.',
+    tryAfter:'Spróbuj za',
+    seconds:'s.',
+    footer:'✦ Mage QR Rest · Bezpieczna platforma',
+  },
+  de: {
+    title:'Mage QR Rest — Anmeldung',
+    brandSub:'Restaurant-Management-Plattform',
+    tabVenue:'Lokal', tabSuper:'Plattform',
+    emailLabel:'E-Mail', passLabel:'Passwort',
+    emailPh:'admin@meinrestaurant.de',
+    loginBtn:'Anmelden',
+    superEmailLabel:'System-E-Mail', superPassLabel:'Systempasswort',
+    superLoginBtn:'Systemanmeldung',
+    errWrongPass:'Ungültige E-Mail oder Passwort',
+    errNotFound:'Benutzer nicht gefunden',
+    errTooMany:'Zu viele Versuche. Versuchen Sie es später.',
+    errDisabled:'Konto gesperrt. Support kontaktieren.',
+    errNetwork:'Keine Internetverbindung.',
+    errGeneral:'Anmeldefehler. Überprüfen Sie Ihre Daten.',
+    errFillAll:'Alle Felder ausfüllen',
+    errDenied:'Zugriff verweigert',
+    errDeniedAccount:'Zugriff für dieses Konto verweigert',
+    attemptsLeft:'Versuche verbleibend',
+    lockedMsg:'🔒 Zu viele fehlgeschlagene Versuche.',
+    tryAfter:'Versuchen Sie es in',
+    seconds:'s.',
+    footer:'✦ Mage QR Rest · Sichere Plattform',
+  },
+  ro: {
+    title:'Mage QR Rest — Autentificare',
+    brandSub:'Platformă de management restaurant',
+    tabVenue:'Local', tabSuper:'Platformă',
+    emailLabel:'Email', passLabel:'Parolă',
+    emailPh:'admin@restaurantulmeu.ro',
+    loginBtn:'Conectați-vă',
+    superEmailLabel:'Email sistem', superPassLabel:'Parolă sistem',
+    superLoginBtn:'Autentificare sistem',
+    errWrongPass:'Email sau parolă incorectă',
+    errNotFound:'Utilizator negăsit',
+    errTooMany:'Prea multe încercări. Încercați mai târziu.',
+    errDisabled:'Cont dezactivat. Contactați suportul.',
+    errNetwork:'Fără conexiune la internet.',
+    errGeneral:'Eroare de autentificare. Verificați datele.',
+    errFillAll:'Completați toate câmpurile',
+    errDenied:'Acces refuzat',
+    errDeniedAccount:'Acces refuzat pentru acest cont',
+    attemptsLeft:'încercări rămase',
+    lockedMsg:'🔒 Prea multe încercări eșuate.',
+    tryAfter:'Încercați după',
+    seconds:'s.',
+    footer:'✦ Mage QR Rest · Platformă securizată',
+  },
+  es: {
+    title:'Mage QR Rest — Iniciar sesión',
+    brandSub:'Plataforma de gestión de restaurantes',
+    tabVenue:'Local', tabSuper:'Plataforma',
+    emailLabel:'Email', passLabel:'Contraseña',
+    emailPh:'admin@mirestaurante.es',
+    loginBtn:'Iniciar sesión',
+    superEmailLabel:'Email del sistema', superPassLabel:'Contraseña del sistema',
+    superLoginBtn:'Acceso al sistema',
+    errWrongPass:'Email o contraseña incorrectos',
+    errNotFound:'Usuario no encontrado',
+    errTooMany:'Demasiados intentos. Inténtelo más tarde.',
+    errDisabled:'Cuenta desactivada. Contacte al soporte.',
+    errNetwork:'Sin conexión a internet.',
+    errGeneral:'Error de inicio de sesión. Verifique sus datos.',
+    errFillAll:'Complete todos los campos',
+    errDenied:'Acceso denegado',
+    errDeniedAccount:'Acceso denegado para esta cuenta',
+    attemptsLeft:'intentos restantes',
+    lockedMsg:'🔒 Demasiados intentos fallidos.',
+    tryAfter:'Inténtelo en',
+    seconds:'s.',
+    footer:'✦ Mage QR Rest · Plataforma segura',
+  },
+  cnr: {
+    title:'Mage QR Rest — Prijava',
+    brandSub:'Platforma za upravljanje restoranom',
+    tabVenue:'Lokal', tabSuper:'Platforma',
+    emailLabel:'Email', passLabel:'Lozinka',
+    emailPh:'admin@mojrestoran.me',
+    loginBtn:'Prijavite se',
+    superEmailLabel:'Sistemski email', superPassLabel:'Sistemska lozinka',
+    superLoginBtn:'Sistemska prijava',
+    errWrongPass:'Pogrešan email ili lozinka',
+    errNotFound:'Korisnik nije pronađen',
+    errTooMany:'Previše pokušaja. Pokušajte kasnije.',
+    errDisabled:'Nalog je blokiran. Kontaktirajte podršku.',
+    errNetwork:'Nema internet veze.',
+    errGeneral:'Greška pri prijavi. Provjerite podatke.',
+    errFillAll:'Popunite sva polja',
+    errDenied:'Pristup odbijen',
+    errDeniedAccount:'Pristup odbijen za ovaj nalog',
+    attemptsLeft:'pokušaja preostalo',
+    lockedMsg:'🔒 Previše neuspješnih pokušaja.',
+    tryAfter:'Pokušajte za',
+    seconds:'s.',
+    footer:'✦ Mage QR Rest · Sigurna platforma',
+  },
+};
+
+function tl(key) {
+  var s = LOGIN_I18N[LOGIN_LANG] || LOGIN_I18N.uk;
+  return s[key] || LOGIN_I18N.uk[key] || key;
+}
+
+function applyLoginLang() {
+  var s = LOGIN_I18N[LOGIN_LANG] || LOGIN_I18N.uk;
+  document.title = s.title;
+  var set = function(id, val) { var el = document.getElementById(id); if(el && val) el.textContent = val; };
+  var setPh = function(id, val) { var el = document.getElementById(id); if(el && val) el.placeholder = val; };
+  
+  set('brand-sub', s.brandSub);
+  set('tab-venue-btn', s.tabVenue);
+  set('tab-super-btn', s.tabSuper);
+  set('email-label', s.emailLabel);
+  set('pass-label', s.passLabel);
+  setPh('v-email', s.emailPh);
+  set('login-btn-text', s.loginBtn);
+  set('super-email-label', s.superEmailLabel);
+  set('super-pass-label', s.superPassLabel);
+  set('super-login-btn-text', s.superLoginBtn);
+  set('v-err', s.errWrongPass);
+  set('s-err', s.errDenied);
+  set('locked-text', s.lockedMsg);
+  set('try-after-text', s.tryAfter);
+  set('seconds-text', s.seconds);
+  set('footer-text', s.footer);
+}
+
+document.addEventListener('DOMContentLoaded', applyLoginLang);
 </script>
 </head>
 <body>
@@ -110,22 +317,22 @@ window.__MQ_CFG = {
 <div class="card">
   <div class="brand">
     <div class="brand-logo">✦ Mage <span>QR</span> Rest</div>
-    <div class="brand-sub">Платформа управління рестораном</div>
+    <div class="brand-sub" id="brand-sub">Платформа управління рестораном</div>
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('venue')">Заклад</button>
-    <button class="tab" onclick="switchTab('super')">Платформа</button>
+    <button class="tab active" id="tab-venue-btn" onclick="switchTab('venue')">Заклад</button>
+    <button class="tab" id="tab-super-btn" onclick="switchTab('super')">Платформа</button>
   </div>
 
   <!-- VENUE LOGIN -->
   <div id="tab-venue">
     <div class="field">
-      <label>Email</label>
+      <label id="email-label">Email</label>
       <input type="email" id="v-email" placeholder="admin@myrestaurant.ua" autocomplete="username"/>
     </div>
     <div class="field">
-      <label>Пароль</label>
+      <label id="pass-label">Пароль</label>
       <input type="password" id="v-pass" placeholder="••••••••" autocomplete="current-password"/>
     </div>
     <!-- HONEYPOT приховане поле — боти заповнять його -->
@@ -135,11 +342,11 @@ window.__MQ_CFG = {
     <div class="attempts-bar"><div class="attempts-fill" id="attempts-fill" style="width:0%"></div></div>
 
     <div class="locked-msg" id="locked-msg">
-      🔒 Забагато невдалих спроб.<br/>Спробуйте через <span class="locked-countdown" id="countdown">60</span> с.
+      <span id="locked-text">🔒 Забагато невдалих спроб.</span><br/><span id="try-after-text">Спробуйте через</span> <span class="locked-countdown" id="countdown">60</span> <span id="seconds-text">с.</span>
     </div>
 
     <button class="btn-primary" id="v-btn" onclick="doVenueLogin()">
-      <span>Увійти</span>
+      <span id="login-btn-text">Увійти</span>
       <div class="spinner"></div>
     </button>
   </div>
@@ -147,22 +354,22 @@ window.__MQ_CFG = {
   <!-- SUPER LOGIN -->
   <div id="tab-super" style="display:none">
     <div class="field">
-      <label>Системний email</label>
+      <label id="super-email-label">Системний email</label>
       <input type="email" id="s-email" placeholder="superadmin@mageqrrest.com"/>
     </div>
     <div class="field">
-      <label>Системний пароль</label>
+      <label id="super-pass-label">Системний пароль</label>
       <input type="password" id="s-pass" placeholder="••••••••"/>
     </div>
     <div class="err" id="s-err">Доступ заборонено</div>
     <button class="btn-primary" id="s-btn" onclick="doSuperLogin()">
-      <span>Системний вхід</span>
+      <span id="super-login-btn-text">Системний вхід</span>
       <div class="spinner"></div>
     </button>
   </div>
 
   <div class="footer">
-    ✦ Mage QR Rest · Захищена платформа<br/>
+    <span id="footer-text">✦ Mage QR Rest · Захищена платформа</span><br/>
     <span style="color:#2A2A2A">v1.0.0</span>
   </div>
 </div>
@@ -269,7 +476,7 @@ async function doVenueLogin() {
   const email = document.getElementById('v-email').value.trim();
   const pass  = document.getElementById('v-pass').value;
 
-  if (!email || !pass) { showErr('v-err', 'Заповніть усі поля'); return; }
+  if (!email || !pass) { showErr('v-err', tl('errFillAll')); return; }
 
   setLoading('v-btn', true);
 
@@ -300,16 +507,16 @@ async function doVenueLogin() {
 
     // Розшифровуємо помилки Firebase у зрозумілі повідомлення
     const msg = {
-      'auth/invalid-credential':   'Невірний email або пароль',
-      'auth/user-not-found':       'Користувача не знайдено',
-      'auth/wrong-password':       'Невірний пароль',
-      'auth/too-many-requests':    'Забагато спроб. Спробуйте пізніше.',
-      'auth/user-disabled':        'Акаунт заблоковано. Зверніться до підтримки.',
+      'auth/invalid-credential':   tl('errWrongPass'),
+      'auth/user-not-found':       tl('errNotFound'),
+      'auth/wrong-password':       tl('errWrongPass'),
+      'auth/too-many-requests':    tl('errTooMany'),
+      'auth/user-disabled':        tl('errDisabled'),
       'auth/network-request-failed': 'Немає з\'єднання з інтернетом.',
-    }[e.code] || 'Помилка входу. Перевірте дані і спробуйте ще раз.';
+    }[e.code] || tl('errGeneral');
 
     showErr('v-err', attempts >= 3
-      ? `${msg} (залишилось спроб: ${MAX_ATTEMPTS - attempts})`
+      ? `${msg} (${MAX_ATTEMPTS - attempts} ${tl('attemptsLeft')})`
       : msg);
   } finally {
     setLoading('v-btn', false);
@@ -320,7 +527,7 @@ async function doVenueLogin() {
 async function doSuperLogin() {
   const email = document.getElementById('s-email').value.trim();
   const pass  = document.getElementById('s-pass').value;
-  if (!email || !pass) { showErr('s-err', 'Заповніть усі поля'); return; }
+  if (!email || !pass) { showErr('s-err', tl('errFillAll')); return; }
 
   setLoading('s-btn', true);
   await new Promise(r => setTimeout(r, 700 + Math.random() * 400));
@@ -341,7 +548,7 @@ async function doSuperLogin() {
     if (userCred.user.email !== SUPER_EMAIL) {
       // Не супер-адмін — виходимо і блокуємо
       await getAuth(app).signOut();
-      showErr('s-err', 'Доступ заборонено для цього акаунту');
+      showErr('s-err', tl('errDeniedAccount'));
       setLoading('s-btn', false);
       return;
     }
@@ -352,10 +559,10 @@ async function doSuperLogin() {
 
   } catch (e) {
     const msg = {
-      'auth/invalid-credential':   'Невірний email або пароль',
-      'auth/too-many-requests':    'Забагато спроб. Спробуйте пізніше.',
+      'auth/invalid-credential':   tl('errWrongPass'),
+      'auth/too-many-requests':    tl('errTooMany'),
       'auth/network-request-failed': 'Немає з\'єднання з інтернетом.',
-    }[e.code] || 'Доступ заборонено';
+    }[e.code] || tl('errDenied');
     showErr('s-err', msg);
   } finally {
     setLoading('s-btn', false);
