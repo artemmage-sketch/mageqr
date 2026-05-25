@@ -335,12 +335,12 @@ button{cursor:pointer}
 <script>
 // ⚠️ ЗАМІНІТЬ на свої ключі (такі самі як у login.html)
 window.__MQ_CFG = window.__MQ_CFG || {
-  apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-    authDomain: "mageqrrest.firebaseapp.com",
-    projectId: "mageqrrest",
-    storageBucket: "mageqrrest.firebasestorage.app",
-    messagingSenderId: "207231972557",
-    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+ apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
+ authDomain: "mageqrrest.firebaseapp.com",
+ projectId: "mageqrrest",
+ storageBucket: "mageqrrest.firebasestorage.app",
+ messagingSenderId: "207231972557",
+ appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 </head>
@@ -469,7 +469,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- МОВА ІНТЕРФЕЙСУ -->
         <div class="settings-section" id="lang-settings-section">
-          <h3>🌐 Мова інтерфейсу адмін панелі</h3>
+          <h3>🌐 data-i18n="venueLanguage">Мова інтерфейсу адмін панелі</h3>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
             <button class="btn btn-outline btn-sm" onclick="applyAdminLang('uk');saveAdminLang('uk')">🇺🇦 Українська</button>
             <button class="btn btn-outline btn-sm" onclick="applyAdminLang('en');saveAdminLang('en')">🇬🇧 English</button>
@@ -871,7 +871,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   <input type="password" placeholder="••••••••••••••••" id="mono-token"/>
                 </div>
                 <div style="font-size:11px;color:var(--muted)">
-                  Токен → <a href="https://web.monobank.ua" target="_blank" style="color:var(--accent)">web.monobank.ua</a> → Еквайринг → Налаштування → API токен
+                  <span data-i18n="monoTokenInstr">Токен → </span><a href="https://web.monobank.ua" target="_blank" style="color:var(--accent)">web.monobank.ua</a><span data-i18n="monoTokenInstr2"> → Еквайринг → Налаштування → API токен</span>
                 </div>
                 <div>
                   <label class="pay-field-label">Webhook URL</label>
@@ -1618,15 +1618,15 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div class="grid-2">
             <div class="field-row span2">
               <label class="field-label" data-i18n="venueName" data-i18n="venueName">Назва закладу</label>
-              <input id="set-name" type="text" placeholder="Моє Меню" oninput="document.getElementById('sb-venue-name').textContent=this.value"/>
+              <input id="set-name" type="text" placeholder="Моє Меню" data-i18n-ph="phVenueName" oninput="document.getElementById('sb-venue-name').textContent=this.value"/>
             </div>
             <div class="field-row">
               <label class="field-label" data-i18n="venueTagline">Слоган / кухня</label>
-              <input id="set-tag" type="text" placeholder="Японська кухня · Тернопіль"/>
+              <input id="set-tag" type="text" placeholder="Японська кухня · Тернопіль" data-i18n-ph="phTagline"/>
             </div>
             <div class="field-row">
               <label class="field-label" data-i18n="venueCity" data-i18n="venueCity">Місто</label>
-              <input id="set-city" type="text" placeholder="Тернопіль"/>
+              <input id="set-city" type="text" placeholder="Тернопіль" data-i18n-ph="phCity"/>
             </div>
             <div class="field-row">
               <label class="field-label" data-i18n="venuePhone" data-i18n="phone">Телефон</label>
@@ -1634,11 +1634,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             </div>
             <div class="field-row">
               <label class="field-label" data-i18n="venueAddress" data-i18n="adresa">Адреса</label>
-              <input id="set-addr" type="text" placeholder="вул. Руська, 12"/>
+              <input id="set-addr" type="text" placeholder="вул. Руська, 12" data-i18n-ph="phAddress"/>
             </div>
             <div class="field-row span2">
               <label class="field-label" data-i18n="venueHours" data-i18n="venueHours" data-i18n="venueHours">Години роботи</label>
-              <input id="set-hours" type="text" placeholder="Пн-Нд: 10:00 — 22:00"/>
+              <input id="set-hours" type="text" placeholder="Пн-Нд: 10:00 — 22:00" data-i18n-ph="phHours"/>
             </div>
           </div>
         </div>
@@ -1744,12 +1744,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div style="font-size:11px;color:var(--muted);margin-top:.375rem" data-i18n="orPasteURL">або вставте URL зображення:</div>
         <input id="if-photo-url-input" type="text" placeholder="https://..." style="margin-top:.25rem;font-size:12px" oninput="setPhotoFromUrl(this.value)"/>
       </div>
-      <div class="span2"><label class="field-label" data-i18n="nazvaStravi">Назва страви</label><input id="if-name" type="text" placeholder="Філадельфія класик"/></div>
-      <div class="span2"><label class="field-label" data-i18n="description">Опис</label><textarea id="if-desc" rows="2" placeholder="Свіжий лосось, вершковий сир..."></textarea></div>
+      <div class="span2"><label class="field-label" data-i18n="nazvaStravi">Назва страви</label><input id="if-name" type="text" placeholder="Філадельфія класик" data-i18n-ph="phDishName"/></div>
+      <div class="span2"><label class="field-label" data-i18n="description">Опис</label><textarea id="if-desc" rows="2" placeholder="Свіжий лосось, вершковий сир..." data-i18n-ph="phDishDesc"></textarea></div>
       <div><label class="field-label" data-i18n="price">Ціна (грн)</label><input id="if-price" type="number" placeholder="189"/></div>
       <div><label class="field-label" data-i18n="vahyObem">Вага / обєм</label><input id="if-weight" type="text" placeholder="250 г"/></div>
       <div><label class="field-label" data-i18n="category">Категорія</label><select id="if-cat"></select></div>
-      <div><label class="field-label" data-i18n="artykulKod">Артикул / код</label><input id="if-sku" type="text" placeholder="необовязково"/></div>
+      <div><label class="field-label" data-i18n="artykulKod">Артикул / код</label><input id="if-sku" type="text" placeholder="необовязково" data-i18n-ph="phOptional"/></div>
 
       <!-- ДОСТУПНІСТЬ ПО ТИПАХ ЗАМОВЛЕННЯ -->
       <div class="span2">
@@ -1764,7 +1764,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             </div>
             <div style="display:flex;align-items:center;gap:.5rem">
               <span style="font-size:12px;color:var(--muted);white-space:nowrap" data-i18n="separatePrice">Окрема ціна:</span>
-              <input id="if-price-dine" type="number" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
+              <input id="if-price-dine" type="number" data-i18n-ph="phSameBase" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
               <span style="font-size:11px;color:var(--muted)" data-i18n="hrn">грн</span>
             </div>
           </div>
@@ -1777,7 +1777,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             </div>
             <div style="display:flex;align-items:center;gap:.5rem">
               <span style="font-size:12px;color:var(--muted);white-space:nowrap" data-i18n="separatePrice">Окрема ціна:</span>
-              <input id="if-price-take" type="number" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
+              <input id="if-price-take" type="number" data-i18n-ph="phSameBase" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
               <span style="font-size:11px;color:var(--muted)" data-i18n="hrn">грн</span>
             </div>
           </div>
@@ -1790,7 +1790,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             </div>
             <div style="display:flex;align-items:center;gap:.5rem">
               <span style="font-size:12px;color:var(--muted);white-space:nowrap" data-i18n="separatePrice">Окрема ціна:</span>
-              <input id="if-price-del" type="number" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
+              <input id="if-price-del" type="number" data-i18n-ph="phSameBase" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
               <span style="font-size:11px;color:var(--muted)" data-i18n="hrn">грн</span>
             </div>
           </div>
@@ -2174,7 +2174,56 @@ var I18N = {
     featPhotoBanner:'Фото+банер',
     featUnlimited:'Необмежено',
     featPOS:'POS інтеграція',
-    featDomain:'Власний домен'},
+    featDomain:'Власний домен',
+    al_gluten:'Глютен',
+    al_milk:'Молоко',
+    al_eggs:'Яйця',
+    al_nuts:'Горіхи',
+    al_fish:'Риба',
+    al_seafood:'Морепродукти',
+    al_soy:'Соя',
+    al_celery:'Селера',
+    al_mustard:'Гірчиця',
+    al_sesame:'Кунжут',
+    al_sulfites:'Сульфіти',
+    al_lupin:'Люпин',
+    al_peanuts:'Арахіс',
+    phDishName:'Філадельфія класик',
+    phDishDesc:'Свіжий лосось, вершковий сир...',
+    phOptional:'необовʼязково',
+    phSameBase:'як базова',
+    phVenueName:'Моє Меню',
+    phTagline:'Японська кухня · Тернопіль',
+    phCity:'Тернопіль',
+    phAddress:'вул. Руська, 12',
+    phHours:'Пн-Нд: 10:00 — 22:00',
+    bindCard:'Привʼязати картку',
+    changeCard:'Змінити картку',
+    removeCard:'Відвязати',
+    loadedProducts:'Завантажено {n} продуктів з {pos}',
+    loadingProducts:'Завантажуємо продукти з {pos}...',
+    guest:'Гість',
+    monoTokenInstr:'Токен → ',
+    monoTokenInstr2:' → Еквайринг → Налаштування → API токен',
+    notifChoosePlan:'Оберіть тариф',
+    notifCreatingInvoice:'Створюємо рахунок Monobank...',
+    notifCardRemoved:'Картку вiдвязано',
+    notifFreeNoPayment:'Free тариф не потребує оплати',
+    notifMonoOpened:'Вiдкрито сторiнку оплати Monobank',
+    notifDesignSaved:'Дизайн збережено!',
+    notifOrderingSaved:'Налаштування замовлень збережено!',
+    notifMappingSaved:'Маппiнг збережено!',
+    notifAutoMapped:'Авто-зiставлення виконано!',
+    notifAuthError:'Помилка авторизацii',
+    notifNotFound:'Не знайдено',
+    notifTokenInvalid:'Токен некоректний',
+    notifPosterConnected:'Poster пiдключено!',
+    notifSyrveConnected:'Syrve пiдключено!',
+    notifCopied:'Скопiйовано!',
+    notifTipsSaved:'Налаштування чайових збережено!',
+    notifLangSaved:'Мову збережено!',
+    notifPaletteApplied:'Палітру застосовано!',
+    notifLoadPOSFirst:'Спочатку завантажте продукти з POS'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2448,7 +2497,56 @@ var I18N = {
     featPhotoBanner:'Photo+banner',
     featUnlimited:'Unlimited',
     featPOS:'POS integration',
-    featDomain:'Custom domain'},
+    featDomain:'Custom domain',
+    al_gluten:'Gluten',
+    al_milk:'Milk',
+    al_eggs:'Eggs',
+    al_nuts:'Nuts',
+    al_fish:'Fish',
+    al_seafood:'Shellfish',
+    al_soy:'Soy',
+    al_celery:'Celery',
+    al_mustard:'Mustard',
+    al_sesame:'Sesame',
+    al_sulfites:'Sulphites',
+    al_lupin:'Lupin',
+    al_peanuts:'Peanuts',
+    phDishName:'Classic Philadelphia',
+    phDishDesc:'Fresh salmon, cream cheese...',
+    phOptional:'optional',
+    phSameBase:'same as base',
+    phVenueName:'My Menu',
+    phTagline:'Japanese cuisine · Your city',
+    phCity:'London',
+    phAddress:'Main St, 12',
+    phHours:'Mon-Sun: 10:00 — 22:00',
+    bindCard:'Link card',
+    changeCard:'Change card',
+    removeCard:'Unlink',
+    loadedProducts:'Loaded {n} products from {pos}',
+    loadingProducts:'Loading products from {pos}...',
+    guest:'Guest',
+    monoTokenInstr:'Token → ',
+    monoTokenInstr2:' → Acquiring → Settings → API token',
+    notifChoosePlan:'Choose a plan',
+    notifCreatingInvoice:'Creating Monobank invoice...',
+    notifCardRemoved:'Card unlinked',
+    notifFreeNoPayment:'Free plan requires no payment',
+    notifMonoOpened:'Monobank payment page opened',
+    notifDesignSaved:'Design saved!',
+    notifOrderingSaved:'Order settings saved!',
+    notifMappingSaved:'Mapping saved!',
+    notifAutoMapped:'Auto-mapping done!',
+    notifAuthError:'Authorization error',
+    notifNotFound:'Not found',
+    notifTokenInvalid:'Invalid token',
+    notifPosterConnected:'Poster connected!',
+    notifSyrveConnected:'Syrve connected!',
+    notifCopied:'Copied!',
+    notifTipsSaved:'Tips settings saved!',
+    notifLangSaved:'Language saved!',
+    notifPaletteApplied:'Palette applied!',
+    notifLoadPOSFirst:'First load products from POS'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -2722,7 +2820,56 @@ var I18N = {
     featPhotoBanner:'Zdjęcie+baner',
     featUnlimited:'Nieograniczone',
     featPOS:'Integracja POS',
-    featDomain:'Własna domena'},
+    featDomain:'Własna domena',
+    al_gluten:'Gluten',
+    al_milk:'Mleko',
+    al_eggs:'Jaja',
+    al_nuts:'Orzechy',
+    al_fish:'Ryby',
+    al_seafood:'Owoce morza',
+    al_soy:'Soja',
+    al_celery:'Seler',
+    al_mustard:'Gorczyca',
+    al_sesame:'Sezam',
+    al_sulfites:'Siarczyny',
+    al_lupin:'Łubin',
+    al_peanuts:'Orzeszki ziemne',
+    phDishName:'Klasyczna Filadelfia',
+    phDishDesc:'Świeży łosoś, serek śmietankowy...',
+    phOptional:'opcjonalnie',
+    phSameBase:'jak bazowa',
+    phVenueName:'Moje Menu',
+    phTagline:'Kuchnia japońska · Twoje miasto',
+    phCity:'Warszawa',
+    phAddress:'ul. Główna, 12',
+    phHours:'Pon-Nd: 10:00 — 22:00',
+    bindCard:'Powiąż kartę',
+    changeCard:'Zmień kartę',
+    removeCard:'Odłącz',
+    loadedProducts:'Załadowano {n} produktów z {pos}',
+    loadingProducts:'Ładowanie produktów z {pos}...',
+    guest:'Gość',
+    monoTokenInstr:'Token → ',
+    monoTokenInstr2:' → Acquiring → Ustawienia → Token API',
+    notifChoosePlan:'Wybierz plan',
+    notifCreatingInvoice:'Tworzymy fakture Monobank...',
+    notifCardRemoved:'Karta odlaczona',
+    notifFreeNoPayment:'Plan Free nie wymaga platnosci',
+    notifMonoOpened:'Otwarto strone platnosci Monobank',
+    notifDesignSaved:'Projekt zapisany!',
+    notifOrderingSaved:'Ustawienia zamowien zapisane!',
+    notifMappingSaved:'Mapowanie zapisane!',
+    notifAutoMapped:'Auto-mapowanie wykonane!',
+    notifAuthError:'Blad autoryzacji',
+    notifNotFound:'Nie znaleziono',
+    notifTokenInvalid:'Nieprawidlowy token',
+    notifPosterConnected:'Poster polaczony!',
+    notifSyrveConnected:'Syrve polaczony!',
+    notifCopied:'Skopiowano!',
+    notifTipsSaved:'Ustawienia napiwkow zapisane!',
+    notifLangSaved:'Jezyk zapisany!',
+    notifPaletteApplied:'Paleta zastosowana!',
+    notifLoadPOSFirst:'Najpierw zaladuj produkty z POS'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -2996,7 +3143,56 @@ var I18N = {
     featPhotoBanner:'Foto+Banner',
     featUnlimited:'Unbegrenzt',
     featPOS:'POS-Integration',
-    featDomain:'Eigene Domain'},
+    featDomain:'Eigene Domain',
+    al_gluten:'Gluten',
+    al_milk:'Milch',
+    al_eggs:'Eier',
+    al_nuts:'Nüsse',
+    al_fish:'Fisch',
+    al_seafood:'Meeresfrüchte',
+    al_soy:'Soja',
+    al_celery:'Sellerie',
+    al_mustard:'Senf',
+    al_sesame:'Sesam',
+    al_sulfites:'Sulfite',
+    al_lupin:'Lupinen',
+    al_peanuts:'Erdnüsse',
+    phDishName:'Klassische Philadelphia',
+    phDishDesc:'Frischer Lachs, Frischkäse...',
+    phOptional:'optional',
+    phSameBase:'wie Basis',
+    phVenueName:'Mein Menü',
+    phTagline:'Japanische Küche · Ihre Stadt',
+    phCity:'Berlin',
+    phAddress:'Hauptstraße 12',
+    phHours:'Mo-So: 10:00 — 22:00',
+    bindCard:'Karte verknüpfen',
+    changeCard:'Karte ändern',
+    removeCard:'Trennen',
+    loadedProducts:'{n} Produkte aus {pos} geladen',
+    loadingProducts:'Produkte werden von {pos} geladen...',
+    guest:'Gast',
+    monoTokenInstr:'Token → ',
+    monoTokenInstr2:' → Acquiring → Einstellungen → API-Token',
+    notifChoosePlan:'Tarif waehlen',
+    notifCreatingInvoice:'Monobank-Rechnung wird erstellt...',
+    notifCardRemoved:'Karte getrennt',
+    notifFreeNoPayment:'Free-Tarif benoetigt keine Zahlung',
+    notifMonoOpened:'Monobank-Zahlungsseite geoeffnet',
+    notifDesignSaved:'Design gespeichert!',
+    notifOrderingSaved:'Bestelleinstellungen gespeichert!',
+    notifMappingSaved:'Mapping gespeichert!',
+    notifAutoMapped:'Auto-Zuordnung abgeschlossen!',
+    notifAuthError:'Autorisierungsfehler',
+    notifNotFound:'Nicht gefunden',
+    notifTokenInvalid:'Ungueltiger Token',
+    notifPosterConnected:'Poster verbunden!',
+    notifSyrveConnected:'Syrve verbunden!',
+    notifCopied:'Kopiert!',
+    notifTipsSaved:'Trinkgeld-Einstellungen gespeichert!',
+    notifLangSaved:'Sprache gespeichert!',
+    notifPaletteApplied:'Palette angewendet!',
+    notifLoadPOSFirst:'Laden Sie zuerst Produkte aus POS'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -3270,7 +3466,56 @@ var I18N = {
     featPhotoBanner:'Foto+banner',
     featUnlimited:'Nelimitat',
     featPOS:'Integrare POS',
-    featDomain:'Domeniu propriu'},
+    featDomain:'Domeniu propriu',
+    al_gluten:'Gluten',
+    al_milk:'Lapte',
+    al_eggs:'Ouă',
+    al_nuts:'Nuci',
+    al_fish:'Pește',
+    al_seafood:'Fructe de mare',
+    al_soy:'Soia',
+    al_celery:'Țelină',
+    al_mustard:'Muștar',
+    al_sesame:'Susan',
+    al_sulfites:'Sulfiți',
+    al_lupin:'Lupin',
+    al_peanuts:'Arahide',
+    phDishName:'Philadelphia clasic',
+    phDishDesc:'Somon proaspăt, cremă de brânză...',
+    phOptional:'opțional',
+    phSameBase:'ca de bază',
+    phVenueName:'Meniul meu',
+    phTagline:'Bucătărie japoneză · Orașul dvs.',
+    phCity:'București',
+    phAddress:'Str. Principală, 12',
+    phHours:'Lu-Du: 10:00 — 22:00',
+    bindCard:'Conectați cardul',
+    changeCard:'Schimbați cardul',
+    removeCard:'Dezasociați',
+    loadedProducts:'Încărcate {n} produse din {pos}',
+    loadingProducts:'Se încarcă produse din {pos}...',
+    guest:'Oaspete',
+    monoTokenInstr:'Token → ',
+    monoTokenInstr2:' → Acquiring → Setări → Token API',
+    notifChoosePlan:'Alegeti un plan',
+    notifCreatingInvoice:'Se creeaza factura Monobank...',
+    notifCardRemoved:'Card deconectat',
+    notifFreeNoPayment:'Planul Free nu necesita plata',
+    notifMonoOpened:'Pagina de plata Monobank deschisa',
+    notifDesignSaved:'Design salvat!',
+    notifOrderingSaved:'Setari comenzi salvate!',
+    notifMappingSaved:'Mapare salvata!',
+    notifAutoMapped:'Mapare automata efectuata!',
+    notifAuthError:'Eroare de autorizare',
+    notifNotFound:'Negasit',
+    notifTokenInvalid:'Token invalid',
+    notifPosterConnected:'Poster conectat!',
+    notifSyrveConnected:'Syrve conectat!',
+    notifCopied:'Copiat!',
+    notifTipsSaved:'Setari bacs is salvate!',
+    notifLangSaved:'Limba salvata!',
+    notifPaletteApplied:'Paleta aplicata!',
+    notifLoadPOSFirst:'Mai intai incarcati produse din POS'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -3544,7 +3789,56 @@ var I18N = {
     featPhotoBanner:'Foto+banner',
     featUnlimited:'Ilimitado',
     featPOS:'Integración POS',
-    featDomain:'Dominio propio'},
+    featDomain:'Dominio propio',
+    al_gluten:'Gluten',
+    al_milk:'Leche',
+    al_eggs:'Huevos',
+    al_nuts:'Frutos secos',
+    al_fish:'Pescado',
+    al_seafood:'Mariscos',
+    al_soy:'Soja',
+    al_celery:'Apio',
+    al_mustard:'Mostaza',
+    al_sesame:'Sésamo',
+    al_sulfites:'Sulfitos',
+    al_lupin:'Altramuz',
+    al_peanuts:'Cacahuetes',
+    phDishName:'Philadelphia clásico',
+    phDishDesc:'Salmón fresco, queso crema...',
+    phOptional:'opcional',
+    phSameBase:'igual que base',
+    phVenueName:'Mi Menú',
+    phTagline:'Cocina japonesa · Tu ciudad',
+    phCity:'Madrid',
+    phAddress:'Calle Mayor, 12',
+    phHours:'Lun-Dom: 10:00 — 22:00',
+    bindCard:'Vincular tarjeta',
+    changeCard:'Cambiar tarjeta',
+    removeCard:'Desvincular',
+    loadedProducts:'Cargados {n} productos de {pos}',
+    loadingProducts:'Cargando productos de {pos}...',
+    guest:'Invitado',
+    monoTokenInstr:'Token → ',
+    monoTokenInstr2:' → Adquirir → Configuración → Token API',
+    notifChoosePlan:'Elija un plan',
+    notifCreatingInvoice:'Creando factura Monobank...',
+    notifCardRemoved:'Tarjeta desvinculada',
+    notifFreeNoPayment:'El plan Free no requiere pago',
+    notifMonoOpened:'Pagina de pago Monobank abierta',
+    notifDesignSaved:'Diseno guardado!',
+    notifOrderingSaved:'Configuracion de pedidos guardada!',
+    notifMappingSaved:'Mapeo guardado!',
+    notifAutoMapped:'Mapeo automatico realizado!',
+    notifAuthError:'Error de autorizacion',
+    notifNotFound:'No encontrado',
+    notifTokenInvalid:'Token invalido',
+    notifPosterConnected:'Poster conectado!',
+    notifSyrveConnected:'Syrve conectado!',
+    notifCopied:'Copiado!',
+    notifTipsSaved:'Ajustes de propinas guardados!',
+    notifLangSaved:'Idioma guardado!',
+    notifPaletteApplied:'Paleta aplicada!',
+    notifLoadPOSFirst:'Primero cargue productos desde POS'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -3818,7 +4112,56 @@ var I18N = {
     featPhotoBanner:'Slika+baner',
     featUnlimited:'Neograničeno',
     featPOS:'POS integracija',
-    featDomain:'Vlastita domena'},
+    featDomain:'Vlastita domena',
+    al_gluten:'Gluten',
+    al_milk:'Mlijeko',
+    al_eggs:'Jaja',
+    al_nuts:'Orasi',
+    al_fish:'Riba',
+    al_seafood:'Plodovi mora',
+    al_soy:'Soja',
+    al_celery:'Celer',
+    al_mustard:'Senf',
+    al_sesame:'Susam',
+    al_sulfites:'Sulfiti',
+    al_lupin:'Lupina',
+    al_peanuts:'Kikiriki',
+    phDishName:'Klasična Filadelfia',
+    phDishDesc:'Svježi losos, krem sir...',
+    phOptional:'opciono',
+    phSameBase:'kao osnovna',
+    phVenueName:'Moj Meni',
+    phTagline:'Japanska kuhinja · Vaš grad',
+    phCity:'Podgorica',
+    phAddress:'Glavna ul. 12',
+    phHours:'Pon-Ned: 10:00 — 22:00',
+    bindCard:'Poveži karticu',
+    changeCard:'Promijeni karticu',
+    removeCard:'Odvezi',
+    loadedProducts:'Učitano {n} proizvoda iz {pos}',
+    loadingProducts:'Učitavamo proizvode iz {pos}...',
+    guest:'Gost',
+    monoTokenInstr:'Token → ',
+    monoTokenInstr2:' → Acquiring → Podešavanja → API token',
+    notifChoosePlan:'Odaberite plan',
+    notifCreatingInvoice:'Kreiramo Monobank racun...',
+    notifCardRemoved:'Kartica odvezana',
+    notifFreeNoPayment:'Free plan ne zahtijeva placanje',
+    notifMonoOpened:'Otvorena stranica placanja Monobank',
+    notifDesignSaved:'Dizajn sacuvan!',
+    notifOrderingSaved:'Podesavanja narudzbina sacuvana!',
+    notifMappingSaved:'Mapiranje sacuvano!',
+    notifAutoMapped:'Automatsko mapiranje zavrseno!',
+    notifAuthError:'Greska autorizacije',
+    notifNotFound:'Nije pronadeno',
+    notifTokenInvalid:'Neispravni token',
+    notifPosterConnected:'Poster povezan!',
+    notifSyrveConnected:'Syrve povezan!',
+    notifCopied:'Kopirano!',
+    notifTipsSaved:'Podesavanja napojnice sacuvana!',
+    notifLangSaved:'Jezik sacuvan!',
+    notifPaletteApplied:'Paleta primijenjena!',
+    notifLoadPOSFirst:'Prvo ucitajte proizvode iz POS-a'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -4321,7 +4664,7 @@ window.saveSettings=async function(){
     notify(t('notifSettingsSaved'),'ok');
   }catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
-window.copyMenuUrl=function(){const url=`https://mageqrrest.com/menu.html?v=${venueId}`;navigator.clipboard.writeText(url).then(()=>notify('🔗 Посилання скопійовано!','ok'));};
+window.copyMenuUrl=function(){const url=`https://mageqrrest.com/menu.html?v=${venueId}`;navigator.clipboard.writeText(url).then(()=>notify(t('notifCopied'),'ok'));};
 window.openMenuUrl=function(){window.open(`https://mageqrrest.com/menu.html?v=${venueId}`,'_blank');};
 
 // ── ДИЗАЙН ──
@@ -4334,7 +4677,7 @@ const PRESETS=[
   {name:'Мінімал',accent:'#111827',bg:'#F9FAFB',card:'#FFFFFF',text:'#111827',head:'Montserrat'},
 ];
 function renderPresetsRow(){document.getElementById('presets-row').innerHTML=PRESETS.map((p,i)=>`<div class="palette-swatch" style="background:linear-gradient(135deg,${p.accent} 50%,${p.bg} 50%)" title="${p.name}" onclick="applyPreset(${i})"></div>`).join('');}
-window.applyPreset=function(i){const p=PRESETS[i];setColor('c-accent',p.accent);setColor('c-bg',p.bg);setColor('c-card',p.card);setColor('c-text',p.text);document.getElementById('font-head').value=p.head;livePreview();notify('✅ Палітру застосовано!','ok');};
+window.applyPreset=function(i){const p=PRESETS[i];setColor('c-accent',p.accent);setColor('c-bg',p.bg);setColor('c-card',p.card);setColor('c-text',p.text);document.getElementById('font-head').value=p.head;livePreview();notify(t('notifPaletteApplied'),'ok');};
 function setColor(id,val){document.getElementById(id).value=val;document.getElementById(id+'-hex').value=val;}
 window.hexToColor=function(id){const hex=document.getElementById(id+'-hex').value;if(/^#[0-9A-F]{6}$/i.test(hex)){document.getElementById(id).value=hex;livePreview();}};
 
@@ -4378,10 +4721,10 @@ async function loadDesignSettings(){
 }
 
 window.saveDesign=async function(){
-  if(!db||!window.__FS){notify('Firebase не підключено','err');return;}
+  if(!db||!window.__FS){notify(t('notifFirebaseNotReady'),'err');return;}
   const {doc,setDoc}=window.__FS;
   const data={accent:document.getElementById('c-accent').value,bg:document.getElementById('c-bg').value,card:document.getElementById('c-card').value,text:document.getElementById('c-text').value,fontHead:document.getElementById('font-head').value,fontBody:document.getElementById('font-body').value,bannerUrl:document.getElementById('banner-url').value,logoEmoji:document.getElementById('logo-emoji').value,logoUrl:document.getElementById('logo-url').value,cardRadius:document.getElementById('card-radius').value,fontSize:document.getElementById('font-size').value,showPrices:document.getElementById('toggle-prices').classList.contains('on'),showDesc:document.getElementById('toggle-desc').classList.contains('on'),showWeight:document.getElementById('toggle-weight').classList.contains('on'),updatedAt:new Date().toISOString()};
-  try{await setDoc(doc(db,'venues',venueId,'design','main'),data);notify('✅ Дизайн збережено!','ok');}
+  try{await setDoc(doc(db,'venues',venueId,'design','main'),data);notify(t('notifDesignSaved'),'ok');}
   catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
 
@@ -4460,19 +4803,19 @@ function renderBillingPlanCards(currentPlan){
 }
 
 window.openPlanSelect=function(){document.getElementById('plan-select-section').scrollIntoView({behavior:'smooth'});};
-window.bindCard=function(){document.getElementById('plan-select-section').scrollIntoView({behavior:'smooth'});notify('Оберіть тариф для прив’язки картки 👇','ok');};
+window.bindCard=function(){document.getElementById('plan-select-section').scrollIntoView({behavior:'smooth'});notify(t('notifChoosePlan'),'ok');};
 
 window.subscribePlan=async function(plan){
-  if(plan==='free'){notify('Free тариф не потребує оплати','ok');return;}
-  notify('Створюємо рахунок Monobank...','ok');
+  if(plan==='free'){notify(t('notifFreeNoPayment'),'ok');return;}
+  notify(t('notifCreatingInvoice'),'ok');
   try{
     const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     const token=await getAuth().currentUser.getIdToken();
     const res=await fetch(`${window.__CF_URL}/createMonoInvoice`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,plan})});
     const data=await res.json();
-    if(!res.ok){notify('Помилка: '+(data.error||'невідома'),'err');return;}
+    if(!res.ok){notify(t('notifError')+': '+(data.error||''),'err');return;}
     window.open(data.pageUrl,'_blank');
-    notify('✅ Відкрито сторінку оплати Monobank','ok');
+    notify(t('notifMonoOpened'),'ok');
   }catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
 window.changeCard=async function(){const {doc,getDoc}=window.__FS;const snap=await getDoc(doc(db,'venues',venueId));const plan=snap.data()?.plan||'pro';await window.subscribePlan(plan==='trial'||plan==='free'?'starter':plan);};
@@ -4480,7 +4823,7 @@ window.removeCard=async function(){
   if(!confirm('Відвязати картку?'))return;
   const {doc,updateDoc}=window.__FS;
   try{await updateDoc(doc(db,'venues',venueId),{recToken:null,cardMask:null,cardExpiry:null});
-  document.getElementById('no-card-block').style.display='block';document.getElementById('has-card-block').style.display='none';notify('Картку відвязано','ok');}
+  document.getElementById('no-card-block').style.display='block';document.getElementById('has-card-block').style.display='none';notify(t('notifCardRemoved'),'ok');}
   catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
 
@@ -4507,7 +4850,7 @@ async function loadPOSProductsForMapping(posSystem) {
     renderMappingRows();
   } catch(e) {
     statusEl.textContent = 'Помилка: ' + e.message;
-    notify('Помилка: ' + e.message, 'err');
+    notify(t('notifError')+': '+e.message,'err');
   }
 }
 
@@ -4554,7 +4897,7 @@ function renderMappingRows() {
 
 window.autoMapProducts = async function() {
   if(!posProducts.poster.length && !posProducts.syrve.length) {
-    notify('Спочатку завантажте продукти з POS', 'err');
+    notify(t('notifLoadPOSFirst'),'err');
     return;
   }
   let matched = 0;
@@ -4605,7 +4948,7 @@ window.savePOSMapping = async function() {
     const data = await res.json();
     if(!res.ok) throw new Error(data.error);
     notify('✅ Маппінг збережено!', 'ok');
-  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
+  } catch(e) { notify(t('notifError')+': '+e.message,'err'); }
 };
 
 // autoMapProducts визначено вище
@@ -4891,7 +5234,7 @@ async function loadPaymentSettings() {
   }catch(e){console.warn('loadPaymentSettings:',e.message);}
 }
 window.savePayments=async function(){
-  if(!db){notify('Firebase не підключено','err');return;}
+  if(!db){notify(t('notifFirebaseNotReady'),'err');return;}
   notify(t('notifSaving'),'ok');
   try{
     const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
@@ -5118,7 +5461,7 @@ async function loadOrderingSettings() {
 }
 
 window.saveOrderingSettings = async function() {
-  if(!db) { notify('Firebase не підключено','err'); return; }
+  if(!db) { notify(t('notifFirebaseNotReady'),'err'); return; }
   const {doc,setDoc} = window.__FS;
   try {
     const data = {
@@ -5157,7 +5500,7 @@ window.saveOrderingSettings = async function() {
       updatedAt: new Date().toISOString(),
     };
     await setDoc(doc(db,'venues',venueId,'settings','ordering'), data);
-    notify('✅ Налаштування замовлень збережено!','ok');
+    notify(t('notifOrderingSaved'),'ok');
   } catch(e) { notify(t('notifError')+': '+e.message,'err'); }
 };
 
@@ -5244,7 +5587,7 @@ function renderCustomers(list) {
       <td>${c.ordersCount ? Math.round((c.totalSpent||0)/(c.ordersCount)) + ' ₴' : '—'}</td>
       <td style="color:var(--muted);font-size:12px">${fmt(c.firstOrderAt)}</td>
       <td style="color:var(--muted);font-size:12px">${fmt(c.lastOrderAt)}</td>
-      <td><button class="btn btn-outline btn-sm" onclick="showCustomerOrders('${c.phone}','${c.name||'Гість'}')" data-i18n="orders">Замовлення</button></td>
+      <td><button class="btn btn-outline btn-sm" onclick="showCustomerOrders('${c.phone}','${c.name||t('guest')}')">${t('orders')}</button></td>
     </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem" data-i18n="noClients">Клієнтів ще немає</td></tr>';
 }
 
@@ -5495,7 +5838,7 @@ window.testPayment = async function(provider) {
     } else {
       notify('❌ Платіжне посилання не отримано. Перевірте ключі.', 'err');
     }
-  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
+  } catch(e) { notify(t('notifError')+': '+e.message,'err'); }
 };
 
 window.verifyProvider = async function(provider) {
@@ -5511,7 +5854,7 @@ window.verifyProvider = async function(provider) {
     const data = await res.json();
     if(!res.ok) throw new Error(data.error);
     notify('✅ ' + (data.message || 'Підключення успішне!'), 'ok');
-  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
+  } catch(e) { notify(t('notifError')+': '+e.message,'err'); }
 };
 
 
@@ -5534,7 +5877,7 @@ window.syncOrderToPOS = async function(orderId) {
     } else {
       notify('Статус: ' + data.status, 'ok');
     }
-  } catch(e) { notify('Помилка: ' + e.message, 'err'); }
+  } catch(e) { notify(t('notifError')+': '+e.message,'err'); }
 };
 
 
