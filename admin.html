@@ -434,8 +434,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div class="topbar">
         <div><div class="page-title" data-i18n="tables">🪑 Столи та QR-оплата</div><div class="page-sub" data-i18n="tablesDesc">Управління залом, QR-коди, чайові</div></div>
         <div style="display:flex;gap:.5rem">
-          <button class="btn btn-outline btn-sm" onclick="printAllQR()">🖨️ Друк всіх QR</button>
-          <button class="btn btn-accent btn-sm" onclick="openAddTable()">+ Додати стіл</button>
+          <button class="btn btn-outline btn-sm" onclick="printAllQR()" data-i18n="printAllQR">🖨️ Друк всіх QR</button>
+          <button class="btn btn-accent btn-sm" onclick="openAddTable()" data-i18n="addTable">+ Додати стіл</button>
         </div>
       </div>
       <div class="content">
@@ -516,7 +516,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div style="font-size:11px;color:var(--muted);margin-top:.25rem" data-i18n="tipVariants">Клієнт бачить ці варіанти плюс поле "Довільна сума"</div>
           </div>
           <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:.75rem;font-size:12px;color:#92400E;margin-top:.75rem">
-            ⚠️ <strong data-i18n="tipsMonobank">Чайові через Monobank:</strong> Додайте співробітників у кабінеті monobank acquiring → зверніться у підтримку mono → після підтвердження вкажіть <code>tipsEmployeeId</code> кожного офіціанта нижче. Мінімальна сума замовлення для показу чайових — 100 грн.
+            ⚠️ <strong data-i18n="tipsMonobank">Чайові через Monobank:</strong> <span data-i18n="tipsMonobankInstr">Додайте співробітників у кабінеті monobank acquiring → зверніться у підтримку mono → після підтвердження вкажіть <code>tipsEmployeeId</code> кожного офіціанта нижче. Мінімальна сума замовлення для показу чайових — 100 грн.
           </div>
         </div>
 
@@ -599,7 +599,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                     <option value="Playfair Display">Playfair Display — класичний</option>
                     <option value="Space Grotesk">Space Grotesk — сучасний</option>
                     <option value="Cormorant Garamond">Cormorant — елегантний</option>
-                    <option value="Unbounded">Unbounded — жирний</option>
+                    <option value="Unbounded" data-i18n="fontBold">Unbounded — жирний</option>
                     <option value="Montserrat">Montserrat — нейтральний</option>
                     <option value="Raleway">Raleway — легкий</option>
                     <option value="Nunito">Nunito — округлий</option>
@@ -784,21 +784,21 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div class="mode-radio" id="radio-after"></div>
               <div class="mode-text">
                 <div class="mode-label" data-i18n="payAfterConfirm">Після підтвердження закладом</div>
-                <div class="mode-sub">Клієнт замовляє → заклад підтверджує → клієнт отримує посилання на оплату. Підходить для залів.</div>
+                <div class="mode-sub" data-i18n="payModeConfirm">Клієнт замовляє → заклад підтверджує → клієнт отримує посилання на оплату. Підходить для залів.</div>
               </div>
             </div>
             <div class="mode-option" id="mode-both" onclick="selectMode('both')">
               <div class="mode-radio" id="radio-both"></div>
               <div class="mode-text">
                 <div class="mode-label" data-i18n="clientChoosesSelf">Клієнт обирає сам</div>
-                <div class="mode-sub">Обидва варіанти доступні. Клієнт бачить кнопки "Оплатити онлайн" та "Оплатити при отриманні".</div>
+                <div class="mode-sub" data-i18n="payModeBoth">Обидва варіанти доступні. Клієнт бачить кнопки "Оплатити онлайн" та "Оплатити при отриманні".</div>
               </div>
             </div>
           </div>
           <div class="toggle-row" style="margin-top:.75rem">
             <div>
               <div style="font-size:13px;font-weight:500" data-i18n="allowCash" data-i18n="allowCash">Дозволити оплату готівкою / при отриманні</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:2px">Клієнт може обрати "Оплата при отриманні" замість онлайн-оплати</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="payModeOptional">Клієнт може обрати "Оплата при отриманні" замість онлайн-оплати</div>
             </div>
             <label class="sw"><input type="checkbox" id="allow-cash" checked/><span class="sw-slider"></span></label>
           </div>
@@ -816,7 +816,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <div class="pay-logo" style="background:#1CB253;color:#fff;font-size:1rem;font-weight:700;font-family:var(--font-head)">LP</div>
                 <div>
                   <div class="pay-name">LiqPay</div>
-                  <div class="pay-fee">ПриватБанк · Комісія 2.75%</div>
+                  <div class="pay-fee" data-i18n="privat24Fee">ПриватБанк · Комісія 2.75%</div>
                 </div>
                 <div class="pay-toggle-wrap">
                   <label class="sw"><input type="checkbox" id="tog-liqpay" onchange="toggleProvider('liqpay',this.checked)"/><span class="sw-slider"></span></label>
@@ -859,7 +859,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <div class="pay-logo" style="background:#1A1A1A;color:#fff;font-size:1.3rem">⬛</div>
                 <div>
                   <div class="pay-name">Monobank</div>
-                  <div class="pay-fee">Acquiring API · від 1.5%</div>
+                  <div class="pay-fee" data-i18n="monoFee">Acquiring API · від 1.5%</div>
                 </div>
                 <div class="pay-toggle-wrap">
                   <label class="sw"><input type="checkbox" id="tog-mono" onchange="toggleProvider('mono',this.checked)"/><span class="sw-slider"></span></label>
@@ -897,7 +897,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <div class="pay-logo" style="background:#005BAC;color:#fff;font-size:.8rem;font-weight:700;font-family:var(--font-head);letter-spacing:-.5px">WFP</div>
                 <div>
                   <div class="pay-name">WayForPay</div>
-                  <div class="pay-fee">Merchant API · від 1.5%</div>
+                  <div class="pay-fee" data-i18n="wfpFee">Merchant API · від 1.5%</div>
                 </div>
                 <div class="pay-toggle-wrap">
                   <label class="sw"><input type="checkbox" id="tog-wfp" onchange="toggleProvider('wfp',this.checked)"/><span class="sw-slider"></span></label>
@@ -940,7 +940,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <div class="pay-logo" style="background:#FF6B00;color:#fff;font-size:.85rem;font-weight:700;font-family:var(--font-head)">А</div>
                 <div>
                   <div class="pay-name">А-Банк</div>
-                  <div class="pay-fee">Acquiring · інд. комісія</div>
+                  <div class="pay-fee" data-i18n="abankFee">Acquiring · інд. комісія</div>
                 </div>
                 <div class="pay-toggle-wrap">
                   <label class="sw"><input type="checkbox" id="tog-abank" onchange="toggleProvider('abank',this.checked)"/><span class="sw-slider"></span></label>
@@ -992,7 +992,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div class="toggle-row">
                 <div>
                   <div style="font-size:13px;font-weight:500">🖥️ Через POS систему (Poster / Syrve)</div>
-                  <div style="font-size:11px;color:var(--muted);margin-top:2px">Якщо підключено Poster або Syrve — фіскалізація відбувається автоматично в касі. Додаткових налаштувань не потрібно.</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="posAutoFiscal">Якщо підключено Poster або Syrve — фіскалізація відбувається автоматично в касі. Додаткових налаштувань не потрібно.</div>
                 </div>
                 <label class="sw"><input type="checkbox" id="fiscal-pos" onchange="toggleFiscalMethod('pos',this.checked)"/><span class="sw-slider"></span></label>
               </div>
@@ -1078,7 +1078,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div class="sync-row">
             <div>
               <div style="font-size:13px;font-weight:500" data-i18n="sendToPOS">Передавати замовлення в POS</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:2px">Одразу після підтвердження оплати або розміщення замовлення</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="posImmediately">Одразу після підтвердження оплати або розміщення замовлення</div>
             </div>
             <label class="sw"><input type="checkbox" id="pos-sync" checked/><span class="sw-slider"></span></label>
           </div>
@@ -1122,16 +1122,16 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <input type="password" placeholder="••••••••••••••••" id="poster-token"/>
               </div>
               <div>
-                <label class="pay-field-label">Spot ID (торгова точка)</label>
+                <label class="pay-field-label" data-i18n="spotId">Spot ID (торгова точка)</label>
                 <input type="number" placeholder="1" id="poster-spot"/>
               </div>
               <div>
-                <label class="pay-field-label">Tableservice ID (зал, якщо є)</label>
+                <label class="pay-field-label" data-i18n="tableserviceId">Tableservice ID (зал, якщо є)</label>
                 <input type="number" placeholder="0 = без залу" id="poster-table"/>
               </div>
             </div>
             <div style="font-size:11px;color:var(--muted);margin-bottom:.75rem;background:var(--bg2);padding:.625rem;border-radius:6px;line-height:1.6">
-              <strong data-i18n="howToConnect">Як підключити:</strong> Poster Admin → Додатки → Маркет → Mage QR Rest → Встановити → Скопіювати токен
+              <strong data-i18n="howToConnect">Як підключити:</strong> <span data-i18n="posterConnectInstr">Poster Admin → Додатки → Маркет → Mage QR Rest → Встановити → Скопіювати токен</span>
             </div>
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
               <button class="btn btn-outline btn-sm" onclick="testPOS('poster')">🧪 Тест</button>
@@ -1142,7 +1142,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div style="margin-top:.875rem">
               <div class="pay-field-label" data-i18n="syncLog" data-i18n="syncLog">Журнал синхронізації</div>
               <div class="pos-sync-log" id="log-poster">
-                <div class="log-info">── Очікування підключення ──</div>
+                <div class="log-info" data-i18n="waitingConnect">── Очікування підключення ──</div>
               </div>
             </div>
           </div>
@@ -1171,16 +1171,16 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <input type="password" placeholder="••••••••" id="syrve-pass"/>
               </div>
               <div>
-                <label class="pay-field-label">Organization ID</label>
+                <label class="pay-field-label" data-i18n="organizationId">Organization ID</label>
                 <input type="text" placeholder="UUID організації" id="syrve-org"/>
               </div>
               <div>
-                <label class="pay-field-label">Terminal Group ID</label>
+                <label class="pay-field-label" data-i18n="terminalGroupId">Terminal Group ID</label>
                 <input type="text" placeholder="UUID терміналу" id="syrve-term"/>
               </div>
             </div>
             <div style="font-size:11px;color:var(--muted);margin-bottom:.75rem;background:var(--bg2);padding:.625rem;border-radius:6px;line-height:1.6">
-              <strong data-i18n="tokenExpiry">Токен живе 1 год.</strong> Система автоматично оновлює його. Organization і Terminal ID знайдіть в Syrve Office → Ресторани → Загальні налаштування.
+              <strong data-i18n="tokenExpiry">Токен живе 1 год.</strong> <span data-i18n="syrveTokenNote">Система автоматично оновлює його. Organization і Terminal ID знайдіть в Syrve Office → Ресторани → Загальні налаштування.</span>
             </div>
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
               <button class="btn btn-outline btn-sm" onclick="testPOS('syrve')">🧪 Тест</button>
@@ -1191,7 +1191,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div style="margin-top:.875rem">
               <div class="pay-field-label" data-i18n="syncLog" data-i18n="syncLog">Журнал синхронізації</div>
               <div class="pos-sync-log" id="log-syrve">
-                <div class="log-info">── Очікування підключення ──</div>
+                <div class="log-info" data-i18n="waitingConnect">── Очікування підключення ──</div>
               </div>
             </div>
           </div>
@@ -1201,7 +1201,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div class="settings-section">
           <h3 data-i18n="posMapping">🔗 Прив'язка страв до POS</h3>
           <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">
-            Зіставте страви вашого меню з позиціями в касовій системі. Замовлення передаватимуться з правильними ID.
+            <span data-i18n="posMappingFullDesc">Зіставте страви вашого меню з позиціями в касовій системі. Замовлення передаватимуться з правильними ID.</span>
           </div>
           <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
             <button class="btn btn-outline btn-sm" onclick="loadPOSProductsForMapping('poster')">
@@ -1221,7 +1221,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div id="mapping-table">
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem;padding:0 .5rem">
               <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em" data-i18n="dishInMenu">Страва в меню</div>
-              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Poster (оберіть)</div>
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em" data-i18n="posterSelect">Poster (оберіть)</div>
               <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Syrve UUID</div>
             </div>
             <div id="mapping-rows"></div>
@@ -1280,7 +1280,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
           <div>
             <div style="font-family:var(--font-head);font-size:1.1rem;font-weight:600" data-i18n="subscription">💳 Підписка та білінг</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px" id="billing-sub" data-i18n="loading" data-i18n="loading">Завантаження...</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px" id="billing-sub" data-i18n="loading">Завантаження...</div>
           </div>
         </div>
 
@@ -1314,7 +1314,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div id="no-card-block">
               <div style="background:var(--bg2);border:2px dashed var(--border2);border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:.875rem">
                 <div style="font-size:2rem;margin-bottom:.375rem">💳</div>
-                <div style="font-size:13px;font-weight:500">Картка не прив'язана</div>
+                <div style="font-size:13px;font-weight:500" data-i18n="cardNotLinked">Картка не прив'язана</div>
                 <div style="font-size:11px;color:var(--muted);margin-top:.25rem" data-i18n="autoMonthlyDesc">Для автоматичних щомісячних списань</div>
               </div>
               <button class="btn btn-accent" style="width:100%" onclick="bindCard()">
@@ -1357,14 +1357,14 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           </div>
           <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem">
             <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.5rem" data-i18n="usageStats">📊 Використання</div>
-            <div style="font-size:13px;color:var(--muted)" id="usage-info" data-i18n="loading" data-i18n="loading">Завантаження...</div>
+            <div style="font-size:13px;color:var(--muted)" id="usage-info" data-i18n="loading">Завантаження...</div>
           </div>
         </div>
 
         <!-- ВИБІР ТАРИФУ -->
         <div class="settings-section" id="plan-select-section">
           <h3 data-i18n="choosePlanTitle">🚀 Оберіть тариф</h3>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Після вибору тарифу ви будете перенаправлені на сторінку оплати Monobank. Картка зберігається для автоматичних щомісячних списань.</p>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:1rem" data-i18n="planChooseNote">Після вибору тарифу ви будете перенаправлені на сторінку оплати Monobank. Картка зберігається для автоматичних щомісячних списань.</p>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.875rem" id="billing-plan-cards"></div>
         </div>
 
@@ -1726,10 +1726,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div id="photo-placeholder">
             <div style="font-size:2rem;margin-bottom:.375rem">📷</div>
             <div style="font-size:12px;color:var(--muted)" data-i18n="clickUploadPhoto">Натисніть щоб завантажити фото</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:2px">JPG, PNG, WebP — до 5 МБ</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px" data-i18n="photoHint">JPG, PNG, WebP — до 5 МБ</div>
           </div>
           <div id="photo-progress" style="display:none">
-            <div style="font-size:12px;color:var(--muted);margin-bottom:.5rem" data-i18n="loading" data-i18n="loading">Завантаження...</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:.5rem" data-i18n="loading">Завантаження...</div>
             <div style="height:4px;background:var(--border);border-radius:2px">
               <div id="photo-progress-bar" style="height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .3s"></div>
             </div>
@@ -1738,8 +1738,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <input type="file" id="if-photo" accept="image/*" style="display:none" onchange="handlePhotoSelect(this)"/>
         <input type="hidden" id="if-photo-url" value=""/>
         <div style="display:flex;gap:.375rem;margin-top:.375rem">
-          <button class="btn btn-outline btn-sm" type="button" onclick="document.getElementById('if-photo').click()">📁 Вибрати файл</button>
-          <button class="btn btn-outline btn-sm" type="button" id="photo-clear-btn" onclick="clearPhoto()" style="display:none">✕ Видалити фото</button>
+          <button class="btn btn-outline btn-sm" type="button" onclick="document.getElementById('if-photo').click()" data-i18n="chooseFile">📁 Вибрати файл</button>
+          <button class="btn btn-outline btn-sm" type="button" id="photo-clear-btn" onclick="clearPhoto()" style="display:none" data-i18n="deletePhoto">✕ Видалити фото</button>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-top:.375rem" data-i18n="orPasteURL">або вставте URL зображення:</div>
         <input id="if-photo-url-input" type="text" placeholder="https://..." style="margin-top:.25rem;font-size:12px" oninput="setPhotoFromUrl(this.value)"/>
@@ -1748,7 +1748,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div class="span2"><label class="field-label" data-i18n="description">Опис</label><textarea id="if-desc" rows="2" placeholder="Свіжий лосось, вершковий сир..."></textarea></div>
       <div><label class="field-label" data-i18n="price">Ціна (грн)</label><input id="if-price" type="number" placeholder="189"/></div>
       <div><label class="field-label" data-i18n="vahyObem">Вага / обєм</label><input id="if-weight" type="text" placeholder="250 г"/></div>
-      <div><label class="field-label">Категорія</label><select id="if-cat"></select></div>
+      <div><label class="field-label" data-i18n="category">Категорія</label><select id="if-cat"></select></div>
       <div><label class="field-label" data-i18n="artykulKod">Артикул / код</label><input id="if-sku" type="text" placeholder="необовязково"/></div>
 
       <!-- ДОСТУПНІСТЬ ПО ТИПАХ ЗАМОВЛЕННЯ -->
@@ -1759,54 +1759,54 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <!-- В ЗАКЛАДІ -->
           <div style="background:var(--bg2);border-radius:8px;padding:.75rem">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
-              <div style="font-size:13px;font-weight:500">🪑 В закладі</div>
+              <div style="font-size:13px;font-weight:500" data-i18n="dineIn">🪑 В закладі</div>
               <label class="sw"><input type="checkbox" id="if-avail-dine" checked/><span class="sw-slider"></span></label>
             </div>
             <div style="display:flex;align-items:center;gap:.5rem">
-              <span style="font-size:12px;color:var(--muted);white-space:nowrap" data-i18n="price">Окрема ціна:</span>
+              <span style="font-size:12px;color:var(--muted);white-space:nowrap" data-i18n="separatePrice">Окрема ціна:</span>
               <input id="if-price-dine" type="number" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
-              <span style="font-size:11px;color:var(--muted)" data-i18n="price">грн</span>
+              <span style="font-size:11px;color:var(--muted)" data-i18n="hrn">грн</span>
             </div>
           </div>
 
           <!-- З СОБОЮ -->
           <div style="background:var(--bg2);border-radius:8px;padding:.75rem">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
-              <div style="font-size:13px;font-weight:500">🥡 З собою</div>
+              <div style="font-size:13px;font-weight:500" data-i18n="takeaway">🥡 З собою</div>
               <label class="sw"><input type="checkbox" id="if-avail-take" checked/><span class="sw-slider"></span></label>
             </div>
             <div style="display:flex;align-items:center;gap:.5rem">
-              <span style="font-size:12px;color:var(--muted);white-space:nowrap" data-i18n="price">Окрема ціна:</span>
+              <span style="font-size:12px;color:var(--muted);white-space:nowrap" data-i18n="separatePrice">Окрема ціна:</span>
               <input id="if-price-take" type="number" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
-              <span style="font-size:11px;color:var(--muted)" data-i18n="price">грн</span>
+              <span style="font-size:11px;color:var(--muted)" data-i18n="hrn">грн</span>
             </div>
           </div>
 
           <!-- ДОСТАВКА -->
           <div style="background:var(--bg2);border-radius:8px;padding:.75rem">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
-              <div style="font-size:13px;font-weight:500">🚗 Доставка</div>
+              <div style="font-size:13px;font-weight:500" data-i18n="delivery">🚗 Доставка</div>
               <label class="sw"><input type="checkbox" id="if-avail-del" checked/><span class="sw-slider"></span></label>
             </div>
             <div style="display:flex;align-items:center;gap:.5rem">
-              <span style="font-size:12px;color:var(--muted);white-space:nowrap" data-i18n="price">Окрема ціна:</span>
+              <span style="font-size:12px;color:var(--muted);white-space:nowrap" data-i18n="separatePrice">Окрема ціна:</span>
               <input id="if-price-del" type="number" placeholder="як базова" style="flex:1;padding:6px 10px;font-size:13px"/>
-              <span style="font-size:11px;color:var(--muted)" data-i18n="price">грн</span>
+              <span style="font-size:11px;color:var(--muted)" data-i18n="hrn">грн</span>
             </div>
           </div>
         </div>
       </div>
 
       <div class="span2">
-        <label class="field-label" data-i18n="alerhenyOberit" data-i18n="alerhenyOberit">Алергени (оберіть всі що є)</label>
+        <label class="field-label" data-i18n="alerhenyOberit">Алергени (оберіть всі що є)</label>
         <div id="allergen-checkboxes" style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.375rem"></div>
       </div>
 
       <!-- ПЕРЕКЛАДИ -->
       <div class="span2" style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
-          <label class="field-label" style="margin:0">🌐 Переклади</label>
-          <button type="button" class="btn btn-outline btn-sm" onclick="translateItemFields()" id="translate-btn">✨ Перекласти автоматично</button>
+          <label class="field-label" style="margin:0" data-i18n="translationsLbl">🌐 Переклади</label>
+          <button type="button" class="btn btn-outline btn-sm" onclick="translateItemFields()" id="translate-btn" data-i18n="translateAuto">✨ Перекласти автоматично</button>
         </div>
         <details style="margin-bottom:.375rem"><summary style="cursor:pointer;font-size:13px;font-weight:500;padding:.375rem 0;color:var(--muted)">🇬🇧 English</summary><div style="padding:.5rem 0;display:flex;flex-direction:column;gap:.375rem"><input id="if-name-en" type="text" placeholder="Name (English)"/><textarea id="if-desc-en" rows="2" placeholder="Description (English)" style="resize:none"></textarea></div></details>
         <details style="margin-bottom:.375rem"><summary style="cursor:pointer;font-size:13px;font-weight:500;padding:.375rem 0;color:var(--muted)">🇵🇱 Polski</summary><div style="padding:.5rem 0;display:flex;flex-direction:column;gap:.375rem"><input id="if-name-pl" type="text" placeholder="Nazwa (Polski)"/><textarea id="if-desc-pl" rows="2" placeholder="Opis (Polski)" style="resize:none"></textarea></div></details>
@@ -1816,27 +1816,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <details style="margin-bottom:.375rem"><summary style="cursor:pointer;font-size:13px;font-weight:500;padding:.375rem 0;color:var(--muted)">🇲🇪 Crnogorski</summary><div style="padding:.5rem 0;display:flex;flex-direction:column;gap:.375rem"><input id="if-name-cnr" type="text" placeholder="Ime (Crnogorski)"/><textarea id="if-desc-cnr" rows="2" placeholder="Opis (Crnogorski)" style="resize:none"></textarea></div></details>
       </div>
 
-      <!-- ПЕРЕКЛАДИ -->
-      <div class="span2" style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
-          <label class="field-label" style="margin:0">🌐 Переклади</label>
-          <button type="button" class="btn btn-outline btn-sm" onclick="translateItemFields()" id="translate-btn">
-            ✨ Перекласти автоматично
-          </button>
-        </div>
-        <div id="translations-wrap">
-          
-          <details style="margin-bottom:.5rem">
-            <summary style="cursor:pointer;font-size:13px;font-weight:500;padding:.375rem 0;color:var(--muted)">
-              ${{en:'🇬🇧 English',pl:'🇵🇱 Polski',de:'🇩🇪 Deutsch',ro:'🇷🇴 Română',es:'🇪🇸 Español',cnr:'🇲🇪 Crnogorski'}[lang]}
-            </summary>
-            <div style="padding:.5rem 0;display:flex;flex-direction:column;gap:.375rem">
-              <input id="if-name-${lang}" type="text" placeholder="Назва (${lang})" style="font-size:13px"/>
-              <textarea id="if-desc-${lang}" rows="2" placeholder="Опис (${lang})" style="font-size:13px;resize:none"></textarea>
-            </div>
-          </details>`).join('')}
-        </div>
-      </div>
+
     </div>
     <button class="btn btn-accent" style="width:100%;margin-top:.75rem" onclick="saveItem()" data-i18n="zberhStravu">Зберегти страву</button>
   </div>
@@ -1925,7 +1905,7 @@ var I18N = {
     markBack:'↺ Назад', markReturn:'↺ Повернути', markOpen:'↺ Відкрити',
     syncPOS:'🔄 Синх. POS', paying:'Оплата:', cash:'Готівка', online:'Онлайн',
     table:'Стіл', comment:'Коментар', address:'Адреса', dineIn:'В закладі', takeaway:'З собою', delivery:'Доставка',
-    noOrders:'Замовлень немає', total:'Разом',
+    noOrders:t('noOrders'), total:'Разом',
     // Страви
     name:'Назва', description:'Опис', price:'Ціна (грн)', category:'Категорія',
     allCategories:'Всі категорії', search:'Пошук страви...',
@@ -2126,7 +2106,75 @@ var I18N = {
     unlimited:'Необмежено',
     afterTrialFree:'Після закінчення trial → Free',
     trialEnded:'Пробний період закінчився!',
-    onlyAfterPlan:'Тільки після оплати тарифу'},
+    onlyAfterPlan:'Тільки після оплати тарифу',
+    photoHint:'JPG, PNG, WebP — до 5 МБ',
+    chooseFile:'📁 Вибрати файл',
+    separatePrice:'Окрема ціна:',
+    hrn:'грн',
+    translationsLbl:'🌐 Переклади',
+    translateAuto:'✨ Перекласти автоматично',
+    deletePhoto:'✕ Видалити фото',
+    payModeConfirm:'Клієнт замовляє → заклад підтверджує → клієнт отримує посилання на оплату. Підходить для залів.',
+    payModeBoth:'Обидва варіанти доступні. Клієнт бачить кнопки "Оплатити онлайн" та "Оплатити при отриманні".',
+    payModeOptional:'Клієнт може обрати "Оплата при отриманні" замість онлайн-оплати',
+    privat24Fee:'ПриватБанк · Комісія 2.75%',
+    monoFee:'Acquiring API · від 1.5%',
+    wfpFee:'Merchant API · від 1.5%',
+    abankFee:'Acquiring · інд. комісія',
+    posAutoFiscal:'Якщо підключено Poster або Syrve — фіскалізація відбувається автоматично в касі. Додаткових налаштувань не потрібно.',
+    posImmediately:'Одразу після підтвердження оплати або розміщення замовлення',
+    spotId:'Spot ID (торгова точка)',
+    tableserviceId:'Tableservice ID (зал, якщо є)',
+    posterConnectInstr:'Poster Admin → Додатки → Маркет → Mage QR Rest → Встановити → Скопіювати токен',
+    waitingConnect:'── Очікування підключення ──',
+    organizationId:'Organization ID',
+    terminalGroupId:'Terminal Group ID',
+    syrveTokenNote:'Система автоматично оновлює його. Organization і Terminal ID знайдіть в Syrve Office → Ресторани → Загальні налаштування.',
+    loadFromSyrve:'🖥️ Завантажити з Syrve',
+    autoMapping:'⚡ Авто-зіставлення за назвою',
+    saveMapping:'💾 Зберегти маппінг',
+    posterSelect:'Poster (оберіть)',
+    posMappingFullDesc:'Зіставте страви вашого меню з позиціями в касовій системі. Замовлення передаватимуться з правильними ID.',
+    cardNotLinked:'Картка не привʼязана',
+    monoSecure:'🔒 Безпечно через Monobank · Картка зберігається у зашифрованому вигляді',
+    planChooseNote:'Після вибору тарифу ви будете перенаправлені на сторінку оплати Monobank. Картка зберігається для автоматичних щомісячних списань.',
+    trialEndsOn:'Пробний період закінчується',
+    dishesCount:'Страв',
+    ordersCount:'Замовлень',
+    fontBold:'Unbounded — жирний',
+    notifSaved:'✅ Збережено!',
+    notifError:'❌ Помилка',
+    notifDeleted:'✅ Видалено',
+    tipsMonobankInstr:'Додайте співробітників у кабінеті monobank acquiring → зверніться у підтримку mono → після підтвердження вкажіть tipsEmployeeId кожного офіціанта нижче. Мінімальна сума замовлення для показу чайових — 100 грн.',
+    notifFirebaseNotReady:'Firebase не готовий',
+    notifUpdating:'Оновлюємо...',
+    notifEnterName:'Введіть назву',
+    notifCatSaved:'✅ Категорію збережено!',
+    notifPhotoTooLarge:'Фото занадто велике. Макс 5 МБ.',
+    notifPhotoError:'Помилка завантаження фото',
+    notifFillNamePrice:'Заповніть назву та ціну',
+    notifSaving:'Збереження...',
+    notifDishSaved:'✅ Страву збережено!',
+    notifSettingsSaved:'✅ Налаштування збережено!',
+    planLabel:'Тариф',
+    perMonth:'міс',
+    willCharge:'Буде списано',
+    popular:'ПОПУЛЯРНИЙ',
+    choosePlanBtn:'Обрати',
+    currentPlanLbl:'Поточний тариф',
+    feat20Dishes:'20 страв',
+    feat100Orders:'100 замовлень/міс',
+    featBasicDesign:'Базовий дизайн',
+    feat80Dishes:'80 страв',
+    feat500Orders:'500 замовлень/міс',
+    featColorsFont:'Кольори+шрифт',
+    feat500Dishes:'500 страв',
+    feat5000Orders:'5000 замовлень/міс',
+    featFullDesign:'Повний дизайн',
+    featPhotoBanner:'Фото+банер',
+    featUnlimited:'Необмежено',
+    featPOS:'POS інтеграція',
+    featDomain:'Власний домен'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2332,7 +2380,75 @@ var I18N = {
     unlimited:'Unlimited',
     afterTrialFree:'After trial ends → Free',
     trialEnded:'Trial period ended!',
-    onlyAfterPlan:'Only after plan payment'},
+    onlyAfterPlan:'Only after plan payment',
+    photoHint:'JPG, PNG, WebP — up to 5 MB',
+    chooseFile:'📁 Choose file',
+    separatePrice:'Separate price:',
+    hrn:'UAH',
+    translationsLbl:'🌐 Translations',
+    translateAuto:'✨ Translate automatically',
+    deletePhoto:'✕ Delete photo',
+    payModeConfirm:'Client orders → venue confirms → client gets payment link. Suitable for dine-in.',
+    payModeBoth:'Both options available. Client sees "Pay online" and "Pay on delivery" buttons.',
+    payModeOptional:'Client can choose "Pay on delivery" instead of online payment',
+    privat24Fee:'PrivatBank · 2.75% fee',
+    monoFee:'Acquiring API · from 1.5%',
+    wfpFee:'Merchant API · from 1.5%',
+    abankFee:'Acquiring · individual fee',
+    posAutoFiscal:'If Poster or Syrve is connected — fiscalization happens automatically at the POS. No additional settings needed.',
+    posImmediately:'Immediately after payment confirmation or order placement',
+    spotId:'Spot ID (sales point)',
+    tableserviceId:'Tableservice ID (hall, if any)',
+    posterConnectInstr:'Poster Admin → Apps → Market → Mage QR Rest → Install → Copy token',
+    waitingConnect:'── Waiting for connection ──',
+    organizationId:'Organization ID',
+    terminalGroupId:'Terminal Group ID',
+    syrveTokenNote:'The system updates it automatically. Find Organization and Terminal ID in Syrve Office → Restaurants → General Settings.',
+    loadFromSyrve:'🖥️ Load from Syrve',
+    autoMapping:'⚡ Auto-mapping by name',
+    saveMapping:'💾 Save mapping',
+    posterSelect:'Poster (select)',
+    posMappingFullDesc:'Map your menu dishes to POS positions. Orders will be sent with the correct IDs.',
+    cardNotLinked:'Card not linked',
+    monoSecure:'🔒 Secure via Monobank · Card stored in encrypted form',
+    planChooseNote:'After choosing a plan you will be redirected to the Monobank payment page. The card is saved for automatic monthly charges.',
+    trialEndsOn:'Trial period ends',
+    dishesCount:'Dishes',
+    ordersCount:'Orders',
+    fontBold:'Unbounded — bold',
+    notifSaved:'✅ Saved!',
+    notifError:'❌ Error',
+    notifDeleted:'✅ Deleted',
+    tipsMonobankInstr:'Add employees in monobank acquiring cabinet → contact mono support → after confirmation enter tipsEmployeeId for each waiter below. Minimum order amount to show tips — 100 UAH.',
+    notifFirebaseNotReady:'Firebase not ready',
+    notifUpdating:'Updating...',
+    notifEnterName:'Enter a name',
+    notifCatSaved:'✅ Category saved!',
+    notifPhotoTooLarge:'Photo too large. Max 5 MB.',
+    notifPhotoError:'Photo upload error',
+    notifFillNamePrice:'Fill in name and price',
+    notifSaving:'Saving...',
+    notifDishSaved:'✅ Dish saved!',
+    notifSettingsSaved:'✅ Settings saved!',
+    planLabel:'Plan',
+    perMonth:'mo',
+    willCharge:'Will be charged',
+    popular:'POPULAR',
+    choosePlanBtn:'Choose',
+    currentPlanLbl:'Current plan',
+    feat20Dishes:'20 dishes',
+    feat100Orders:'100 orders/mo',
+    featBasicDesign:'Basic design',
+    feat80Dishes:'80 dishes',
+    feat500Orders:'500 orders/mo',
+    featColorsFont:'Colors+font',
+    feat500Dishes:'500 dishes',
+    feat5000Orders:'5000 orders/mo',
+    featFullDesign:'Full design',
+    featPhotoBanner:'Photo+banner',
+    featUnlimited:'Unlimited',
+    featPOS:'POS integration',
+    featDomain:'Custom domain'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -2538,7 +2654,75 @@ var I18N = {
     unlimited:'Nieograniczone',
     afterTrialFree:'Po zakończeniu trial → Free',
     trialEnded:'Okres próbny zakończony!',
-    onlyAfterPlan:'Tylko po opłaceniu planu'},
+    onlyAfterPlan:'Tylko po opłaceniu planu',
+    photoHint:'JPG, PNG, WebP — do 5 MB',
+    chooseFile:'📁 Wybierz plik',
+    separatePrice:'Osobna cena:',
+    hrn:'UAH',
+    translationsLbl:'🌐 Tłumaczenia',
+    translateAuto:'✨ Przetłumacz automatycznie',
+    deletePhoto:'✕ Usuń zdjęcie',
+    payModeConfirm:'Klient zamawia → lokal potwierdza → klient otrzymuje link do płatności. Dla sali.',
+    payModeBoth:'Obydwie opcje dostępne. Klient widzi "Zapłać online" i "Zapłać przy odbiorze".',
+    payModeOptional:'Klient może wybrać "Płatność przy odbiorze" zamiast płatności online',
+    privat24Fee:'PrivatBank · Prowizja 2.75%',
+    monoFee:'Acquiring API · od 1.5%',
+    wfpFee:'Merchant API · od 1.5%',
+    abankFee:'Acquiring · indywid. prowizja',
+    posAutoFiscal:'Jeśli Poster lub Syrve jest podłączony — fiskalizacja odbywa się automatycznie w kasie.',
+    posImmediately:'Natychmiast po potwierdzeniu płatności lub złożeniu zamówienia',
+    spotId:'Spot ID (punkt sprzedaży)',
+    tableserviceId:'Tableservice ID (sala, jeśli jest)',
+    posterConnectInstr:'Poster Admin → Aplikacje → Market → Mage QR Rest → Zainstaluj → Skopiuj token',
+    waitingConnect:'── Oczekiwanie na połączenie ──',
+    organizationId:'Organization ID',
+    terminalGroupId:'Terminal Group ID',
+    syrveTokenNote:'System aktualizuje to automatycznie. Organization i Terminal ID w Syrve Office → Restauracje → Ustawienia ogólne.',
+    loadFromSyrve:'🖥️ Załaduj z Syrve',
+    autoMapping:'⚡ Auto-mapowanie po nazwie',
+    saveMapping:'💾 Zapisz mapowanie',
+    posterSelect:'Poster (wybierz)',
+    posMappingFullDesc:'Dopasuj dania menu do pozycji w POS. Zamówienia będą wysyłane z poprawnymi ID.',
+    cardNotLinked:'Karta nie jest połączona',
+    monoSecure:'🔒 Bezpiecznie przez Monobank · Karta przechowywana w zaszyfrowanej formie',
+    planChooseNote:'Po wyborze planu zostaniesz przekierowany na stronę płatności Monobank. Karta zostaje zapisana dla automatycznych miesięcznych opłat.',
+    trialEndsOn:'Okres próbny kończy się',
+    dishesCount:'Dań',
+    ordersCount:'Zamówień',
+    fontBold:'Unbounded — pogrubiony',
+    notifSaved:'✅ Zapisano!',
+    notifError:'❌ Błąd',
+    notifDeleted:'✅ Usunięto',
+    tipsMonobankInstr:'Dodaj pracowników w panelu monobank acquiring → skontaktuj się z pomocą mono → po potwierdzeniu podaj tipsEmployeeId każdego kelnera. Min. kwota zamówienia dla napiwków — 100 UAH.',
+    notifFirebaseNotReady:'Firebase nie jest gotowy',
+    notifUpdating:'Aktualizujemy...',
+    notifEnterName:'Wprowadź nazwę',
+    notifCatSaved:'✅ Kategoria zapisana!',
+    notifPhotoTooLarge:'Zdjęcie za duże. Maks 5 MB.',
+    notifPhotoError:'Błąd przesyłania zdjęcia',
+    notifFillNamePrice:'Uzupełnij nazwę i cenę',
+    notifSaving:'Zapisywanie...',
+    notifDishSaved:'✅ Danie zapisane!',
+    notifSettingsSaved:'✅ Ustawienia zapisane!',
+    planLabel:'Plan',
+    perMonth:'mies',
+    willCharge:'Zostanie pobrane',
+    popular:'POPULARNY',
+    choosePlanBtn:'Wybierz',
+    currentPlanLbl:'Aktualny plan',
+    feat20Dishes:'20 dań',
+    feat100Orders:'100 zamówień/mies',
+    featBasicDesign:'Podstawowy wygląd',
+    feat80Dishes:'80 dań',
+    feat500Orders:'500 zamówień/mies',
+    featColorsFont:'Kolory+czcionka',
+    feat500Dishes:'500 dań',
+    feat5000Orders:'5000 zamówień/mies',
+    featFullDesign:'Pełny wygląd',
+    featPhotoBanner:'Zdjęcie+baner',
+    featUnlimited:'Nieograniczone',
+    featPOS:'Integracja POS',
+    featDomain:'Własna domena'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -2744,7 +2928,75 @@ var I18N = {
     unlimited:'Unbegrenzt',
     afterTrialFree:'Nach Trial-Ende → Free',
     trialEnded:'Testzeitraum abgelaufen!',
-    onlyAfterPlan:'Nur nach Tarifzahlung'},
+    onlyAfterPlan:'Nur nach Tarifzahlung',
+    photoHint:'JPG, PNG, WebP — bis 5 MB',
+    chooseFile:'📁 Datei auswählen',
+    separatePrice:'Separater Preis:',
+    hrn:'UAH',
+    translationsLbl:'🌐 Übersetzungen',
+    translateAuto:'✨ Automatisch übersetzen',
+    deletePhoto:'✕ Foto löschen',
+    payModeConfirm:'Kunde bestellt → Lokal bestätigt → Kunde erhält Zahlungslink. Für den Saal.',
+    payModeBoth:'Beide Optionen verfügbar. Kunde sieht "Online bezahlen" und "Bei Lieferung bezahlen".',
+    payModeOptional:'Kunde kann "Zahlung bei Lieferung" statt Online-Zahlung wählen',
+    privat24Fee:'PrivatBank · Gebühr 2.75%',
+    monoFee:'Acquiring API · ab 1.5%',
+    wfpFee:'Merchant API · ab 1.5%',
+    abankFee:'Acquiring · individuelle Gebühr',
+    posAutoFiscal:'Wenn Poster oder Syrve verbunden ist — erfolgt die Fiskalisierung automatisch an der Kasse.',
+    posImmediately:'Sofort nach Zahlungsbestätigung oder Bestellaufgabe',
+    spotId:'Spot ID (Verkaufspunkt)',
+    tableserviceId:'Tableservice ID (Saal, falls vorhanden)',
+    posterConnectInstr:'Poster Admin → Apps → Markt → Mage QR Rest → Installieren → Token kopieren',
+    waitingConnect:'── Warten auf Verbindung ──',
+    organizationId:'Organization ID',
+    terminalGroupId:'Terminal Group ID',
+    syrveTokenNote:'Das System aktualisiert es automatisch. Organization und Terminal ID in Syrve Office → Restaurants → Allgemeine Einstellungen.',
+    loadFromSyrve:'🖥️ Von Syrve laden',
+    autoMapping:'⚡ Auto-Zuordnung nach Name',
+    saveMapping:'💾 Mapping speichern',
+    posterSelect:'Poster (auswählen)',
+    posMappingFullDesc:'Ordnen Sie die Menügerichte den POS-Positionen zu. Bestellungen werden mit korrekten IDs gesendet.',
+    cardNotLinked:'Karte nicht verknüpft',
+    monoSecure:'🔒 Sicher über Monobank · Karte verschlüsselt gespeichert',
+    planChooseNote:'Nach der Planauswahl werden Sie zur Monobank-Zahlungsseite weitergeleitet. Die Karte wird für automatische monatliche Abbuchungen gespeichert.',
+    trialEndsOn:'Testzeitraum endet',
+    dishesCount:'Gerichte',
+    ordersCount:'Bestellungen',
+    fontBold:'Unbounded — fett',
+    notifSaved:'✅ Gespeichert!',
+    notifError:'❌ Fehler',
+    notifDeleted:'✅ Gelöscht',
+    tipsMonobankInstr:'Fügen Sie Mitarbeiter im Monobank-Acquiring-Konto hinzu → kontaktieren Sie den Mono-Support → geben Sie nach Bestätigung die tipsEmployeeId jedes Kellners ein. Mindestbestellbetrag für Trinkgeld — 100 UAH.',
+    notifFirebaseNotReady:'Firebase nicht bereit',
+    notifUpdating:'Wird aktualisiert...',
+    notifEnterName:'Name eingeben',
+    notifCatSaved:'✅ Kategorie gespeichert!',
+    notifPhotoTooLarge:'Foto zu groß. Max 5 MB.',
+    notifPhotoError:'Fehler beim Foto-Upload',
+    notifFillNamePrice:'Name und Preis ausfüllen',
+    notifSaving:'Wird gespeichert...',
+    notifDishSaved:'✅ Gericht gespeichert!',
+    notifSettingsSaved:'✅ Einstellungen gespeichert!',
+    planLabel:'Tarif',
+    perMonth:'Mo',
+    willCharge:'Wird abgebucht',
+    popular:'BELIEBT',
+    choosePlanBtn:'Wählen',
+    currentPlanLbl:'Aktueller Tarif',
+    feat20Dishes:'20 Gerichte',
+    feat100Orders:'100 Bestellungen/Mo',
+    featBasicDesign:'Basisdesign',
+    feat80Dishes:'80 Gerichte',
+    feat500Orders:'500 Bestellungen/Mo',
+    featColorsFont:'Farben+Schrift',
+    feat500Dishes:'500 Gerichte',
+    feat5000Orders:'5000 Bestellungen/Mo',
+    featFullDesign:'Vollständiges Design',
+    featPhotoBanner:'Foto+Banner',
+    featUnlimited:'Unbegrenzt',
+    featPOS:'POS-Integration',
+    featDomain:'Eigene Domain'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -2950,7 +3202,75 @@ var I18N = {
     unlimited:'Nelimitat',
     afterTrialFree:'După trial → Free',
     trialEnded:'Perioada de probă s-a încheiat!',
-    onlyAfterPlan:'Doar după plata planului'},
+    onlyAfterPlan:'Doar după plata planului',
+    photoHint:'JPG, PNG, WebP — până la 5 MB',
+    chooseFile:'📁 Alege fișier',
+    separatePrice:'Preț separat:',
+    hrn:'UAH',
+    translationsLbl:'🌐 Traduceri',
+    translateAuto:'✨ Traduce automat',
+    deletePhoto:'✕ Șterge foto',
+    payModeConfirm:'Clientul comandă → localul confirmă → clientul primește link de plată. Pentru sală.',
+    payModeBoth:'Ambele opțiuni disponibile. Clientul vede "Plătește online" și "Plătește la primire".',
+    payModeOptional:'Clientul poate alege "Plată la primire" în loc de plată online',
+    privat24Fee:'PrivatBank · Comision 2.75%',
+    monoFee:'Acquiring API · de la 1.5%',
+    wfpFee:'Merchant API · de la 1.5%',
+    abankFee:'Acquiring · comision individual',
+    posAutoFiscal:'Dacă Poster sau Syrve este conectat — fiscalizarea se face automat la casă.',
+    posImmediately:'Imediat după confirmarea plății sau plasarea comenzii',
+    spotId:'Spot ID (punct de vânzare)',
+    tableserviceId:'Tableservice ID (sală, dacă există)',
+    posterConnectInstr:'Poster Admin → Aplicații → Market → Mage QR Rest → Instalează → Copiază token',
+    waitingConnect:'── Așteptare conexiune ──',
+    organizationId:'Organization ID',
+    terminalGroupId:'Terminal Group ID',
+    syrveTokenNote:'Sistemul îl actualizează automat. Organization și Terminal ID în Syrve Office → Restaurante → Setări generale.',
+    loadFromSyrve:'🖥️ Încarcă din Syrve',
+    autoMapping:'⚡ Mapare automată după nume',
+    saveMapping:'💾 Salvează maparea',
+    posterSelect:'Poster (alegeți)',
+    posMappingFullDesc:'Asociați preparatele meniului cu pozițiile din POS. Comenzile vor fi trimise cu ID-urile corecte.',
+    cardNotLinked:'Card neconectat',
+    monoSecure:'🔒 Securizat prin Monobank · Cardul stocat în formă criptată',
+    planChooseNote:'După alegerea planului veți fi redirecționat la pagina de plată Monobank. Cardul este salvat pentru taxe lunare automate.',
+    trialEndsOn:'Perioada de probă se termină',
+    dishesCount:'Preparate',
+    ordersCount:'Comenzi',
+    fontBold:'Unbounded — aldin',
+    notifSaved:'✅ Salvat!',
+    notifError:'❌ Eroare',
+    notifDeleted:'✅ Șters',
+    tipsMonobankInstr:'Adăugați angajați în cabinetul monobank acquiring → contactați suportul mono → după confirmare introduceți tipsEmployeeId pentru fiecare chelner. Suma minimă comandă pentru bacșiș — 100 UAH.',
+    notifFirebaseNotReady:'Firebase nu este gata',
+    notifUpdating:'Actualizăm...',
+    notifEnterName:'Introduceți un nume',
+    notifCatSaved:'✅ Categorie salvată!',
+    notifPhotoTooLarge:'Fotografia prea mare. Max 5 MB.',
+    notifPhotoError:'Eroare la încărcarea fotografiei',
+    notifFillNamePrice:'Completați numele și prețul',
+    notifSaving:'Se salvează...',
+    notifDishSaved:'✅ Preparat salvat!',
+    notifSettingsSaved:'✅ Setări salvate!',
+    planLabel:'Plan',
+    perMonth:'lună',
+    willCharge:'Va fi taxat',
+    popular:'POPULAR',
+    choosePlanBtn:'Alegeți',
+    currentPlanLbl:'Plan curent',
+    feat20Dishes:'20 preparate',
+    feat100Orders:'100 comenzi/lună',
+    featBasicDesign:'Design de bază',
+    feat80Dishes:'80 preparate',
+    feat500Orders:'500 comenzi/lună',
+    featColorsFont:'Culori+font',
+    feat500Dishes:'500 preparate',
+    feat5000Orders:'5000 comenzi/lună',
+    featFullDesign:'Design complet',
+    featPhotoBanner:'Foto+banner',
+    featUnlimited:'Nelimitat',
+    featPOS:'Integrare POS',
+    featDomain:'Domeniu propriu'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -3156,7 +3476,75 @@ var I18N = {
     unlimited:'Ilimitado',
     afterTrialFree:'Tras el trial → Free',
     trialEnded:'¡Período de prueba finalizado!',
-    onlyAfterPlan:'Solo tras el pago del plan'},
+    onlyAfterPlan:'Solo tras el pago del plan',
+    photoHint:'JPG, PNG, WebP — hasta 5 MB',
+    chooseFile:'📁 Elegir archivo',
+    separatePrice:'Precio separado:',
+    hrn:'UAH',
+    translationsLbl:'🌐 Traducciones',
+    translateAuto:'✨ Traducir automáticamente',
+    deletePhoto:'✕ Eliminar foto',
+    payModeConfirm:'Cliente pide → local confirma → cliente recibe enlace de pago. Para el salón.',
+    payModeBoth:'Ambas opciones disponibles. El cliente ve "Pagar online" y "Pagar al recibir".',
+    payModeOptional:'El cliente puede elegir "Pago al recibir" en lugar de pago online',
+    privat24Fee:'PrivatBank · Comisión 2.75%',
+    monoFee:'Acquiring API · desde 1.5%',
+    wfpFee:'Merchant API · desde 1.5%',
+    abankFee:'Acquiring · comisión individual',
+    posAutoFiscal:'Si Poster o Syrve está conectado — la fiscalización ocurre automáticamente en caja.',
+    posImmediately:'Inmediatamente tras la confirmación del pago o la realización del pedido',
+    spotId:'Spot ID (punto de venta)',
+    tableserviceId:'Tableservice ID (sala, si existe)',
+    posterConnectInstr:'Poster Admin → Apps → Market → Mage QR Rest → Instalar → Copiar token',
+    waitingConnect:'── Esperando conexión ──',
+    organizationId:'Organization ID',
+    terminalGroupId:'Terminal Group ID',
+    syrveTokenNote:'El sistema lo actualiza automáticamente. Organization y Terminal ID en Syrve Office → Restaurantes → Configuración general.',
+    loadFromSyrve:'🖥️ Cargar de Syrve',
+    autoMapping:'⚡ Mapeo automático por nombre',
+    saveMapping:'💾 Guardar mapeo',
+    posterSelect:'Poster (seleccione)',
+    posMappingFullDesc:'Mapee los platos del menú con las posiciones del POS. Los pedidos se enviarán con los ID correctos.',
+    cardNotLinked:'Tarjeta no vinculada',
+    monoSecure:'🔒 Seguro via Monobank · Tarjeta almacenada cifrada',
+    planChooseNote:'Tras elegir un plan será redirigido a la página de pago de Monobank. La tarjeta se guarda para cargos mensuales automáticos.',
+    trialEndsOn:'El período de prueba termina',
+    dishesCount:'Platos',
+    ordersCount:'Pedidos',
+    fontBold:'Unbounded — negrita',
+    notifSaved:'✅ ¡Guardado!',
+    notifError:'❌ Error',
+    notifDeleted:'✅ Eliminado',
+    tipsMonobankInstr:'Agregue empleados en el gabinete monobank acquiring → contacte al soporte mono → tras confirmación ingrese tipsEmployeeId de cada camarero. Monto mínimo para propinas — 100 UAH.',
+    notifFirebaseNotReady:'Firebase no está listo',
+    notifUpdating:'Actualizando...',
+    notifEnterName:'Ingrese un nombre',
+    notifCatSaved:'✅ ¡Categoría guardada!',
+    notifPhotoTooLarge:'Foto demasiado grande. Máx 5 MB.',
+    notifPhotoError:'Error al subir foto',
+    notifFillNamePrice:'Complete el nombre y precio',
+    notifSaving:'Guardando...',
+    notifDishSaved:'✅ ¡Plato guardado!',
+    notifSettingsSaved:'✅ ¡Ajustes guardados!',
+    planLabel:'Plan',
+    perMonth:'mes',
+    willCharge:'Se cobrará',
+    popular:'POPULAR',
+    choosePlanBtn:'Elegir',
+    currentPlanLbl:'Plan actual',
+    feat20Dishes:'20 platos',
+    feat100Orders:'100 pedidos/mes',
+    featBasicDesign:'Diseño básico',
+    feat80Dishes:'80 platos',
+    feat500Orders:'500 pedidos/mes',
+    featColorsFont:'Colores+fuente',
+    feat500Dishes:'500 platos',
+    feat5000Orders:'5000 pedidos/mes',
+    featFullDesign:'Diseño completo',
+    featPhotoBanner:'Foto+banner',
+    featUnlimited:'Ilimitado',
+    featPOS:'Integración POS',
+    featDomain:'Dominio propio'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -3362,7 +3750,75 @@ var I18N = {
     unlimited:'Neograničeno',
     afterTrialFree:'Nakon triala → Free',
     trialEnded:'Probni period je završen!',
-    onlyAfterPlan:'Samo nakon plaćanja plana'},
+    onlyAfterPlan:'Samo nakon plaćanja plana',
+    photoHint:'JPG, PNG, WebP — do 5 MB',
+    chooseFile:'📁 Odaberi fajl',
+    separatePrice:'Posebna cijena:',
+    hrn:'UAH',
+    translationsLbl:'🌐 Prijevodi',
+    translateAuto:'✨ Prevedi automatski',
+    deletePhoto:'✕ Izbriši sliku',
+    payModeConfirm:'Klijent naručuje → lokal potvrđuje → klijent dobija link za plaćanje. Za salu.',
+    payModeBoth:'Obje opcije dostupne. Klijent vidi "Plati online" i "Plati pri preuzimanju".',
+    payModeOptional:'Klijent može odabrati "Plaćanje pri preuzimanju" umjesto online plaćanja',
+    privat24Fee:'PrivatBank · Provizija 2.75%',
+    monoFee:'Acquiring API · od 1.5%',
+    wfpFee:'Merchant API · od 1.5%',
+    abankFee:'Acquiring · individualna provizija',
+    posAutoFiscal:'Ako je Poster ili Syrve povezan — fiskalizacija se odvija automatski na kasi.',
+    posImmediately:'Odmah nakon potvrde plaćanja ili narudžbine',
+    spotId:'Spot ID (prodajno mjesto)',
+    tableserviceId:'Tableservice ID (sala, ako postoji)',
+    posterConnectInstr:'Poster Admin → Aplikacije → Market → Mage QR Rest → Instaliraj → Kopiraj token',
+    waitingConnect:'── Čekanje na vezu ──',
+    organizationId:'Organization ID',
+    terminalGroupId:'Terminal Group ID',
+    syrveTokenNote:'Sistem ga automatski ažurira. Organization i Terminal ID u Syrve Office → Restorani → Opšta podešavanja.',
+    loadFromSyrve:'🖥️ Učitaj iz Syrve',
+    autoMapping:'⚡ Auto-mapiranje po nazivu',
+    saveMapping:'💾 Sačuvaj mapiranje',
+    posterSelect:'Poster (odaberi)',
+    posMappingFullDesc:'Mapirajte jela menija na POS pozicije. Narudžbine će biti poslate sa ispravnim ID-ovima.',
+    cardNotLinked:'Kartica nije vezana',
+    monoSecure:'🔒 Sigurno putem Monobanka · Kartica pohranjena u šifrovanom obliku',
+    planChooseNote:'Nakon odabira plana bit ćete preusmjereni na stranicu plaćanja Monobank. Kartica se čuva za automatska mesečna naplaćivanja.',
+    trialEndsOn:'Probni period završava',
+    dishesCount:'Jela',
+    ordersCount:'Narudžbina',
+    fontBold:'Unbounded — podebljano',
+    notifSaved:'✅ Sačuvano!',
+    notifError:'❌ Greška',
+    notifDeleted:'✅ Izbrisano',
+    tipsMonobankInstr:'Dodajte zaposlenike u monobank acquiring kabinetu → kontaktirajte mono podršku → nakon potvrde unesite tipsEmployeeId svakog konobara. Minimalni iznos narudžbine za napojnicu — 100 UAH.',
+    notifFirebaseNotReady:'Firebase nije spreman',
+    notifUpdating:'Ažuriramo...',
+    notifEnterName:'Unesite naziv',
+    notifCatSaved:'✅ Kategorija sačuvana!',
+    notifPhotoTooLarge:'Slika prevelika. Maks 5 MB.',
+    notifPhotoError:'Greška pri uploadu slike',
+    notifFillNamePrice:'Popunite naziv i cijenu',
+    notifSaving:'Čuvanje...',
+    notifDishSaved:'✅ Jelo sačuvano!',
+    notifSettingsSaved:'✅ Podešavanja sačuvana!',
+    planLabel:'Plan',
+    perMonth:'mj',
+    willCharge:'Bit će naplaćeno',
+    popular:'POPULARNO',
+    choosePlanBtn:'Odaberi',
+    currentPlanLbl:'Trenutni plan',
+    feat20Dishes:'20 jela',
+    feat100Orders:'100 narudžbina/mj',
+    featBasicDesign:'Osnovni dizajn',
+    feat80Dishes:'80 jela',
+    feat500Orders:'500 narudžbina/mj',
+    featColorsFont:'Boje+font',
+    feat500Dishes:'500 jela',
+    feat5000Orders:'5000 narudžbina/mj',
+    featFullDesign:'Puni dizajn',
+    featPhotoBanner:'Slika+baner',
+    featUnlimited:'Neograničeno',
+    featPOS:'POS integracija',
+    featDomain:'Vlastita domena'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -3500,17 +3956,17 @@ function updateOrderBadge(){
 }
 
 window.setStatus = async function(id, status) {
-  if(!db || !window.__FS) { notify('Firebase не готовий','err'); return; }
+  if(!db || !window.__FS) { notify(t('notifFirebaseNotReady'),'err'); return; }
   const {doc, updateDoc} = window.__FS;
   try {
-    notify('Оновлюємо...','ok');
+    notify(t('notifUpdating'),'ok');
     await updateDoc(doc(db,'venues',venueId,'orders',id), {status});
     const o = orders.find(x => x.id === id);
     if(o) o.status = status;
     renderOrders();
     const labels = {done:'✅ Виконано', cancel:'Скасовано', preparing:'👨‍🍳 Готується', new:'↺ Повернуто'};
     notify(labels[status]||'Статус оновлено','ok');
-  } catch(e) { notify('Помилка setStatus: '+e.message,'err'); }
+  } catch(e) { notify(t('notifError')+': '+e.message,'err'); }
 };
 
 function renderOrders(){
@@ -3582,19 +4038,19 @@ async function loadCats(){
 window.saveCat=async function(){
   const {collection,doc,addDoc,setDoc}=window.__FS;
   const name=document.getElementById('cf-name').value.trim();
-  if(!name){notify('Введіть назву','err');return;}
+  if(!name){notify(t('notifEnterName'),'err');return;}
   const data={name,emoji:document.getElementById('cf-emoji').value||'📂',order:parseInt(document.getElementById('cf-order').value)||0};
   try{
     if(editCatId)await setDoc(doc(db,'venues',venueId,'categories',editCatId),data);
     else await addDoc(collection(db,'venues',venueId,'categories'),data);
-    closeModal('modal-cat');await loadCats();notify('✅ Категорію збережено!','ok');
-  }catch(e){notify('Помилка: '+e.message,'err');}
+    closeModal('modal-cat');await loadCats();notify(t('notifCatSaved'),'ok');
+  }catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
 window.deleteCat=async function(id){
   const {doc,deleteDoc}=window.__FS;
   if(!confirm('Видалити категорію?'))return;
-  try{await deleteDoc(doc(db,'venues',venueId,'categories',id));await loadCats();notify('Видалено','ok');}
-  catch(e){notify('Помилка: '+e.message,'err');}
+  try{await deleteDoc(doc(db,'venues',venueId,'categories',id));await loadCats();notify(t('notifDeleted'),'ok');}
+  catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
 
 // ── СТРАВИ ──
@@ -3611,7 +4067,7 @@ async function loadItems(){
 let currentPhotoFile=null;
 function handlePhotoSelect(input){
   const file=input.files[0];if(!file)return;
-  if(file.size>5*1024*1024){notify('Фото занадто велике. Макс 5 МБ.','err');return;}
+  if(file.size>5*1024*1024){notify(t('notifPhotoTooLarge'),'err');return;}
   currentPhotoFile=file;
   const reader=new FileReader();
   reader.onload=e=>showPhotoPreview(e.target.result);
@@ -3662,7 +4118,7 @@ async function uploadPhotoAndGetUrl(){
         async()=>{const url=await getDownloadURL(task.snapshot.ref);document.getElementById('photo-progress').style.display='none';resolve(url);}
       );
     });
-  }catch(e){notify('Помилка завантаження фото: '+e.message,'err');return '';}
+  }catch(e){notify(t('notifPhotoError')+': '+e.message,'err');return '';}
 }
 window.handlePhotoSelect=handlePhotoSelect;window.clearPhoto=clearPhoto;window.setPhotoFromUrl=setPhotoFromUrl;
 
@@ -3691,8 +4147,8 @@ window.saveItem=async function(){
   const {collection,doc,addDoc,setDoc}=window.__FS;
   const name=document.getElementById('if-name').value.trim();
   const price=parseFloat(document.getElementById('if-price').value);
-  if(!name||!price){notify('Заповніть назву та ціну','err');return;}
-  notify('Збереження...','ok');
+  if(!name||!price){notify(t('notifFillNamePrice'),'err');return;}
+  notify(t('notifSaving'),'ok');
   const photoUrl=await uploadPhotoAndGetUrl();
   const data={name,desc:document.getElementById('if-desc').value,price,photoUrl:photoUrl||'',
     weight:document.getElementById('if-weight').value,category:document.getElementById('if-cat').value,
@@ -3712,15 +4168,15 @@ window.saveItem=async function(){
   try{
     if(editItemId)await setDoc(doc(db,'venues',venueId,'items',editItemId),data);
     else await addDoc(collection(db,'venues',venueId,'items'),data);
-    closeModal('modal-item');await loadItems();notify('✅ Страву збережено!','ok');
-  }catch(e){notify('Помилка: '+e.message,'err');}
+    closeModal('modal-item');await loadItems();notify(t('notifDishSaved'),'ok');
+  }catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
 
 window.deleteItem=async function(id){
   const {doc,deleteDoc}=window.__FS;
   if(!confirm('Видалити страву?'))return;
-  try{await deleteDoc(doc(db,'venues',venueId,'items',id));await loadItems();notify('Видалено','ok');}
-  catch(e){notify('Помилка: '+e.message,'err');}
+  try{await deleteDoc(doc(db,'venues',venueId,'items',id));await loadItems();notify(t('notifDeleted'),'ok');}
+  catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
 
 // ── РЕНДЕР ──
@@ -3853,7 +4309,7 @@ async function loadSettings(){
 
 window.saveSettings=async function(){
   const {doc,setDoc}=window.__FS;
-  notify('Зберігаємо...','ok');
+  notify(t('notifSaving'),'ok');
   let logoUrl=document.getElementById('set-logo-url').value.trim();
   let bannerUrl=document.getElementById('set-banner-url').value.trim();
   try{
@@ -3862,8 +4318,8 @@ window.saveSettings=async function(){
     const data={name:document.getElementById('set-name').value.trim(),tagline:document.getElementById('set-tag').value.trim(),city:document.getElementById('set-city')?.value.trim()||'',phone:document.getElementById('set-phone').value.trim(),address:document.getElementById('set-addr').value.trim(),hours:document.getElementById('set-hours')?.value.trim()||'',logoUrl,logoEmoji:document.getElementById('set-logo-emoji').value.trim(),bannerUrl,updatedAt:new Date().toISOString()};
     await setDoc(doc(db,'venues',venueId,'settings','main'),data);
     if(data.name)document.getElementById('sb-venue-name').textContent=data.name;
-    notify('✅ Налаштування збережено!','ok');
-  }catch(e){notify('Помилка: '+e.message,'err');}
+    notify(t('notifSettingsSaved'),'ok');
+  }catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
 window.copyMenuUrl=function(){const url=`https://mageqrrest.com/menu.html?v=${venueId}`;navigator.clipboard.writeText(url).then(()=>notify('🔗 Посилання скопійовано!','ok'));};
 window.openMenuUrl=function(){window.open(`https://mageqrrest.com/menu.html?v=${venueId}`,'_blank');};
@@ -3926,7 +4382,7 @@ window.saveDesign=async function(){
   const {doc,setDoc}=window.__FS;
   const data={accent:document.getElementById('c-accent').value,bg:document.getElementById('c-bg').value,card:document.getElementById('c-card').value,text:document.getElementById('c-text').value,fontHead:document.getElementById('font-head').value,fontBody:document.getElementById('font-body').value,bannerUrl:document.getElementById('banner-url').value,logoEmoji:document.getElementById('logo-emoji').value,logoUrl:document.getElementById('logo-url').value,cardRadius:document.getElementById('card-radius').value,fontSize:document.getElementById('font-size').value,showPrices:document.getElementById('toggle-prices').classList.contains('on'),showDesc:document.getElementById('toggle-desc').classList.contains('on'),showWeight:document.getElementById('toggle-weight').classList.contains('on'),updatedAt:new Date().toISOString()};
   try{await setDoc(doc(db,'venues',venueId,'design','main'),data);notify('✅ Дизайн збережено!','ok');}
-  catch(e){notify('Помилка: '+e.message,'err');}
+  catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
 
 // ── BILLING ──
@@ -3941,20 +4397,20 @@ async function loadBilling(){
     const vd=venueSnap.data();
     const plan=vd.plan||'trial';
     const planData=PLANS_BILLING[plan]||PLANS_BILLING.trial;
-    document.getElementById('billing-sub').textContent=`Тариф: ${planData.name}`;
+    document.getElementById('billing-sub').textContent=`${t('planLabel')}: ${planData.name}`;
     document.getElementById('cur-plan-name').textContent=planData.name;
     document.getElementById('cur-plan-name').style.color=planData.color;
-    document.getElementById('cur-plan-desc').textContent=plan==='trial'?'Пробний період':plan==='free'?'Безкоштовно':`₴${planData.price}/місяць`;
+    document.getElementById('cur-plan-desc').textContent=plan==='trial'?t('trialPeriod'):plan==='free'?t('free'):`₴${planData.price}/${t('perMonth')}`;
     if(plan==='trial'&&vd.trialEndsAt){
       const trialEnd=vd.trialEndsAt.seconds*1000;
       const daysLeft=Math.max(0,Math.ceil((trialEnd-Date.now())/86400000));
       const pct=Math.round(daysLeft/14*100);
       document.getElementById('trial-days-big').textContent=daysLeft;
-      document.getElementById('trial-days-label').textContent=daysLeft===0?'Пробний період закінчився!':'днів залишилось';
+      document.getElementById('trial-days-label').textContent=daysLeft===0?t('trialEnded'):t('daysLeft');
       document.getElementById('trial-fill').style.width=pct+'%';
       document.getElementById('trial-fill').style.background=daysLeft<=3?'var(--red)':daysLeft<=7?'var(--amber)':'var(--green)';
       const endDate=new Date(trialEnd);
-      document.getElementById('trial-end-date').textContent=`Пробний період закінчується: ${endDate.toLocaleDateString('uk-UA',{day:'numeric',month:'long'})}`;
+      document.getElementById('trial-end-date').textContent=`${t('trialEndsOn')}: ${endDate.toLocaleDateString(adminLang==='uk'?'uk-UA':'en-GB',{day:'numeric',month:'long'})}`;
       document.getElementById('trial-block').style.display='block';
     }else{document.getElementById('trial-block').style.display='none';}
     if(vd.recToken){
@@ -3965,20 +4421,20 @@ async function loadBilling(){
     }
     if(vd.planEndsAt&&plan!=='trial'&&plan!=='free'){
       const nextDate=new Date(vd.planEndsAt.seconds*1000);
-      document.getElementById('next-charge-date').textContent=nextDate.toLocaleDateString('uk-UA',{day:'numeric',month:'long',year:'numeric'});
-      document.getElementById('next-charge-amount').textContent=`Буде списано ₴${planData.price}`;
+      document.getElementById('next-charge-date').textContent=nextDate.toLocaleDateString(adminLang==='uk'?'uk-UA':'en-GB',{day:'numeric',month:'long',year:'numeric'});
+      document.getElementById('next-charge-amount').textContent=`${t('willCharge')} ₴${planData.price}`;
     }else if(plan==='trial'){
       document.getElementById('next-charge-date').textContent='—';
-      document.getElementById('next-charge-amount').textContent='Після закінчення trial → Free';
+      document.getElementById('next-charge-amount').textContent=t('afterTrialFree');
     }else{
       document.getElementById('next-charge-date').textContent='—';
-      document.getElementById('next-charge-amount').textContent='Тільки після оплати тарифу';
+      document.getElementById('next-charge-amount').textContent=t('onlyAfterPlan');
     }
     const itemsSnap=await getDocs(collection(db,'venues',venueId,'items'));
     const ordSnap=await getDocs(collection(db,'venues',venueId,'orders'));
     const limits={free:{items:20,orders:100},trial:{items:500,orders:5000},starter:{items:80,orders:500},pro:{items:500,orders:5000},enterprise:{items:99999,orders:99999}};
     const lim=limits[plan]||limits.free;
-    document.getElementById('usage-info').innerHTML=`Страв: <b>${itemsSnap.size}/${lim.items}</b><br/>Замовлень: <b>${ordSnap.size}/${lim.orders}</b>`;
+    document.getElementById('usage-info').innerHTML=`${t('dishesCount')}: <b>${itemsSnap.size}/${lim.items}</b><br/>${t('ordersCount')}: <b>${ordSnap.size}/${lim.orders}</b>`;
     renderBillingPlanCards(plan);
     const paymSnap=await getDocs(collection(db,'payments'));
     const payments=paymSnap.docs.map(d=>({id:d.id,...d.data()})).filter(p=>p.venueId===venueId).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
@@ -3988,18 +4444,18 @@ async function loadBilling(){
 
 function renderBillingPlanCards(currentPlan){
   const plans=[
-    {key:'free',name:'Free',price:0,features:['20 страв','100 замовлень/міс','Базовий дизайн']},
-    {key:'starter',name:'Starter',price:299,features:['80 страв','500 замовлень/міс','Кольори+шрифт']},
-    {key:'pro',name:'Pro',price:699,features:['500 страв','5000 замовлень/міс','Повний дизайн','Фото+банер'],popular:true},
-    {key:'enterprise',name:'Enterprise',price:1999,features:['Необмежено','POS інтеграція','Власний домен']},
+    {key:'free',name:'Free',price:0,features:[t('feat20Dishes'),t('feat100Orders'),t('featBasicDesign')]},
+    {key:'starter',name:'Starter',price:299,features:[t('feat80Dishes'),t('feat500Orders'),t('featColorsFont')]},
+    {key:'pro',name:'Pro',price:699,features:[t('feat500Dishes'),t('feat5000Orders'),t('featFullDesign'),t('featPhotoBanner')],popular:true},
+    {key:'enterprise',name:'Enterprise',price:1999,features:[t('featUnlimited'),t('featPOS'),t('featDomain')]},
   ];
   document.getElementById('billing-plan-cards').innerHTML=plans.map(p=>`
     <div style="background:var(--card);border:1.5px solid ${p.key===currentPlan?'var(--accent)':'var(--border)'};border-radius:var(--radius);padding:1rem;position:relative;${p.key===currentPlan?'background:var(--accent-soft)':''}">
-      ${p.popular?'<div style="position:absolute;top:.5rem;right:.5rem;background:var(--accent);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600">ПОПУЛЯРНИЙ</div>':''}
+      ${p.popular?`<div style="position:absolute;top:.5rem;right:.5rem;background:var(--accent);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600">${t('popular')}</div>`:''}
       <div style="font-family:var(--font-head);font-size:.95rem;font-weight:600;margin-bottom:.25rem">${p.name}</div>
-      <div style="font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:.5rem">${p.price?'₴'+p.price+'<span style="font-size:11px;font-weight:400;color:var(--muted)">/міс</span>':'Безкоштовно'}</div>
+      <div style="font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:.5rem">${p.price?'₴'+p.price+'<span style="font-size:11px;font-weight:400;color:var(--muted)">/${t("perMonth")}</span>':t('free')}</div>
       <div style="font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:.75rem">${p.features.join('<br/>')}</div>
-      ${p.key!==currentPlan?`<button class="btn btn-accent btn-sm" style="width:100%" onclick="subscribePlan('${p.key}')">${currentPlan==='trial'||currentPlan==='free'?'Обрати':'Перейти'}</button>`:'<div style="text-align:center;font-size:12px;color:var(--accent);font-weight:600">✓ Поточний тариф</div>'}
+      ${p.key!==currentPlan?`<button class="btn btn-accent btn-sm" style="width:100%" onclick="subscribePlan('${p.key}')">${currentPlan==='trial'||currentPlan==='free'?t('choosePlanBtn'):t('switchPlan')}</button>`:`<div style="text-align:center;font-size:12px;color:var(--accent);font-weight:600">✓ ${t('currentPlanLbl')}</div>`}
     </div>`).join('');
 }
 
@@ -4017,7 +4473,7 @@ window.subscribePlan=async function(plan){
     if(!res.ok){notify('Помилка: '+(data.error||'невідома'),'err');return;}
     window.open(data.pageUrl,'_blank');
     notify('✅ Відкрито сторінку оплати Monobank','ok');
-  }catch(e){notify('Помилка: '+e.message,'err');}
+  }catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
 window.changeCard=async function(){const {doc,getDoc}=window.__FS;const snap=await getDoc(doc(db,'venues',venueId));const plan=snap.data()?.plan||'pro';await window.subscribePlan(plan==='trial'||plan==='free'?'starter':plan);};
 window.removeCard=async function(){
@@ -4025,7 +4481,7 @@ window.removeCard=async function(){
   const {doc,updateDoc}=window.__FS;
   try{await updateDoc(doc(db,'venues',venueId),{recToken:null,cardMask:null,cardExpiry:null});
   document.getElementById('no-card-block').style.display='block';document.getElementById('has-card-block').style.display='none';notify('Картку відвязано','ok');}
-  catch(e){notify('Помилка: '+e.message,'err');}
+  catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
 
 // ── POS ──
@@ -4436,7 +4892,7 @@ async function loadPaymentSettings() {
 }
 window.savePayments=async function(){
   if(!db){notify('Firebase не підключено','err');return;}
-  notify('Зберігаємо...','ok');
+  notify(t('notifSaving'),'ok');
   try{
     const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     const token=await getAuth().currentUser?.getIdToken();
@@ -4451,7 +4907,7 @@ window.savePayments=async function(){
     const data=await res.json();
     if(!res.ok){notify('Помилка: '+(data.error||''),'err');return;}
     notify('Налаштування платежів збережено!','ok');
-  }catch(e){notify('Помилка: '+e.message,'err');}
+  }catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
 
 // ── POS ──────────────────────────────────────────────────
@@ -4493,7 +4949,7 @@ async function savePOSData(){
   const syrve={enabled:document.getElementById('pos-card-syrve')?.classList.contains('connected'),serverUrl:document.getElementById('syrve-url')?.value||'',login:document.getElementById('syrve-login')?.value||'',password:document.getElementById('syrve-pass')?.value||'',organizationId:document.getElementById('syrve-org')?.value||'',terminalGroupId:document.getElementById('syrve-term')?.value||''};
   await fetch(`${window.__CF_URL}/savePOSSettings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,poster,syrve,syncEnabled:document.getElementById('pos-sync')?.checked!==false,syncWhen:document.getElementById('pos-when')?.value||'placed'})});
 }
-window.savePOS=async function(){try{await savePOSData();notify('POS-налаштування збережено!','ok');}catch(e){notify('Помилка: '+e.message,'err');}};
+window.savePOS=async function(){try{await savePOSData();notify('POS-налаштування збережено!','ok');}catch(e){notify(t('notifError')+': '+e.message,'err');}};
 window.connectPOS=async function(sys){
   const logEl=document.getElementById('log-'+sys),now=new Date().toLocaleTimeString('uk-UA');
   logEl.innerHTML=`<div class="log-info">[${now}] Підключення...</div>`;
@@ -4511,7 +4967,7 @@ window.connectPOS=async function(sys){
     // Зберігаємо enabled:true
     await savePOSData();
     notify((sys==='poster'?'Poster':'Syrve')+' підключено!','ok');
-  }catch(e){logEl.innerHTML+=`<div class="log-err">[${now}] ${e.message}</div>`;notify('Помилка: '+e.message,'err');}
+  }catch(e){logEl.innerHTML+=`<div class="log-err">[${now}] ${e.message}</div>`;notify(t('notifError')+': '+e.message,'err');}
 };
 window.testPOS=async function(sys){
   const logEl=document.getElementById('log-'+sys),now=new Date().toLocaleTimeString('uk-UA');
@@ -4524,7 +4980,7 @@ window.testPOS=async function(sys){
     if(!res.ok)throw new Error(data.error);
     logEl.innerHTML+=`<div class="log-ok">[${now}] OK: ${data.name||''}</div>`;
     notify('Тест успішний!','ok');
-  }catch(e){logEl.innerHTML+=`<div class="log-err">[${now}] ${e.message}</div>`;notify('Помилка: '+e.message,'err');}
+  }catch(e){logEl.innerHTML+=`<div class="log-err">[${now}] ${e.message}</div>`;notify(t('notifError')+': '+e.message,'err');}
 };
 const _origNav2=window.nav;
 window.nav=function(btn,tab){
@@ -4702,7 +5158,7 @@ window.saveOrderingSettings = async function() {
     };
     await setDoc(doc(db,'venues',venueId,'settings','ordering'), data);
     notify('✅ Налаштування замовлень збережено!','ok');
-  } catch(e) { notify('Помилка: '+e.message,'err'); }
+  } catch(e) { notify(t('notifError')+': '+e.message,'err'); }
 };
 
 // Завантажуємо при відкритті вкладки
@@ -4815,8 +5271,8 @@ window.showCustomerOrders = async function(phone, name) {
       const items = (o.items||[]).map(i=>`${i.name} ×${i.qty}`).join(', ');
       return `${date}: ${items} — ${o.total} ₴`;
     }).join('\n');
-    alert(`Замовлення клієнта ${name} (${phone}):\n\n${info||'Замовлень немає'}`);
-  } catch(e) { notify('Помилка: '+e.message,'err'); }
+    alert(`Замовлення клієнта ${name} (${phone}):\n\n${info||t('noOrders')}`);
+  } catch(e) { notify(t('notifError')+': '+e.message,'err'); }
 };
 
 window.exportCustomersExcel = function() {
@@ -4873,7 +5329,7 @@ window.testCheckbox = async function() {
     });
     if(res.ok) notify('✅ Checkbox підключено успішно!','ok');
     else notify('Помилка: невірні дані Checkbox','err');
-  } catch(e) { notify('Помилка: '+e.message,'err'); }
+  } catch(e) { notify(t('notifError')+': '+e.message,'err'); }
 };
 
 window.testVchasno = function() {
