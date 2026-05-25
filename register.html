@@ -111,7 +111,7 @@ h1{font-size:1.8rem;font-weight:700;letter-spacing:-.5px;margin-bottom:.5rem}
 <body>
 <script>
 window.__MQ_CFG = {
-  apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
+ apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
     authDomain: "mageqrrest.firebaseapp.com",
     projectId: "mageqrrest",
     storageBucket: "mageqrrest.firebasestorage.app",
@@ -125,10 +125,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 <div class="header">
   <div class="logo">✦ Mage <span>QR</span> Rest</div>
   <h1 data-i18n="r_startBtn">Почніть безкоштовно</h1>
-  <p class="subtitle">Цифрове меню для вашого закладу<br/ data-i18n="r_in5min">за 5 хвилин</p>
+  <p class="subtitle"><span data-i18n="r_subtitle">Цифрове меню для вашого закладу</span><br/><span data-i18n="r_in5min">за 5 хвилин</span></p>
 </div>
 
-<div class="trial-badge" data-i18n="r_trialBadge" data-i18n="r_trialBadge">🎁 14 днів безкоштовно — будь-який тариф</div>
+<div class="trial-badge" data-i18n="r_trialBadge">🎁 14 днів безкоштовно — будь-який тариф</div>
 
 <div class="steps-wrap">
   <div class="step-item">
@@ -328,7 +328,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 </div>
 
 <div style="text-align:center;margin-top:1.5rem;font-size:13px;color:var(--muted)">
-  Вже є акаунт? <a href="login.html" style="color:var(--accent)" data-i18n="r_loginBtn">Увійти</a>
+  <span data-i18n="r_haveAccount">Вже є акаунт?</span> <a href="login.html" style="color:var(--accent)" data-i18n="r_loginBtn">Увійти</a>
 </div>
 
 <script type="module">
@@ -384,7 +384,9 @@ const REG_I18N = {
     'r_in5min':'за 5 хвилин',
     'phVenueName':'Кафе «Смачно»',
     'phCity':'Тернопіль',
-    'phSlug':'miy-zaklad'},
+    'phSlug':'miy-zaklad',
+    'r_subtitle':'Цифрове меню для вашого закладу',
+    'r_haveAccount':'Вже є акаунт?'},
   en: {
     langTitle:'Choose your language', langSubtitle:'For comfortable work with admin panel',
     langNext:'Continue →', stepLang:'Language', stepVenue:'Venue',
@@ -421,7 +423,9 @@ const REG_I18N = {
     'r_in5min':'in 5 minutes',
     'phVenueName':'My Cafe',
     'phCity':'London',
-    'phSlug':'my-cafe'},
+    'phSlug':'my-cafe',
+    'r_subtitle':'Digital menu for your venue',
+    'r_haveAccount':'Already have an account?'},
   pl: {
     langTitle:'Wybierz język', langSubtitle:'Dla wygodnej pracy z panelem administracyjnym',
     langNext:'Kontynuuj →', stepLang:'Język', stepVenue:'Lokal',
@@ -458,7 +462,9 @@ const REG_I18N = {
     'r_in5min':'w 5 minut',
     'phVenueName':'Moja Restauracja',
     'phCity':'Warszawa',
-    'phSlug':'moja-restauracja'},
+    'phSlug':'moja-restauracja',
+    'r_subtitle':'Cyfrowe menu dla Twojego lokalu',
+    'r_haveAccount':'Masz już konto?'},
   de: {
     langTitle:'Sprache wählen', langSubtitle:'Für komfortable Arbeit mit dem Admin-Panel',
     langNext:'Weiter →', stepLang:'Sprache', stepVenue:'Lokal',
@@ -495,7 +501,9 @@ const REG_I18N = {
     'r_in5min':'in 5 Minuten',
     'phVenueName':'Mein Restaurant',
     'phCity':'Berlin',
-    'phSlug':'mein-restaurant'},
+    'phSlug':'mein-restaurant',
+    'r_subtitle':'Digitale Speisekarte für Ihr Lokal',
+    'r_haveAccount':'Haben Sie ein Konto?'},
   ro: {
     langTitle:'Alegeți limba', langSubtitle:'Pentru lucru comod cu panoul de administrare',
     langNext:'Continuați →', stepLang:'Limbă', stepVenue:'Local',
@@ -532,7 +540,9 @@ const REG_I18N = {
     'r_in5min':'în 5 minute',
     'phVenueName':'Restaurantul meu',
     'phCity':'București',
-    'phSlug':'restaurantul-meu'},
+    'phSlug':'restaurantul-meu',
+    'r_subtitle':'Meniu digital pentru localul dvs.',
+    'r_haveAccount':'Aveți deja un cont?'},
   es: {
     langTitle:'Elige tu idioma', langSubtitle:'Para trabajar cómodamente con el panel de administración',
     langNext:'Continuar →', stepLang:'Idioma', stepVenue:'Local',
@@ -569,7 +579,9 @@ const REG_I18N = {
     'r_in5min':'en 5 minutos',
     'phVenueName':'Mi Restaurante',
     'phCity':'Madrid',
-    'phSlug':'mi-restaurante'},
+    'phSlug':'mi-restaurante',
+    'r_subtitle':'Menú digital para tu local',
+    'r_haveAccount':'¿Ya tienes cuenta?'},
   cnr: {
     langTitle:'Odaberite jezik', langSubtitle:'Za udoban rad s admin panelom',
     langNext:'Nastavi →', stepLang:'Jezik', stepVenue:'Lokal',
@@ -606,7 +618,9 @@ const REG_I18N = {
     'r_in5min':'za 5 minuta',
     'phVenueName':'Moj Restoran',
     'phCity':'Podgorica',
-    'phSlug':'moj-restoran'},
+    'phSlug':'moj-restoran',
+    'r_subtitle':'Digitalni meni za vaš lokal',
+    'r_haveAccount':'Već imate nalog?'},
 }
 
 function applyRegLang(lang) {
