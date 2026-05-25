@@ -2007,6 +2007,16 @@ var I18N = {
     avgCheck:'Сер. чек',
     clientCol:'Клієнт',
     firstOrder:'Перше замовлення',
+    editDish:'Редагувати страву',
+    addItem:'Нова страва',
+    saveDish:'💾 Зберегти страву',
+    editCat:'Редагувати категорію',
+    addCat:'Нова категорія',
+    saveCat:'💾 Зберегти категорію',
+    itemsCount:'позицій',
+    ordersCount:'замовлень',
+    tablesCount:'столів',
+    clientsCount:'клієнтів'
   },
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
@@ -2103,6 +2113,16 @@ var I18N = {
     avgCheck:'Avg. check',
     clientCol:'Client',
     firstOrder:'First order',
+    editDish:'Edit dish',
+    addItem:'New dish',
+    saveDish:'💾 Save dish',
+    editCat:'Edit category',
+    addCat:'New category',
+    saveCat:'💾 Save category',
+    itemsCount:'items',
+    ordersCount:'orders',
+    tablesCount:'tables',
+    clientsCount:'clients'
   },
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
@@ -2199,6 +2219,16 @@ var I18N = {
     avgCheck:'Śr. rachunek',
     clientCol:'Klient',
     firstOrder:'Pierwsze zamówienie',
+    editDish:'Edytuj danie',
+    addItem:'Nowe danie',
+    saveDish:'💾 Zapisz danie',
+    editCat:'Edytuj kategorię',
+    addCat:'Nowa kategoria',
+    saveCat:'💾 Zapisz kategorię',
+    itemsCount:'pozycji',
+    ordersCount:'zamówień',
+    tablesCount:'stolików',
+    clientsCount:'klientów'
   },
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
@@ -2294,6 +2324,16 @@ var I18N = {
     avgCheck:'Ø Rechnung',
     clientCol:'Kunde',
     firstOrder:'Erste Bestellung',
+    editDish:'Gericht bearbeiten',
+    addItem:'Neues Gericht',
+    saveDish:'💾 Gericht speichern',
+    editCat:'Kategorie bearbeiten',
+    addCat:'Neue Kategorie',
+    saveCat:'💾 Kategorie speichern',
+    itemsCount:'Gerichte',
+    ordersCount:'Bestellungen',
+    tablesCount:'Tische',
+    clientsCount:'Kunden'
   },
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
@@ -2389,6 +2429,16 @@ var I18N = {
     avgCheck:'Bon mediu',
     clientCol:'Client',
     firstOrder:'Prima comandă',
+    editDish:'Editează preparat',
+    addItem:'Preparat nou',
+    saveDish:'💾 Salvează preparat',
+    editCat:'Editează categorie',
+    addCat:'Categorie nouă',
+    saveCat:'💾 Salvează categorie',
+    itemsCount:'preparate',
+    ordersCount:'comenzi',
+    tablesCount:'mese',
+    clientsCount:'clienți'
   },
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
@@ -2484,6 +2534,16 @@ var I18N = {
     avgCheck:'Ticket medio',
     clientCol:'Cliente',
     firstOrder:'Primer pedido',
+    editDish:'Editar plato',
+    addItem:'Nuevo plato',
+    saveDish:'💾 Guardar plato',
+    editCat:'Editar categoría',
+    addCat:'Nueva categoría',
+    saveCat:'💾 Guardar categoría',
+    itemsCount:'platos',
+    ordersCount:'pedidos',
+    tablesCount:'mesas',
+    clientsCount:'clientes'
   },
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
@@ -2579,6 +2639,16 @@ var I18N = {
     avgCheck:'Prosj. račun',
     clientCol:'Klijent',
     firstOrder:'Prva narudžbina',
+    editDish:'Uredi jelo',
+    addItem:'Novo jelo',
+    saveDish:'💾 Sačuvaj jelo',
+    editCat:'Uredi kategoriju',
+    addCat:'Nova kategorija',
+    saveCat:'💾 Sačuvaj kategoriju',
+    itemsCount:'jela',
+    ordersCount:'narudžbina',
+    tablesCount:'stolova',
+    clientsCount:'klijenata'
   },
 };
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -2635,8 +2705,9 @@ async function initFirebase() {
     renderPresetsRow();
     loadDesignSettings();
     loadTablesFromFirestore();
-    renderAdminLangSwitcher();
-    applyAdminLang(adminLang);
+    // applyAdminLang вже викликається в loadSettings після читання Firestore
+    // Якщо мова не в Firestore — застосовуємо з localStorage
+    if(!document._langApplied) applyAdminLang(adminLang);
     setTimeout(() => loadBilling(), 500);
   });
 }
@@ -2820,7 +2891,7 @@ async function loadItems(){
   try{const snap=await getDocs(collection(db,'venues',venueId,'items'));
   items=snap.docs.map(d=>({id:d.id,...d.data()}));
   renderItems();
-  document.getElementById('items-count-sub').textContent=items.length+' позицій';}
+  document.getElementById('items-count-sub').textContent=items.length+' '+(t('itemsCount')||'позицій');}
   catch(e){console.warn('loadItems:',e.message);}
 }
 
@@ -2945,10 +3016,10 @@ function renderItems(){
   const cf=document.getElementById('item-cat-filter').value;
   const q=document.getElementById('item-search').value.toLowerCase();
   const list=items.filter(i=>(!cf||i.category===cf)&&(!q||i.name.toLowerCase().includes(q)));
-  document.getElementById('items-count-sub').textContent=items.length+' позицій';
+  document.getElementById('items-count-sub').textContent=items.length+' '+(t('itemsCount')||'позицій');
   const sel=document.getElementById('item-cat-filter');
   const prev=sel.value;
-  sel.innerHTML='<option value="">Всі категорії</option>'+cats.map(c=>`<option${c.name===prev?' selected':''}>${c.name}</option>`).join('');
+  sel.innerHTML=`<option value="">${t('allCategories')}</option>`+cats.map(c=>`<option${c.name===prev?' selected':''}>${c.name}</option>`).join('');
   document.getElementById('items-list').innerHTML=list.length?list.map(i=>`
     <div class="item-row">
       <div class="item-em" style="overflow:hidden;padding:0">
@@ -2968,7 +3039,7 @@ function openItemModal(id=null){
   document.getElementById('if-cat').innerHTML=cats.map(c=>`<option>${c.name}</option>`).join('');
   if(id){
     const i=items.find(x=>x.id===id);
-    document.getElementById('item-modal-t').textContent='Редагувати страву';
+    document.getElementById('item-modal-t').textContent=t('editDish');
     document.getElementById('if-name').value=i.name||'';
     document.getElementById('if-desc').value=i.desc||'';
     document.getElementById('if-price').value=i.price||'';
@@ -2989,7 +3060,7 @@ function openItemModal(id=null){
     document.getElementById('if-price-del')&&(document.getElementById('if-price-del').value=pr.delivery||'');
     if(i.photoUrl){document.getElementById('if-photo-url').value=i.photoUrl;document.getElementById('if-photo-url-input').value=i.photoUrl;showPhotoPreview(i.photoUrl);}else clearPhoto();
   }else{
-    document.getElementById('item-modal-t').textContent='Нова страва';
+    document.getElementById('item-modal-t').textContent=t('addItem');
     ['if-name','if-desc','if-price','if-weight'].forEach(f=>document.getElementById(f).value='');
     document.getElementById('if-sku')&&(document.getElementById('if-sku').value='');
     renderAllergenCheckboxes([]);clearPhoto();currentPhotoFile=null;
@@ -3016,7 +3087,7 @@ function renderCats(){
 function openCatModal(id=null){
   editCatId=id;
   if(id){const c=cats.find(x=>x.id===id);document.getElementById('cat-modal-t').textContent=t('edit');document.getElementById('cf-name').value=c.name;document.getElementById('cf-emoji').value=c.emoji||'';document.getElementById('cf-order').value=c.order||'';}
-  else{document.getElementById('cat-modal-t').textContent='Нова категорія';['cf-name','cf-emoji','cf-order'].forEach(f=>document.getElementById(f).value='');}
+  else{document.getElementById('cat-modal-t').textContent=t('addCat');['cf-name','cf-emoji','cf-order'].forEach(f=>document.getElementById(f).value='');}
   openModal('modal-cat');
 }
 window.openCatModal=openCatModal;
@@ -3051,7 +3122,13 @@ async function loadSettings(){
     if(!snap.exists())return;
     const d=snap.data();
     if(d.name){document.getElementById('set-name').value=d.name;document.getElementById('sb-venue-name').textContent=d.name;}
-    if(d.adminLang) { applyAdminLang(d.adminLang); renderAdminLangSwitcher(); }
+    if(d.adminLang) {
+      adminLang = d.adminLang;
+      localStorage.setItem('mq_admin_lang', d.adminLang);
+      applyAdminLang(d.adminLang);
+      renderAdminLangSwitcher();
+      document._langApplied = true;
+    }
     if(d.tagline)document.getElementById('set-tag').value=d.tagline;
     if(d.city)document.getElementById('set-city').value=d.city;
     if(d.phone)document.getElementById('set-phone').value=d.phone;
@@ -3985,7 +4062,7 @@ async function loadCustomers() {
     document.getElementById('cst-new').textContent = newCount;
     document.getElementById('cst-repeat').textContent = repeatCount;
     document.getElementById('cst-avg').textContent = avgSpend + ' ₴';
-    document.getElementById('customers-sub').textContent = allCustomers.length + ' клієнтів';
+    document.getElementById('customers-sub').textContent = allCustomers.length + ' '+(t('clientsCount')||'клієнтів');
   } catch(e) { console.warn('loadCustomers:', e.message); }
 }
 
@@ -4439,6 +4516,19 @@ function applyAdminLang(lang) {
   try { if(typeof renderItems === 'function') renderItems(); } catch(e) {}
   try { if(typeof renderCats === 'function') renderCats(); } catch(e) {}
   try { if(typeof renderTables === 'function') renderTables(); } catch(e) {}
+  try { if(typeof loadCustomers === 'function') loadCustomers(); } catch(e) {}
+
+  // Оновлюємо заголовки вкладок
+  const tabTitles = {
+    't-orders': 'orders', 't-items': 'dishes', 't-cats': 'categories',
+    't-tables': 'tables', 't-design': 'design', 't-payments': 'payments',
+    't-pos': 'pos', 't-customers': 'customers', 't-ordering': 'ordering',
+    't-settings': 'settings', 't-subscription': 'subscription',
+  };
+  document.querySelectorAll('.page-title[data-i18n], .page-sub[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if(key && t(key) !== key) el.textContent = t(key);
+  });
 
   renderAdminLangSwitcher();
 }
@@ -4460,6 +4550,7 @@ function renderAdminLangSwitcher() {
 
 // Переклад всього меню
 window.saveAdminLang = async function(lang) {
+  localStorage.setItem('mq_admin_lang', lang);
   if(!db||!window.__FS) return;
   const {doc, updateDoc} = window.__FS;
   try {
