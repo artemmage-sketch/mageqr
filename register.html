@@ -94,6 +94,17 @@ h1{font-size:1.8rem;font-weight:700;letter-spacing:-.5px;margin-bottom:.5rem}
 
 .lang-sel-btn{padding:5px 10px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
 .lang-sel-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.lang-choice-btn{
+  display:flex;align-items:center;gap:.625rem;
+  padding:.75rem .875rem;
+  border:2px solid var(--border2);border-radius:10px;
+  background:var(--card);cursor:pointer;
+  font-size:14px;font-weight:500;color:var(--text);
+  transition:all .2s;width:100%;text-align:left;
+}
+.lang-choice-btn span:first-child{font-size:1.25rem;line-height:1;flex-shrink:0}
+.lang-choice-btn:hover{border-color:var(--accent)}
+.lang-choice-btn.active{border-color:var(--accent);background:rgba(193,68,14,.08);font-weight:600}
 
 </style>
 </head>
@@ -121,23 +132,48 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
 <div class="steps-wrap">
   <div class="step-item">
-    <div class="step-circle active" id="sc1">1</div>
-    <div class="step-label">Заклад</div>
+    <div class="step-circle active" id="sc0">🌐</div>
+    <div class="step-label" id="lbl-step0">Мова</div>
+  </div>
+  <div class="step-item">
+    <div class="step-circle" id="sc1">1</div>
+    <div class="step-label" id="lbl-step1">Заклад</div>
   </div>
   <div class="step-item">
     <div class="step-circle" id="sc2">2</div>
-    <div class="step-label">Акаунт</div>
+    <div class="step-label" id="lbl-step2">Акаунт</div>
   </div>
   <div class="step-item">
     <div class="step-circle" id="sc3">3</div>
-    <div class="step-label">Тариф</div>
+    <div class="step-label" id="lbl-step3">Тариф</div>
   </div>
 </div>
 
 <div class="card">
 
+  <!-- STEP 0: Вибір мови -->
+  <div class="form-step active" id="step0">
+    <div style="text-align:center;padding:1rem 0 1.25rem">
+      <div style="font-size:2.5rem;margin-bottom:.5rem">🌐</div>
+      <div style="font-size:20px;font-weight:700;margin-bottom:.375rem" id="lang-title">Оберіть мову</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:1.25rem" id="lang-subtitle">Choose your admin panel language</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:1.25rem" id="lang-grid">
+      <button type="button" class="lang-choice-btn active" data-lang="uk"><span>🇺🇦</span><span>Українська</span></button>
+      <button type="button" class="lang-choice-btn" data-lang="en"><span>🇬🇧</span><span>English</span></button>
+      <button type="button" class="lang-choice-btn" data-lang="pl"><span>🇵🇱</span><span>Polski</span></button>
+      <button type="button" class="lang-choice-btn" data-lang="de"><span>🇩🇪</span><span>Deutsch</span></button>
+      <button type="button" class="lang-choice-btn" data-lang="ro"><span>🇷🇴</span><span>Română</span></button>
+      <button type="button" class="lang-choice-btn" data-lang="es"><span>🇪🇸</span><span>Español</span></button>
+      <button type="button" class="lang-choice-btn" data-lang="cnr" style="grid-column:1/-1"><span>🇲🇪</span><span>Crnogorski</span></button>
+    </div>
+    <button class="btn btn-accent" style="width:100%;font-size:15px;padding:13px" id="lang-next-btn" type="button">
+      Продовжити →
+    </button>
+  </div>
+
   <!-- STEP 1: Інформація про заклад -->
-  <div class="form-step active" id="step1">
+  <div class="form-step" id="step1">
     <div style="font-size:16px;font-weight:600;margin-bottom:1.25rem">📋 Про ваш заклад</div>
     <div class="field">
       <label>Назва закладу *</label>
@@ -180,7 +216,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     </div>
     <div class="err" id="step2-err"></div>
     <button class="btn btn-accent" onclick="nextStep(2)">Далі →</button>
-    <button class="btn btn-outline" onclick="goStep(1)" style="margin-top:.5rem">← Назад</button>
+    <button class="btn btn-outline" id="back-to-step1" style="margin-top:.5rem">← Назад</button>
   </div>
 
   <!-- STEP 3: Вибір тарифу -->
@@ -275,7 +311,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     <button class="btn btn-accent" id="register-btn" onclick="doRegister()">
       Розпочати 14 днів безкоштовно 🚀
     </button>
-    <button class="btn btn-outline" onclick="goStep(2)" style="margin-top:.5rem">← Назад</button>
+    <button class="btn btn-outline" id="back-to-step2" style="margin-top:.5rem">← Назад</button>
     <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:.75rem">
       Реєструючись ви погоджуєтесь з умовами використання.<br/>Картка не потрібна для пробного періоду.
     </div>
@@ -324,16 +360,132 @@ let selectedPlan   = 'pro';
 let registeredSlug = '';
 let selectedAdminLang = localStorage.getItem('mq_admin_lang') || 'uk';
 
-window.selectRegLang = function(lang) {
+// Переклади для сторінки реєстрації
+const REG_I18N = {
+  uk: {
+    langTitle:'Оберіть мову', langSubtitle:'Для зручної роботи з адмін панеллю',
+    langNext:'Продовжити →', stepLang:'Мова', stepVenue:'Заклад',
+    stepAccount:'Акаунт', stepPlan:'Тариф',
+    step1title:'📋 Про ваш заклад', venueName:'Назва закладу *',
+    venueCity:'Місто', venuePhone:'Телефон',
+    step2title:'👤 Дані акаунту', email:'Email *', password:'Пароль *',
+    step3title:'💰 Оберіть тариф', startBtn:'Розпочати 14 днів безкоштовно 🚀',
+    backBtn:'← Назад', trialBadge:'🎁 14 днів безкоштовно — будь-який тариф',
+  },
+  en: {
+    langTitle:'Choose your language', langSubtitle:'For comfortable work with admin panel',
+    langNext:'Continue →', stepLang:'Language', stepVenue:'Venue',
+    stepAccount:'Account', stepPlan:'Plan',
+    step1title:'📋 About your venue', venueName:'Venue name *',
+    venueCity:'City', venuePhone:'Phone',
+    step2title:'👤 Account details', email:'Email *', password:'Password *',
+    step3title:'💰 Choose a plan', startBtn:'Start 14 days free 🚀',
+    backBtn:'← Back', trialBadge:'🎁 14 days free — any plan',
+  },
+  pl: {
+    langTitle:'Wybierz język', langSubtitle:'Dla wygodnej pracy z panelem administracyjnym',
+    langNext:'Kontynuuj →', stepLang:'Język', stepVenue:'Lokal',
+    stepAccount:'Konto', stepPlan:'Plan',
+    step1title:'📋 O Twoim lokalu', venueName:'Nazwa lokalu *',
+    venueCity:'Miasto', venuePhone:'Telefon',
+    step2title:'👤 Dane konta', email:'Email *', password:'Hasło *',
+    step3title:'💰 Wybierz plan', startBtn:'Zacznij 14 dni za darmo 🚀',
+    backBtn:'← Wstecz', trialBadge:'🎁 14 dni za darmo — dowolny plan',
+  },
+  de: {
+    langTitle:'Sprache wählen', langSubtitle:'Für komfortable Arbeit mit dem Admin-Panel',
+    langNext:'Weiter →', stepLang:'Sprache', stepVenue:'Lokal',
+    stepAccount:'Konto', stepPlan:'Tarif',
+    step1title:'📋 Über Ihr Lokal', venueName:'Name des Lokals *',
+    venueCity:'Stadt', venuePhone:'Telefon',
+    step2title:'👤 Kontodaten', email:'E-Mail *', password:'Passwort *',
+    step3title:'💰 Tarif wählen', startBtn:'14 Tage kostenlos starten 🚀',
+    backBtn:'← Zurück', trialBadge:'🎁 14 Tage kostenlos — jeder Tarif',
+  },
+  ro: {
+    langTitle:'Alegeți limba', langSubtitle:'Pentru lucru comod cu panoul de administrare',
+    langNext:'Continuați →', stepLang:'Limbă', stepVenue:'Local',
+    stepAccount:'Cont', stepPlan:'Plan',
+    step1title:'📋 Despre localul dvs.', venueName:'Numele localului *',
+    venueCity:'Oraș', venuePhone:'Telefon',
+    step2title:'👤 Datele contului', email:'Email *', password:'Parolă *',
+    step3title:'💰 Alegeți un plan', startBtn:'Începeți 14 zile gratuit 🚀',
+    backBtn:'← Înapoi', trialBadge:'🎁 14 zile gratuit — orice plan',
+  },
+  es: {
+    langTitle:'Elige tu idioma', langSubtitle:'Para trabajar cómodamente con el panel de administración',
+    langNext:'Continuar →', stepLang:'Idioma', stepVenue:'Local',
+    stepAccount:'Cuenta', stepPlan:'Plan',
+    step1title:'📋 Sobre tu local', venueName:'Nombre del local *',
+    venueCity:'Ciudad', venuePhone:'Teléfono',
+    step2title:'👤 Datos de la cuenta', email:'Email *', password:'Contraseña *',
+    step3title:'💰 Elige un plan', startBtn:'Empezar 14 días gratis 🚀',
+    backBtn:'← Atrás', trialBadge:'🎁 14 días gratis — cualquier plan',
+  },
+  cnr: {
+    langTitle:'Odaberite jezik', langSubtitle:'Za udoban rad s admin panelom',
+    langNext:'Nastavi →', stepLang:'Jezik', stepVenue:'Lokal',
+    stepAccount:'Nalog', stepPlan:'Plan',
+    step1title:'📋 O vašem lokalu', venueName:'Naziv lokala *',
+    venueCity:'Grad', venuePhone:'Telefon',
+    step2title:'👤 Podaci naloga', email:'Email *', password:'Lozinka *',
+    step3title:'💰 Odaberite plan', startBtn:'Počnite 14 dana besplatno 🚀',
+    backBtn:'← Nazad', trialBadge:'🎁 14 dana besplatno — bilo koji plan',
+  },
+};
+
+function applyRegLang(lang) {
+  const s = REG_I18N[lang] || REG_I18N.uk;
+  const set = (id, key) => { const el = document.getElementById(id); if(el && s[key]) el.textContent = s[key]; };
+  const setLbl = (id, key) => { const el = document.querySelector(`label[for="${id}"], #${id}-label`); if(el && s[key]) el.textContent = s[key]; };
+  const setPh = (id, key) => { const el = document.getElementById(id); if(el && s[key]) el.placeholder = s[key]; };
+
+  set('lang-title', 'langTitle');
+  set('lang-subtitle', 'langSubtitle');
+  set('lang-next-btn', 'langNext');
+  set('lbl-step0', 'stepLang');
+  set('lbl-step1', 'stepVenue');
+  set('lbl-step2', 'stepAccount');
+  set('lbl-step3', 'stepPlan');
+  set('register-btn', 'startBtn');
+
+  // Крок 1 — заклад
+  const s1 = document.querySelector('#step1 [style*="font-size:16px"]');
+  if(s1) s1.textContent = s.step1title;
+
+  // Крок 2 — акаунт
+  const s2 = document.querySelector('#step2 [style*="font-size:16px"]');
+  if(s2) s2.textContent = s.step2title;
+
+  // Крок 3 — тариф
+  const s3 = document.querySelector('#step3 [style*="font-size:16px"]');
+  if(s3) s3.textContent = s.step3title;
+
+  // Trial badge
+  const badge = document.querySelector('.trial-badge');
+  if(badge) badge.textContent = s.trialBadge;
+
+  // Кнопки "← Назад"
+  document.querySelectorAll('.btn-outline[onclick*="goStep"]').forEach(btn => {
+    btn.textContent = s.backBtn;
+  });
+}
+
+window._selectRegLang = window.selectRegLang = function(lang) {
   selectedAdminLang = lang;
-  document.querySelectorAll('.lang-sel-btn').forEach(b => {
+  localStorage.setItem('mq_admin_lang', lang);
+  // Кнопки вибору мови
+  document.querySelectorAll('.lang-choice-btn, .lang-sel-btn').forEach(b => {
     b.classList.toggle('active', b.getAttribute('data-lang') === lang);
   });
+  // Перекладаємо сторінку
+  applyRegLang(lang);
 };
 // Відновлюємо збережену мову при завантаженні
-document.querySelectorAll('.lang-sel-btn').forEach(b => {
+document.querySelectorAll('.lang-choice-btn, .lang-sel-btn').forEach(b => {
   b.classList.toggle('active', b.getAttribute('data-lang') === selectedAdminLang);
 });
+applyRegLang(selectedAdminLang);
 
 // ── SLUG ──────────────────────────────────────────────────
 window.generateSlug = function() {
@@ -369,15 +521,23 @@ window.checkStrength = function() {
 };
 
 // ── NAVIGATION ────────────────────────────────────────────
-window.goStep = function(n) {
+window._goStep = window.goStep = function(n) {
   document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
   document.getElementById(`step${n}`).classList.add('active');
+  // Крок 0 — мова
+  const sc0 = document.getElementById('sc0');
+  if(sc0) {
+    sc0.classList.remove('active','done');
+    if(n === 0) sc0.classList.add('active');
+    else sc0.classList.add('done'), sc0.textContent = '✓';
+  }
   [1,2,3].forEach(i => {
-    const c = document.getElementById(`sc${i}`);
-    c.classList.remove('active','done');
-    if (i < n)  c.classList.add('done'), c.textContent = '✓';
-    if (i === n) c.classList.add('active'), c.textContent = i;
-    if (i > n)  c.textContent = i;
+    const el = document.getElementById(`sc${i}`);
+    if(!el) return;
+    el.classList.remove('active','done');
+    if (i < n)  el.classList.add('done'), el.textContent = '✓';
+    if (i === n) el.classList.add('active'), el.textContent = i;
+    if (i > n)  el.textContent = i;
   });
   currentStep = n;
 };
@@ -495,6 +655,28 @@ function showErr(id, msg) {
 function hideErr(id) {
   document.getElementById(id).classList.remove('show');
 }
+</script>
+<script>
+// Ініціалізація кнопок мови через addEventListener (script module не дає global scope)
+document.addEventListener('DOMContentLoaded', function() {
+  // Кнопки вибору мови
+  document.querySelectorAll('.lang-choice-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const lang = this.getAttribute('data-lang');
+      if(window._selectRegLang) window._selectRegLang(lang);
+    });
+  });
+  // Кнопка "Продовжити"
+  const nextBtn = document.getElementById('lang-next-btn');
+  if(nextBtn) nextBtn.addEventListener('click', function() {
+    if(window._goStep) window._goStep(1);
+  });
+  // Кнопки назад
+  const b1 = document.getElementById('back-to-step1');
+  if(b1) b1.addEventListener('click', () => window._goStep && window._goStep(1));
+  const b2 = document.getElementById('back-to-step2');
+  if(b2) b2.addEventListener('click', () => window._goStep && window._goStep(2));
+});
 </script>
 </body>
 </html>
