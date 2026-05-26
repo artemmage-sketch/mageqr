@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Стіл — Mage QR Rest</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Sans:wght@400;500;600&display=swap');
+
+  :root {
+    --accent: #C1440E;
+    --accent2: #E8581F;
+    --bg: #0F0F0F;
+    --bg2: #1A1A1A;
+    --card: #1F1F1F;
+    --border: rgba(255,255,255,.08);
+    --text: #F5F5F5;
+    --muted: rgba(255,255,255,.45);
+    --green: #22C55E;
+    --amber: #F59E0B;
+    --red: #EF4444;
+    --radius: 20px;
+    --font-head: 'Unbounded', sans-serif;
+    --font: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    width: 100%;
+    max-width: 420px;
+    padding: 1.5rem 1.25rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .venue-logo {
+    width: 64px; height: 64px;
+    border-radius: 18px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+  }
+  .venue-logo img { width: 100%; height: 100%; object-fit: cover; }
+
+  .venue-name {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: .25rem;
+  }
+
+  .table-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .375rem;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-head);
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    padding: .3rem .8rem;
+    border-radius: 20px;
+    margin-top: .125rem;
+  }
+
+  /* ── BILL BANNER ── */
+  .bill-banner {
+    width: calc(100% - 2.5rem);
+    max-width: 395px;
+    margin: 1.25rem auto 0;
+    background: linear-gradient(135deg, #1A2F1A, #0F1F0F);
+    border: 1.5px solid rgba(34,197,94,.3);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: none;
+    cursor: pointer;
+    transition: transform .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .bill-banner:active { transform: scale(.98); }
+  .bill-banner::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 100px; height: 100px;
+    background: rgba(34,197,94,.08);
+    border-radius: 50%;
+  }
+  .bill-banner .bb-label {
+    font-size: .7rem;
+    color: rgba(34,197,94,.7);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 600;
+    margin-bottom: .25rem;
+  }
+  .bill-banner .bb-amount {
+    font-family: var(--font-head);
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--green);
+    letter-spacing: -.02em;
+  }
+  .bill-banner .bb-desc {
+    font-size: .75rem;
+    color: var(--muted);
+    margin-top: .25rem;
+  }
+  .bill-banner .bb-cta {
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--green);
+    color: #0F1F0F;
+    font-weight: 700;
+    font-size: .8rem;
+    padding: .5rem 1rem;
+    border-radius: 12px;
+    white-space: nowrap;
+  }
+
+  /* ── MAIN ACTIONS ── */
+  .actions {
+    width: calc(100% - 2.5rem);
+    max-width: 395px;
+    margin: 1.25rem auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+  }
+
+  .action-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text);
+    transition: all .18s;
+    position: relative;
+    overflow: hidden;
+  }
+  .action-card:active { transform: scale(.97); }
+  .action-card.primary {
+    background: linear-gradient(135deg, #2A1208, #1A0A04);
+    border-color: rgba(193,68,14,.4);
+  }
+  .action-card.primary:hover { border-color: var(--accent); }
+
+  .action-card .ac-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    background: rgba(255,255,255,.06);
+  }
+  .action-card.primary .ac-icon {
+    background: rgba(193,68,14,.2);
+  }
+
+  .action-card .ac-body { flex: 1; }
+  .action-card .ac-title {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: .2rem;
+  }
+  .action-card .ac-desc {
+    font-size: .78rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .action-card .ac-arrow {
+    color: var(--muted);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .action-card.primary .ac-arrow { color: var(--accent2); }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin: 2rem auto 1.5rem;
+    text-align: center;
+    font-size: .7rem;
+    color: rgba(255,255,255,.2);
+  }
+
+  /* ── OVERLAYS ── */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.7);
+    backdrop-filter: blur(4px);
+    display: flex; align-items: flex-end; justify-content: center;
+    z-index: 100;
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s;
+  }
+  .overlay.open { opacity: 1; pointer-events: all; }
+
+  .sheet {
+    background: var(--card);
+    border-radius: 24px 24px 0 0;
+    width: 100%; max-width: 420px;
+    padding: 1.5rem 1.5rem 2rem;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform .25s cubic-bezier(.2,.8,.2,1);
+  }
+  .overlay.open .sheet { transform: translateY(0); }
+
+  .sheet-handle {
+    width: 36px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 1.25rem;
+  }
+  .sheet-title {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  /* ── BILL SHEET ── */
+  .bill-item {
+    display: flex;
+    justify-content: space-between;
+    padding: .6rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: .9rem;
+  }
+  .bill-item:last-child { border-bottom: none; }
+  .bill-item .bi-name { color: var(--text); flex: 1; }
+  .bill-item .bi-qty { color: var(--muted); margin: 0 .5rem; }
+  .bill-item .bi-price { font-weight: 600; }
+
+  .bill-total {
+    display: flex;
+    justify-content: space-between;
+    padding: .875rem 0 .5rem;
+    border-top: 2px solid var(--border);
+    margin-top: .375rem;
+  }
+  .bill-total .bt-label {
+    font-family: var(--font-head);
+    font-size: .9rem;
+    font-weight: 700;
+  }
+  .bill-total .bt-amount {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--green);
+  }
+
+  .pay-methods { display: flex; flex-direction: column; gap: .625rem; margin-top: 1.25rem; }
+
+  .pay-btn {
+    width: 100%;
+    padding: .875rem;
+    border-radius: 14px;
+    border: none;
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex; align-items: center; justify-content: center; gap: .5rem;
+  }
+  .pay-btn.online {
+    background: var(--green);
+    color: #0F1F0F;
+  }
+  .pay-btn.cash {
+    background: transparent;
+    color: var(--muted);
+    border: 1.5px solid var(--border);
+  }
+  .pay-btn.online:active, .pay-btn.cash:active { transform: scale(.97); }
+
+  /* pay QR */
+  .pay-qr-wrap {
+    display: none;
+    text-align: center;
+    margin-top: 1.25rem;
+    background: var(--bg2);
+    border-radius: 16px;
+    padding: 1.25rem;
+  }
+  .pay-qr-wrap img {
+    width: 180px; height: 180px;
+    border-radius: 12px;
+    background: #fff;
+    padding: 4px;
+    margin: 0 auto .75rem;
+    display: block;
+  }
+  .pay-qr-url {
+    font-size: .7rem;
+    color: var(--muted);
+    word-break: break-all;
+    margin-bottom: .75rem;
+  }
+  .copy-btn {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    padding: .5rem 1.25rem;
+    border-radius: 10px;
+    font-size: .8rem;
+    cursor: pointer;
+    font-family: var(--font);
+  }
+
+  /* ── REVIEW SHEET ── */
+  .stars { display: flex; gap: .5rem; justify-content: center; margin: .5rem 0 1rem; }
+  .star {
+    font-size: 2rem; cursor: pointer;
+    transition: transform .1s;
+    filter: grayscale(1) opacity(.4);
+  }
+  .star.active { filter: none; transform: scale(1.15); }
+
+  .review-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: .9rem;
+    padding: .875rem;
+    resize: none;
+    outline: none;
+    margin-bottom: .875rem;
+  }
+  .review-textarea:focus { border-color: var(--accent); }
+
+  /* ── TIPS SHEET ── */
+  .tip-amounts { display: flex; gap: .5rem; flex-wrap: wrap; margin: .75rem 0; }
+  .tip-chip {
+    flex: 1; min-width: 60px;
+    padding: .6rem;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: .9rem;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text);
+    transition: all .15s;
+    font-family: var(--font);
+  }
+  .tip-chip.active {
+    border-color: var(--accent);
+    background: rgba(193,68,14,.15);
+    color: var(--accent2);
+  }
+
+  .tip-custom-wrap {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: 1rem;
+  }
+  .tip-custom-wrap input {
+    flex: 1;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 1rem;
+    padding: .75rem;
+    outline: none;
+  }
+  .tip-custom-wrap input:focus { border-color: var(--accent); }
+
+  .staff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: .625rem;
+    margin: .75rem 0;
+  }
+  .staff-card {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: .625rem .5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .staff-card.active {
+    border-color: var(--accent);
+    background: rgba(193,68,14,.1);
+  }
+  .staff-card .sc-avatar { font-size: 1.75rem; margin-bottom: .25rem; }
+  .staff-card .sc-name { font-size: .7rem; font-weight: 600; }
+  .staff-card .sc-role { font-size: .65rem; color: var(--muted); }
+
+  /* ── SUCCESS ── */
+  .success-wrap {
+    text-align: center;
+    padding: 1rem 0 .5rem;
+  }
+  .success-icon { font-size: 3.5rem; margin-bottom: .75rem; }
+  .success-title {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: .375rem;
+  }
+  .success-desc { font-size: .85rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── LOADING ── */
+  #loading {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    gap: .75rem;
+    z-index: 200;
+    transition: opacity .3s;
+  }
+  #loading.hidden { opacity: 0; pointer-events: none; }
+  .loader {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-text { font-size: .8rem; color: var(--muted); }
+
+  /* ── NO BILL ── */
+  .no-bill {
+    text-align: center;
+    padding: 1.5rem 0;
+    color: var(--muted);
+  }
+  .no-bill .nb-icon { font-size: 2.5rem; margin-bottom: .5rem; }
+  .no-bill .nb-text { font-size: .85rem; line-height: 1.5; }
+
+  /* ── SPINNER in button ── */
+  .btn-spinner {
+    width: 18px; height: 18px;
+    border: 2px solid rgba(0,0,0,.3);
+    border-top-color: #0F1F0F;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    display: none;
+  }
+  .paying .btn-spinner { display: block; }
+  .paying .btn-text { display: none; }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="loader"></div>
+  <div class="loader-text">Завантаження...</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="venue-logo" id="venue-logo">✦</div>
+  <div class="venue-name" id="venue-name">Mage QR Rest</div>
+  <div class="table-badge" id="table-badge">🪑 Стіл —</div>
+</div>
+
+<!-- BILL BANNER (якщо є відкритий рахунок) -->
+<div class="bill-banner" id="bill-banner" onclick="openBill()">
+  <div class="bb-label">💳 Відкритий рахунок</div>
+  <div class="bb-amount" id="bb-amount">—</div>
+  <div class="bb-desc" id="bb-desc">Натисніть щоб оплатити</div>
+  <div class="bb-cta">Оплатити →</div>
+</div>
+
+<!-- ACTIONS -->
+<div class="actions">
+  <a class="action-card primary" id="menu-link" href="#">
+    <div class="ac-icon">🍽️</div>
+    <div class="ac-body">
+      <div class="ac-title">Меню та замовлення</div>
+      <div class="ac-desc">Переглядайте страви і замовляйте без офіціанта</div>
+    </div>
+    <div class="ac-arrow">→</div>
+  </a>
+
+  <div class="action-card" onclick="openBill()">
+    <div class="ac-icon">💳</div>
+    <div class="ac-body">
+      <div class="ac-title">Рахунок</div>
+      <div class="ac-desc" id="bill-action-desc">Переглянути та оплатити рахунок за столом</div>
+    </div>
+    <div class="ac-arrow">→</div>
+  </div>
+
+  <div class="action-card" onclick="openTips()">
+    <div class="ac-icon">💸</div>
+    <div class="ac-body">
+      <div class="ac-title">Чайові</div>
+      <div class="ac-desc">Подякувати персоналу напряму</div>
+    </div>
+    <div class="ac-arrow">→</div>
+  </div>
+
+  <div class="action-card" onclick="openReview()">
+    <div class="ac-icon">⭐</div>
+    <div class="ac-body">
+      <div class="ac-title">Залишити відгук</div>
+      <div class="ac-desc">Ваша думка допомагає нам ставати кращими</div>
+    </div>
+    <div class="ac-arrow">→</div>
+  </div>
+</div>
+
+<div class="footer">✦ Mage QR Rest · Powered by monobank</div>
+
+<!-- ─── BILL SHEET ─────────────────────────────── -->
+<div class="overlay" id="bill-overlay" onclick="if(event.target===this)closeOverlay('bill-overlay')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">💳 Ваш рахунок</div>
+
+    <div id="bill-content">
+      <!-- заповнюється JS -->
+    </div>
+  </div>
+</div>
+
+<!-- ─── REVIEW SHEET ───────────────────────────── -->
+<div class="overlay" id="review-overlay" onclick="if(event.target===this)closeOverlay('review-overlay')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">⭐ Ваш відгук</div>
+
+    <div id="review-content">
+      <div style="font-size:.85rem;color:var(--muted);margin-bottom:.75rem">Як вам у нас сьогодні?</div>
+      <div class="stars" id="stars">
+        <span class="star" onclick="setStar(1)">★</span>
+        <span class="star" onclick="setStar(2)">★</span>
+        <span class="star" onclick="setStar(3)">★</span>
+        <span class="star" onclick="setStar(4)">★</span>
+        <span class="star" onclick="setStar(5)">★</span>
+      </div>
+      <textarea class="review-textarea" id="review-text" rows="3"
+        placeholder="Напишіть що сподобалось або що варто покращити..."></textarea>
+      <input type="text" id="review-name"
+        style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--font);font-size:.9rem;padding:.75rem;outline:none;margin-bottom:.875rem"
+        placeholder="Ваше ім'я (необов'язково)"/>
+      <button class="pay-btn online" onclick="submitReview()" id="review-btn">
+        <span class="btn-spinner"></span>
+        <span class="btn-text">✓ Надіслати відгук</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TIPS SHEET ─────────────────────────────── -->
+<div class="overlay" id="tips-overlay" onclick="if(event.target===this)closeOverlay('tips-overlay')">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">💸 Чайові</div>
+
+    <div id="tips-content">
+      <div style="font-size:.85rem;color:var(--muted);margin-bottom:.75rem" id="tips-staff-label">
+        Оберіть кому залишити чайові:
+      </div>
+      <div class="staff-grid" id="staff-grid"></div>
+      <div style="font-size:.85rem;color:var(--muted);margin:.75rem 0 .375rem">Сума чайових:</div>
+      <div class="tip-amounts" id="tip-amounts"></div>
+      <div class="tip-custom-wrap">
+        <input type="number" id="tip-custom" placeholder="Своя сума" min="10" step="5"
+          oninput="selectTip(null, this.value)"/>
+        <span style="color:var(--muted);font-size:.9rem" id="tip-currency-sym">₴</span>
+      </div>
+      <button class="pay-btn online" onclick="payTips()" id="tips-btn">
+        <span class="btn-spinner"></span>
+        <span class="btn-text">💸 Надіслати чайові</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="anti-scraping.js"></script>
+<script>
+window.__MQ_CFG = {
+  apiKey:            "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
+  authDomain:        "mageqrrest.firebaseapp.com",
+  projectId:         "mageqrrest",
+  storageBucket:     "mageqrrest.firebasestorage.app",
+  messagingSenderId: "207231972557",
+  appId:             "1:207231972557:web:f8234c22e6b32a0a2ee584",
+};
+window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
+</script>
+<script type="module">
+import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc, onSnapshot, query, where, orderBy, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getAuth } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+// ── INIT ────────────────────────────────────────────────────────
+const app  = getApps().length ? getApps()[0] : initializeApp(window.__MQ_CFG);
+const db   = getFirestore(app);
+const CF   = window.__CF_URL;
+const $    = id => document.getElementById(id);
+
+const params   = new URLSearchParams(location.search);
+const venueId  = (params.get('v') || '').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,50) || 'demo';
+const tableNum = params.get('t') || null;
+
+let venueSettings = {};
+let openBillData  = null;   // поточний відкритий рахунок
+let staff         = [];
+let selectedStar  = 0;
+let selectedStaff = null;
+let selectedTip   = null;
+let currSymbol    = '₴';
+let currPostfix   = false;
+
+function mCur(n) {
+  return currPostfix ? `${n} ${currSymbol}` : `${currSymbol}${n}`;
+}
+
+// ── LOAD DATA ───────────────────────────────────────────────────
+async function init() {
+  try {
+    // Налаштування закладу
+    const [sSnap, staffSnap] = await Promise.all([
+      getDoc(doc(db, 'venues', venueId, 'settings', 'main')),
+      getDocs(collection(db, 'venues', venueId, 'staff')),
+    ]);
+
+    if (sSnap.exists()) {
+      venueSettings = sSnap.data();
+      applyVenueSettings(venueSettings);
+    }
+
+    // Персонал для чайових
+    staff = staffSnap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .filter(s => s.tipsEnabled !== false);
+
+    // Посилання на меню
+    $('menu-link').href = `menu.html?v=${venueId}${tableNum ? '&t='+tableNum : ''}`;
+
+    // Підписка на рахунок столу в реальному часі
+    if (tableNum) {
+      subscribeToTableBill();
+    }
+  } catch(e) {
+    console.error('init error:', e);
+  } finally {
+    // Ховаємо loader
+    const loader = $('loading');
+    loader.classList.add('hidden');
+    setTimeout(() => loader.style.display = 'none', 350);
+  }
+}
+
+function applyVenueSettings(s) {
+  // Назва і лого
+  if (s.name)    $('venue-name').textContent = s.name;
+  if (s.logoUrl) $('venue-logo').innerHTML = `<img src="${s.logoUrl}" alt="${s.name}"/>`;
+  else if (s.logoEmoji) $('venue-logo').textContent = s.logoEmoji;
+  document.title = (s.name || 'Меню') + (tableNum ? ` — Стіл №${tableNum}` : '');
+
+  // Значок столу
+  if (tableNum) $('table-badge').textContent = `🪑 Стіл №${tableNum}`;
+
+  // Валюта
+  const CURR = {UAH:'₴',EUR:'€',USD:'$',PLN:'zł',GBP:'£',CZK:'Kč',RON:'lei',HUF:'Ft',BGN:'лв',BAM:'KM',RSD:'дін'};
+  const POST = ['₴','zł','Kč','lei','Ft','лв','KM','дін'];
+  if (s.currency && CURR[s.currency]) {
+    currSymbol  = CURR[s.currency];
+    currPostfix = POST.includes(currSymbol);
+  }
+}
+
+// ── ПІДПИСКА НА РАХУНОК СТОЛУ ───────────────────────────────────
+function subscribeToTableBill() {
+  // Шукаємо відкритий рахунок для цього столу
+  const billsRef = collection(db, 'venues', venueId, 'bills');
+  const q = query(billsRef,
+    where('tableNum', '==', Number(tableNum)),
+    where('status', 'in', ['open', 'pending_payment'])
+  );
+
+  onSnapshot(q, snap => {
+    if (snap.empty) {
+      openBillData = null;
+      hideBillBanner();
+    } else {
+      // Беремо найновіший рахунок
+      const bills = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      openBillData = bills[0];
+      showBillBanner(openBillData);
+    }
+  });
+}
+
+function showBillBanner(bill) {
+  const banner = $('bill-banner');
+  $('bb-amount').textContent = mCur(bill.total || 0);
+  $('bb-desc').textContent = `${bill.items?.length || 0} позицій · Натисніть щоб оплатити`;
+  $('bill-action-desc').textContent = 'Є відкритий рахунок — оплатіть онлайн';
+  banner.style.display = 'block';
+}
+
+function hideBillBanner() {
+  $('bill-banner').style.display = 'none';
+  $('bill-action-desc').textContent = 'Переглянути та оплатити рахунок за столом';
+}
+
+// ── РАХУНОК ─────────────────────────────────────────────────────
+window.openBill = function() {
+  const content = $('bill-content');
+
+  if (!openBillData) {
+    // Немає відкритого рахунку — показуємо замовлення зі столу
+    loadTableOrders(content);
+  } else {
+    renderBillContent(content, openBillData);
+  }
+  openOverlay('bill-overlay');
+};
+
+async function loadTableOrders(content) {
+  content.innerHTML = `<div style="text-align:center;padding:1rem;color:var(--muted)">Завантаження...</div>`;
+
+  try {
+    const ordersRef = collection(db, 'venues', venueId, 'orders');
+    const q = query(ordersRef,
+      where('tableId', '==', tableNum),
+      where('status', 'in', ['new','preparing','done']),
+      orderBy('createdAt', 'desc')
+    );
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      content.innerHTML = `
+        <div class="no-bill">
+          <div class="nb-icon">🧾</div>
+          <div class="nb-text">Рахунок ще не виставлений.<br/>Зверніться до офіціанта або зробіть замовлення через меню.</div>
+        </div>`;
+      return;
+    }
+
+    // Збираємо всі позиції
+    const allItems = [];
+    let total = 0;
+    snap.docs.forEach(d => {
+      const o = d.data();
+      (o.items || []).forEach(item => {
+        allItems.push({ name: item.name, qty: item.qty || 1, price: item.price || 0 });
+        total += (item.price || 0) * (item.qty || 1);
+      });
+    });
+
+    // Групуємо однакові позиції
+    const grouped = {};
+    allItems.forEach(item => {
+      const key = item.name;
+      if (grouped[key]) {
+        grouped[key].qty += item.qty;
+      } else {
+        grouped[key] = { ...item };
+      }
+    });
+
+    openBillData = { items: Object.values(grouped), total, status: 'open', fromOrders: true };
+    renderBillContent(content, openBillData);
+
+  } catch(e) {
+    content.innerHTML = `<div class="no-bill"><div class="nb-icon">⚠️</div><div class="nb-text">Не вдалось завантажити. Зверніться до офіціанта.</div></div>`;
+    console.error('loadTableOrders:', e);
+  }
+}
+
+function renderBillContent(content, bill) {
+  const items = bill.items || [];
+  const total = bill.total || 0;
+
+  const itemsHtml = items.map(item => `
+    <div class="bill-item">
+      <span class="bi-name">${item.name}</span>
+      <span class="bi-qty">×${item.qty || 1}</span>
+      <span class="bi-price">${mCur((item.price || 0) * (item.qty || 1))}</span>
+    </div>`).join('');
+
+  content.innerHTML = `
+    ${itemsHtml}
+    <div class="bill-total">
+      <span class="bt-label">Разом</span>
+      <span class="bt-amount">${mCur(total)}</span>
+    </div>
+    <div class="pay-methods">
+      <button class="pay-btn online" id="pay-online-btn" onclick="payOnline()">
+        <span class="btn-spinner"></span>
+        <span class="btn-text">💳 Оплатити онлайн</span>
+      </button>
+      <button class="pay-btn cash" onclick="payCash()">
+        💵 Оплачу готівкою / карткою
+      </button>
+    </div>
+    <div class="pay-qr-wrap" id="pay-qr-wrap">
+      <img id="pay-qr-img" src="" alt="QR"/>
+      <div class="pay-qr-url" id="pay-qr-url"></div>
+      <button class="copy-btn" onclick="copyPayUrl()">🔗 Копіювати посилання</button>
+    </div>`;
+}
+
+window.payOnline = async function() {
+  if (!openBillData) return;
+  const btn = $('pay-online-btn');
+  btn.classList.add('paying');
+  btn.disabled = true;
+
+  try {
+    let payUrl = openBillData.payUrl;
+
+    // Якщо рахунок з bills і є payUrl — використовуємо
+    if (!payUrl) {
+      // Якщо немає готового посилання — запитуємо у CF
+      const res = await fetch(`${CF}/createOrder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          venueId,
+          items:       openBillData.items || [],
+          total:       openBillData.total || 0,
+          tableId:     tableNum,
+          tableNum:    Number(tableNum),
+          orderType:   'dine_in',
+          paymentMethod: 'online',
+          clientName:  'Гість',
+          comment:     `Оплата рахунку стіл №${tableNum}`,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Помилка');
+      payUrl = data.payUrl;
+    }
+
+    if (payUrl) {
+      // Показуємо QR
+      const qrWrap = $('pay-qr-wrap');
+      $('pay-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(payUrl)}`;
+      $('pay-qr-url').textContent = payUrl;
+      qrWrap.style.display = 'block';
+      qrWrap._payUrl = payUrl;
+      // На телефоні — відкриваємо одразу
+      if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
+        window.location.href = payUrl;
+      }
+    }
+  } catch(e) {
+    alert('Помилка: ' + e.message);
+  } finally {
+    btn.classList.remove('paying');
+    btn.disabled = false;
+  }
+};
+
+window.payCash = function() {
+  closeOverlay('bill-overlay');
+  // Показуємо підтвердження
+  setTimeout(() => alert('✓ Попросіть офіціанта розрахувати вас готівкою або через термінал.'), 200);
+};
+
+window.copyPayUrl = function() {
+  const url = $('pay-qr-url')?.textContent || $('pay-qr-wrap')?._payUrl;
+  if (!url) return;
+  navigator.clipboard?.writeText(url).catch(() => {});
+};
+
+// ── ВІДГУК ──────────────────────────────────────────────────────
+window.openReview = function() { openOverlay('review-overlay'); };
+
+window.setStar = function(n) {
+  selectedStar = n;
+  document.querySelectorAll('.star').forEach((s, i) => {
+    s.classList.toggle('active', i < n);
+  });
+};
+
+window.submitReview = async function() {
+  if (!selectedStar) { alert('Оберіть оцінку'); return; }
+  const btn = $('review-btn');
+  btn.classList.add('paying');
+  btn.disabled = true;
+
+  try {
+    await addDoc(collection(db, 'venues', venueId, 'reviews'), {
+      rating:    selectedStar,
+      text:      $('review-text').value.trim(),
+      name:      $('review-name').value.trim() || 'Гість',
+      tableNum:  tableNum ? Number(tableNum) : null,
+      createdAt: serverTimestamp(),
+    });
+
+    $('review-content').innerHTML = `
+      <div class="success-wrap">
+        <div class="success-icon">🙏</div>
+        <div class="success-title">Дякуємо за відгук!</div>
+        <div class="success-desc">Ваша думка дуже важлива для нас. Раді бачити вас знову!</div>
+      </div>`;
+  } catch(e) {
+    alert('Помилка: ' + e.message);
+  } finally {
+    btn.classList.remove('paying');
+    btn.disabled = false;
+  }
+};
+
+// ── ЧАЙОВІ ──────────────────────────────────────────────────────
+window.openTips = function() {
+  renderStaffGrid();
+  renderTipAmounts();
+  $('tip-currency-sym').textContent = currSymbol;
+  openOverlay('tips-overlay');
+};
+
+function renderStaffGrid() {
+  const grid = $('staff-grid');
+  const label = $('tips-staff-label');
+  if (!staff.length) {
+    grid.innerHTML = '';
+    label.style.display = 'none';
+    return;
+  }
+  label.style.display = 'block';
+  grid.innerHTML = staff.map(s => `
+    <div class="staff-card" id="sc-${s.id}" onclick="selectStaff('${s.id}')">
+      <div class="sc-avatar">${s.avatar || '👤'}</div>
+      <div class="sc-name">${s.name || '—'}</div>
+      <div class="sc-role">${s.role || ''}</div>
+    </div>`).join('');
+}
+
+function renderTipAmounts() {
+  const amounts = [20, 50, 100, 200];
+  $('tip-amounts').innerHTML = amounts.map(a => `
+    <button class="tip-chip" id="tc-${a}" onclick="selectTip(${a}, null)">
+      ${mCur(a)}
+    </button>`).join('');
+}
+
+window.selectStaff = function(id) {
+  selectedStaff = id;
+  document.querySelectorAll('.staff-card').forEach(el => el.classList.remove('active'));
+  const card = $(`sc-${id}`);
+  if (card) card.classList.add('active');
+};
+
+window.selectTip = function(preset, custom) {
+  selectedTip = preset || Number(custom) || null;
+  document.querySelectorAll('.tip-chip').forEach(el => el.classList.remove('active'));
+  if (preset) {
+    const chip = $(`tc-${preset}`);
+    if (chip) chip.classList.add('active');
+    $('tip-custom').value = '';
+  }
+};
+
+window.payTips = async function() {
+  if (!selectedTip || selectedTip < 1) { alert('Оберіть суму чайових'); return; }
+  const btn = $('tips-btn');
+  btn.classList.add('paying');
+  btn.disabled = true;
+
+  try {
+    // Знаходимо вибраного співробітника
+    const staffMember = staff.find(s => s.id === selectedStaff);
+    const tipsEmployeeId = staffMember?.tipsEmployeeId || null;
+
+    // Якщо є monobank tipsEmployeeId — платимо через mono
+    if (tipsEmployeeId) {
+      const res = await fetch(`${CF}/createOrder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          venueId,
+          items: [{ name: 'Чайові', qty: 1, price: selectedTip }],
+          total: selectedTip,
+          tableId: tableNum,
+          orderType: 'tips',
+          paymentMethod: 'online',
+          tipsEmployeeId,
+          comment: `Чайові · Стіл №${tableNum}`,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Помилка');
+      if (data.payUrl) {
+        window.location.href = data.payUrl;
+        return;
+      }
+    }
+
+    // Зберігаємо запис і показуємо подяку
+    await addDoc(collection(db, 'venues', venueId, 'tips'), {
+      amount:     selectedTip,
+      staffId:    selectedStaff,
+      staffName:  staff.find(s => s.id === selectedStaff)?.name || '—',
+      tableNum:   tableNum ? Number(tableNum) : null,
+      status:     'pending',
+      createdAt:  serverTimestamp(),
+    });
+
+    $('tips-content').innerHTML = `
+      <div class="success-wrap">
+        <div class="success-icon">💸</div>
+        <div class="success-title">Дякуємо!</div>
+        <div class="success-desc">Чайові ${mCur(selectedTip)} передано ${staff.find(s=>s.id===selectedStaff)?.name || 'персоналу'}.</div>
+      </div>`;
+  } catch(e) {
+    alert('Помилка: ' + e.message);
+  } finally {
+    btn.classList.remove('paying');
+    btn.disabled = false;
+  }
+};
+
+// ── HELPERS ─────────────────────────────────────────────────────
+window.openOverlay  = id => { $(id)?.classList.add('open'); document.body.style.overflow = 'hidden'; };
+window.closeOverlay = id => { $(id)?.classList.remove('open'); document.body.style.overflow = ''; };
+
+// Закриття по swipe вниз
+document.querySelectorAll('.sheet').forEach(sheet => {
+  let startY = 0;
+  sheet.addEventListener('touchstart', e => startY = e.touches[0].clientY, { passive: true });
+  sheet.addEventListener('touchend', e => {
+    if (e.changedTouches[0].clientY - startY > 80) {
+      const overlay = sheet.closest('.overlay');
+      if (overlay) closeOverlay(overlay.id);
+    }
+  });
+});
+
+init();
+</script>
+</body>
+</html>
