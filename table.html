@@ -710,10 +710,15 @@ function applyVenueSettings(s) {
 
 // ── ПІДПИСКА НА РАХУНОК СТОЛУ ───────────────────────────────────
 function subscribeToTableBill() {
+  const tableNumInt = Number(tableNum);
+  if (!tableNum || isNaN(tableNumInt) || tableNumInt <= 0) {
+    console.warn('subscribeToTableBill: невалідний tableNum', tableNum);
+    return;
+  }
   // Шукаємо відкритий рахунок для цього столу
   const billsRef = collection(db, 'venues', venueId, 'bills');
   const q = query(billsRef,
-    where('tableNum', '==', Number(tableNum)),
+    where('tableNum', '==', tableNumInt),
     where('status', 'in', ['open', 'pending_payment'])
   );
 
@@ -749,9 +754,10 @@ window.openBill = function() {
   const content = $('bill-content');
 
   if (!openBillData) {
-    // Немає відкритого рахунку — показуємо замовлення зі столу
+    // Немає відкритого рахунку від офіціанта — показуємо замовлення зі столу
     loadTableOrders(content);
   } else {
+    // Є рахунок від офіціанта (з payUrl) — показуємо його
     renderBillContent(content, openBillData);
   }
   openOverlay('bill-overlay');
@@ -763,7 +769,7 @@ async function loadTableOrders(content) {
   try {
     const ordersRef = collection(db, 'venues', venueId, 'orders');
     const q = query(ordersRef,
-      where('tableId', '==', tableNum),
+      where('tableId', '==', String(tableNum)),
       where('status', 'in', ['new','preparing','done']),
       orderBy('createdAt', 'desc')
     );
