@@ -5399,18 +5399,12 @@ window.openTableDetail = function(id) {
   // Статус столу
   const statusLabels = {free:'🟢 Вільний',occupied:'🔴 Зайнятий',ordered:'🔵 Замовлено',paid:'✅ Оплачено'};
   document.getElementById('table-status-display').textContent = statusLabels[t.status] || t.status;
-  document.getElementById('split-row').innerHTML=[2,3,4].map(n=>`
-    <div class="split-person" onclick="selectSplit(this,${n},${t.amount})">
-      <div>👤×${n}</div>
-      <div style="font-size:11px;color:var(--muted)">${t.amount?'≈'+cur(Math.ceil(t.amount/n))+'/ос.':''}</div>
-    </div>`).join('');
-  const staffSel=document.getElementById('table-staff-assign');
-  staffSel.innerHTML='<option value="">— Не призначено —</option>'+staff.map(s=>`<option value="${s.id}"${s.id===t.staffId?' selected':''}>${s.emoji} ${s.name}</option>`).join('');
+
   // Скидаємо стан онлайн-оплати
   document.getElementById('bill-pay-link-wrap').style.display='none';
   document.getElementById('bill-pay-link').textContent='';
   const onlineBtn=document.getElementById('bill-online-btn');
-  if(onlineBtn){onlineBtn.disabled=false;onlineBtn.innerHTML='📲 <span data-i18n="billOnline">Надіслати посилання на оплату (Monobank)</span>';}
+  if(onlineBtn){onlineBtn.disabled=false;onlineBtn.innerHTML='📲 <span data-i18n="billOnline">Надіслати посилання на оплату</span>';}
   // Оновлюємо символ валюти
   const manualSym = document.getElementById('manual-currency-sym');
   if(manualSym) manualSym.textContent = venueCurrency.symbol;
