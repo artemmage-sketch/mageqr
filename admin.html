@@ -4841,7 +4841,7 @@ window.saveDesign=async function(){
 };
 
 // ── BILLING ──
-const PLANS_BILLING={free:{name:'Free',price:0,color:'#8888AA'},trial:{name:'Trial',price:0,color:'#C1440E'},starter:{name:'Starter',price:299,color:'#F59E0B'},pro:{name:'Pro',price:699,color:'#6C63FF'},enterprise:{name:'Enterprise',price:1999,color:'#10B981'}};
+const PLANS_BILLING={free:{name:'Free',price:0,color:'#8888AA'},trial:{name:'Trial',price:0,color:'#C1440E'},starter:{name:'Starter',price:9,color:'#F59E0B'},pro:{name:'Pro',price:19,color:'#6C63FF'},enterprise:{name:'Enterprise',price:49,color:'#10B981'}};
 
 async function loadBilling(){
   if(!db||!window.__FS)return;
@@ -4855,7 +4855,7 @@ async function loadBilling(){
     document.getElementById('billing-sub').textContent=`${t('planLabel')}: ${planData.name}`;
     document.getElementById('cur-plan-name').textContent=planData.name;
     document.getElementById('cur-plan-name').style.color=planData.color;
-    document.getElementById('cur-plan-desc').textContent=plan==='trial'?t('trialPeriod'):plan==='free'?t('free'):`₴${planData.price}/${t('perMonth')}`;
+    document.getElementById('cur-plan-desc').textContent=plan==='trial'?t('trialPeriod'):plan==='free'?t('free'):`€${planData.price}/${t('perMonth')}`;
     if(plan==='trial'&&vd.trialEndsAt){
       const trialEnd=vd.trialEndsAt.seconds*1000;
       const daysLeft=Math.max(0,Math.ceil((trialEnd-Date.now())/86400000));
@@ -4877,7 +4877,7 @@ async function loadBilling(){
     if(vd.planEndsAt&&plan!=='trial'&&plan!=='free'){
       const nextDate=new Date(vd.planEndsAt.seconds*1000);
       document.getElementById('next-charge-date').textContent=nextDate.toLocaleDateString(adminLang==='uk'?'uk-UA':'en-GB',{day:'numeric',month:'long',year:'numeric'});
-      document.getElementById('next-charge-amount').textContent=`${t('willCharge')} ₴${planData.price}`;
+      document.getElementById('next-charge-amount').textContent=`${t('willCharge')} €${planData.price}`;
     }else if(plan==='trial'){
       document.getElementById('next-charge-date').textContent='—';
       document.getElementById('next-charge-amount').textContent=t('afterTrialFree');
@@ -4900,15 +4900,15 @@ async function loadBilling(){
 function renderBillingPlanCards(currentPlan){
   const plans=[
     {key:'free',name:'Free',price:0,features:[t('feat20Dishes'),t('feat100Orders'),t('featBasicDesign')]},
-    {key:'starter',name:'Starter',price:299,features:[t('feat80Dishes'),t('feat500Orders'),t('featColorsFont')]},
-    {key:'pro',name:'Pro',price:699,features:[t('feat500Dishes'),t('feat5000Orders'),t('featFullDesign'),t('featPhotoBanner')],popular:true},
-    {key:'enterprise',name:'Enterprise',price:1999,features:[t('featUnlimited'),t('featPOS'),t('featDomain')]},
+    {key:'starter',name:'Starter',price:9,features:[t('feat80Dishes'),t('feat500Orders'),t('featColorsFont')]},
+    {key:'pro',name:'Pro',price:19,features:[t('feat500Dishes'),t('feat5000Orders'),t('featFullDesign'),t('featPhotoBanner')],popular:true},
+    {key:'enterprise',name:'Enterprise',price:49,features:[t('featUnlimited'),t('featPOS'),t('featDomain')]},
   ];
   document.getElementById('billing-plan-cards').innerHTML=plans.map(p=>`
     <div style="background:var(--card);border:1.5px solid ${p.key===currentPlan?'var(--accent)':'var(--border)'};border-radius:var(--radius);padding:1rem;position:relative;${p.key===currentPlan?'background:var(--accent-soft)':''}">
       ${p.popular?`<div style="position:absolute;top:.5rem;right:.5rem;background:var(--accent);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600">${t('popular')}</div>`:''}
       <div style="font-family:var(--font-head);font-size:.95rem;font-weight:600;margin-bottom:.25rem">${p.name}</div>
-      <div style="font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:.5rem">${p.price?'₴'+p.price+'<span style="font-size:11px;font-weight:400;color:var(--muted)">/'+t('perMonth')+'</span>':t('free')}</div>
+      <div style="font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:.5rem">${p.price?'€'+p.price+'<span style="font-size:11px;font-weight:400;color:var(--muted)">/'+t('perMonth')+'</span>':t('free')}</div>
       <div style="font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:.75rem">${p.features.join('<br/>')}</div>
       ${p.key!==currentPlan?`<button class="btn btn-accent btn-sm" style="width:100%" onclick="subscribePlan('${p.key}')">${currentPlan==='trial'||currentPlan==='free'?t('choosePlanBtn'):t('switchPlan')}</button>`:`<div style="text-align:center;font-size:12px;color:var(--accent);font-weight:600">✓ ${t('currentPlanLbl')}</div>`}
     </div>`).join('');
@@ -5268,7 +5268,7 @@ function deleteStaff(id){if(confirm('Видалити?')){staff=staff.filter(s=>
 window.openAddStaff=openAddStaff;window.openEditStaff=openEditStaff;window.saveStaff=saveStaff;window.deleteStaff=deleteStaff;
 
 // ── ПІДПИСКА (стара вкладка - для loadSubscription) ──
-const PLAN_LIMITS={free:{name:'Free',price:0,items:20,cats:5,orders:100},trial:{name:'Trial',price:0,items:500,cats:50,orders:5000},starter:{name:'Starter',price:299,items:80,cats:15,orders:500},pro:{name:'Pro',price:699,items:500,cats:50,orders:5000},enterprise:{name:'Enterprise',price:1999,items:99999,cats:999,orders:99999}};
+const PLAN_LIMITS={free:{name:'Free',price:0,items:20,cats:5,orders:100},trial:{name:'Trial',price:0,items:500,cats:50,orders:5000},starter:{name:'Starter',price:9,items:80,cats:15,orders:500},pro:{name:'Pro',price:19,items:500,cats:50,orders:5000},enterprise:{name:'Enterprise',price:49,items:99999,cats:999,orders:99999}};
 
 async function loadSubscription(){
   // Тепер просто перезавантажуємо billing
