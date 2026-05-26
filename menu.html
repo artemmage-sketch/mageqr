@@ -346,6 +346,15 @@ const db  = getFirestore(app);
 const params   = new URLSearchParams(location.search);
 const rawVenueId = params.get('v') || 'demo';
 const venueId  = rawVenueId.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 50) || 'demo';
+
+// Валюта закладу (завантажується з settings)
+let menuCurrencySymbol = '₴';
+let menuCurrencyPostfix = false; // true = символ після числа (грн, zł...)
+
+function mCur(amount) {
+  if (menuCurrencyPostfix) return amount + ' ' + menuCurrencySymbol;
+  return menuCurrencySymbol + amount;
+}
 const tableId  = params.get('t') || null;
 
 let allItems = [], allCats = [], activeCat = null;
@@ -545,7 +554,7 @@ function applyUILang() {
   Object.entries(discMap).forEach(([id, disc]) => {
     const el = $(id);
     if (!el) return;
-    const dt = disc?.pct ? ' −' + disc.pct + '%' : disc?.fix ? ' −' + disc.fix + '₴' : '';
+    const dt = disc?.pct ? ' −' + disc.pct + '%' : disc?.fix ? ' −' + mCur(disc.fix) : '';
     el.textContent = ui(keyMap[id]) + dt;
   });
 }
@@ -626,7 +635,7 @@ function renderMenu() {
               const disc = getDiscount(p);
               const final = Math.max(0, p - disc);
               if (disc > 0) return '<span style="color:var(--green,#059669)">' + final + ' грн</span><span style="text-decoration:line-through;color:var(--muted);font-size:13px;margin-left:6px">' + p + '</span>';
-              return p + ' грн';
+              return mCur(p);
             })()}
           </div>` : '<div></div>'}
           <button class="add-btn${cart[it.id] ? ' added' : ''}" id="ab-${it.id}" onclick="event.stopPropagation();qAdd('${it.id}')">${cart[it.id] ? '✓' : '+'}</button>
@@ -659,7 +668,7 @@ window.openDet = id => {
   if (_dd > 0) {
     $('det-price').innerHTML = '<span style="color:var(--green,#059669)">' + _df + ' грн</span> <span style="text-decoration:line-through;color:var(--muted);font-size:1rem">' + _dp + '</span>';
   } else {
-    $('det-price').textContent = _dp + ' грн';
+    $('det-price').textContent = mCur(_dp);
   }
   $('det-qty').textContent = detQty;
   const weightEl = $('det-weight');
@@ -801,9 +810,9 @@ function renderCart() {
       discEl.style.cssText = 'font-size:13px;color:var(--green,#059669);margin:.25rem 0 .5rem;font-weight:500';
       $('cart-total-val')?.closest('.cart-total')?.after(discEl);
     }
-    discEl.textContent = '🏷️ ' + (_discNm || ui('discount')) + ': −' + _disc + ' грн';
+    discEl.textContent = '🏷️ ' + (_discNm || ui('discount')) + ': −' + mCur(_disc);
   } else {
-    $('cart-total-val').textContent = _final + ' грн';
+    $('cart-total-val').textContent = mCur(_final);
     document.getElementById('cart-discount-row')?.remove();
   }
 }
@@ -888,7 +897,7 @@ window.setOrderType = function(type) {
     const info_el = $('delivery-price-info');
     if (del && info_el) {
       let info = '';
-      if (del.price) info += `Доставка: ${del.price} грн`;
+      if (del.price) info += `Доставка: ${mCur(del.price)}`;
       if (del.freeFrom) info += ` · Безкоштовно від ${del.freeFrom} грн`;
       if (del.minOrder) info += ` · Мін. замовлення: ${del.minOrder} грн`;
       info_el.innerHTML = info;
@@ -1049,6 +1058,16 @@ function toast(msg) {
 }
 
 function applySettings(s) {
+  // Встановлюємо валюту закладу
+  const POSTFIX_SYMBOLS = ['грн','zł','Kč','lei','Ft','лв','KM','дін'];
+  const CURRENCY_MAP = {
+    UAH:'₴', EUR:'€', USD:'$', PLN:'zł', GBP:'£',
+    CZK:'Kč', RON:'lei', HUF:'Ft', BGN:'лв', BAM:'KM', RSD:'дін',
+  };
+  if (s.currency && CURRENCY_MAP[s.currency]) {
+    menuCurrencySymbol = CURRENCY_MAP[s.currency];
+    menuCurrencyPostfix = POSTFIX_SYMBOLS.includes(menuCurrencySymbol);
+  }
   document.title = s.name || 'Меню';
   $('venue-name').textContent = s.name || 'Меню закладу';
   const line1 = [s.tagline, s.city].filter(Boolean).join(' · ');
