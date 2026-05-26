@@ -849,43 +849,40 @@ window.payOnline = async function() {
   btn.disabled = true;
 
   try {
+    // Якщо є готове payUrl від офіціанта — відкриваємо одразу
     let payUrl = openBillData.payUrl;
 
-    // Якщо рахунок з bills і є payUrl — використовуємо
     if (!payUrl) {
-      // Якщо немає готового посилання — запитуємо у CF
-      const res = await fetch(`${CF}/createOrder`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          venueId,
-          items:       openBillData.items || [],
-          total:       openBillData.total || 0,
-          tableId:     tableNum,
-          tableNum:    Number(tableNum),
-          orderType:   'dine_in',
-          paymentMethod: 'online',
-          clientName:  'Гість',
-          comment:     `Оплата рахунку стіл №${tableNum}`,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Помилка');
-      payUrl = data.payUrl;
+      // Немає payUrl — показуємо повідомлення попросити офіціанта
+      btn.classList.remove('paying');
+      btn.disabled = false;
+      const qrWrap = $('pay-qr-wrap');
+      qrWrap.style.display = 'block';
+      $('pay-qr-img').src = '';
+      $('pay-qr-img').style.display = 'none';
+      $('pay-qr-url').textContent = '';
+      qrWrap.innerHTML = `
+        <div style="text-align:center;padding:1rem">
+          <div style="font-size:2rem;margin-bottom:.5rem">📲</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:.375rem">Попросіть офіціанта</div>
+          <div style="font-size:12px;color:var(--muted)">Офіціант надішле вам QR-код або посилання для оплати</div>
+        </div>`;
+      return;
     }
 
-    if (payUrl) {
-      // Показуємо QR
-      const qrWrap = $('pay-qr-wrap');
-      $('pay-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(payUrl)}`;
-      $('pay-qr-url').textContent = payUrl;
-      qrWrap.style.display = 'block';
-      qrWrap._payUrl = payUrl;
-      // На телефоні — відкриваємо одразу
-      if (/Mobi|Android|iPhone/i.test(navigator.userAgent)) {
-        window.location.href = payUrl;
-      }
-    }
+    // Є payUrl — відкриваємо на всіх пристроях
+    window.open(payUrl, '_blank');
+
+    // Також показуємо QR якщо відкриття заблоковано
+    const qrWrap = $('pay-qr-wrap');
+    qrWrap.innerHTML = `
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:.5rem">Або відскануйте QR:</div>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(payUrl)}"
+        style="width:180px;height:180px;display:block;margin:0 auto;border-radius:8px;background:#fff;padding:4px"/>
+      <div style="font-size:11px;color:var(--muted);word-break:break-all;margin-top:.5rem;text-align:center">${payUrl}</div>
+      <button class="copy-btn" style="display:block;margin:.5rem auto 0" onclick="navigator.clipboard?.writeText('${payUrl}').catch(()=>{})">🔗 Копіювати</button>`;
+    qrWrap.style.display = 'block';
+
   } catch(e) {
     alert('Помилка: ' + e.message);
   } finally {
