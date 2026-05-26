@@ -2285,7 +2285,8 @@ var I18N = {
     billTitle:'💳 Рахунок',
     billCash:'Готівка / термінал — відмітити оплаченим',
     billOnline:'Надіслати посилання на оплату (Monobank)',
-    billLinkReady:'Посилання для клієнта:'},
+    billLinkReady:'Посилання для клієнта:',
+    billScanQR:'Клієнт сканує QR для оплати:'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2635,7 +2636,8 @@ var I18N = {
     billTitle:'💳 Bill',
     billCash:'Cash / terminal — mark as paid',
     billOnline:'Send payment link (Monobank)',
-    billLinkReady:'Payment link for client:'},
+    billLinkReady:'Payment link for client:',
+    billScanQR:'Client scans QR to pay:'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -2985,7 +2987,8 @@ var I18N = {
     billTitle:'💳 Rachunek',
     billCash:'Gotówka / terminal — oznacz jako zapłacone',
     billOnline:'Wyślij link do płatności (Monobank)',
-    billLinkReady:'Link dla klienta:'},
+    billLinkReady:'Link dla klienta:',
+    billScanQR:'Klient skanuje QR aby zapłacić:'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -3335,7 +3338,8 @@ var I18N = {
     billTitle:'💳 Rechnung',
     billCash:'Bar / Terminal — als bezahlt markieren',
     billOnline:'Zahlungslink senden (Monobank)',
-    billLinkReady:'Zahlungslink für Kunden:'},
+    billLinkReady:'Zahlungslink für Kunden:',
+    billScanQR:'Kunde scannt QR zum Bezahlen:'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -3685,7 +3689,8 @@ var I18N = {
     billTitle:'💳 Notă de plată',
     billCash:'Numerar / terminal — marchează ca plătit',
     billOnline:'Trimite link de plată (Monobank)',
-    billLinkReady:'Link de plată pentru client:'},
+    billLinkReady:'Link de plată pentru client:',
+    billScanQR:'Clientul scanează QR pentru plată:'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -4035,7 +4040,8 @@ var I18N = {
     billTitle:'💳 Cuenta',
     billCash:'Efectivo / terminal — marcar como pagado',
     billOnline:'Enviar enlace de pago (Monobank)',
-    billLinkReady:'Enlace de pago para el cliente:'},
+    billLinkReady:'Enlace de pago para el cliente:',
+    billScanQR:'El cliente escanea QR para pagar:'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -4385,7 +4391,8 @@ var I18N = {
     billTitle:'💳 Račun',
     billCash:'Gotovina / terminal — označi kao plaćeno',
     billOnline:'Pošalji link za plaćanje (Monobank)',
-    billLinkReady:'Link za klijenta:'},
+    billLinkReady:'Link za klijenta:',
+    billScanQR:'Klijent skenira QR za plaćanje:'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -5429,10 +5436,22 @@ window.billOnline = async function(){
     if(!res.ok) throw new Error(data.error||'Помилка');
 
     if(data.payUrl){
-      document.getElementById('bill-pay-link').textContent = data.payUrl;
+      const payUrl = data.payUrl;
+      document.getElementById('bill-pay-link').textContent = payUrl;
       document.getElementById('bill-pay-link-wrap').style.display = 'block';
-      // Копіюємо одразу
-      navigator.clipboard?.writeText(data.payUrl).catch(()=>{});
+      // Показуємо QR для посилання на оплату
+      const qrWrap = document.getElementById('bill-pay-link-wrap');
+      const existingQr = document.getElementById('bill-pay-qr');
+      if(!existingQr) {
+        const qrImg = document.createElement('img');
+        qrImg.id = 'bill-pay-qr';
+        qrImg.width = 180; qrImg.height = 180;
+        qrImg.style.cssText = 'display:block;margin:.5rem auto;border-radius:4px;background:#fff;padding:4px';
+        qrWrap.insertBefore(qrImg, qrWrap.firstChild);
+      }
+      document.getElementById('bill-pay-qr').src =
+        `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(payUrl)}`;
+      navigator.clipboard?.writeText(payUrl).catch(()=>{});
       notify(t('notifMonoOpened'),'ok');
     } else {
       notify('✅ Замовлення створено (оплата при отриманні)','ok');
