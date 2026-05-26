@@ -5517,7 +5517,7 @@ window.placeTableOrder = async function() {
   btn.disabled = true;
 
   try {
-    const { collection, addDoc } = window.__FS;
+    const { collection, addDoc, serverTimestamp } = window.__FS;
     // Отримуємо поточний лічильник замовлень
     const orderNum = Date.now().toString().slice(-4);
     await addDoc(collection(db,'venues',venueId,'orders'), {
@@ -5647,7 +5647,7 @@ window.createBill = async function() {
   }
 
   try {
-    const { collection, addDoc } = window.__FS;
+    const { collection, addDoc, serverTimestamp } = window.__FS;
     // Спочатку створюємо інвойс Monobank щоб отримати payUrl
     let payUrl = null;
     try {
@@ -5680,7 +5680,7 @@ window.createBill = async function() {
       status:     'open',
       payUrl:     payUrl || null,
       orderIds:   tableOrders.map(o => o.id),
-      createdAt:  new Date().toISOString(),
+      createdAt:  serverTimestamp(),
     });
 
     if(payUrl) {
