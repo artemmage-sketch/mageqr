@@ -423,16 +423,19 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <button class="close-btn" onclick="closeModal('modal-plan')">✕</button>
     </div>
     <div class="field-group"><label class="field-label">Назва тарифу</label><input id="pf-name" type="text"/></div>
+    <div class="field-group"><label class="field-label">Опис (підзаголовок)</label><input id="pf-desc" type="text" placeholder="Ідеально для малого бізнесу"/></div>
+    <div class="field-group"><label class="field-label">Функції (кожна з нового рядка)</label><textarea id="pf-features" rows="4" style="resize:vertical;font-size:13px" placeholder="20 страв&#10;100 замовлень/міс&#10;Базовий дизайн"></textarea></div>
     <div class="grid-2">
-      <div class="field-group"><label class="field-label">Ціна (грн/міс)</label><input id="pf-price" type="number"/></div>
-      <div class="field-group"><label class="field-label">Макс. страв</label><input id="pf-items" type="number"/></div>
+      <div class="field-group"><label class="field-label">Ціна (€/міс)</label><input id="pf-price" type="number" min="0" step="1" placeholder="9"/></div>
+      <div class="field-group"><label class="field-label">Макс. страв</label><input id="pf-items" type="number" placeholder="∞ = порожньо"/></div>
       <div class="field-group"><label class="field-label">Макс. категорій</label><input id="pf-cats" type="number"/></div>
       <div class="field-group"><label class="field-label">Макс. замовлень/міс</label><input id="pf-orders" type="number"/></div>
     </div>
     <div class="field-group"><label class="field-label">Кастомний дизайн</label>
       <select id="pf-design"><option value="0">Не доступно</option><option value="1">Кольори + шрифт</option><option value="2">Повна кастомізація</option></select>
     </div>
-    <button class="btn btn-accent" style="width:100%" onclick="savePlan()">Зберегти тариф</button>
+    <div id="pf-save-status" style="font-size:12px;color:var(--muted);margin-bottom:.5rem;min-height:1.2em"></div>
+    <button class="btn btn-accent" style="width:100%" onclick="savePlan()">💾 Зберегти тариф</button>
   </div>
 </div>
 
@@ -467,11 +470,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
 // Firebase Config
 window.__MQ_CFG = window.__MQ_CFG || {
   apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-  authDomain: "mageqrrest.firebaseapp.com",
-  projectId: "mageqrrest",
-  storageBucket: "mageqrrest.firebasestorage.app",
-  messagingSenderId: "207231972557",
-  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+    authDomain: "mageqrrest.firebaseapp.com",
+    projectId: "mageqrrest",
+    storageBucket: "mageqrrest.firebasestorage.app",
+    messagingSenderId: "207231972557",
+    appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
 };
 window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
@@ -560,7 +563,7 @@ async function init() {
   renderStats();
   renderCharts();
   renderActivity();
-  renderPlans();
+  loadPlansFromFirestore();
 }
 
 // ── VENUES — ЗАВАНТАЖЕННЯ З FIRESTORE ────────────────────
@@ -787,25 +790,38 @@ window.exportVenues=window.exportVenues;
 
 // ── PLANS ──────────────────────────────────────────────────
 const PLANS_DATA={
-  free:      {name:'Free',      price:0,    items:20,  cats:5,  orders:100,   design:0, color:'#8888AA'},
-  starter:   {name:'Starter',   price:299,  items:80,  cats:15, orders:500,   design:1, color:'#F59E0B'},
-  pro:       {name:'Pro',       price:699,  items:500, cats:50, orders:5000,  design:2, color:'#6C63FF'},
-  enterprise:{name:'Enterprise',price:1999, items:999999,cats:999,orders:999999,design:2,color:'#10B981'},
+  free:      {name:'Free',      desc:'Для знайомства з платформою', price:0,  amountCents:0,    items:20,  cats:5,  orders:100,   design:0, color:'#8888AA', features:['20 страв','5 категорій','100 замовлень/міс','Базовий дизайн']},
+  starter:   {name:'Starter',   desc:'Ідеально для малого бізнесу', price:9,  amountCents:900,  items:80,  cats:15, orders:500,   design:1, color:'#F59E0B', features:['80 страв','15 категорій','500 замовлень/міс','Кольори+шрифт']},
+  pro:       {name:'Pro',       desc:'Для зростаючого ресторану',    price:19, amountCents:1900, items:500, cats:50, orders:5000,  design:2, color:'#6C63FF', features:['500 страв','50 категорій','5000 замовлень/міс','Повний дизайн','Фото+банер']},
+  enterprise:{name:'Enterprise',desc:'Мережі та великі заклади',     price:49, amountCents:4900, items:999999,cats:999,orders:999999,design:2,color:'#10B981', features:['Необмежено страв','Необмежено замовлень','POS інтеграція','Власний домен']},
 };
+
+// Завантажуємо тарифи з Firestore (якщо є кастомні)
+async function loadPlansFromFirestore(){
+  try {
+    const {doc, getDoc} = window.__FS;
+    const snap = await getDoc(doc(db,'config','plans'));
+    if(snap.exists()){
+      const data = snap.data();
+      Object.keys(PLANS_DATA).forEach(key=>{
+        if(data[key]) Object.assign(PLANS_DATA[key], data[key]);
+      });
+    }
+  } catch(e){ console.warn('loadPlans:', e.message); }
+  renderPlans();
+}
 
 function renderPlans(){
   document.getElementById('plans-grid').innerHTML=Object.entries(PLANS_DATA).map(([key,p])=>`
     <div class="plan-card${key==='pro'?' featured':''}">
       ${key==='pro'?'<div class="plan-featured-badge">ПОПУЛЯРНИЙ</div>':''}
       <div class="plan-name" style="color:${p.color}">${p.name}</div>
-      <div class="plan-price">${p.price?'₴'+p.price:'Безкоштовно'}<span>${p.price?' /місяць':''}</span></div>
+      ${p.desc?`<div style="font-size:11px;color:var(--muted);margin-bottom:.25rem">${p.desc}</div>`:''}
+      <div class="plan-price">${p.price?'€'+p.price:'Безкоштовно'}<span>${p.price?' /міс':''}</span></div>
       <ul class="plan-features">
-        <li>${p.items===999999?'Необмежено':p.items} страв</li>
-        <li>${p.cats===999?'Необмежено':p.cats} категорій</li>
-        <li>${p.orders===999999?'Необмежено':p.orders} замовлень/міс</li>
-        <li>${['Немає','Кольори+шрифт','Повна кастомізація'][p.design]}</li>
+        ${(p.features||[]).map(f=>`<li>${f}</li>`).join('')}
       </ul>
-      <button class="plan-edit-btn" onclick="openPlanModal('${key}')">✏️ Редагувати тариф</button>
+      <button class="plan-edit-btn" onclick="openPlanModal('${key}')">✏️ Редагувати</button>
     </div>`).join('');
 }
 
@@ -814,28 +830,51 @@ window.openPlanModal = function(key){
   const p=PLANS_DATA[key];
   document.getElementById('plan-modal-title').textContent='Тариф: '+p.name;
   document.getElementById('pf-name').value=p.name;
+  document.getElementById('pf-desc').value=p.desc||'';
+  document.getElementById('pf-features').value=(p.features||[]).join('\n');
   document.getElementById('pf-price').value=p.price;
   document.getElementById('pf-items').value=p.items===999999?'':p.items;
   document.getElementById('pf-cats').value=p.cats===999?'':p.cats;
   document.getElementById('pf-orders').value=p.orders===999999?'':p.orders;
   document.getElementById('pf-design').value=p.design;
+  document.getElementById('pf-save-status').textContent='';
   openModal('modal-plan');
 };
 
-window.savePlan = function(){
+window.savePlan = async function(){
   if(!editPlanKey)return;
+  const price = parseInt(document.getElementById('pf-price').value)||0;
+  const features = document.getElementById('pf-features').value
+    .split('\n').map(s=>s.trim()).filter(Boolean);
+
   PLANS_DATA[editPlanKey]={
     ...PLANS_DATA[editPlanKey],
-    name:   document.getElementById('pf-name').value,
-    price:  parseInt(document.getElementById('pf-price').value)||0,
-    items:  parseInt(document.getElementById('pf-items').value)||999999,
-    cats:   parseInt(document.getElementById('pf-cats').value)||999,
-    orders: parseInt(document.getElementById('pf-orders').value)||999999,
-    design: parseInt(document.getElementById('pf-design').value),
+    name:        document.getElementById('pf-name').value.trim(),
+    desc:        document.getElementById('pf-desc').value.trim(),
+    features,
+    price,
+    amountCents: price * 100,
+    items:       parseInt(document.getElementById('pf-items').value)||999999,
+    cats:        parseInt(document.getElementById('pf-cats').value)||999,
+    orders:      parseInt(document.getElementById('pf-orders').value)||999999,
+    design:      parseInt(document.getElementById('pf-design').value),
   };
-  closeModal('modal-plan');
-  renderPlans();
-  notify('✅ Тариф оновлено!','success');
+
+  // Зберігаємо в Firestore config/plans
+  const statusEl = document.getElementById('pf-save-status');
+  statusEl.textContent = '⏳ Зберігаємо...';
+  try {
+    const {doc, setDoc} = window.__FS;
+    await setDoc(doc(db,'config','plans'), {
+      [editPlanKey]: PLANS_DATA[editPlanKey]
+    }, {merge:true});
+    statusEl.textContent = '✅ Збережено в Firestore!';
+    setTimeout(()=>{ closeModal('modal-plan'); renderPlans(); }, 800);
+    notify('✅ Тариф оновлено!','success');
+  } catch(e){
+    statusEl.textContent = '❌ Помилка: '+e.message;
+    notify('❌ Помилка збереження','error');
+  }
 };
 
 function renderPlanTable(){
