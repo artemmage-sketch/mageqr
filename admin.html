@@ -5562,7 +5562,7 @@ window.openTableDetail = function(id) {
   document.getElementById('table-detail-title').textContent = `Стіл №${t.num} — ${t.zone}`;
 
   // Реальний QR URL
-  const qrUrl = `https://mageqrrest.com/menu.html?v=${venueId}&t=${t.num}`;
+  const qrUrl = `https://mageqrrest.com/table.html?v=${venueId}&t=${t.num}`;
   document.getElementById('table-qr-url').textContent = qrUrl;
 
   // Генеруємо QR через api.qrserver.com
@@ -5648,17 +5648,57 @@ window.createBill = async function() {
 
   try {
     const { collection, addDoc } = window.__FS;
+    // Спочатку створюємо інвойс Monobank щоб отримати payUrl
+    let payUrl = null;
+    try {
+      const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+      const token = await getAuth().currentUser.getIdToken();
+      const payRes = await fetch(`${window.__CF_URL}/createOrder`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body: JSON.stringify({
+          venueId,
+          items: allItems,
+          total,
+          tableId: String(selectedTable.num),
+          tableNum: selectedTable.num,
+          orderType: 'dine_in',
+          paymentMethod: 'online',
+          clientName: `Стіл №${selectedTable.num}`,
+          comment: `Рахунок стіл №${selectedTable.num}`,
+        }),
+      });
+      const payData = await payRes.json();
+      if(payRes.ok) payUrl = payData.payUrl || null;
+    } catch(e) { console.warn('createBill payUrl:', e.message); }
+
+    // Зберігаємо рахунок з payUrl
     const billRef = await addDoc(collection(db,'venues',venueId,'bills'), {
       tableNum:   selectedTable.num,
       items:      allItems,
       total,
       status:     'open',
+      payUrl:     payUrl || null,
       orderIds:   tableOrders.map(o => o.id),
       createdAt:  new Date().toISOString(),
     });
-    notify(`✅ Рахунок на ${cur(total)} виставлено!`, 'ok');
-    // Оновлюємо кнопку виставити рахунок
-    document.getElementById('bill-online-btn').textContent = `✅ Рахунок виставлено: ${cur(total)}`;
+
+    if(payUrl) {
+      // Показуємо QR одразу в модалці
+      document.getElementById('bill-pay-link').textContent = payUrl;
+      document.getElementById('bill-pay-link-wrap').style.display = 'block';
+      const existingQr = document.getElementById('bill-pay-qr');
+      if(!existingQr) {
+        const qrImg = document.createElement('img');
+        qrImg.id = 'bill-pay-qr';
+        qrImg.style.cssText = 'display:block;margin:.5rem auto;border-radius:4px;background:#fff;padding:4px;width:180px;height:180px';
+        document.getElementById('bill-pay-link-wrap').insertBefore(qrImg, document.getElementById('bill-pay-link-wrap').firstChild);
+      }
+      document.getElementById('bill-pay-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(payUrl)}`;
+      notify(`✅ Рахунок ${cur(total)} — посилання готове!`, 'ok');
+    } else {
+      notify(`✅ Рахунок на ${cur(total)} виставлено! Клієнт побачить у table.html`, 'ok');
+    }
   } catch(e) {
     notify(t('notifError')+': '+e.message,'err');
   }
