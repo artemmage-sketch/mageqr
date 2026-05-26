@@ -798,7 +798,11 @@ const PLANS_DATA={
 
 // Завантажуємо тарифи з Firestore (якщо є кастомні)
 async function loadPlansFromFirestore(){
+  // Одразу рендеримо дефолтні плани
+  renderPlans();
+  // Потім оновлюємо з Firestore
   try {
+    if(!window.__FS || !db) return;
     const {doc, getDoc} = window.__FS;
     const snap = await getDoc(doc(db,'config','plans'));
     if(snap.exists()){
@@ -806,9 +810,9 @@ async function loadPlansFromFirestore(){
       Object.keys(PLANS_DATA).forEach(key=>{
         if(data[key]) Object.assign(PLANS_DATA[key], data[key]);
       });
+      renderPlans(); // перерендеруємо з Firestore даними
     }
   } catch(e){ console.warn('loadPlans:', e.message); }
-  renderPlans();
 }
 
 function renderPlans(){
