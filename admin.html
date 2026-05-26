@@ -2263,7 +2263,11 @@ var I18N = {
     al_sulphites:'Сульфіти',
     venueCurrencyTitle:'💱 Валюта закладу',
     venueCurrencyLabel:'Валюта для цін у меню та замовленнях',
-    venueCurrencyNote:'Зміна валюти впливає на відображення цін у адмінці. Збережіть налаштування щоб застосувати.'},
+    venueCurrencyNote:'Зміна валюти впливає на відображення цін у адмінці. Збережіть налаштування щоб застосувати.',
+    paymentFailed:'Помилка списання',
+    updateCard:'Оновіть картку',
+    subscriptionExpired:'Підписка закінчилась',
+    renewPlan:'Поновити'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2605,7 +2609,11 @@ var I18N = {
     al_sulphites:'Sulphites',
     venueCurrencyTitle:'💱 Venue currency',
     venueCurrencyLabel:'Currency for menu prices and orders',
-    venueCurrencyNote:'Changing currency affects price display in the admin panel. Save settings to apply.'},
+    venueCurrencyNote:'Changing currency affects price display in the admin panel. Save settings to apply.',
+    paymentFailed:'Payment failed',
+    updateCard:'Update card',
+    subscriptionExpired:'Subscription expired',
+    renewPlan:'Renew'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -2947,7 +2955,11 @@ var I18N = {
     al_sulphites:'Siarczyny',
     venueCurrencyTitle:'💱 Waluta lokalu',
     venueCurrencyLabel:'Waluta dla cen w menu i zamówieniach',
-    venueCurrencyNote:'Zmiana waluty wpływa na wyświetlanie cen w panelu. Zapisz ustawienia, aby zastosować.'},
+    venueCurrencyNote:'Zmiana waluty wpływa na wyświetlanie cen w panelu. Zapisz ustawienia, aby zastosować.',
+    paymentFailed:'Błąd płatności',
+    updateCard:'Zaktualizuj kartę',
+    subscriptionExpired:'Subskrypcja wygasła',
+    renewPlan:'Odnów'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -3289,7 +3301,11 @@ var I18N = {
     al_sulphites:'Sulfite',
     venueCurrencyTitle:'💱 Lokal-Währung',
     venueCurrencyLabel:'Währung für Menüpreise und Bestellungen',
-    venueCurrencyNote:'Die Währungsänderung wirkt sich auf die Preisanzeige aus. Speichern Sie die Einstellungen.'},
+    venueCurrencyNote:'Die Währungsänderung wirkt sich auf die Preisanzeige aus. Speichern Sie die Einstellungen.',
+    paymentFailed:'Zahlungsfehler',
+    updateCard:'Karte aktualisieren',
+    subscriptionExpired:'Abonnement abgelaufen',
+    renewPlan:'Erneuern'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -3631,7 +3647,11 @@ var I18N = {
     al_sulphites:'Sulfiți',
     venueCurrencyTitle:'💱 Moneda localului',
     venueCurrencyLabel:'Moneda pentru prețurile din meniu și comenzi',
-    venueCurrencyNote:'Schimbarea monedei afectează afișarea prețurilor. Salvați setările pentru a aplica.'},
+    venueCurrencyNote:'Schimbarea monedei afectează afișarea prețurilor. Salvați setările pentru a aplica.',
+    paymentFailed:'Eroare la plată',
+    updateCard:'Actualizați cardul',
+    subscriptionExpired:'Abonament expirat',
+    renewPlan:'Reînnoiți'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -3973,7 +3993,11 @@ var I18N = {
     al_sulphites:'Sulfitos',
     venueCurrencyTitle:'💱 Moneda del local',
     venueCurrencyLabel:'Moneda para precios del menú y pedidos',
-    venueCurrencyNote:'El cambio de moneda afecta la visualización de precios. Guarde la configuración para aplicar.'},
+    venueCurrencyNote:'El cambio de moneda afecta la visualización de precios. Guarde la configuración para aplicar.',
+    paymentFailed:'Error de pago',
+    updateCard:'Actualizar tarjeta',
+    subscriptionExpired:'Suscripción caducada',
+    renewPlan:'Renovar'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -4315,7 +4339,11 @@ var I18N = {
     al_sulphites:'Sulfiti',
     venueCurrencyTitle:'💱 Valuta lokala',
     venueCurrencyLabel:'Valuta za cijene u meniju i narudžbinama',
-    venueCurrencyNote:'Promjena valute utiče na prikaz cijena u admin panelu. Sačuvajte podešavanja za primjenu.'},
+    venueCurrencyNote:'Promjena valute utiče na prikaz cijena u admin panelu. Sačuvajte podešavanja za primjenu.',
+    paymentFailed:'Greška plaćanja',
+    updateCard:'Ažuriraj karticu',
+    subscriptionExpired:'Pretplata istekla',
+    renewPlan:'Obnovi'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -4953,6 +4981,16 @@ async function loadBilling(){
     document.getElementById('cur-plan-name').textContent=planData.name;
     document.getElementById('cur-plan-name').style.color=planData.color;
     document.getElementById('cur-plan-desc').textContent=plan==='trial'?t('trialPeriod'):plan==='free'?t('free'):`€${planData.price}/${t('perMonth')}`;
+    // Статус підписки
+    if(vd.status === 'expired' || vd.status === 'payment_failed') {
+      const warn = document.createElement('div');
+      warn.style.cssText = 'background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:.875rem;margin-bottom:1rem;font-size:13px;color:#DC2626';
+      warn.innerHTML = vd.status === 'payment_failed'
+        ? `⚠️ ${t('paymentFailed')} — <a href="#" onclick="document.querySelector('[onclick*=t-billing]')?.click()" style="color:var(--accent)">${t('updateCard')}</a>`
+        : `⏰ ${t('subscriptionExpired')} — <a href="#" onclick="bindCard()" style="color:var(--accent)">${t('renewPlan')}</a>`;
+      document.getElementById('billing-wrap')?.prepend(warn);
+    }
+
     if(plan==='trial'&&vd.trialEndsAt){
       const trialEnd=vd.trialEndsAt.seconds*1000;
       const daysLeft=Math.max(0,Math.ceil((trialEnd-Date.now())/86400000));
