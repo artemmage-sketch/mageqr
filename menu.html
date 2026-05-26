@@ -880,7 +880,14 @@ window.setOrderType = function(type) {
   const elAddress = $('form-address');
   const elComment = $('form-comment');
   const elLabel   = $('comment-label');
-  if (elTable)   elTable.style.display   = type === 'dine_in'  ? 'block' : 'none';
+  if (elTable) {
+    if (type === 'dine_in') {
+      // Якщо стіл відомий з QR — ховаємо поле вводу повністю
+      elTable.style.display = tableId ? 'none' : 'block';
+    } else {
+      elTable.style.display = 'none';
+    }
+  }
   if (elTime)    elTime.style.display    = type === 'takeaway' ? 'block' : 'none';
   if (elAddress) elAddress.style.display = type === 'delivery' ? 'block' : 'none';
   if (elComment) elComment.style.display = type === 'delivery' ? 'none'  : 'block';
