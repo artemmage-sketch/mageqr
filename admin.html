@@ -1645,6 +1645,28 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- ЛОГОТИП -->
         <div class="settings-section">
+          <h3 data-i18n="venueCurrencyTitle">💱 Валюта закладу</h3>
+          <div class="field-row">
+            <label class="field-label" data-i18n="venueCurrencyLabel">Валюта для цін у меню та замовленнях</label>
+            <select id="set-currency" onchange="onCurrencyChange(this.value)" style="max-width:320px">
+              <option value="UAH">🇺🇦 Гривня (₴ UAH)</option>
+              <option value="EUR">🇪🇺 Євро (€ EUR)</option>
+              <option value="USD">🇺🇸 Долар США ($ USD)</option>
+              <option value="PLN">🇵🇱 Злотий (zł PLN)</option>
+              <option value="GBP">🇬🇧 Фунт стерлінгів (£ GBP)</option>
+              <option value="CZK">🇨🇿 Чеська крона (Kč CZK)</option>
+              <option value="RON">🇷🇴 Румунський лей (lei RON)</option>
+              <option value="HUF">🇭🇺 Форинт (Ft HUF)</option>
+              <option value="BGN">🇧🇬 Болгарський лев (лв BGN)</option>
+              <option value="BAM">🇧🇦 Конвертована марка (KM BAM)</option>
+              <option value="RSD">🇷🇸 Динар (дін RSD)</option>
+            </select>
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:.375rem" data-i18n="venueCurrencyNote">Зміна валюти впливає на відображення цін у адмінці. Збережіть налаштування щоб застосувати.</div>
+        </div>
+
+        <!-- ЛОГОТИП -->
+        <div class="settings-section">
           <h3 data-i18n="venueLogoTitle">🖼️ Логотип закладу</h3>
           <div style="display:grid;grid-template-columns:120px 1fr;gap:1.25rem;align-items:start">
             <div>
@@ -2239,7 +2261,10 @@ var I18N = {
     phOrgUUID:'UUID організації',
     phTermUUID:'UUID терміналу',
     phNoTableSelect:'0 = не показувати вибір столу',
-    al_sulphites:'Сульфіти'},
+    al_sulphites:'Сульфіти',
+    venueCurrencyTitle:'💱 Валюта закладу',
+    venueCurrencyLabel:'Валюта для цін у меню та замовленнях',
+    venueCurrencyNote:'Зміна валюти впливає на відображення цін у адмінці. Збережіть налаштування щоб застосувати.'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2578,7 +2603,10 @@ var I18N = {
     phOrgUUID:'Organization UUID',
     phTermUUID:'Terminal UUID',
     phNoTableSelect:'0 = do not show table selection',
-    al_sulphites:'Sulphites'},
+    al_sulphites:'Sulphites',
+    venueCurrencyTitle:'💱 Venue currency',
+    venueCurrencyLabel:'Currency for menu prices and orders',
+    venueCurrencyNote:'Changing currency affects price display in the admin panel. Save settings to apply.'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -2917,7 +2945,10 @@ var I18N = {
     phOrgUUID:'UUID organizacji',
     phTermUUID:'UUID terminalu',
     phNoTableSelect:'0 = nie pokazuj wyboru stolika',
-    al_sulphites:'Siarczyny'},
+    al_sulphites:'Siarczyny',
+    venueCurrencyTitle:'💱 Waluta lokalu',
+    venueCurrencyLabel:'Waluta dla cen w menu i zamówieniach',
+    venueCurrencyNote:'Zmiana waluty wpływa na wyświetlanie cen w panelu. Zapisz ustawienia, aby zastosować.'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -3256,7 +3287,10 @@ var I18N = {
     phOrgUUID:'Organisations-UUID',
     phTermUUID:'Terminal-UUID',
     phNoTableSelect:'0 = Tischauswahl nicht anzeigen',
-    al_sulphites:'Sulfite'},
+    al_sulphites:'Sulfite',
+    venueCurrencyTitle:'💱 Lokal-Währung',
+    venueCurrencyLabel:'Währung für Menüpreise und Bestellungen',
+    venueCurrencyNote:'Die Währungsänderung wirkt sich auf die Preisanzeige aus. Speichern Sie die Einstellungen.'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -3595,7 +3629,10 @@ var I18N = {
     phOrgUUID:'UUID organizație',
     phTermUUID:'UUID terminal',
     phNoTableSelect:'0 = nu arăta selecția mesei',
-    al_sulphites:'Sulfiți'},
+    al_sulphites:'Sulfiți',
+    venueCurrencyTitle:'💱 Moneda localului',
+    venueCurrencyLabel:'Moneda pentru prețurile din meniu și comenzi',
+    venueCurrencyNote:'Schimbarea monedei afectează afișarea prețurilor. Salvați setările pentru a aplica.'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -3934,7 +3971,10 @@ var I18N = {
     phOrgUUID:'UUID de organización',
     phTermUUID:'UUID de terminal',
     phNoTableSelect:'0 = no mostrar selección de mesa',
-    al_sulphites:'Sulfitos'},
+    al_sulphites:'Sulfitos',
+    venueCurrencyTitle:'💱 Moneda del local',
+    venueCurrencyLabel:'Moneda para precios del menú y pedidos',
+    venueCurrencyNote:'El cambio de moneda afecta la visualización de precios. Guarde la configuración para aplicar.'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -4273,10 +4313,39 @@ var I18N = {
     phOrgUUID:'UUID organizacije',
     phTermUUID:'UUID terminala',
     phNoTableSelect:'0 = ne prikazuj izbor stola',
-    al_sulphites:'Sulfiti'},
+    al_sulphites:'Sulfiti',
+    venueCurrencyTitle:'💱 Valuta lokala',
+    venueCurrencyLabel:'Valuta za cijene u meniju i narudžbinama',
+    venueCurrencyNote:'Promjena valute utiče na prikaz cijena u admin panelu. Sačuvajte podešavanja za primjenu.'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
+
+// Валюта закладу
+var CURRENCIES = {
+  UAH: {symbol:'₴', code:'UAH', name:'Гривня',    ccyMono:980},
+  EUR: {symbol:'€', code:'EUR', name:'Євро',       ccyMono:978},
+  USD: {symbol:'$', code:'USD', name:'Долар США',  ccyMono:840},
+  PLN: {symbol:'zł',code:'PLN', name:'Злотий',     ccyMono:985},
+  GBP: {symbol:'£', code:'GBP', name:'Фунт',       ccyMono:826},
+  CZK: {symbol:'Kč',code:'CZK', name:'Крона',      ccyMono:203},
+  RON: {symbol:'lei',code:'RON',name:'Лей',         ccyMono:946},
+  HUF: {symbol:'Ft',code:'HUF', name:'Форинт',     ccyMono:348},
+  BGN: {symbol:'лв',code:'BGN', name:'Лев',         ccyMono:975},
+  BAM: {symbol:'KM',code:'BAM', name:'Марка',       ccyMono:977},
+  RSD: {symbol:'дін',code:'RSD',name:'Динар',       ccyMono:941},
+};
+var venueCurrency = CURRENCIES.UAH;
+
+// cur(amount) — форматує суму з символом валюти
+function cur(amount) {
+  if(amount === undefined || amount === null || amount === '') return '';
+  var sym = venueCurrency.symbol;
+  // Символи що йдуть після числа
+  var postfix = ['грн','zł','Kč','lei','Ft','лв','KM','дін'];
+  if(postfix.includes(sym)) return amount + ' ' + sym;
+  return sym + amount;
+}
 function t(key) {
   if(!key) return '';
   if(typeof I18N === 'undefined') return key;
@@ -4436,9 +4505,9 @@ function renderOrders(){
   const rev=todayOrders.filter(o=>o.status!=='cancel').reduce((s,o)=>s+(o.total||0),0);
   document.getElementById('st-new-ord').textContent=newO.length;
   document.getElementById('st-done-ord').textContent=doneO.length;
-  document.getElementById('st-today-rev').textContent=rev+'₴';
+  document.getElementById('st-today-rev').textContent=cur(rev);
   const avg=doneO.length?Math.round(doneO.reduce((s,o)=>s+(o.total||0),0)/doneO.length):0;
-  document.getElementById('st-avg')&&(document.getElementById('st-avg').textContent=avg?avg+'₴':'—');
+  document.getElementById('st-avg')&&(document.getElementById('st-avg').textContent=avg?cur(avg):'—');
   updateOrderBadge();
   if(!list.length){document.getElementById('orders-wrap').innerHTML=`<div class="empty"><i>🧾</i><div>${t('noOrders')}</div></div>`;return;}
   document.getElementById('orders-wrap').innerHTML=list.map(o=>`
@@ -4454,7 +4523,7 @@ function renderOrders(){
           <span class="o-badge ${{new:'o-new',preparing:'o-prep',done:'o-done',cancel:'o-cancel',pending_payment:'o-pending'}[o.status]||'o-new'}">${{new:t('newOrder'),preparing:t('preparing'),done:t('done'),cancel:t('cancelled'),pending_payment:'⏳'}[o.status]||t('newOrder')}</span>
         </div>
       </div>
-      <div class="o-items">${(o.items||[]).map(i=>`<b>${i.name}</b> ×${i.qty} — ${i.price*i.qty}грн`).join('<br/>')}</div>
+      <div class="o-items">${(o.items||[]).map(i=>`<b>${i.name}</b> ×${i.qty} — ${cur(i.price*i.qty)}`).join('<br/>')}</div>
       <div style="font-size:12px;color:var(--muted);margin-top:.375rem;display:flex;flex-wrap:wrap;gap:.5rem">
         ${o.clientPhone?`<span>📞 ${o.clientPhone}</span>`:''}
         ${o.orderType?`<span>${{dine_in:'🪑 '+t('dineIn'),takeaway:'🥡 '+t('takeaway'),delivery:'🚗 '+t('delivery')}[o.orderType]||o.orderType}</span>`:''}
@@ -4465,7 +4534,7 @@ function renderOrders(){
       </div>
       ${o.comment?`<div class="o-comment">${t('comment')}: ${o.comment}</div>`:''}
       ${o.deliveryComment?`<div class="o-comment">🚗 ${o.deliveryComment}</div>`:''}
-      <div class="o-total">${t('total')}: <b>${o.total} грн</b></div>
+      <div class="o-total">${t('total')}: <b>${cur(o.total)}</b></div>
       <div class="o-actions">
         ${(o.status==='new'||!o.status)?`
           <button class="btn btn-outline btn-sm" onclick="setStatus('${o.id}','preparing')">${t('markPreparing')}</button>
@@ -4649,7 +4718,7 @@ function renderItems(){
         ${i.photoUrl?`<img src="${i.photoUrl}" alt="${i.name}" style="width:100%;height:100%;object-fit:cover;border-radius:8px"/>`:`<span style="font-size:1.5rem">🍽️</span>`}
       </div>
       <div class="item-body"><div class="item-name">${i.name}</div><div class="item-sub">${i.category||''} · ${i.weight||''}</div></div>
-      <span class="item-price">${i.price} грн</span>
+      <span class="item-price">${cur(i.price)}</span>
       <div class="item-btns">
         <button class="icon-btn" onclick="openItemModal('${i.id}')">✏️</button>
         <button class="icon-btn del" onclick="deleteItem('${i.id}')">🗑️</button>
@@ -4749,6 +4818,11 @@ async function loadSettings(){
       adminLang = d.adminLang;
       localStorage.setItem('mq_admin_lang', d.adminLang);
     }
+    if(d.currency && CURRENCIES[d.currency]) {
+      venueCurrency = CURRENCIES[d.currency];
+      const sel = document.getElementById('set-currency');
+      if(sel) sel.value = d.currency;
+    }
     if(d.tagline)document.getElementById('set-tag').value=d.tagline;
     if(d.city)document.getElementById('set-city').value=d.city;
     if(d.phone)document.getElementById('set-phone').value=d.phone;
@@ -4770,7 +4844,9 @@ window.saveSettings=async function(){
   try{
     if(logoFile){logoUrl=await uploadSettingsFile(logoFile,`venues/${venueId}/settings/logo_${Date.now()}`,'logo-upload-status');document.getElementById('set-logo-url').value=logoUrl;logoFile=null;}
     if(bannerFile){bannerUrl=await uploadSettingsFile(bannerFile,`venues/${venueId}/settings/banner_${Date.now()}`,'banner-upload-status');document.getElementById('set-banner-url').value=bannerUrl;bannerFile=null;}
-    const data={name:document.getElementById('set-name').value.trim(),tagline:document.getElementById('set-tag').value.trim(),city:document.getElementById('set-city')?.value.trim()||'',phone:document.getElementById('set-phone').value.trim(),address:document.getElementById('set-addr').value.trim(),hours:document.getElementById('set-hours')?.value.trim()||'',logoUrl,logoEmoji:document.getElementById('set-logo-emoji').value.trim(),bannerUrl,updatedAt:new Date().toISOString()};
+    const currencyCode = document.getElementById('set-currency')?.value || 'UAH';
+    if(CURRENCIES[currencyCode]) venueCurrency = CURRENCIES[currencyCode];
+    const data={name:document.getElementById('set-name').value.trim(),tagline:document.getElementById('set-tag').value.trim(),city:document.getElementById('set-city')?.value.trim()||'',phone:document.getElementById('set-phone').value.trim(),address:document.getElementById('set-addr').value.trim(),hours:document.getElementById('set-hours')?.value.trim()||'',logoUrl,logoEmoji:document.getElementById('set-logo-emoji').value.trim(),bannerUrl,currency:currencyCode,updatedAt:new Date().toISOString()};
     await setDoc(doc(db,'venues',venueId,'settings','main'),data);
     if(data.name)document.getElementById('sb-venue-name').textContent=data.name;
     notify(t('notifSettingsSaved'),'ok');
@@ -4893,7 +4969,7 @@ async function loadBilling(){
     renderBillingPlanCards(plan);
     const paymSnap=await getDocs(collection(db,'payments'));
     const payments=paymSnap.docs.map(d=>({id:d.id,...d.data()})).filter(p=>p.venueId===venueId).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-    if(payments.length){document.getElementById('billing-history-wrap').innerHTML=payments.map(p=>`<div class="bh-row"><div class="bh-status ${p.status==='success'?'bh-paid':p.status==='pending'?'bh-pending':'bh-failed'}"></div><div style="flex:1"><div style="font-weight:500">${PLANS_BILLING[p.plan]?.name||p.plan} тариф</div><div style="font-size:11px;color:var(--muted)">${p.createdAt?new Date(p.createdAt.seconds*1000).toLocaleDateString('uk-UA'):''}</div></div><div style="font-weight:600">₴${(p.amount/100)||0}</div><div style="font-size:11px;margin-left:.5rem;color:${p.status==='success'?'var(--green)':p.status==='pending'?'var(--amber)':'var(--red)'}">${p.status==='success'?'Оплачено':p.status==='pending'?'Очікує':'Помилка'}</div></div>`).join('');}
+    if(payments.length){document.getElementById('billing-history-wrap').innerHTML=payments.map(p=>`<div class="bh-row"><div class="bh-status ${p.status==='success'?'bh-paid':p.status==='pending'?'bh-pending':'bh-failed'}"></div><div style="flex:1"><div style="font-weight:500">${PLANS_BILLING[p.plan]?.name||p.plan} тариф</div><div style="font-size:11px;color:var(--muted)">${p.createdAt?new Date(p.createdAt.seconds*1000).toLocaleDateString('uk-UA'):''}</div></div><div style="font-weight:600">€${(p.amount/100)||0}</div><div style="font-size:11px;margin-left:.5rem;color:${p.status==='success'?'var(--green)':p.status==='pending'?'var(--amber)':'var(--red)'}">${p.status==='success'?'Оплачено':p.status==='pending'?'Очікує':'Помилка'}</div></div>`).join('');}
   }catch(e){console.warn('loadBilling:',e.message);}
 }
 
@@ -4992,7 +5068,7 @@ function renderMappingRows() {
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.625rem .75rem">
       <div>
         <div style="font-size:13px;font-weight:500">🍽️ ${item.name}</div>
-        <div style="font-size:11px;color:var(--muted)">${item.category||''} · ${item.price} грн</div>
+        <div style="font-size:11px;color:var(--muted)">${item.category||''} · ${cur(item.price)}</div>
       </div>
       <select data-item="${item.id}" data-type="posterId" style="font-size:12px;padding:5px 8px" onchange="currentMapping['${item.id}'] = {...(currentMapping['${item.id}']||{}), posterId: this.value}">
         ${posProducts.poster.length
@@ -5106,14 +5182,14 @@ function renderTables(){
       <div class="table-num">${t.num}</div>
       <div class="table-zone">${t.zone} · ${t.seats} місць</div>
       <div><span class="table-status ${stMap[t.status]||'ts-free'}">${stLabel[t.status]||t('tableFree')}</span></div>
-      ${t.amount?`<div class="table-amount">₴${t.amount}</div>`:''}
+      ${t.amount?`<div class="table-amount">${cur(t.amount)}</div>`:''}
       ${t.startTime?`<div class="table-timer">⏱ з ${t.startTime}</div>`:''}
       <div style="margin-top:.5rem;font-size:11px;color:var(--muted)">QR · Деталі</div>
     </div>`).join('');
   document.getElementById('st-tables-free').textContent=tables.filter(t=>t.status==='free').length;
   document.getElementById('st-tables-occ').textContent=tables.filter(t=>t.status!=='free').length;
-  document.getElementById('st-tables-rev').textContent='₴'+tables.filter(t=>t.status==='paid').reduce((s,t)=>s+t.amount,0);
-  document.getElementById('st-tips-today').textContent='₴'+staff.reduce((s,p)=>s+p.tipsToday,0);
+  document.getElementById('st-tables-rev').textContent=cur('').replace(/\d/g,'')+tables.filter(t=>t.status==='paid').reduce((s,t)=>s+t.amount,0);
+  document.getElementById('st-tips-today').textContent=cur(staff.reduce((s,p)=>s+p.tipsToday,0));
 }
 function filterZone(btn,zone){
   document.querySelectorAll('.zone-tab').forEach(b=>b.classList.remove('active'));
@@ -5184,7 +5260,7 @@ window.openTableDetail=openTableDetail;
 
 function selectSplit(el,n,total){document.querySelectorAll('.split-person').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');notify(`Рахунок розділено на ${n}: ≈₴${Math.ceil(total/n)} з особи`,'ok');}
 window.selectSplit=selectSplit;
-function selectTip(btn,pct){document.querySelectorAll('.tips-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('tips-custom-val').value='';if(selectedTable&&selectedTable.amount)notify(`Чайові ${pct}% = ₴${Math.round(selectedTable.amount*parseInt(pct)/100)}`,'ok');}
+function selectTip(btn,pct){document.querySelectorAll('.tips-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('tips-custom-val').value='';if(selectedTable&&selectedTable.amount)notify(`${t('tipsWord')} ${pct}% = ${cur(Math.round(selectedTable.amount*parseInt(pct)/100))}`,'ok');}
 window.selectTip=selectTip;
 window.setTableStatus = function(status) {
   if(!selectedTable) return;
@@ -6139,6 +6215,16 @@ function renderAdminLangSwitcher() {
 }
 
 // Переклад всього меню
+window.onCurrencyChange = function(code) {
+  if(CURRENCIES[code]) {
+    venueCurrency = CURRENCIES[code];
+    // Оновлюємо мітки з валютою одразу
+    applyAdminLang(adminLang);
+    try { renderItems(); } catch(e){}
+    try { renderOrders(); } catch(e){}
+  }
+};
+
 window.saveAdminLang = async function(lang) {
   adminLang = lang;
   localStorage.setItem('mq_admin_lang', lang);
