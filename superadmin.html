@@ -349,9 +349,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
     <!-- PLANS -->
     <div id="t-plans" class="tab-section">
-      <div class="topbar"><div><div class="topbar-title">Управління тарифами</div></div></div>
+      <div class="topbar">
+        <div><div class="topbar-title">💎 Управління тарифами</div></div>
+        <button class="btn btn-sm" style="background:var(--accent);color:#fff;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:13px" onclick="loadPlansFromFirestore()">↺ Оновити</button>
+      </div>
       <div class="content">
-        <div class="plans-grid" id="plans-grid"></div>
+        <div id="plans-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1.5rem">
+          <div style="color:var(--muted);font-size:13px;padding:1rem">Завантаження тарифів...</div>
+        </div>
         <div class="table-wrap">
           <div class="table-header"><div class="table-title">Заклади по тарифах</div></div>
           <table>
@@ -930,6 +935,8 @@ window.nav = function(btn, tab){
   btn.classList.add('active');
   document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));
   document.getElementById(tab).classList.add('active');
+  // При переході на тарифи — рендеримо плани
+  if(tab === 't-plans') loadPlansFromFirestore();
 };
 
 // ── MODAL ───────────────────────────────────────────────────
