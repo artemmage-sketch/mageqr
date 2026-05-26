@@ -4392,7 +4392,7 @@ async function initFirebase() {
     venueId = await findVenueByUid(user.uid) || deriveVenueFromEmail(user.email);
     sessionStorage.setItem('__mq_venue', venueId);
     document.getElementById('sb-venue-name').textContent = venueId;
-    await Promise.all([loadSettings(), loadCats(), loadItems()]);
+    await Promise.all([loadSettings(), loadCats(), loadItems(), loadPlanPrices()]);
     subscribeOrders();
     renderMappingRows();
     renderPresetsRow();
@@ -4916,7 +4916,29 @@ window.saveDesign=async function(){
 };
 
 // ── BILLING ──
-const PLANS_BILLING={free:{name:'Free',price:0,color:'#8888AA'},trial:{name:'Trial',price:0,color:'#C1440E'},starter:{name:'Starter',price:9,color:'#F59E0B'},pro:{name:'Pro',price:19,color:'#6C63FF'},enterprise:{name:'Enterprise',price:49,color:'#10B981'}};
+var PLANS_BILLING={free:{name:'Free',price:0,color:'#8888AA'},trial:{name:'Trial',price:0,color:'#C1440E'},starter:{name:'Starter',price:9,color:'#F59E0B'},pro:{name:'Pro',price:19,color:'#6C63FF'},enterprise:{name:'Enterprise',price:49,color:'#10B981'}};
+
+// Завантажуємо актуальні ціни тарифів з Firestore (редаговані в superadmin)
+async function loadPlanPrices() {
+  if(!db || !window.__FS) return;
+  try {
+    const {doc, getDoc} = window.__FS;
+    const snap = await getDoc(doc(db,'config','plans'));
+    if(!snap.exists()) return;
+    const data = snap.data();
+    Object.keys(PLANS_BILLING).forEach(key => {
+      if(data[key]) {
+        if(data[key].price !== undefined) PLANS_BILLING[key].price = data[key].price;
+        if(data[key].name)  PLANS_BILLING[key].name  = data[key].name;
+        if(data[key].amountCents !== undefined) PLANS_BILLING[key].amountCents = data[key].amountCents;
+      }
+    });
+    // Оновлюємо PLAN_LIMITS теж
+    Object.keys(PLAN_LIMITS).forEach(key => {
+      if(data[key]?.price !== undefined) PLAN_LIMITS[key].price = data[key].price;
+    });
+  } catch(e) { console.warn('loadPlanPrices:', e.message); }
+}
 
 async function loadBilling(){
   if(!db||!window.__FS)return;
