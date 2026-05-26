@@ -302,11 +302,13 @@ tr:hover td{background:rgba(255,255,255,.02)}
                 <option value="pro">Pro</option>
                 <option value="enterprise">Enterprise</option>
               </select>
-              <select id="filter-status" style="width:130px" onchange="filterVenues()">
+              <select id="filter-status" style="width:150px" onchange="filterVenues()">
                 <option value="">Всі статуси</option>
                 <option value="active">Активні</option>
                 <option value="inactive">Неактивні</option>
                 <option value="blocked">Заблоковані</option>
+                <option value="expired">⏰ Закінчилась</option>
+                <option value="payment_failed">⚠️ Помилка оплати</option>
               </select>
               <div class="search-wrap">
                 <span class="search-icon">🔍</span>
@@ -318,9 +320,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
             <thead>
               <tr>
                 <th>Заклад</th>
-                <th>Власник</th>
+                <th>Місто</th>
                 <th>Тариф</th>
                 <th>Статус</th>
+                <th>Картка</th>
                 <th>Замовлень</th>
                 <th>Дата реєстрації</th>
                 <th>Дії</th>
@@ -591,14 +594,18 @@ async function loadVenues() {
         const orders = ordSnap.size;
 
         loaded.push({
-          id:      venueId,
-          name:    sett.name    || venueId,
-          city:    sett.city    || '—',
-          phone:   sett.phone   || '',
-          address: sett.address || '',
-          slug:    venueId,
-          plan:    d.data()?.plan    || 'free',
-          status:  d.data()?.status  || 'active',
+          id:          venueId,
+          name:        sett.name       || venueId,
+          city:        sett.city       || '—',
+          phone:       sett.phone      || '',
+          address:     sett.address    || '',
+          slug:        venueId,
+          plan:        d.data()?.plan        || 'free',
+          status:      d.data()?.status      || 'active',
+          planEndsAt:  d.data()?.planEndsAt  || null,
+          planPaidAt:  d.data()?.planPaidAt  || null,
+          recToken:    d.data()?.recToken     ? '✓' : '—',
+          cardMask:    d.data()?.cardMask     || '—',
           orders,
           reg:     d.data()?.createdAt
             ? new Date(d.data().createdAt.seconds*1000).toISOString().slice(0,10)
@@ -684,8 +691,25 @@ function renderStats(){
   document.getElementById('st-active').textContent   = allVenues.filter(v=>v.status==='active').length;
   document.getElementById('st-orders').textContent   = allVenues.reduce((s,v)=>s+(v.orders||0),0).toLocaleString();
   const rev = allVenues.reduce((s,v)=>s+(PLANS_DATA[v.plan]?.price||0),0);
-  document.getElementById('st-rev').textContent      = '₴'+rev.toLocaleString();
+  document.getElementById('st-rev').textContent      = '€'+rev.toLocaleString();
   document.getElementById('st-items').textContent    = allVenues.length;
+
+  // Проблемні заклади
+  const failed  = allVenues.filter(v=>v.status==='payment_failed').length;
+  const expired = allVenues.filter(v=>v.status==='expired').length;
+  const hasCard = allVenues.filter(v=>v.recToken==='✓').length;
+  let alertEl = document.getElementById('billing-alerts');
+  if(!alertEl){
+    alertEl = document.createElement('div');
+    alertEl.id = 'billing-alerts';
+    alertEl.style.cssText = 'display:flex;gap:.5rem;flex-wrap:wrap;margin:.75rem 1.5rem 0';
+    document.querySelector('.stats-row')?.after(alertEl);
+  }
+  alertEl.innerHTML = [
+    failed  ? `<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:.375rem .875rem;font-size:12px;color:#DC2626;cursor:pointer" onclick="document.getElementById('filter-status').value='payment_failed';filterVenues()">⚠️ Помилка оплати: <b>${failed}</b></div>` : '',
+    expired ? `<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:.375rem .875rem;font-size:12px;color:#EA580C;cursor:pointer" onclick="document.getElementById('filter-status').value='expired';filterVenues()">⏰ Закінчилась: <b>${expired}</b></div>` : '',
+    `<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.375rem .875rem;font-size:12px;color:var(--muted)">🔑 З токеном: <b>${hasCard}</b>/${allVenues.length}</div>`,
+  ].join('');
 }
 
 // ── VENUES TABLE ───────────────────────────────────────────
@@ -713,18 +737,37 @@ function renderVenuesTable(list){
   const total=list.length;
   const start=(currentPage-1)*pageSize;
   const page=list.slice(start,start+pageSize);
-  const statusDot={active:'dot-active',inactive:'dot-inactive',blocked:'dot-blocked'};
-  const statusText={active:'Активний',inactive:'Неактивний',blocked:'Заблоковано'};
 
-  document.getElementById('venues-tbody').innerHTML = page.length ? page.map(v=>`
-    <tr>
+  const statusDot ={
+    active:'dot-active', inactive:'dot-inactive', blocked:'dot-blocked',
+    expired:'dot-inactive', payment_failed:'dot-blocked',
+  };
+  const statusText={
+    active:'Активний', inactive:'Неактивний', blocked:'Заблоковано',
+    expired:'⏰ Закінчилась', payment_failed:'⚠️ Помилка оплати',
+  };
+
+  document.getElementById('venues-tbody').innerHTML = page.length ? page.map(v=>{
+    const planEnds = v.planEndsAt
+      ? new Date(v.planEndsAt.seconds*1000).toLocaleDateString('uk-UA')
+      : '—';
+    const isBillingIssue = v.status==='expired' || v.status==='payment_failed';
+    return `
+    <tr${isBillingIssue?' style="background:#FEF2F2"':''}>
       <td>
         <div class="venue-name">${v.name}</div>
         <div class="venue-slug">/${v.slug}</div>
       </td>
       <td style="color:var(--muted)">${v.city||'—'}</td>
-      <td><span class="plan-badge plan-${v.plan}">${PLANS_DATA[v.plan]?.name||v.plan}</span></td>
-      <td><span class="status-dot ${statusDot[v.status]||'dot-inactive'}"></span>${statusText[v.status]||'—'}</td>
+      <td>
+        <span class="plan-badge plan-${v.plan}">${PLANS_DATA[v.plan]?.name||v.plan}</span>
+        ${planEnds!=='—'?`<div style="font-size:10px;color:var(--muted);margin-top:2px">до ${planEnds}</div>`:''}
+      </td>
+      <td><span class="status-dot ${statusDot[v.status]||'dot-inactive'}"></span>${statusText[v.status]||v.status}</td>
+      <td>
+        <div style="font-size:11px">${v.cardMask}</div>
+        <div style="font-size:10px;color:var(--muted)">${v.recToken==='✓'?'🔑 токен є':'немає токена'}</div>
+      </td>
       <td>${(v.orders||0).toLocaleString()}</td>
       <td style="color:var(--muted)">${v.reg||'—'}</td>
       <td>
@@ -735,8 +778,9 @@ function renderVenuesTable(list){
           <button class="btn btn-sm btn-danger" onclick="toggleBlock('${v.id}')" title="${v.status==='blocked'?'Розблокувати':'Заблокувати'}">${v.status==='blocked'?'🔓':'🔒'}</button>
         </div>
       </td>
-    </tr>`).join('')
-  : `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">Закладів не знайдено</td></tr>`;
+    </tr>`;
+  }).join('')
+  : `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--muted)">Закладів не знайдено</td></tr>`;
 
   document.getElementById('page-info').textContent = `Показано ${Math.min(start+1,total)}–${Math.min(start+pageSize,total)} з ${total}`;
   const totalPages = Math.ceil(total/pageSize)||1;
