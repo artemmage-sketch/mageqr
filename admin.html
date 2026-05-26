@@ -1883,22 +1883,36 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div style="display:flex;justify-content:space-between;font-weight:700;font-size:15px;border-top:1px solid var(--border);padding-top:.5rem;margin-top:.5rem;margin-bottom:.75rem">
         <span data-i18n="total">Разом:</span><span id="table-order-total">—</span>
       </div>
-      <!-- Кнопки оплати -->
+
+      <!-- Ручне введення суми -->
+      <div style="margin-bottom:.75rem">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:.375rem">💰 Довільна сума (якщо замовлення не в системі):</div>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <input type="number" id="manual-amount" placeholder="0" min="0" step="1"
+            style="flex:1;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:15px;outline:none"/>
+          <span style="font-size:13px;color:var(--muted)" id="manual-currency-sym">₴</span>
+        </div>
+      </div>
+
+      <!-- Кнопки дій -->
       <div id="table-bill-actions" style="display:flex;flex-direction:column;gap:.5rem">
-        <button class="btn btn-outline btn-sm" style="font-size:13px;margin-bottom:.375rem" onclick="createBill()">
+        <button class="btn btn-outline btn-sm" style="font-size:13px" onclick="createBill()">
           🧾 Виставити рахунок клієнту (QR оплата)
         </button>
         <button class="btn btn-success btn-sm" onclick="billCash()" style="font-size:13px">
-          💵 <span data-i18n="billCash">Готівка / термінал — відмітити оплаченим</span>
+          💵 <span data-i18n="billCash">Готівка / термінал — оплачено</span>
         </button>
         <button class="btn btn-accent btn-sm" id="bill-online-btn" onclick="billOnline()" style="font-size:13px">
-          📲 <span data-i18n="billOnline">Надіслати посилання на оплату (Monobank)</span>
+          📲 <span data-i18n="billOnline">Надіслати посилання на оплату</span>
         </button>
         <div id="bill-pay-link-wrap" style="display:none;background:var(--bg2);border-radius:8px;padding:.625rem;font-size:11px;word-break:break-all">
           <div style="color:var(--muted);margin-bottom:.375rem" data-i18n="billLinkReady">Посилання для клієнта:</div>
           <div id="bill-pay-link" style="font-family:monospace;color:var(--accent)"></div>
           <button class="btn btn-outline btn-sm" style="margin-top:.375rem;width:100%" onclick="copyBillLink()" data-i18n="copyURL">🔗 Копіювати</button>
         </div>
+        <button class="btn btn-outline btn-sm" style="font-size:12px;color:var(--muted);margin-top:.375rem;border-color:var(--border)" onclick="setTableStatus('free');closeModal('modal-table-detail')">
+          ✓ <span data-i18n="tableFreeBtn">Звільнити стіл</span>
+        </button>
       </div>
     </div>
   </div>
@@ -2289,7 +2303,8 @@ var I18N = {
     billCash:'Готівка / термінал — відмітити оплаченим',
     billOnline:'Надіслати посилання на оплату (Monobank)',
     billLinkReady:'Посилання для клієнта:',
-    billScanQR:'Клієнт сканує QR для оплати:'},
+    billScanQR:'Клієнт сканує QR для оплати:',
+    manualCharge:'Послуги / рахунок'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2640,7 +2655,8 @@ var I18N = {
     billCash:'Cash / terminal — mark as paid',
     billOnline:'Send payment link (Monobank)',
     billLinkReady:'Payment link for client:',
-    billScanQR:'Client scans QR to pay:'},
+    billScanQR:'Client scans QR to pay:',
+    manualCharge:'Services / charge'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -2991,7 +3007,8 @@ var I18N = {
     billCash:'Gotówka / terminal — oznacz jako zapłacone',
     billOnline:'Wyślij link do płatności (Monobank)',
     billLinkReady:'Link dla klienta:',
-    billScanQR:'Klient skanuje QR aby zapłacić:'},
+    billScanQR:'Klient skanuje QR aby zapłacić:',
+    manualCharge:'Usługi / rachunek'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -3342,7 +3359,8 @@ var I18N = {
     billCash:'Bar / Terminal — als bezahlt markieren',
     billOnline:'Zahlungslink senden (Monobank)',
     billLinkReady:'Zahlungslink für Kunden:',
-    billScanQR:'Kunde scannt QR zum Bezahlen:'},
+    billScanQR:'Kunde scannt QR zum Bezahlen:',
+    manualCharge:'Leistungen / Rechnung'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -3693,7 +3711,8 @@ var I18N = {
     billCash:'Numerar / terminal — marchează ca plătit',
     billOnline:'Trimite link de plată (Monobank)',
     billLinkReady:'Link de plată pentru client:',
-    billScanQR:'Clientul scanează QR pentru plată:'},
+    billScanQR:'Clientul scanează QR pentru plată:',
+    manualCharge:'Servicii / notă'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -4044,7 +4063,8 @@ var I18N = {
     billCash:'Efectivo / terminal — marcar como pagado',
     billOnline:'Enviar enlace de pago (Monobank)',
     billLinkReady:'Enlace de pago para el cliente:',
-    billScanQR:'El cliente escanea QR para pagar:'},
+    billScanQR:'El cliente escanea QR para pagar:',
+    manualCharge:'Servicios / cargo'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -4395,7 +4415,8 @@ var I18N = {
     billCash:'Gotovina / terminal — označi kao plaćeno',
     billOnline:'Pošalji link za plaćanje (Monobank)',
     billLinkReady:'Link za klijenta:',
-    billScanQR:'Klijent skenira QR za plaćanje:'},
+    billScanQR:'Klijent skenira QR za plaćanje:',
+    manualCharge:'Usluge / račun'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -5384,6 +5405,12 @@ window.openTableDetail = function(id) {
   document.getElementById('bill-pay-link').textContent='';
   const onlineBtn=document.getElementById('bill-online-btn');
   if(onlineBtn){onlineBtn.disabled=false;onlineBtn.innerHTML='📲 <span data-i18n="billOnline">Надіслати посилання на оплату (Monobank)</span>';}
+  // Оновлюємо символ валюти
+  const manualSym = document.getElementById('manual-currency-sym');
+  if(manualSym) manualSym.textContent = venueCurrency.symbol;
+  // Скидаємо ручну суму
+  const manualInput = document.getElementById('manual-amount');
+  if(manualInput) manualInput.value = '';
   openModal('modal-table-detail');
 }
 window.openTableDetail=openTableDetail;
@@ -5412,14 +5439,20 @@ window.createBill = async function() {
   );
   if(!tableOrders.length) { notify(t('noOrders'),'err'); return; }
 
+  const manualBillAmt = parseInt(document.getElementById('manual-amount')?.value)||0;
   const allItems = [];
   let total = 0;
-  tableOrders.forEach(o => {
-    (o.items || []).forEach(item => {
-      allItems.push({ name: item.name, qty: item.qty||1, price: item.price||0 });
-      total += (item.price||0) * (item.qty||1);
+  if(manualBillAmt > 0) {
+    allItems.push({ name: t('manualCharge'), qty: 1, price: manualBillAmt });
+    total = manualBillAmt;
+  } else {
+    tableOrders.forEach(o => {
+      (o.items || []).forEach(item => {
+        allItems.push({ name: item.name, qty: item.qty||1, price: item.price||0 });
+        total += (item.price||0) * (item.qty||1);
+      });
     });
-  });
+  }
 
   try {
     const { collection, addDoc } = window.__FS;
@@ -5439,9 +5472,16 @@ window.createBill = async function() {
   }
 };
 
+function getTableTotal(){
+  // Пріоритет: ручна сума → сума замовлень
+  const manual = parseInt(document.getElementById('manual-amount')?.value)||0;
+  if(manual > 0) return manual;
+  return parseInt(document.getElementById('table-order-total').textContent.replace(/[^\d]/g,''))||0;
+}
+
 function billCash(){
   if(!selectedTable) return;
-  const total = parseInt(document.getElementById('table-order-total').textContent.replace(/[^\d]/g,''))||0;
+  const total = getTableTotal();
   if(!total){ notify(t('noOrders'),'err'); return; }
   // Відмічаємо всі замовлення столу як оплачені
   const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&o.status!=='cancelled');
@@ -5461,7 +5501,9 @@ window.billCash = billCash;
 window.billOnline = async function(){
   if(!selectedTable) return;
   const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&(o.status==='new'||o.status==='preparing'));
-  const total = tableOrders.reduce((s,o)=>s+(o.total||0),0);
+  // Ручна сума має пріоритет
+  const manualAmt = parseInt(document.getElementById('manual-amount')?.value)||0;
+  const total = manualAmt > 0 ? manualAmt : tableOrders.reduce((s,o)=>s+(o.total||0),0);
   if(!total){ notify(t('noOrders'),'err'); return; }
 
   const btn = document.getElementById('bill-online-btn');
