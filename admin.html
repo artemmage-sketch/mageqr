@@ -4996,10 +4996,10 @@ async function loadBilling(){
 
 function renderBillingPlanCards(currentPlan){
   const plans=[
-    {key:'free',name:'Free',price:0,features:[t('feat20Dishes'),t('feat100Orders'),t('featBasicDesign')]},
-    {key:'starter',name:'Starter',price:9,features:[t('feat80Dishes'),t('feat500Orders'),t('featColorsFont')]},
-    {key:'pro',name:'Pro',price:19,features:[t('feat500Dishes'),t('feat5000Orders'),t('featFullDesign'),t('featPhotoBanner')],popular:true},
-    {key:'enterprise',name:'Enterprise',price:49,features:[t('featUnlimited'),t('featPOS'),t('featDomain')]},
+    {key:'free',      name:PLANS_BILLING.free?.name||'Free',       price:PLANS_BILLING.free?.price||0,  features:[t('feat20Dishes'),t('feat100Orders'),t('featBasicDesign')]},
+    {key:'starter',   name:PLANS_BILLING.starter?.name||'Starter',  price:PLANS_BILLING.starter?.price||9,  features:[t('feat80Dishes'),t('feat500Orders'),t('featColorsFont')]},
+    {key:'pro',       name:PLANS_BILLING.pro?.name||'Pro',          price:PLANS_BILLING.pro?.price||19, features:[t('feat500Dishes'),t('feat5000Orders'),t('featFullDesign'),t('featPhotoBanner')],popular:true},
+    {key:'enterprise',name:PLANS_BILLING.enterprise?.name||'Enterprise',price:PLANS_BILLING.enterprise?.price||49,features:[t('featUnlimited'),t('featPOS'),t('featDomain')]},
   ];
   document.getElementById('billing-plan-cards').innerHTML=plans.map(p=>`
     <div style="background:var(--card);border:1.5px solid ${p.key===currentPlan?'var(--accent)':'var(--border)'};border-radius:var(--radius);padding:1rem;position:relative;${p.key===currentPlan?'background:var(--accent-soft)':''}">
