@@ -4544,7 +4544,7 @@ function subscribeOrders() {
         let changed = false;
         orders.forEach(o => {
           if (!o.tableId || o.status === 'cancelled' || o.status === 'done') return;
-          const tbl = tables.find(t => String(t.num) === String(o.tableId));
+          const tbl = tables.find(tb => String(tb.num) === String(o.tableId));
           if (tbl && tbl.status === 'free') {
             tbl.status = 'occupied';
             changed = true;
@@ -5292,19 +5292,25 @@ window.selectMode=selectMode;window.toggleProvider=toggleProvider;
 // fiscal listener — handled by toggleFiscalMethod
 
 // ── UTILS ──
-function nav(btn,tab){
-  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-  document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));
+window.nav = function(btn,tab){
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-section').forEach(sec=>sec.classList.remove('active'));
   const el=document.getElementById(tab);
-  el.classList.add('active');
+  if(el) el.classList.add('active');
   const main=document.querySelector('.main');
   if(main) main.scrollTop=0;
-  if(tab==='t-billing')loadBilling();
-}
+  if(tab==='t-billing')   loadBilling();
+  if(tab==='t-payments')  { loadPaymentSettings(); loadFiscalSettings(); }
+  if(tab==='t-pos')       { loadPOSSettings(); loadExistingMapping().then(()=>{ if(Object.keys(currentMapping).length>0) loadPOSProductsForMapping('poster').catch(()=>{}); renderMappingRows(); }); }
+  if(tab==='t-ordering')  loadOrderingSettings();
+  if(tab==='t-customers') loadCustomers();
+  if(tab==='t-tables')    loadTablesFromFirestore();
+};
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function notify(msg,type='ok'){const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';setTimeout(()=>n.classList.remove('show'),2800);}
-window.nav=nav;window.openModal=openModal;window.closeModal=closeModal;window.notify=notify;
+window.openModal=openModal;window.closeModal=closeModal;window.notify=notify;
 
 
 // ── TABLES & QR ──
@@ -5357,7 +5363,7 @@ function drawQRMock(canvas){
 }
 
 window.openTableDetail = function(id) {
-  selectedTable = tables.find(t => String(t.id) === String(id));
+  selectedTable = tables.find(tbl => String(tbl.id) === String(id));
   if(!selectedTable) return;
   const t = selectedTable;
 
@@ -5634,12 +5640,12 @@ function printQR(){
 function printAllQR(){
   if(!tables.length) return notify('Столів немає','err');
   const win = window.open('','_blank','width=900,height=700');
-  const rows = tables.map(t => {
-    const url = `https://mageqrrest.com/table.html?v=${venueId}&t=${t.num}`;
+  const rows = tables.map(tbl => {
+    const url = `https://mageqrrest.com/table.html?v=${venueId}&t=${tbl.num}`;
     const img = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
     return `<div style="display:inline-block;text-align:center;margin:15px;vertical-align:top">
       <img src="${img}" width="200" height="200"/>
-      <div style="font-weight:700;margin-top:8px;font-size:16px">Стіл №${t.num}</div>
+      <div style="font-weight:700;margin-top:8px;font-size:16px">Стіл №${tbl.num}</div>
       <div style="font-size:10px;color:#666;margin-top:4px;max-width:200px;word-break:break-all">${url}</div>
     </div>`;
   }).join('');
@@ -5734,7 +5740,7 @@ async function loadTablesFromFirestore() {
       staffId: d.data().staffId || '',
     }));
     // Витягуємо унікальні зони
-    zones = [...new Set(tables.map(t => t.zone).filter(Boolean))];
+    zones = [...new Set(tables.map(tbl => tbl.zone).filter(Boolean))];
     renderZoneTabs();
     renderTables();
   } catch(e) {
@@ -5872,21 +5878,7 @@ window.testPOS=async function(sys){
     notify('Тест успішний!','ok');
   }catch(e){logEl.innerHTML+=`<div class="log-err">[${now}] ${e.message}</div>`;notify(t('notifError')+': '+e.message,'err');}
 };
-const _origNav2=window.nav;
-window.nav=function(btn,tab){
-  _origNav2(btn,tab);
-  if(tab==='t-payments')loadPaymentSettings();
-  if(tab==='t-pos'){
-  loadPOSSettings();
-  loadExistingMapping().then(async () => {
-    // Якщо є збережений маппінг — завантажуємо продукти з Poster автоматично
-    if(Object.keys(currentMapping).length > 0) {
-      await loadPOSProductsForMapping('poster').catch(()=>{});
-    }
-    renderMappingRows();
-  });
-}
-};
+
 
 
 window.showPosterWebhook = function() {
@@ -6052,11 +6044,7 @@ window.saveOrderingSettings = async function() {
 };
 
 // Завантажуємо при відкритті вкладки
-const _origNav3 = window.nav;
-window.nav = function(btn,tab){
-  _origNav3(btn,tab);
-  if(tab==='t-ordering') loadOrderingSettings();
-};
+
 
 
 window.syncTablesFromPoster = async function() {
@@ -6084,8 +6072,8 @@ window.syncTablesFromPoster = async function() {
     if(logEl && data.tables?.length) {
       const now = new Date().toLocaleTimeString('uk-UA');
       logEl.innerHTML = `<div class="log-ok">[${now}] ✓ Синхронізовано ${count} столів</div>` +
-        data.tables.slice(0,5).map(t =>
-          `<div class="log-info">[${now}] ${t.zone}: ${t.name} (${t.seats} місць)</div>`
+        data.tables.slice(0,5).map(tbl =>
+          `<div class="log-info">[${now}] ${tbl.zone}: ${tbl.name} (${tbl.seats} місць)</div>`
         ).join('');
     }
   } catch(e) { notify('Помилка: '+e.message, 'err'); }
@@ -6190,11 +6178,7 @@ window.exportCustomersExcel = function() {
 };
 
 // Оновлюємо nav для завантаження клієнтів
-const _origNavCust = window.nav;
-window.nav = function(btn,tab){
-  _origNavCust(btn,tab);
-  if(tab==='t-customers') loadCustomers();
-};
+
 
 
 // ── ФІСКАЛІЗАЦІЯ ────────────────────────────────────────
@@ -6255,11 +6239,7 @@ window.savePayments = async function() {
 };
 
 // Завантажуємо фіскальні налаштування при відкритті Платежів
-const _origNavFisc = window.nav;
-window.nav = function(btn,tab){
-  _origNavFisc(btn,tab);
-  if(tab==='t-payments') loadFiscalSettings();
-};
+
 
 async function loadFiscalSettings() {
   if(!db||!window.__FS) return;
@@ -6285,11 +6265,7 @@ async function loadFiscalSettings() {
 
 
 // ── КЛІЄНТИ ──────────────────────────────────────────────
-const _origNav4 = window.nav;
-window.nav = function(btn,tab){
-  _origNav4(btn,tab);
-  if(tab==='t-customers') loadCustomers();
-};
+
 
 
 window.syncSyrveTables = async function() {
