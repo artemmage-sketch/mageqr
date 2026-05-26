@@ -1885,6 +1885,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       </div>
       <!-- Кнопки оплати -->
       <div id="table-bill-actions" style="display:flex;flex-direction:column;gap:.5rem">
+        <button class="btn btn-outline btn-sm" style="font-size:13px;margin-bottom:.375rem" onclick="createBill()">
+          🧾 Виставити рахунок клієнту (QR оплата)
+        </button>
         <button class="btn btn-success btn-sm" onclick="billCash()" style="font-size:13px">
           💵 <span data-i18n="billCash">Готівка / термінал — відмітити оплаченим</span>
         </button>
@@ -5400,6 +5403,42 @@ window.setTableStatus = function(status) {
 };
 // ── РАХУНОК СТОЛУ ──────────────────────────────────────────
 // Готівка/термінал
+// Виставити рахунок з адмін панелі (зберігається в Firestore bills/{id})
+window.createBill = async function() {
+  if(!selectedTable) return;
+  const tableOrders = orders.filter(o =>
+    String(o.tableId) === String(selectedTable.num) &&
+    ['new','preparing','done'].includes(o.status)
+  );
+  if(!tableOrders.length) { notify(t('noOrders'),'err'); return; }
+
+  const allItems = [];
+  let total = 0;
+  tableOrders.forEach(o => {
+    (o.items || []).forEach(item => {
+      allItems.push({ name: item.name, qty: item.qty||1, price: item.price||0 });
+      total += (item.price||0) * (item.qty||1);
+    });
+  });
+
+  try {
+    const { collection, addDoc } = window.__FS;
+    const billRef = await addDoc(collection(db,'venues',venueId,'bills'), {
+      tableNum:   selectedTable.num,
+      items:      allItems,
+      total,
+      status:     'open',
+      orderIds:   tableOrders.map(o => o.id),
+      createdAt:  new Date().toISOString(),
+    });
+    notify(`✅ Рахунок на ${cur(total)} виставлено!`, 'ok');
+    // Оновлюємо кнопку виставити рахунок
+    document.getElementById('bill-online-btn').textContent = `✅ Рахунок виставлено: ${cur(total)}`;
+  } catch(e) {
+    notify(t('notifError')+': '+e.message,'err');
+  }
+};
+
 function billCash(){
   if(!selectedTable) return;
   const total = parseInt(document.getElementById('table-order-total').textContent.replace(/[^\d]/g,''))||0;
@@ -5509,7 +5548,7 @@ window.copyTableQRUrl = function() {
 };
 function downloadTableQR(){
   if(!selectedTable) return;
-  const qrUrl = `https://mageqrrest.com/menu.html?v=${venueId}&t=${selectedTable.num}`;
+  const qrUrl = `https://mageqrrest.com/table.html?v=${venueId}&t=${selectedTable.num}`;
   const imgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(qrUrl)}`;
   const a = document.createElement('a');
   a.href = imgUrl;
@@ -5524,7 +5563,7 @@ function downloadQR(){ downloadTableQR(); }
 
 function copyTableQRUrl(){
   if(!selectedTable) return;
-  const url = `https://mageqrrest.com/menu.html?v=${venueId}&t=${selectedTable.num}`;
+  const url = `https://mageqrrest.com/table.html?v=${venueId}&t=${selectedTable.num}`;
   navigator.clipboard.writeText(url).then(()=>notify(t('notifCopied'),'ok')).catch(()=>{
     const inp = document.createElement('input');
     inp.value = url;
@@ -5538,7 +5577,7 @@ function copyTableQRUrl(){
 
 function printQR(){
   if(!selectedTable) return;
-  const qrUrl = `https://mageqrrest.com/menu.html?v=${venueId}&t=${selectedTable.num}`;
+  const qrUrl = `https://mageqrrest.com/table.html?v=${venueId}&t=${selectedTable.num}`;
   const imgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(qrUrl)}`;
   const win = window.open('','_blank','width=400,height=500');
   win.document.write(`
@@ -5554,7 +5593,7 @@ function printAllQR(){
   if(!tables.length) return notify('Столів немає','err');
   const win = window.open('','_blank','width=900,height=700');
   const rows = tables.map(t => {
-    const url = `https://mageqrrest.com/menu.html?v=${venueId}&t=${t.num}`;
+    const url = `https://mageqrrest.com/table.html?v=${venueId}&t=${t.num}`;
     const img = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
     return `<div style="display:inline-block;text-align:center;margin:15px;vertical-align:top">
       <img src="${img}" width="200" height="200"/>
