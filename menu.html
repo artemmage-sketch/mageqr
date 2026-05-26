@@ -227,6 +227,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
       <div class="form-section" id="form-table">
         <div class="form-section-title" id="table-num-title">🪑 Номер столу</div>
+        <div id="table-auto-display" style="display:none;font-size:18px;font-weight:700;color:var(--accent);padding:.5rem 0"></div>
         <input id="cli-table" type="number" placeholder="Введіть номер столу" style="font-size:16px;padding:12px"/>
       </div>
 
@@ -271,18 +272,18 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       <div class="form-section">
         <div class="form-section-title" id="contacts-title">👤 Контактні дані</div>
         <div style="margin-bottom:.75rem">
-          <label id="lbl-name" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Ім'я *</label>
+          <label id="lbl-name" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Ім'я <span id="name-required-star">*</span></label>
           <input id="cli-name" type="text" placeholder="Ваше ім'я" style="font-size:16px;padding:12px"/>
         </div>
         <div>
-          <label id="lbl-phone" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Телефон *</label>
+        <div id="form-phone-block"><label id="lbl-phone" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Телефон *</label>
           <div style="display:flex;align-items:center;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg)">
             <span style="padding:12px;font-size:16px;color:var(--text);font-weight:600;border-right:1px solid var(--border);background:var(--bg2)">+38</span>
             <input id="cli-phone" type="tel" placeholder="0XXXXXXXXX" maxlength="10"
               style="border:none;border-radius:0;flex:1;font-size:16px;padding:12px;background:var(--bg);color:var(--text);outline:none"
               oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
           </div>
-        </div>
+        </div></div>
       </div>
 
       <div class="form-section" id="form-cutlery">
@@ -891,6 +892,14 @@ window.setOrderType = function(type) {
     renderCart();
     renderOrderTypeBtns();
   }
+  // Телефон — тільки для доставки та самовиносу
+  const phoneBlock = $('form-phone-block');
+  const nameStar = $('name-required-star');
+  const cliName = $('cli-name');
+  if (phoneBlock) phoneBlock.style.display = type === 'dine_in' ? 'none' : 'block';
+  if (nameStar) nameStar.style.display = type === 'dine_in' ? 'none' : 'inline';
+  if (cliName) cliName.placeholder = type === 'dine_in' ? "Ваше ім'я (необов'язково)" : "Ваше ім'я";
+
   if (type === 'delivery') {
     if (window.loadGoogleMaps) window.loadGoogleMaps();
     const del = orderingSettings.delivery;
@@ -993,10 +1002,11 @@ window.placeOrder = async () => {
   const btn = $('order-btn');
   btn.textContent = '...';
   btn.disabled = true;
-  const name = $('cli-name')?.value?.trim();
-  const phone = $('cli-phone')?.value?.trim();
-  if (!name) { toast("Введіть ваше ім'я"); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
-  if (!phone) { toast('Введіть номер телефону'); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
+  const name = $('cli-name')?.value?.trim() || '';
+  const phone = $('cli-phone')?.value?.trim() || '';
+  // Для dine_in — ім'я та телефон необов'язкові
+  if (orderType !== 'dine_in' && !name) { toast(ui('enterName') || "Введіть ваше ім'я"); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
+  if (orderType !== 'dine_in' && !phone) { toast(ui('enterPhone') || 'Введіть номер телефону'); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
   if (orderType === 'delivery' && !$('cli-address')?.value?.trim()) { toast('Введіть адресу доставки'); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
   if (orderType === 'takeaway' && !selectedTime) { toast('Оберіть час самовиносу'); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
   try {
@@ -1013,7 +1023,7 @@ window.placeOrder = async () => {
       clientName: name,
       clientPhone: phone,
       comment: $('cli-comment')?.value || '',
-      tableId: orderType === 'dine_in' ? ($('cli-table')?.value || tableId || null) : null,
+      tableId: orderType === 'dine_in' ? (tableId || $('cli-table')?.value || null) : null,
       pickupTime: orderType === 'takeaway' ? selectedTime?.toISOString() : null,
       deliveryAddress: orderType === 'delivery' ? [
         $('cli-city')?.value || '',
@@ -1079,7 +1089,15 @@ function applySettings(s) {
   if (line3) tagHtml += `<div style="margin-top:2px">🕐 ${line3}</div>`;
   $('venue-tag').innerHTML = tagHtml;
   if (s.city) { const cityEl = $('cli-city'); if (cityEl) cityEl.value = s.city; window._venueCity = s.city; }
-  if (tableId) $('venue-tag').innerHTML += `<div style="margin-top:3px"><span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Стіл №${tableId}</span></div>`;
+  if (tableId) {
+    // Показуємо стіл в шапці
+    $('venue-tag').innerHTML += `<div style="margin-top:3px"><span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Стіл №${tableId}</span></div>`;
+    // Підставляємо стіл у форму автоматично
+    const cliTable = $('cli-table');
+    const autoDisplay = $('table-auto-display');
+    if (cliTable) { cliTable.value = tableId; cliTable.style.display = 'none'; }
+    if (autoDisplay) { autoDisplay.textContent = `🪑 Стіл №${tableId}`; autoDisplay.style.display = 'block'; }
+  }
   if (s.logoUrl) { $('venue-logo').innerHTML = `<img src="${s.logoUrl}" alt="${s.name || ''}"/>`; }
   else if (s.logoEmoji) { $('venue-logo').textContent = s.logoEmoji; }
   if (s.bannerUrl) { const img = $('banner-img'); img.src = s.bannerUrl; img.style.display = 'block'; $('banner-placeholder').style.display = 'none'; }
