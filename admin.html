@@ -4832,7 +4832,7 @@ async function loadSettings(){
     if(d.bannerUrl){document.getElementById('set-banner-url').value=d.bannerUrl;window.previewBannerUrl(d.bannerUrl);}
     const qrUrl=`mageqrrest.com/menu.html?v=${venueId}`;
     document.getElementById('venue-qr-url')&&(document.getElementById('venue-qr-url').textContent=qrUrl);
-  }catch(e){console.warn('loadSettings:',e.message);}
+  }catch(e){console.error('loadSettings ERROR:',e.message,e.stack);notify('loadSettings: '+e.message,'err');}
 }
 
 window.saveSettings=async function(){
