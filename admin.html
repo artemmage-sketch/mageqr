@@ -1856,11 +1856,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <!-- QR КОД -->
       <div style="text-align:center">
         <div id="table-qr-wrap" style="background:#fff;padding:.5rem;border-radius:8px;border:1px solid var(--border);display:inline-block">
-          <canvas id="table-qr-canvas" width="160" height="160"></canvas>
+          <img id="table-qr-img" src="" width="160" height="160" style="display:block"/>
         </div>
         <div id="table-qr-url" style="font-size:10px;color:var(--muted);margin-top:.375rem;word-break:break-all"></div>
-        <button class="btn btn-outline btn-sm" style="margin-top:.5rem;width:100%" onclick="downloadTableQR()" data-i18n="downloadQR">${t('downloadQR')}</button>
-        <button class="btn btn-outline btn-sm" style="margin-top:.375rem;width:100%" onclick="copyTableQRUrl()" data-i18n="copyURL">${t('copyURL')}</button>
+        <button class="btn btn-outline btn-sm" style="margin-top:.5rem;width:100%" onclick="downloadTableQR()" data-i18n="downloadQR">⬇️ Завантажити QR</button>
+        <button class="btn btn-outline btn-sm" style="margin-top:.375rem;width:100%" onclick="copyTableQRUrl()" data-i18n="copyURL">🔗 Копіювати URL</button>
       </div>
 
       <!-- СТАТУС І ДІЇ -->
@@ -1876,12 +1876,26 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       </div>
     </div>
 
-    <!-- ЗАМОВЛЕННЯ НА СТОЛІ -->
-    <div style="padding:0 1rem 1rem">
-      <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem" data-i18n="activeOrders">${t('activeOrders')}</div>
+    <!-- РАХУНОК -->
+    <div style="padding:0 1rem 1rem;border-top:1px solid var(--border);margin-top:.5rem">
+      <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:.75rem 0 .5rem" data-i18n="billTitle">💳 Рахунок</div>
       <div id="table-order-lines"></div>
-      <div style="display:flex;justify-content:space-between;font-weight:600;border-top:1px solid var(--border);padding-top:.5rem;margin-top:.5rem">
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:15px;border-top:1px solid var(--border);padding-top:.5rem;margin-top:.5rem;margin-bottom:.75rem">
         <span data-i18n="total">Разом:</span><span id="table-order-total">—</span>
+      </div>
+      <!-- Кнопки оплати -->
+      <div id="table-bill-actions" style="display:flex;flex-direction:column;gap:.5rem">
+        <button class="btn btn-success btn-sm" onclick="billCash()" style="font-size:13px">
+          💵 <span data-i18n="billCash">Готівка / термінал — відмітити оплаченим</span>
+        </button>
+        <button class="btn btn-accent btn-sm" id="bill-online-btn" onclick="billOnline()" style="font-size:13px">
+          📲 <span data-i18n="billOnline">Надіслати посилання на оплату (Monobank)</span>
+        </button>
+        <div id="bill-pay-link-wrap" style="display:none;background:var(--bg2);border-radius:8px;padding:.625rem;font-size:11px;word-break:break-all">
+          <div style="color:var(--muted);margin-bottom:.375rem" data-i18n="billLinkReady">Посилання для клієнта:</div>
+          <div id="bill-pay-link" style="font-family:monospace;color:var(--accent)"></div>
+          <button class="btn btn-outline btn-sm" style="margin-top:.375rem;width:100%" onclick="copyBillLink()" data-i18n="copyURL">🔗 Копіювати</button>
+        </div>
       </div>
     </div>
   </div>
@@ -2267,7 +2281,11 @@ var I18N = {
     paymentFailed:'Помилка списання',
     updateCard:'Оновіть картку',
     subscriptionExpired:'Підписка закінчилась',
-    renewPlan:'Поновити'},
+    renewPlan:'Поновити',
+    billTitle:'💳 Рахунок',
+    billCash:'Готівка / термінал — відмітити оплаченим',
+    billOnline:'Надіслати посилання на оплату (Monobank)',
+    billLinkReady:'Посилання для клієнта:'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2613,7 +2631,11 @@ var I18N = {
     paymentFailed:'Payment failed',
     updateCard:'Update card',
     subscriptionExpired:'Subscription expired',
-    renewPlan:'Renew'},
+    renewPlan:'Renew',
+    billTitle:'💳 Bill',
+    billCash:'Cash / terminal — mark as paid',
+    billOnline:'Send payment link (Monobank)',
+    billLinkReady:'Payment link for client:'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -2959,7 +2981,11 @@ var I18N = {
     paymentFailed:'Błąd płatności',
     updateCard:'Zaktualizuj kartę',
     subscriptionExpired:'Subskrypcja wygasła',
-    renewPlan:'Odnów'},
+    renewPlan:'Odnów',
+    billTitle:'💳 Rachunek',
+    billCash:'Gotówka / terminal — oznacz jako zapłacone',
+    billOnline:'Wyślij link do płatności (Monobank)',
+    billLinkReady:'Link dla klienta:'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -3305,7 +3331,11 @@ var I18N = {
     paymentFailed:'Zahlungsfehler',
     updateCard:'Karte aktualisieren',
     subscriptionExpired:'Abonnement abgelaufen',
-    renewPlan:'Erneuern'},
+    renewPlan:'Erneuern',
+    billTitle:'💳 Rechnung',
+    billCash:'Bar / Terminal — als bezahlt markieren',
+    billOnline:'Zahlungslink senden (Monobank)',
+    billLinkReady:'Zahlungslink für Kunden:'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -3651,7 +3681,11 @@ var I18N = {
     paymentFailed:'Eroare la plată',
     updateCard:'Actualizați cardul',
     subscriptionExpired:'Abonament expirat',
-    renewPlan:'Reînnoiți'},
+    renewPlan:'Reînnoiți',
+    billTitle:'💳 Notă de plată',
+    billCash:'Numerar / terminal — marchează ca plătit',
+    billOnline:'Trimite link de plată (Monobank)',
+    billLinkReady:'Link de plată pentru client:'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -3997,7 +4031,11 @@ var I18N = {
     paymentFailed:'Error de pago',
     updateCard:'Actualizar tarjeta',
     subscriptionExpired:'Suscripción caducada',
-    renewPlan:'Renovar'},
+    renewPlan:'Renovar',
+    billTitle:'💳 Cuenta',
+    billCash:'Efectivo / terminal — marcar como pagado',
+    billOnline:'Enviar enlace de pago (Monobank)',
+    billLinkReady:'Enlace de pago para el cliente:'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -4343,7 +4381,11 @@ var I18N = {
     paymentFailed:'Greška plaćanja',
     updateCard:'Ažuriraj karticu',
     subscriptionExpired:'Pretplata istekla',
-    renewPlan:'Obnovi'},
+    renewPlan:'Obnovi',
+    billTitle:'💳 Račun',
+    billCash:'Gotovina / terminal — označi kao plaćeno',
+    billOnline:'Pošalji link za plaćanje (Monobank)',
+    billLinkReady:'Link za klijenta:'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -5280,12 +5322,12 @@ window.openTableDetail = function(id) {
   const qrUrl = `https://mageqrrest.com/menu.html?v=${venueId}&t=${t.num}`;
   document.getElementById('table-qr-url').textContent = qrUrl;
 
-  // Генеруємо реальний QR через Google Charts API
-  const canvas = document.getElementById('table-qr-canvas');
-  const img = document.createElement('img');
-  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}`;
-  img.style.cssText = 'width:200px;height:200px;display:block;margin:0 auto';
-  canvas.parentNode.replaceChild(img, canvas);
+  // Генеруємо QR через api.qrserver.com
+  const qrImg = document.getElementById('table-qr-img');
+  if(qrImg) {
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}`;
+    qrImg.alt = qrUrl;
+  }
 
   // Замовлення столу — шукаємо активні замовлення
   const tableOrders = orders.filter(o => String(o.tableId) === String(t.num) && (o.status === 'new' || o.status === 'preparing'));
@@ -5293,7 +5335,7 @@ window.openTableDetail = function(id) {
     ? tableOrders.map(o => `
         <div class="order-line">
           <span>${o.clientName || 'Гість'} · #${o.num}</span>
-          <span style="font-weight:500">₴${o.total}</span>
+          <span style="font-weight:500">${cur(o.total)}</span>
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:.375rem">
           ${(o.items||[]).map(i=>`${i.name} ×${i.qty}`).join(', ')}
@@ -5301,7 +5343,7 @@ window.openTableDetail = function(id) {
     : '<div style="font-size:13px;color:var(--muted);text-align:center;padding:.75rem" data-i18n="noActiveOrders" data-i18n="noActiveOrders">Активних замовлень немає</div>';
 
   const totalAmount = tableOrders.reduce((s,o) => s + (o.total||0), 0);
-  document.getElementById('table-order-total').textContent = totalAmount ? '₴' + totalAmount : '—';
+  document.getElementById('table-order-total').textContent = totalAmount ? cur(totalAmount) : '—';
 
   // Статус столу
   const statusLabels = {free:'🟢 Вільний',occupied:'🔴 Зайнятий',ordered:'🔵 Замовлено',paid:'✅ Оплачено'};
@@ -5309,10 +5351,15 @@ window.openTableDetail = function(id) {
   document.getElementById('split-row').innerHTML=[2,3,4].map(n=>`
     <div class="split-person" onclick="selectSplit(this,${n},${t.amount})">
       <div>👤×${n}</div>
-      <div style="font-size:11px;color:var(--muted)">${t.amount?'≈₴'+Math.ceil(t.amount/n)+'/ос.':''}</div>
+      <div style="font-size:11px;color:var(--muted)">${t.amount?'≈'+cur(Math.ceil(t.amount/n))+'/ос.':''}</div>
     </div>`).join('');
   const staffSel=document.getElementById('table-staff-assign');
   staffSel.innerHTML='<option value="">— Не призначено —</option>'+staff.map(s=>`<option value="${s.id}"${s.id===t.staffId?' selected':''}>${s.emoji} ${s.name}</option>`).join('');
+  // Скидаємо стан онлайн-оплати
+  document.getElementById('bill-pay-link-wrap').style.display='none';
+  document.getElementById('bill-pay-link').textContent='';
+  const onlineBtn=document.getElementById('bill-online-btn');
+  if(onlineBtn){onlineBtn.disabled=false;onlineBtn.innerHTML='📲 <span data-i18n="billOnline">Надіслати посилання на оплату (Monobank)</span>';}
   openModal('modal-table-detail');
 }
 window.openTableDetail=openTableDetail;
@@ -5330,6 +5377,85 @@ window.setTableStatus = function(status) {
   updateTableStatus(selectedTable.id, {status});
   notify({free:'Стіл звільнено',occupied:'Стіл відкрито',paid:'Стіл оплачено'}[status]||'Оновлено','ok');
 };
+// ── РАХУНОК СТОЛУ ──────────────────────────────────────────
+// Готівка/термінал
+function billCash(){
+  if(!selectedTable) return;
+  const total = parseInt(document.getElementById('table-order-total').textContent.replace(/[^\d]/g,''))||0;
+  if(!total){ notify(t('noOrders'),'err'); return; }
+  // Відмічаємо всі замовлення столу як оплачені
+  const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&o.status!=='cancelled');
+  const {doc,updateDoc} = window.__FS;
+  tableOrders.forEach(o=>{
+    updateDoc(doc(db,'venues',venueId,'orders',o.id),{
+      status:'done', paymentMethod:'cash', paidAt:new Date().toISOString()
+    }).catch(e=>console.warn('billCash order update:',e.message));
+  });
+  setTableStatus('paid');
+  closeModal('modal-table-detail');
+  notify(`✅ ${cur(total)} — ${t('paid')}`,'ok');
+}
+window.billCash = billCash;
+
+// Онлайн оплата через Monobank
+window.billOnline = async function(){
+  if(!selectedTable) return;
+  const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&(o.status==='new'||o.status==='preparing'));
+  const total = tableOrders.reduce((s,o)=>s+(o.total||0),0);
+  if(!total){ notify(t('noOrders'),'err'); return; }
+
+  const btn = document.getElementById('bill-online-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ '+t('notifCreatingInvoice');
+
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser.getIdToken();
+    const items = tableOrders.flatMap(o=>o.items||[]);
+    const res = await fetch(`${window.__CF_URL}/createOrder`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({
+        venueId, items, total,
+        tableId: selectedTable.num,
+        tableNum: selectedTable.num,
+        orderType:'dine_in',
+        paymentMethod:'online',
+        clientName: `Стіл №${selectedTable.num}`,
+        comment:`Рахунок столу №${selectedTable.num}`,
+      })
+    });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error||'Помилка');
+
+    if(data.payUrl){
+      document.getElementById('bill-pay-link').textContent = data.payUrl;
+      document.getElementById('bill-pay-link-wrap').style.display = 'block';
+      // Копіюємо одразу
+      navigator.clipboard?.writeText(data.payUrl).catch(()=>{});
+      notify(t('notifMonoOpened'),'ok');
+    } else {
+      notify('✅ Замовлення створено (оплата при отриманні)','ok');
+    }
+  } catch(e){
+    notify(t('notifError')+': '+e.message,'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '📲 <span data-i18n="billOnline">Надіслати посилання на оплату</span>';
+  }
+};
+
+function copyBillLink(){
+  const url = document.getElementById('bill-pay-link').textContent;
+  if(!url) return;
+  navigator.clipboard.writeText(url).then(()=>notify(t('notifCopied'),'ok')).catch(()=>{
+    const inp=document.createElement('input');inp.value=url;
+    document.body.appendChild(inp);inp.select();document.execCommand('copy');
+    document.body.removeChild(inp);notify(t('notifCopied'),'ok');
+  });
+}
+window.copyBillLink = copyBillLink;
+
 function markPaid(){setTableStatus('paid');closeModal('modal-table-detail');}
 function clearTable(){setTableStatus('free');closeModal('modal-table-detail');}
 function sendPayLink(){closeModal('modal-table-detail');notify('💳 Посилання надіслано клієнту','ok');}
@@ -5348,11 +5474,71 @@ window.copyTableQRUrl = function() {
   const url = document.getElementById('table-qr-url').textContent;
   navigator.clipboard.writeText(url).then(() => notify('✅ URL скопійовано','ok'));
 };
-function downloadQR(){notify('⬇️ QR завантажується...','ok');}
-function printQR(){notify('🖨️ Відправлено на друк','ok');}
-function printAllQR(){notify('🖨️ Всі QR відправлені','ok');}
+function downloadTableQR(){
+  if(!selectedTable) return;
+  const qrUrl = `https://mageqrrest.com/menu.html?v=${venueId}&t=${selectedTable.num}`;
+  const imgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(qrUrl)}`;
+  const a = document.createElement('a');
+  a.href = imgUrl;
+  a.download = `qr-table-${selectedTable.num}.png`;
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  notify(t('notifCopied'),'ok');
+}
+function downloadQR(){ downloadTableQR(); }
+
+function copyTableQRUrl(){
+  if(!selectedTable) return;
+  const url = `https://mageqrrest.com/menu.html?v=${venueId}&t=${selectedTable.num}`;
+  navigator.clipboard.writeText(url).then(()=>notify(t('notifCopied'),'ok')).catch(()=>{
+    const inp = document.createElement('input');
+    inp.value = url;
+    document.body.appendChild(inp);
+    inp.select();
+    document.execCommand('copy');
+    document.body.removeChild(inp);
+    notify(t('notifCopied'),'ok');
+  });
+}
+
+function printQR(){
+  if(!selectedTable) return;
+  const qrUrl = `https://mageqrrest.com/menu.html?v=${venueId}&t=${selectedTable.num}`;
+  const imgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(qrUrl)}`;
+  const win = window.open('','_blank','width=400,height=500');
+  win.document.write(`
+    <html><body style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;margin:0;padding:20px">
+      <h2 style="margin-bottom:1rem">Стіл №${selectedTable.num}</h2>
+      <img src="${imgUrl}" width="300" height="300" onload="window.print()"/>
+      <p style="font-size:11px;margin-top:1rem;color:#666">${qrUrl}</p>
+    </body></html>`);
+  win.document.close();
+}
+
+function printAllQR(){
+  if(!tables.length) return notify('Столів немає','err');
+  const win = window.open('','_blank','width=900,height=700');
+  const rows = tables.map(t => {
+    const url = `https://mageqrrest.com/menu.html?v=${venueId}&t=${t.num}`;
+    const img = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(url)}`;
+    return `<div style="display:inline-block;text-align:center;margin:15px;vertical-align:top">
+      <img src="${img}" width="200" height="200"/>
+      <div style="font-weight:700;margin-top:8px;font-size:16px">Стіл №${t.num}</div>
+      <div style="font-size:10px;color:#666;margin-top:4px;max-width:200px;word-break:break-all">${url}</div>
+    </div>`;
+  }).join('');
+  win.document.write(`
+    <html><body style="font-family:sans-serif;padding:20px;text-align:center">
+      <h2 style="margin-bottom:20px">${document.getElementById('sb-venue-name').textContent} — QR коди столів</h2>
+      ${rows}
+      <script>window.onload=()=>window.print()<\/script>
+    </body></html>`);
+  win.document.close();
+}
 window.sendPayLink=sendPayLink;window.markPaid=markPaid;window.clearTable=clearTable;
-window.downloadQR=downloadQR;window.printQR=printQR;window.printAllQR=printAllQR;
+window.downloadQR=downloadQR;window.downloadTableQR=downloadTableQR;window.copyTableQRUrl=copyTableQRUrl;window.printQR=printQR;window.printAllQR=printAllQR;
 
 function openAddTable(){['at-num','at-desc'].forEach(f=>document.getElementById(f).value='');document.getElementById('at-seats').value='4';openModal('modal-add-table');}
 function saveTable(){
