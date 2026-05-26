@@ -393,7 +393,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div class="stat"><div class="stat-val" id="st-new-ord">—</div><div class="stat-lbl" data-i18n="newThisMonth">Нових</div></div>
           <div class="stat"><div class="stat-val" id="st-done-ord">—</div><div class="stat-lbl" data-i18n="done" data-i18n="done">Виконано</div></div>
           <div class="stat"><div class="stat-val" id="st-today-rev">—</div><div class="stat-lbl" data-i18n="revenueToday" data-i18n="revenueToday">Виручка</div></div>
-          <div class="stat"><div class="stat-val" id="st-avg">—</div><div class="stat-lbl" data-i18n="avgCheck">${t('avgCheck')}</div></div>
+          <div class="stat"><div class="stat-val" id="st-avg">—</div><div class="stat-lbl" data-i18n="avgCheck" data-i18n="avgCheck">Сер. чек</div></div>
         </div>
         <div id="orders-wrap"></div>
       </div>
@@ -411,7 +411,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div class="content">
         <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
           <select id="item-cat-filter" style="width:160px" onchange="renderItems()"><option value="" data-i18n="allCategories">Всі категорії</option></select>
-          <input type="text" id="item-search" placeholder="${t('search')}" data-i18n-ph="search" style="width:200px" oninput="renderItems()"/>
+          <input type="text" id="item-search" placeholder="Пошук страви..." data-i18n-ph="search" data-i18n-ph="search" style="width:200px" oninput="renderItems()"/>
         </div>
         <div class="items-list" id="items-list"></div>
       </div>
@@ -440,9 +440,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div class="content">
 
         <div class="stats-grid" style="margin-bottom:1.25rem">
-          <div class="stat"><div class="stat-val" id="st-tables-free">—</div><div class="stat-lbl" data-i18n="freeTablesLbl">${t('freeTablesLbl')}</div></div>
-          <div class="stat"><div class="stat-val" id="st-tables-occ">—</div><div class="stat-lbl" data-i18n="occTablesLbl">${t('occTablesLbl')}</div></div>
-          <div class="stat"><div class="stat-val" id="st-tables-rev">—</div><div class="stat-lbl" data-i18n="revenueToday">${t('revenueToday')}</div></div>
+          <div class="stat"><div class="stat-val" id="st-tables-free">—</div><div class="stat-lbl" data-i18n="freeTablesLbl" data-i18n="freeTablesLbl">Вільних столів</div></div>
+          <div class="stat"><div class="stat-val" id="st-tables-occ">—</div><div class="stat-lbl" data-i18n="occTablesLbl" data-i18n="occTablesLbl">Зайнятих</div></div>
+          <div class="stat"><div class="stat-val" id="st-tables-rev">—</div><div class="stat-lbl" data-i18n="revenueToday" data-i18n="revenueToday">Виручка зали (сьогодні)</div></div>
           <div class="stat"><div class="stat-val" id="st-tips-today">—</div><div class="stat-lbl" data-i18n="tipsToday">Чайові сьогодні</div></div>
         </div>
 
@@ -740,7 +740,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               </div>
               <div class="ds-save-bar">
                 <div style="font-size:12px;color:var(--muted)" data-i18n="unsavedChanges" data-i18n="unsavedChanges" data-i18n="unsavedChanges">Зміни не збережені</div>
-                <button class="btn btn-accent btn-sm" onclick="saveDesign()" data-i18n="save">${t('save')}</button>
+                <button class="btn btn-accent btn-sm" onclick="saveDesign()" data-i18n="save" data-i18n="save">💾 Зберегти</button>
               </div>
             </div>
           </div>
@@ -754,7 +754,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div><div class="page-title" data-i18n="payments">💳 Платежі</div><div class="page-sub" data-i18n="paymentsDesc">Налаштуйте способи оплати для клієнтів</div></div>
         <div style="display:flex;gap:.5rem">
           <button class="btn btn-outline btn-sm" onclick="notify('Тест-замовлення відправлено!','ok')" data-i18n="testPayment">🧪 Тест оплати</button>
-          <button class="btn btn-accent btn-sm" onclick="savePayments()" data-i18n="save">${t('save')}</button>
+          <button class="btn btn-accent btn-sm" onclick="savePayments()" data-i18n="save" data-i18n="save">💾 Зберегти</button>
         </div>
       </div>
       <div class="content">
@@ -1062,7 +1062,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <div id="t-pos" class="tab-section">
       <div class="topbar">
         <div><div class="page-title" data-i18n="pos">🖥️ POS-інтеграція</div><div class="page-sub" data-i18n="posDesc">Синхронізація замовлень з касовими системами</div></div>
-        <button class="btn btn-accent btn-sm" onclick="savePOS()" data-i18n="save">${t('save')}</button>
+        <button class="btn btn-accent btn-sm" onclick="savePOS()" data-i18n="save" data-i18n="save">💾 Зберегти</button>
       </div>
       <div class="content">
 
@@ -1246,10 +1246,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       </div>
       <div class="content">
         <div class="stats-grid" style="margin-bottom:1.25rem">
-          <div class="stat"><div class="stat-val" id="cst-total">—</div><div class="stat-lbl" data-i18n="totalClients">${t('totalClients')}</div></div>
-          <div class="stat"><div class="stat-val" id="cst-new">—</div><div class="stat-lbl" data-i18n="newThisMonth">${t('newThisMonth')}</div></div>
-          <div class="stat"><div class="stat-val" id="cst-repeat">—</div><div class="stat-lbl" data-i18n="returnClients">${t('returnClients')}</div></div>
-          <div class="stat"><div class="stat-val" id="cst-avg">—</div><div class="stat-lbl" data-i18n="avgCheck">${t('avgCheck')}</div></div>
+          <div class="stat"><div class="stat-val" id="cst-total">—</div><div class="stat-lbl" data-i18n="totalClients" data-i18n="totalClients">Всього клієнтів</div></div>
+          <div class="stat"><div class="stat-val" id="cst-new">—</div><div class="stat-lbl" data-i18n="newThisMonth" data-i18n="newThisMonth">Нових за місяць</div></div>
+          <div class="stat"><div class="stat-val" id="cst-repeat">—</div><div class="stat-lbl" data-i18n="returnClients" data-i18n="returnClients">Повторних</div></div>
+          <div class="stat"><div class="stat-val" id="cst-avg">—</div><div class="stat-lbl" data-i18n="avgCheck" data-i18n="avgCheck">Сер. чек</div></div>
         </div>
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
           <div style="overflow-x:auto">
@@ -1260,9 +1260,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   <th data-i18n="venuePhone" data-i18n="phone">Телефон</th>
                   <th>Замовлень</th>
                   <th data-i18n="spent">Витрачено</th>
-                  <th data-i18n="avgCheck" data-i18n="avgCheck">${t('avgCheck')}</th>
-                  <th data-i18n="firstOrder">${t('firstOrder')}</th>
-                  <th>${t('lastOrder')}</th>
+                  <th data-i18n="avgCheck" data-i18n="avgCheck" data-i18n="avgCheck">Сер. чек</th>
+                  <th data-i18n="firstOrder" data-i18n="firstOrder">Перше замовлення</th>
+                  <th data-i18n="lastOrder">Останнє замовлення</th>
                   <th></th>
                 </tr>
               </thead>
@@ -1383,7 +1383,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <div id="t-ordering" class="tab-section">
       <div class="topbar">
         <div><div class="page-title" data-i18n="ordering">📋 Налаштування замовлень</div><div class="page-sub" data-i18n="orderingDesc">Типи замовлень, доставка, години роботи</div></div>
-        <button class="btn btn-accent btn-sm" onclick="saveOrderingSettings()" data-i18n="save">${t('save')}</button>
+        <button class="btn btn-accent btn-sm" onclick="saveOrderingSettings()" data-i18n="save" data-i18n="save">💾 Зберегти</button>
       </div>
       <div class="content">
 
@@ -1870,7 +1870,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <div style="display:flex;flex-direction:column;gap:.375rem">
           <button class="btn btn-success btn-sm" onclick="setTableStatus('occupied')">🪑 Відкрити стіл</button>
-          <button class="btn btn-outline btn-sm" onclick="setTableStatus('free')" data-i18n="tableFreeBtn">${t('tableFreeBtn')}</button>
+          <button class="btn btn-outline btn-sm" onclick="setTableStatus('free')" data-i18n="tableFreeBtn">✓ Звільнити стіл</button>
           <button class="btn btn-accent btn-sm" onclick="markPaid()" data-i18n="tablePaid" data-i18n="tablePaid">💳 Оплачено</button>
         </div>
       </div>
@@ -5320,22 +5320,22 @@ let selectedTable=null;
 let editStaffId=null;
 
 function renderTables(){
-  const filtered=activeZone?tables.filter(t=>t.zone===activeZone):tables;
+  const filtered=activeZone?tables.filter(tbl=>tbl.zone===activeZone):tables;
   const stMap={free:'ts-free',occupied:'ts-occupied',ordered:'ts-ordered',paid:'ts-paid'};
-  const stLabel={free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('aktyvniZamovlennya'),paid:'Оплачено'};
-  document.getElementById('tables-grid').innerHTML=filtered.map(t=>`
-    <div class="table-card ${t.status}" onclick="openTableDetail('${t.id}')">
-      <div class="table-num">${t.num}</div>
-      <div class="table-zone">${t.zone} · ${t.seats} місць</div>
-      <div><span class="table-status ${stMap[t.status]||'ts-free'}">${stLabel[t.status]||t('tableFree')}</span></div>
-      ${t.amount?`<div class="table-amount">${cur(t.amount)}</div>`:''}
-      ${t.startTime?`<div class="table-timer">⏱ з ${t.startTime}</div>`:''}
+  const stLabel={free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('activeOrders'),paid:t('paid')};
+  document.getElementById('tables-grid').innerHTML=filtered.map(tbl=>`
+    <div class="table-card ${tbl.status}" onclick="openTableDetail('${tbl.id}')">
+      <div class="table-num">${tbl.num}</div>
+      <div class="table-zone">${tbl.zone} · ${tbl.seats} місць</div>
+      <div><span class="table-status ${stMap[tbl.status]||'ts-free'}">${stLabel[tbl.status]||t('tableFree')}</span></div>
+      ${tbl.amount?`<div class="table-amount">${cur(tbl.amount)}</div>`:''}
+      ${tbl.startTime?`<div class="table-timer">⏱ з ${tbl.startTime}</div>`:''}
       <div style="margin-top:.5rem;font-size:11px;color:var(--muted)">QR · Деталі</div>
     </div>`).join('');
-  document.getElementById('st-tables-free').textContent=tables.filter(t=>t.status==='free').length;
-  document.getElementById('st-tables-occ').textContent=tables.filter(t=>t.status!=='free').length;
-  document.getElementById('st-tables-rev').textContent=cur('').replace(/\d/g,'')+tables.filter(t=>t.status==='paid').reduce((s,t)=>s+t.amount,0);
-  document.getElementById('st-tips-today').textContent=cur(staff.reduce((s,p)=>s+p.tipsToday,0));
+  document.getElementById('st-tables-free').textContent=tables.filter(tbl=>tbl.status==='free').length;
+  document.getElementById('st-tables-occ').textContent=tables.filter(tbl=>tbl.status!=='free').length;
+  document.getElementById('st-tables-rev').textContent=cur(tables.filter(tbl=>tbl.status==='paid').reduce((s,tbl)=>s+(tbl.amount||0),0));
+  document.getElementById('st-tips-today').textContent=cur(staff.reduce((s,p)=>s+(p.tipsToday||0),0));
 }
 function filterZone(btn,zone){
   document.querySelectorAll('.zone-tab').forEach(b=>b.classList.remove('active'));
