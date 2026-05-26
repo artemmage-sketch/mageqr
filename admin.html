@@ -1896,6 +1896,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
       <!-- Кнопки дій -->
       <div id="table-bill-actions" style="display:flex;flex-direction:column;gap:.5rem">
+        <button class="btn btn-accent btn-sm" style="font-size:13px" onclick="openTableOrder()">
+          🍽️ <span>Нове замовлення за столом</span>
+        </button>
         <button class="btn btn-outline btn-sm" style="font-size:13px" onclick="createBill()">
           🧾 Виставити рахунок клієнту (QR оплата)
         </button>
@@ -1914,6 +1917,48 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           ✓ <span data-i18n="tableFreeBtn">Звільнити стіл</span>
         </button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="modal-table-order" onclick="if(event.target===this)closeModal('modal-table-order')">
+  <div class="modal" style="max-width:520px;max-height:90vh;overflow-y:auto" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="table-order-modal-title">🍽️ Нове замовлення</div>
+      <button class="close-btn" onclick="closeModal('modal-table-order')">✕</button>
+    </div>
+
+    <!-- Пошук страв -->
+    <div style="margin-bottom:.75rem">
+      <input type="text" id="to-search" placeholder="Пошук страви..." 
+        style="width:100%;padding:.625rem .875rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;outline:none"
+        oninput="renderTableOrderItems()"/>
+    </div>
+
+    <!-- Фільтр категорій -->
+    <div id="to-cats" style="display:flex;gap:.375rem;flex-wrap:wrap;margin-bottom:.875rem"></div>
+
+    <!-- Список страв -->
+    <div id="to-items" style="display:flex;flex-direction:column;gap:.5rem;max-height:280px;overflow-y:auto;margin-bottom:.875rem"></div>
+
+    <!-- Кошик замовлення -->
+    <div style="border-top:1px solid var(--border);padding-top:.875rem">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem">🛒 Замовлення</div>
+      <div id="to-cart" style="display:flex;flex-direction:column;gap:.375rem;margin-bottom:.75rem;max-height:160px;overflow-y:auto">
+        <div style="color:var(--muted);font-size:13px;text-align:center;padding:.5rem">Додайте страви вище</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:15px;margin-bottom:.875rem">
+        <span>Разом:</span>
+        <span id="to-total" style="color:var(--accent)">—</span>
+      </div>
+      <!-- Коментар -->
+      <div style="margin-bottom:.75rem">
+        <input type="text" id="to-comment" placeholder="Коментар до замовлення (необов'язково)"
+          style="width:100%;padding:.5rem .875rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;outline:none"/>
+      </div>
+      <button class="btn btn-accent" style="width:100%;padding:.75rem;font-size:15px" onclick="placeTableOrder()">
+        ✓ Оформити замовлення
+      </button>
     </div>
   </div>
 </div>
@@ -5361,6 +5406,153 @@ function drawQRMock(canvas){
   const cell=size/p.length;
   p.forEach((row,r)=>row.forEach((v,c_)=>{if(v)ctx.fillRect(Math.round(c_*cell),Math.round(r*cell),Math.ceil(cell),Math.ceil(cell));}));
 }
+
+
+// ── ЗАМОВЛЕННЯ ЗА СТОЛОМ (офіціант додає страви) ────────────
+let tableOrderCart = {}; // { itemId: { item, qty } }
+let tableOrderCatFilter = '';
+
+window.openTableOrder = function() {
+  if(!selectedTable) return;
+  tableOrderCart = {};
+  tableOrderCatFilter = '';
+  document.getElementById('to-search').value = '';
+  document.getElementById('table-order-modal-title').textContent =
+    `🍽️ Замовлення — Стіл №${selectedTable.num}`;
+  renderTableOrderCats();
+  renderTableOrderItems();
+  renderTableOrderCart();
+  closeModal('modal-table-detail');
+  openModal('modal-table-order');
+};
+
+function renderTableOrderCats() {
+  const wrap = document.getElementById('to-cats');
+  wrap.innerHTML = `<button class="zone-tab${tableOrderCatFilter===''?' active':''}" 
+    onclick="tableOrderCatFilter='';renderTableOrderItems();document.querySelectorAll('#to-cats .zone-tab').forEach(b=>b.classList.remove('active'));this.classList.add('active')">Всі</button>`
+    + cats.map(cat => `<button class="zone-tab${tableOrderCatFilter===cat.name?' active':''}"
+      onclick="tableOrderCatFilter='${cat.name}';renderTableOrderItems();document.querySelectorAll('#to-cats .zone-tab').forEach(b=>b.classList.remove('active'));this.classList.add('active')">
+      ${cat.emoji||''} ${cat.name}</button>`).join('');
+}
+
+window.renderTableOrderItems = function() {
+  const q = document.getElementById('to-search').value.toLowerCase();
+  let list = items.filter(i =>
+    (!tableOrderCatFilter || i.category === tableOrderCatFilter) &&
+    (!q || i.name.toLowerCase().includes(q))
+  );
+  const wrap = document.getElementById('to-items');
+  if(!list.length) {
+    wrap.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:1rem">Страви не знайдено</div>';
+    return;
+  }
+  wrap.innerHTML = list.map(item => {
+    const inCart = tableOrderCart[item.id];
+    return `<div style="display:flex;align-items:center;gap:.75rem;padding:.5rem .625rem;background:var(--card);border:1px solid var(--border);border-radius:10px">
+      <div style="width:40px;height:40px;border-radius:8px;background:var(--bg2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem">
+        ${item.photoUrl ? `<img src="${item.photoUrl}" style="width:100%;height:100%;object-fit:cover"/>` : '🍽️'}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.name}</div>
+        <div style="font-size:12px;color:var(--accent);font-weight:600">${cur(item.price)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.375rem;flex-shrink:0">
+        ${inCart ? `
+          <button onclick="toChangeQty('${item.id}',-1)" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+          <span style="font-weight:700;min-width:20px;text-align:center">${inCart.qty}</span>
+        ` : ''}
+        <button onclick="toChangeQty('${item.id}',1)" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--accent);background:var(--accent);color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.toChangeQty = function(itemId, delta) {
+  const item = items.find(i => i.id === itemId);
+  if(!item) return;
+  if(!tableOrderCart[itemId]) tableOrderCart[itemId] = { item, qty: 0 };
+  tableOrderCart[itemId].qty += delta;
+  if(tableOrderCart[itemId].qty <= 0) delete tableOrderCart[itemId];
+  renderTableOrderItems();
+  renderTableOrderCart();
+};
+
+function renderTableOrderCart() {
+  const entries = Object.values(tableOrderCart);
+  const wrap = document.getElementById('to-cart');
+  const totalEl = document.getElementById('to-total');
+  if(!entries.length) {
+    wrap.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:.5rem">Додайте страви вище</div>';
+    totalEl.textContent = '—';
+    return;
+  }
+  let total = 0;
+  wrap.innerHTML = entries.map(({item, qty}) => {
+    const sum = item.price * qty;
+    total += sum;
+    return `<div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:.25rem 0;border-bottom:1px solid var(--border)">
+      <span style="flex:1">${item.name} <span style="color:var(--muted)">×${qty}</span></span>
+      <span style="font-weight:600;margin-left:.5rem">${cur(sum)}</span>
+      <button onclick="delete tableOrderCart['${item.id}'];renderTableOrderItems();renderTableOrderCart()" 
+        style="background:none;border:none;color:var(--muted);cursor:pointer;padding:0 0 0 .5rem;font-size:1rem">✕</button>
+    </div>`;
+  }).join('');
+  totalEl.textContent = cur(total);
+}
+
+window.placeTableOrder = async function() {
+  const entries = Object.values(tableOrderCart);
+  if(!entries.length) { notify('Додайте хоча б одну страву','err'); return; }
+  if(!selectedTable) return;
+
+  const orderItems = entries.map(({item, qty}) => ({
+    id: item.id, itemId: item.id,
+    name: item.name, price: item.price, qty,
+  }));
+  const total = entries.reduce((s, {item, qty}) => s + item.price * qty, 0);
+  const comment = document.getElementById('to-comment').value.trim();
+
+  const btn = document.querySelector('#modal-table-order .btn-accent');
+  btn.textContent = '⏳ Оформляємо...';
+  btn.disabled = true;
+
+  try {
+    const { collection, addDoc } = window.__FS;
+    // Отримуємо поточний лічильник замовлень
+    const orderNum = Date.now().toString().slice(-4);
+    await addDoc(collection(db,'venues',venueId,'orders'), {
+      items: orderItems,
+      total,
+      tableId: String(selectedTable.num),
+      tableNum: selectedTable.num,
+      orderType: 'dine_in',
+      clientName: `Стіл №${selectedTable.num}`,
+      clientPhone: '',
+      comment,
+      paymentMethod: 'cash',
+      num: orderNum,
+      status: 'new',
+      createdAt: new Date(),
+      source: 'admin', // позначаємо що від офіціанта
+    });
+
+    // Оновлюємо статус столу
+    if(selectedTable.status === 'free') {
+      selectedTable.status = 'occupied';
+      await updateTableStatus(selectedTable.id, { status: 'occupied', startTime: new Date().toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'}) });
+    }
+
+    closeModal('modal-table-order');
+    notify(`✅ Замовлення на ${cur(total)} оформлено!`, 'ok');
+    tableOrderCart = {};
+    renderTables();
+  } catch(e) {
+    notify(t('notifError')+': '+e.message, 'err');
+  } finally {
+    btn.textContent = '✓ Оформити замовлення';
+    btn.disabled = false;
+  }
+};
 
 window.openTableDetail = function(id) {
   selectedTable = tables.find(tbl => String(tbl.id) === String(id));
