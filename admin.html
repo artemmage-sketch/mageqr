@@ -4514,6 +4514,20 @@ function subscribeOrders() {
       renderOrders();
       updateOrderBadge();
       playNewOrderSound();
+
+      // Автооновлення статусу столів по активних замовленнях
+      if (tables.length) {
+        let changed = false;
+        orders.forEach(o => {
+          if (!o.tableId || o.status === 'cancelled' || o.status === 'done') return;
+          const tbl = tables.find(t => String(t.num) === String(o.tableId));
+          if (tbl && tbl.status === 'free') {
+            tbl.status = 'occupied';
+            changed = true;
+          }
+        });
+        if (changed) renderTables();
+      }
     } catch(e) { console.warn('subscribeOrders render error:', e.message); }
   }, err => { console.warn('subscribeOrders:', err.message); });
 }
