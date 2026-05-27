@@ -5650,9 +5650,12 @@ window.setTableStatus = function(status) {
 // Виставити рахунок з адмін панелі (зберігається в Firestore bills/{id})
 window.createBill = async function() {
   if(!selectedTable) return;
+  // Тільки сьогоднішні активні замовлення
+  const todayStartMs = (() => { const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); })();
   const tableOrders = orders.filter(o =>
     String(o.tableId) === String(selectedTable.num) &&
-    ['new','preparing','done'].includes(o.status)
+    ['new','preparing','done'].includes(o.status) &&
+    (o.dateMs || 0) >= todayStartMs
   );
   if(!tableOrders.length) { notify(t('noOrders'),'err'); return; }
 
@@ -5672,44 +5675,44 @@ window.createBill = async function() {
   }
 
   try {
-    const { collection, addDoc } = window.__FS;
-    // Спочатку створюємо інвойс Monobank щоб отримати payUrl
-    let payUrl = null;
-    try {
-      const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
-      const token = await getAuth().currentUser.getIdToken();
-      const payRes = await fetch(`${window.__CF_URL}/createOrder`, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
-        body: JSON.stringify({
-          venueId,
-          items: allItems,
-          total,
-          tableId: String(selectedTable.num),
-          tableNum: selectedTable.num,
-          orderType: 'dine_in',
-          paymentMethod: 'online',
-          clientName: `Стіл №${selectedTable.num}`,
-          comment: `Рахунок стіл №${selectedTable.num}`,
-        }),
-      });
-      const payData = await payRes.json();
-      if(payRes.ok) payUrl = payData.payUrl || null;
-    } catch(e) { console.warn('createBill payUrl:', e.message); }
+    const { collection, addDoc, serverTimestamp } = window.__FS;
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser.getIdToken();
 
-    // Зберігаємо рахунок з payUrl
+    // Зберігаємо рахунок в Firestore
     const billRef = await addDoc(collection(db,'venues',venueId,'bills'), {
       tableNum:   selectedTable.num,
       items:      allItems,
       total,
       status:     'open',
-      payUrl:     payUrl || null,
+      payUrl:     null,
       orderIds:   tableOrders.map(o => o.id),
-      createdAt:  new Date().toISOString(),
+      createdAt:  serverTimestamp(),
     });
 
+    // Генеруємо платіжне посилання через окремий ендпоінт
+    let payUrl = null;
+    try {
+      const payRes2 = await fetch(`${window.__CF_URL}/createBillPayment`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body: JSON.stringify({
+          venueId,
+          billId: billRef.id,
+          items: allItems,
+          total,
+          tableNum: selectedTable.num,
+        }),
+      });
+      const payData2 = await payRes2.json();
+      if(payRes2.ok && payData2.payUrl) {
+        payUrl = payData2.payUrl;
+      } else {
+        console.warn('createBillPayment:', payData2);
+      }
+    } catch(e) { console.warn('createBillPayment fetch:', e.message); }
+
     if(payUrl) {
-      // Показуємо QR одразу в модалці
       document.getElementById('bill-pay-link').textContent = payUrl;
       document.getElementById('bill-pay-link-wrap').style.display = 'block';
       const existingQr = document.getElementById('bill-pay-qr');
@@ -5722,7 +5725,7 @@ window.createBill = async function() {
       document.getElementById('bill-pay-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(payUrl)}`;
       notify(`✅ Рахунок ${cur(total)} — посилання готове!`, 'ok');
     } else {
-      notify(`✅ Рахунок на ${cur(total)} виставлено! Клієнт побачить у table.html`, 'ok');
+      notify(`✅ Рахунок на ${cur(total)} виставлено. Платіжний провайдер не налаштовано — клієнт побачить суму.`, 'ok');
     }
   } catch(e) {
     notify(t('notifError')+': '+e.message,'err');
