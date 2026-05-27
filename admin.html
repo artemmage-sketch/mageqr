@@ -4605,20 +4605,12 @@ function subscribeOrders() {
           if (shouldBeOccupied && tbl.status === 'free') {
             tbl.status = 'occupied';
             changed = true;
-            // Синхронізуємо в Firestore
             updateDoc(doc(db,'venues',venueId,'tables',String(tbl.id)), {
               status: 'occupied',
               updatedAt: new Date().toISOString(),
             }).catch(e => console.warn('table sync:', e.message));
-          } else if (!shouldBeOccupied && (tbl.status === 'occupied' || tbl.status === 'paid')) {
-            // Немає активних замовлень сьогодні — повертаємо в free
-            tbl.status = 'free';
-            changed = true;
-            updateDoc(doc(db,'venues',venueId,'tables',String(tbl.id)), {
-              status: 'free',
-              updatedAt: new Date().toISOString(),
-            }).catch(e => console.warn('table sync:', e.message));
           }
+          // Не повертаємо автоматично в free — тільки офіціант вручну
         });
         if (changed) renderTables();
       }
@@ -5596,7 +5588,10 @@ window.placeTableOrder = async function() {
 };
 
 window.openTableDetail = function(id) {
-  // Throttle: ігноруємо повторні виклики протягом 800мс (iOS генерує кілька click подій)
+  // Не відкриваємо якщо модал вже відкритий
+  if(document.getElementById('modal-table-detail').classList.contains('open')) return;
+  if(document.getElementById('modal-table-order').classList.contains('open')) return;
+  // Throttle від подвійного tap
   const now = Date.now();
   if(window.__lastTableOpen && now - window.__lastTableOpen < 800) return;
   window.__lastTableOpen = now;
@@ -5670,8 +5665,7 @@ window.setTableStatus = function(status) {
     const {doc, updateDoc} = window.__FS;
     orders.filter(o =>
       String(o.tableId) === String(selectedTable.num) &&
-      ['new','preparing','done'].includes(o.status) &&
-      !o.paidAt
+      ['new','preparing'].includes(o.status)
     ).forEach(o => {
       updateDoc(doc(db,'venues',venueId,'orders',o.id), {
         status: 'done',
@@ -5687,8 +5681,7 @@ window.createBill = async function() {
   if(!selectedTable) return;
   const tableOrders = orders.filter(o =>
     String(o.tableId) === String(selectedTable.num) &&
-    ['new','preparing','done'].includes(o.status) &&
-    !o.paidAt
+    ['new','preparing'].includes(o.status)
   );
   if(!tableOrders.length) { notify(t('noOrders'),'err'); return; }
 
@@ -5793,7 +5786,7 @@ window.billCash = billCash;
 // Онлайн оплата через Monobank
 window.billOnline = async function(){
   if(!selectedTable) return;
-  const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&(['new','preparing','done'].includes(o.status)));
+  const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&(['new','preparing'].includes(o.status)));
   // Ручна сума має пріоритет
   const manualAmt = parseInt(document.getElementById('manual-amount')?.value)||0;
   const total = manualAmt > 0 ? manualAmt : tableOrders.reduce((s,o)=>s+(o.total||0),0);
