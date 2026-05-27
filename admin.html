@@ -2002,7 +2002,7 @@ var I18N = {
     markBack:'↺ Назад', markReturn:'↺ Повернути', markOpen:'↺ Відкрити',
     syncPOS:'🔄 Синх. POS', paying:'Оплата:', cash:'Готівка', online:'Онлайн',
     table:'Стіл', comment:'Коментар', address:'Адреса', dineIn:'В закладі', takeaway:'З собою', delivery:'Доставка',
-    noOrders:t('noOrders'), total:'Разом',
+    noOrders:'Немає замовлень', total:'Разом',
     // Страви
     name:'Назва', description:'Опис', price:'Ціна (грн)', category:'Категорія',
     allCategories:'Всі категорії', search:'Пошук страви...',
@@ -5625,7 +5625,7 @@ window.setTableStatus = function(status) {
   if(!selectedTable) return;
   selectedTable.status = status;
   document.getElementById('table-status-display').textContent = 
-    {free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('aktyvniZamovlennya'),paid:'Оплачено'}[status] || status;
+    {free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('activeOrders'),paid:t('paid')}[status] || status;
   renderTables();
   updateTableStatus(selectedTable.id, {status});
   notify({free:'Стіл звільнено',occupied:'Стіл відкрито',paid:'Стіл оплачено'}[status]||'Оновлено','ok');
