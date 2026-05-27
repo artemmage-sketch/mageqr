@@ -838,11 +838,11 @@ function renderBillContent(content, bill) {
       <span class="bt-amount">${mCur(total)}</span>
     </div>
     <div class="pay-methods">
-      <button class="pay-btn online" id="pay-online-btn" data-action="pay-online">
+      <button class="pay-btn online" id="pay-online-btn" onclick="payOnline()">
         <span class="btn-spinner"></span>
         <span class="btn-text">💳 Оплатити онлайн</span>
       </button>
-      <button class="pay-btn cash" data-action="pay-cash">
+      <button class="pay-btn cash" onclick="payCash()">
         💵 Оплачу готівкою / карткою
       </button>
     </div>
