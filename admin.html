@@ -1869,7 +1869,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div id="table-status-display" style="font-weight:600;font-size:15px;margin-bottom:1rem"></div>
 
         <div style="display:flex;flex-direction:column;gap:.375rem">
-          <button class="btn btn-success btn-sm" onclick="setTableStatus('occupied')">🪑 Відкрити стіл</button>
+          <button class="btn btn-success btn-sm" onclick="setTableStatus('occupied')" data-i18n="tableOpen">🪑 Відкрити стіл</button>
           <button class="btn btn-outline btn-sm" onclick="setTableStatus('free')" data-i18n="tableFreeBtn">✓ Звільнити стіл</button>
           <button class="btn btn-accent btn-sm" onclick="markPaid()" data-i18n="tablePaid" data-i18n="tablePaid">💳 Оплачено</button>
         </div>
@@ -1886,7 +1886,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
       <!-- Ручне введення суми -->
       <div style="margin-bottom:.75rem">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:.375rem">💰 Довільна сума (якщо замовлення не в системі):</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:.375rem" data-i18n="manualAmountLbl">💰 Довільна сума (якщо замовлення не в системі):</div>
         <div style="display:flex;gap:.5rem;align-items:center">
           <input type="number" id="manual-amount" placeholder="0" min="0" step="1"
             style="flex:1;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:15px;outline:none"/>
@@ -1896,10 +1896,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
       <!-- Кнопки дій -->
       <div id="table-bill-actions" style="display:flex;flex-direction:column;gap:.5rem">
-        <button class="btn btn-accent btn-sm" style="font-size:13px" onclick="openTableOrder()">
+        <button class="btn btn-accent btn-sm" style="font-size:13px" onclick="openTableOrder()" data-i18n="newTableOrder">
           🍽️ <span>Нове замовлення за столом</span>
         </button>
-        <button class="btn btn-outline btn-sm" style="font-size:13px" onclick="createBill()">
+        <button class="btn btn-outline btn-sm" style="font-size:13px" onclick="createBill()" data-i18n="createBillBtn">
           🧾 Виставити рахунок клієнту (QR оплата)
         </button>
         <button class="btn btn-success btn-sm" onclick="billCash()" style="font-size:13px">
@@ -1930,7 +1930,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
     <!-- Пошук страв -->
     <div style="margin-bottom:.75rem">
-      <input type="text" id="to-search" placeholder="Пошук страви..." 
+      <input type="text" id="to-search" placeholder="Пошук страви..." data-i18n-ph="tableOrderSearch"
         style="width:100%;padding:.625rem .875rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;outline:none"
         oninput="renderTableOrderItems()"/>
     </div>
@@ -1943,20 +1943,20 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
     <!-- Кошик замовлення -->
     <div style="border-top:1px solid var(--border);padding-top:.875rem">
-      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem">🛒 Замовлення</div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem" data-i18n="orderCartTitle">🛒 Замовлення</div>
       <div id="to-cart" style="display:flex;flex-direction:column;gap:.375rem;margin-bottom:.75rem;max-height:160px;overflow-y:auto">
         <div style="color:var(--muted);font-size:13px;text-align:center;padding:.5rem">Додайте страви вище</div>
       </div>
       <div style="display:flex;justify-content:space-between;font-weight:700;font-size:15px;margin-bottom:.875rem">
-        <span>Разом:</span>
+        <span data-i18n="total">Разом:</span>
         <span id="to-total" style="color:var(--accent)">—</span>
       </div>
       <!-- Коментар -->
       <div style="margin-bottom:.75rem">
-        <input type="text" id="to-comment" placeholder="Коментар до замовлення (необов'язково)"
+        <input type="text" id="to-comment" placeholder="Коментар до замовлення (необов'язково)" data-i18n-ph="orderCommentPh"
           style="width:100%;padding:.5rem .875rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;outline:none"/>
       </div>
-      <button class="btn btn-accent" style="width:100%;padding:.75rem;font-size:15px" onclick="placeTableOrder()">
+      <button class="btn btn-accent" style="width:100%;padding:.75rem;font-size:15px" onclick="placeTableOrder()" data-i18n="placeOrderBtn">
         ✓ Оформити замовлення
       </button>
     </div>
@@ -2002,7 +2002,7 @@ var I18N = {
     markBack:'↺ Назад', markReturn:'↺ Повернути', markOpen:'↺ Відкрити',
     syncPOS:'🔄 Синх. POS', paying:'Оплата:', cash:'Готівка', online:'Онлайн',
     table:'Стіл', comment:'Коментар', address:'Адреса', dineIn:'В закладі', takeaway:'З собою', delivery:'Доставка',
-    noOrders:'Немає замовлень', total:'Разом',
+    noOrders:t('noOrders'), total:'Разом',
     // Страви
     name:'Назва', description:'Опис', price:'Ціна (грн)', category:'Категорія',
     allCategories:'Всі категорії', search:'Пошук страви...',
@@ -2349,7 +2349,16 @@ var I18N = {
     billOnline:'Надіслати посилання на оплату (Monobank)',
     billLinkReady:'Посилання для клієнта:',
     billScanQR:'Клієнт сканує QR для оплати:',
-    manualCharge:'Послуги / рахунок'},
+    manualCharge:'Послуги / рахунок',
+    newTableOrder:'🍽️ Нове замовлення за столом',
+    createBillBtn:'🧾 Виставити рахунок клієнту (QR оплата)',
+    manualAmountLbl:'💰 Довільна сума (якщо замовлення не в системі):',
+    addDishesAbove:'Додайте страви вище',
+    placeOrderBtn:'✓ Оформити замовлення',
+    orderCartTitle:'🛒 Замовлення',
+    orderCommentPh:"Коментар до замовлення (необов'язково)",
+    tableOrderSearch:'Пошук страви...',
+    noActiveOrders:'Активних замовлень немає'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2701,7 +2710,16 @@ var I18N = {
     billOnline:'Send payment link (Monobank)',
     billLinkReady:'Payment link for client:',
     billScanQR:'Client scans QR to pay:',
-    manualCharge:'Services / charge'},
+    manualCharge:'Services / charge',
+    newTableOrder:'🍽️ New table order',
+    createBillBtn:'🧾 Send bill to client (QR payment)',
+    manualAmountLbl:'💰 Custom amount (if order not in system):',
+    addDishesAbove:'Add dishes above',
+    placeOrderBtn:'✓ Place order',
+    orderCartTitle:'🛒 Order',
+    orderCommentPh:'Order comment (optional)',
+    tableOrderSearch:'Search dish...',
+    noActiveOrders:'No active orders'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -3053,7 +3071,16 @@ var I18N = {
     billOnline:'Wyślij link do płatności (Monobank)',
     billLinkReady:'Link dla klienta:',
     billScanQR:'Klient skanuje QR aby zapłacić:',
-    manualCharge:'Usługi / rachunek'},
+    manualCharge:'Usługi / rachunek',
+    newTableOrder:'🍽️ Nowe zamówienie przy stoliku',
+    createBillBtn:'🧾 Wystaw rachunek klientowi (płatność QR)',
+    manualAmountLbl:'💰 Kwota własna (jeśli zamówienie nie w systemie):',
+    addDishesAbove:'Dodaj dania powyżej',
+    placeOrderBtn:'✓ Złóż zamówienie',
+    orderCartTitle:'🛒 Zamówienie',
+    orderCommentPh:'Komentarz do zamówienia (opcjonalnie)',
+    tableOrderSearch:'Szukaj dania...',
+    noActiveOrders:'Brak aktywnych zamówień'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -3405,7 +3432,16 @@ var I18N = {
     billOnline:'Zahlungslink senden (Monobank)',
     billLinkReady:'Zahlungslink für Kunden:',
     billScanQR:'Kunde scannt QR zum Bezahlen:',
-    manualCharge:'Leistungen / Rechnung'},
+    manualCharge:'Leistungen / Rechnung',
+    newTableOrder:'🍽️ Neue Tischbestellung',
+    createBillBtn:'🧾 Rechnung an Kunden senden (QR-Zahlung)',
+    manualAmountLbl:'💰 Eigener Betrag (falls Bestellung nicht im System):',
+    addDishesAbove:'Gerichte oben hinzufügen',
+    placeOrderBtn:'✓ Bestellung aufgeben',
+    orderCartTitle:'🛒 Bestellung',
+    orderCommentPh:'Bestellkommentar (optional)',
+    tableOrderSearch:'Gericht suchen...',
+    noActiveOrders:'Keine aktiven Bestellungen'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -3757,7 +3793,16 @@ var I18N = {
     billOnline:'Trimite link de plată (Monobank)',
     billLinkReady:'Link de plată pentru client:',
     billScanQR:'Clientul scanează QR pentru plată:',
-    manualCharge:'Servicii / notă'},
+    manualCharge:'Servicii / notă',
+    newTableOrder:'🍽️ Comandă nouă la masă',
+    createBillBtn:'🧾 Trimite nota clientului (plată QR)',
+    manualAmountLbl:'💰 Sumă personalizată (dacă comanda nu e în sistem):',
+    addDishesAbove:'Adaugă preparate mai sus',
+    placeOrderBtn:'✓ Plasează comanda',
+    orderCartTitle:'🛒 Comandă',
+    orderCommentPh:'Comentariu la comandă (opțional)',
+    tableOrderSearch:'Caută preparat...',
+    noActiveOrders:'Fără comenzi active'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -4109,7 +4154,16 @@ var I18N = {
     billOnline:'Enviar enlace de pago (Monobank)',
     billLinkReady:'Enlace de pago para el cliente:',
     billScanQR:'El cliente escanea QR para pagar:',
-    manualCharge:'Servicios / cargo'},
+    manualCharge:'Servicios / cargo',
+    newTableOrder:'🍽️ Nuevo pedido en mesa',
+    createBillBtn:'🧾 Enviar cuenta al cliente (pago QR)',
+    manualAmountLbl:'💰 Monto personalizado (si el pedido no está en el sistema):',
+    addDishesAbove:'Agrega platos arriba',
+    placeOrderBtn:'✓ Realizar pedido',
+    orderCartTitle:'🛒 Pedido',
+    orderCommentPh:'Comentario del pedido (opcional)',
+    tableOrderSearch:'Buscar plato...',
+    noActiveOrders:'Sin pedidos activos'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -4461,7 +4515,16 @@ var I18N = {
     billOnline:'Pošalji link za plaćanje (Monobank)',
     billLinkReady:'Link za klijenta:',
     billScanQR:'Klijent skenira QR za plaćanje:',
-    manualCharge:'Usluge / račun'},
+    manualCharge:'Usluge / račun',
+    newTableOrder:'🍽️ Nova narudžbina za sto',
+    createBillBtn:'🧾 Pošalji račun klijentu (QR plaćanje)',
+    manualAmountLbl:'💰 Vlastiti iznos (ako narudžbina nije u sistemu):',
+    addDishesAbove:'Dodajte jela gore',
+    placeOrderBtn:'✓ Naruči',
+    orderCartTitle:'🛒 Narudžbina',
+    orderCommentPh:'Komentar uz narudžbinu (opciono)',
+    tableOrderSearch:'Traži jelo...',
+    noActiveOrders:'Nema aktivnih narudžbina'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -4583,6 +4646,45 @@ function subscribeOrders() {
       renderOrders();
       updateOrderBadge();
       playNewOrderSound();
+
+      // Автооновлення статусу столів по активних замовленнях
+      if (tables.length) {
+        const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+        const todayMs = todayStart.getTime();
+        const {doc, updateDoc} = window.__FS;
+
+        // Збираємо які столи мають активні замовлення СЬОГОДНІ
+        const occupiedNums = new Set();
+        orders.forEach(o => {
+          if (!o.tableId) return;
+          if (o.status === 'cancelled' || o.status === 'done') return;
+          if (o.dateMs < todayMs) return; // ігноруємо вчорашні і старіші
+          occupiedNums.add(String(o.tableId));
+        });
+
+        let changed = false;
+        tables.forEach(tbl => {
+          const shouldBeOccupied = occupiedNums.has(String(tbl.num));
+          if (shouldBeOccupied && tbl.status === 'free') {
+            tbl.status = 'occupied';
+            changed = true;
+            // Синхронізуємо в Firestore
+            updateDoc(doc(db,'venues',venueId,'tables',String(tbl.id)), {
+              status: 'occupied',
+              updatedAt: new Date().toISOString(),
+            }).catch(e => console.warn('table sync:', e.message));
+          } else if (!shouldBeOccupied && (tbl.status === 'occupied' || tbl.status === 'paid')) {
+            // Немає активних замовлень сьогодні — повертаємо в free
+            tbl.status = 'free';
+            changed = true;
+            updateDoc(doc(db,'venues',venueId,'tables',String(tbl.id)), {
+              status: 'free',
+              updatedAt: new Date().toISOString(),
+            }).catch(e => console.warn('table sync:', e.message));
+          }
+        });
+        if (changed) renderTables();
+      }
     } catch(e) { console.warn('subscribeOrders render error:', e.message); }
   }, err => { console.warn('subscribeOrders:', err.message); });
 }
@@ -5339,20 +5441,7 @@ window.nav = function(btn,tab){
   if(tab==='t-tables')    loadTablesFromFirestore();
 };
 function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){
-  document.getElementById(id).classList.remove('open');
-  if(id==='modal-table-order'){
-    selectedTable=null;
-    renderTables();
-  } else if(id==='modal-table-detail'){
-    setTimeout(()=>{
-      if(!document.getElementById('modal-table-order').classList.contains('open')){
-        selectedTable=null;
-        renderTables();
-      }
-    },50);
-  }
-}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
 function notify(msg,type='ok'){const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';setTimeout(()=>n.classList.remove('show'),2800);}
 window.openModal=openModal;window.closeModal=closeModal;window.notify=notify;
 
@@ -5483,7 +5572,7 @@ function renderTableOrderCart() {
   const wrap = document.getElementById('to-cart');
   const totalEl = document.getElementById('to-total');
   if(!entries.length) {
-    wrap.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:.5rem">Додайте страви вище</div>';
+    wrap.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:.5rem">'+t('addDishesAbove')+'</div>';
     totalEl.textContent = '—';
     return;
   }
@@ -5521,7 +5610,6 @@ window.placeTableOrder = async function() {
     const { collection, addDoc } = window.__FS;
     // Отримуємо поточний лічильник замовлень
     const orderNum = Date.now().toString().slice(-4);
-    const { serverTimestamp } = window.__FS;
     await addDoc(collection(db,'venues',venueId,'orders'), {
       items: orderItems,
       total,
@@ -5534,8 +5622,8 @@ window.placeTableOrder = async function() {
       paymentMethod: 'cash',
       num: orderNum,
       status: 'new',
-      createdAt: serverTimestamp(),
-      source: 'admin',
+      createdAt: new Date(),
+      source: 'admin', // позначаємо що від офіціанта
     });
 
     // Оновлюємо статус столу
@@ -5551,16 +5639,13 @@ window.placeTableOrder = async function() {
   } catch(e) {
     notify(t('notifError')+': '+e.message, 'err');
   } finally {
-    btn.textContent = '✓ Оформити замовлення';
+    btn.textContent = t('placeOrderBtn');
     btn.disabled = false;
   }
 };
 
 window.openTableDetail = function(id) {
-  // Не відкриваємо якщо модал вже відкритий
-  if(document.getElementById('modal-table-detail').classList.contains('open')) return;
-  if(document.getElementById('modal-table-order').classList.contains('open')) return;
-  // Throttle від подвійного tap
+  // Throttle: ігноруємо повторні виклики протягом 800мс (iOS генерує кілька click подій)
   const now = Date.now();
   if(window.__lastTableOpen && now - window.__lastTableOpen < 800) return;
   window.__lastTableOpen = now;
@@ -5625,46 +5710,22 @@ window.setTableStatus = function(status) {
   if(!selectedTable) return;
   selectedTable.status = status;
   document.getElementById('table-status-display').textContent = 
-    {free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('activeOrders'),paid:t('paid')}[status] || status;
+    {free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('aktyvniZamovlennya'),paid:'Оплачено'}[status] || status;
   renderTables();
   updateTableStatus(selectedTable.id, {status});
   notify({free:'Стіл звільнено',occupied:'Стіл відкрито',paid:'Стіл оплачено'}[status]||'Оновлено','ok');
-  // При звільненні або оплаті — закриваємо всі відкриті bills столу
-  if(status === 'free' || status === 'paid') {
-    const {doc, updateDoc, collection, getDocs, query, where} = window.__FS;
-    // Закриваємо активні замовлення
-    orders.filter(o =>
-      String(o.tableId) === String(selectedTable.num) &&
-      ['new','preparing'].includes(o.status)
-    ).forEach(o => {
-      updateDoc(doc(db,'venues',venueId,'orders',o.id), {
-        status: 'done',
-        paidAt: new Date().toISOString(),
-      }).catch(e => console.warn('setTableStatus order close:', e.message));
-    });
-    // Закриваємо відкриті bills
-    getDocs(query(
-      collection(db,'venues',venueId,'bills'),
-      where('tableNum','==', selectedTable.num),
-      where('status','in',['open','pending_payment'])
-    )).then(snap => {
-      snap.forEach(d => {
-        updateDoc(doc(db,'venues',venueId,'bills',d.id), {
-          status: 'closed',
-          closedAt: new Date().toISOString(),
-        }).catch(e => console.warn('bill close:', e.message));
-      });
-    }).catch(e => console.warn('bills query:', e.message));
-  }
 };
 // ── РАХУНОК СТОЛУ ──────────────────────────────────────────
 // Готівка/термінал
 // Виставити рахунок з адмін панелі (зберігається в Firestore bills/{id})
 window.createBill = async function() {
   if(!selectedTable) return;
+  // Тільки сьогоднішні активні замовлення
+  const todayStartMs = (() => { const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); })();
   const tableOrders = orders.filter(o =>
     String(o.tableId) === String(selectedTable.num) &&
-    ['new','preparing'].includes(o.status)
+    ['new','preparing','done'].includes(o.status) &&
+    (o.dateMs || 0) >= todayStartMs
   );
   if(!tableOrders.length) { notify(t('noOrders'),'err'); return; }
 
@@ -5769,7 +5830,7 @@ window.billCash = billCash;
 // Онлайн оплата через Monobank
 window.billOnline = async function(){
   if(!selectedTable) return;
-  const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&(['new','preparing'].includes(o.status)));
+  const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&(['new','preparing','done'].includes(o.status)));
   // Ручна сума має пріоритет
   const manualAmt = parseInt(document.getElementById('manual-amount')?.value)||0;
   const total = manualAmt > 0 ? manualAmt : tableOrders.reduce((s,o)=>s+(o.total||0),0);
@@ -5995,33 +6056,31 @@ async function loadSubscription(){
 
 // Ініціалізація UI
 // Завантажуємо столи при відкритті вкладки
-let unsubTables = null;
 async function loadTablesFromFirestore() {
   if(!db||!window.__FS) return;
-  const {collection, onSnapshot} = window.__FS;
-  // Відписуємось від попередньої підписки якщо є
-  if(unsubTables) { unsubTables(); unsubTables = null; }
+  const {collection, getDocs} = window.__FS;
   try {
-    unsubTables = onSnapshot(collection(db,'venues',venueId,'tables'), snap => {
-      if(snap.empty) {
-        document.getElementById('tables-grid').innerHTML =
-          '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">' +
-          '🪑 Столів ще немає. Натисніть "🪑 Синх. столи" в POS-інтеграції або додайте вручну.</div>';
-        return;
-      }
-      tables = snap.docs.map(d => ({
-        ...d.data(),
-        id: d.id,
-        status: d.data().status || 'free',
-        orders: d.data().orders || [],
-        amount: d.data().amount || 0,
-        startTime: d.data().startTime || '',
-        staffId: d.data().staffId || '',
-      }));
-      zones = [...new Set(tables.map(tbl => tbl.zone).filter(Boolean))];
-      renderZoneTabs();
-      renderTables();
-    }, e => console.warn('loadTablesFromFirestore:', e.message));
+    const snap = await getDocs(collection(db,'venues',venueId,'tables'));
+    if(snap.empty) {
+      // Немає столів — показуємо підказку
+      document.getElementById('tables-grid').innerHTML =
+        '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">' +
+        '🪑 Столів ще немає. Натисніть "🪑 Синх. столи" в POS-інтеграції або додайте вручну.</div>';
+      return;
+    }
+    tables = snap.docs.map(d => ({
+      ...d.data(),
+      id: d.id,
+      status: d.data().status || 'free',
+      orders: d.data().orders || [],
+      amount: d.data().amount || 0,
+      startTime: d.data().startTime || '',
+      staffId: d.data().staffId || '',
+    }));
+    // Витягуємо унікальні зони
+    zones = [...new Set(tables.map(tbl => tbl.zone).filter(Boolean))];
+    renderZoneTabs();
+    renderTables();
   } catch(e) {
     console.warn('loadTablesFromFirestore:', e.message);
   }
