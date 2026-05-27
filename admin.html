@@ -5400,7 +5400,7 @@ function renderTables(){
   const stMap={free:'ts-free',occupied:'ts-occupied',ordered:'ts-ordered',paid:'ts-paid'};
   const stLabel={free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('activeOrders'),paid:t('paid')};
   document.getElementById('tables-grid').innerHTML=filtered.map(tbl=>`
-    <div class="table-card ${tbl.status}" onclick="openTableDetail('${tbl.id}')">
+    <div class="table-card ${tbl.status}" data-table-id="${tbl.id}" style="cursor:pointer">
       <div class="table-num">${tbl.num}</div>
       <div class="table-zone">${tbl.zone} · ${tbl.seats} місць</div>
       <div><span class="table-status ${stMap[tbl.status]||'ts-free'}">${stLabel[tbl.status]||t('tableFree')}</span></div>
@@ -5580,11 +5580,6 @@ window.placeTableOrder = async function() {
 };
 
 window.openTableDetail = function(id) {
-  // ── БАГ-ФІХ: захист від подвійного відкриття (подвійний клік або повторний рендер карток)
-  if(window.__tableDetailLock) return;
-  window.__tableDetailLock = true;
-  setTimeout(() => { window.__tableDetailLock = false; }, 600);
-
   selectedTable = tables.find(tbl => String(tbl.id) === String(id));
   if(!selectedTable) return;
   const t = selectedTable;
@@ -5636,6 +5631,13 @@ window.openTableDetail = function(id) {
   openModal('modal-table-detail');
 }
 window.openTableDetail=openTableDetail;
+
+// ── Event delegation для карток столів (замість onclick в кожній картці) ──
+document.getElementById('tables-grid').addEventListener('click', function(e) {
+  const card = e.target.closest('[data-table-id]');
+  if (!card) return;
+  openTableDetail(card.dataset.tableId);
+});
 
 function selectSplit(el,n,total){document.querySelectorAll('.split-person').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');notify(`Рахунок розділено на ${n}: ≈₴${Math.ceil(total/n)} з особи`,'ok');}
 window.selectSplit=selectSplit;
@@ -5765,8 +5767,7 @@ window.billCash = billCash;
 // Онлайн оплата через Monobank
 window.billOnline = async function(){
   if(!selectedTable) return;
-  // ── БАГ-ФІХ: включаємо 'done' — страви вже готові але ще не оплачені
-  const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&(['new','preparing','done'].includes(o.status)));
+  const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&(o.status==='new'||o.status==='preparing'));
   // Ручна сума має пріоритет
   const manualAmt = parseInt(document.getElementById('manual-amount')?.value)||0;
   const total = manualAmt > 0 ? manualAmt : tableOrders.reduce((s,o)=>s+(o.total||0),0);
@@ -5779,11 +5780,7 @@ window.billOnline = async function(){
   try {
     const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     const token = await getAuth().currentUser.getIdToken();
-    // ── БАГ-ФІХ: якщо ручна сума або items порожній — передаємо синтетичний рядок
-    let items = tableOrders.flatMap(o=>o.items||[]);
-    if(!items.length) {
-      items = [{ name: `Рахунок столу №${selectedTable.num}`, qty: 1, price: total }];
-    }
+    const items = tableOrders.flatMap(o=>o.items||[]);
     const res = await fetch(`${window.__CF_URL}/createOrder`,{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
