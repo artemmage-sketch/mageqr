@@ -5796,7 +5796,7 @@ window.billOnline = async function(){
     if(data.payUrl){
       const payUrl = data.payUrl;
 
-      // Записуємо в колекцію bills — клієнт отримає payUrl через onSnapshot
+      // Записуємо в bills — клієнт отримає payUrl через onSnapshot
       try {
         const {collection,addDoc,serverTimestamp} = window.__FS;
         await addDoc(collection(db,'venues',venueId,'bills'), {
