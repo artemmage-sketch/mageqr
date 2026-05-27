@@ -854,33 +854,54 @@ function renderBillContent(content, bill) {
 }
 
 window.payOnline = async function() {
-  if (!openBillData) return;
+  console.log('[payOnline] called, openBillData=', openBillData);
+
+  if (!openBillData) {
+    alert('Помилка: немає даних рахунку');
+    return;
+  }
+
   const btn = $('pay-online-btn');
+  console.log('[payOnline] btn=', btn);
+
+  if (!btn) {
+    alert('Помилка: кнопку не знайдено в DOM');
+    return;
+  }
+
   btn.classList.add('paying');
   btn.disabled = true;
 
   try {
-    // Якщо є готове payUrl від офіціанта — відкриваємо одразу
-    let payUrl = openBillData.payUrl;
+    const payUrl = openBillData.payUrl;
+    console.log('[payOnline] payUrl=', payUrl);
 
     if (!payUrl) {
-      // Немає payUrl — показуємо повідомлення попросити офіціанта
       btn.classList.remove('paying');
       btn.disabled = false;
       const qrWrap = $('pay-qr-wrap');
-      qrWrap.style.display = 'block';
-      qrWrap.innerHTML = `
-        <div style="text-align:center;padding:1rem">
-          <div style="font-size:2rem;margin-bottom:.5rem">📲</div>
-          <div style="font-size:14px;font-weight:600;margin-bottom:.375rem">Попросіть офіціанта</div>
-          <div style="font-size:12px;color:var(--muted)">Офіціант надішле вам QR-код або посилання для оплати</div>
-        </div>`;
+      if (qrWrap) {
+        qrWrap.style.display = 'block';
+        qrWrap.innerHTML = `
+          <div style="text-align:center;padding:1rem">
+            <div style="font-size:2rem;margin-bottom:.5rem">📲</div>
+            <div style="font-size:14px;font-weight:600;margin-bottom:.375rem">Попросіть офіціанта</div>
+            <div style="font-size:12px;color:var(--muted)">Офіціант надішле вам QR-код або посилання для оплати</div>
+          </div>`;
+      }
       return;
     }
 
-    // Є payUrl — показуємо кнопку-посилання + QR
-    // НЕ використовуємо window.open — iOS Safari блокує його з async функцій
+    // Є payUrl — показуємо посилання + QR
     const qrWrap = $('pay-qr-wrap');
+    console.log('[payOnline] qrWrap=', qrWrap);
+
+    if (!qrWrap) {
+      // qrWrap не знайдено — відкриваємо напряму
+      window.location.href = payUrl;
+      return;
+    }
+
     qrWrap.innerHTML = `
       <a href="${payUrl}" target="_blank" rel="noopener"
         style="display:block;width:100%;padding:.875rem;background:var(--green);color:#0F1F0F;
@@ -898,6 +919,7 @@ window.payOnline = async function() {
     qrWrap.style.display = 'block';
 
   } catch(e) {
+    console.error('[payOnline] error:', e);
     alert('Помилка: ' + e.message);
   } finally {
     btn.classList.remove('paying');
