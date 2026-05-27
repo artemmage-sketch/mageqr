@@ -4595,7 +4595,8 @@ function subscribeOrders() {
         orders.forEach(o => {
           if (!o.tableId) return;
           if (o.status === 'cancelled' || o.status === 'done') return;
-          if (o.dateMs < todayMs) return; // ігноруємо вчорашні і старіші
+          // dateMs=0 означає optimistic update (serverTimestamp ще не прийшов) — вважаємо сьогоднішнім
+          if (o.dateMs !== 0 && o.dateMs < todayMs) return;
           occupiedNums.add(String(o.tableId));
         });
 
