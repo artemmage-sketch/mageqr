@@ -774,7 +774,7 @@ async function loadTableOrders(content) {
     const { Timestamp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
     const q = query(ordersRef,
       where('tableId', '==', String(tableNum)),
-      where('status', 'in', ['new', 'preparing']),
+      where('status', 'in', ['new', 'preparing', 'done']),
       where('createdAt', '>=', Timestamp.fromDate(todayStart)),
       orderBy('createdAt', 'desc')
     );
