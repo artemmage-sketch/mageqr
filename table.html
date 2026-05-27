@@ -754,10 +754,12 @@ window.openBill = function() {
   const content = $('bill-content');
 
   if (!openBillData) {
-    // Немає відкритого рахунку від офіціанта — показуємо замовлення зі столу
-    loadTableOrders(content);
+    content.innerHTML = `
+      <div class="no-bill">
+        <div class="nb-icon">🧾</div>
+        <div class="nb-text">Рахунок ще не виставлений.<br/>Зверніться до офіціанта.</div>
+      </div>`;
   } else {
-    // Є рахунок від офіціанта (з payUrl) — показуємо його
     renderBillContent(content, openBillData);
   }
   openOverlay('bill-overlay');
@@ -774,7 +776,7 @@ async function loadTableOrders(content) {
     const { Timestamp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
     const q = query(ordersRef,
       where('tableId', '==', String(tableNum)),
-      where('status', 'in', ['new', 'preparing', 'done']),
+      where('status', 'in', ['new', 'preparing']),
       where('createdAt', '>=', Timestamp.fromDate(todayStart)),
       orderBy('createdAt', 'desc')
     );
