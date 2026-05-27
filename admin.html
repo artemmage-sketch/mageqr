@@ -5380,9 +5380,17 @@ window.nav = function(btn,tab){
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){
   document.getElementById(id).classList.remove('open');
-  if(id==='modal-table-detail'||id==='modal-table-order') {
+  if(id==='modal-table-order') {
     selectedTable=null;
     renderTables();
+  } else if(id==='modal-table-detail') {
+    // Затримка щоб openTableOrder встиг відкрити modal-table-order з selectedTable
+    setTimeout(()=>{
+      if(!document.getElementById('modal-table-order').classList.contains('open')){
+        selectedTable=null;
+        renderTables();
+      }
+    }, 50);
   }
 }
 function notify(msg,type='ok'){const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';setTimeout(()=>n.classList.remove('show'),2800);}
@@ -5403,8 +5411,7 @@ let editStaffId=null;
 
 function renderTables(){
   if(document.getElementById('modal-table-detail').classList.contains('open') ||
-     document.getElementById('modal-table-order').classList.contains('open') ||
-     selectedTable) return;
+     document.getElementById('modal-table-order').classList.contains('open')) return;
   const filtered=activeZone?tables.filter(tbl=>tbl.zone===activeZone):tables;
   const stMap={free:'ts-free',occupied:'ts-occupied',ordered:'ts-ordered',paid:'ts-paid'};
   const stLabel={free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('activeOrders'),paid:t('paid')};
@@ -5689,16 +5696,12 @@ window.createBill = async function() {
   }
 
   try {
-    const { collection, addDoc, serverTimestamp } = window.__FS;
+    const { collection, addDoc, doc, updateDoc, serverTimestamp } = window.__FS;
     const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     const token = await getAuth().currentUser.getIdToken();
 
-    // Спочатку отримуємо payUrl від платіжного провайдера
-    let payUrl = null;
-    let billRef = null;
-
-    // Створюємо тимчасовий документ щоб отримати ID для платіжного посилання
-    billRef = await addDoc(collection(db,'venues',venueId,'bills'), {
+    // Зберігаємо як pending — клієнт не бачить поки немає payUrl
+    const billRef = await addDoc(collection(db,'venues',venueId,'bills'), {
       tableNum:   selectedTable.num,
       items:      allItems,
       total,
@@ -5708,6 +5711,8 @@ window.createBill = async function() {
       createdAt:  serverTimestamp(),
     });
 
+    // Генеруємо платіжне посилання
+    let payUrl = null;
     try {
       const payRes2 = await fetch(`${window.__CF_URL}/createBillPayment`, {
         method: 'POST',
@@ -5728,8 +5733,7 @@ window.createBill = async function() {
       }
     } catch(e) { console.warn('createBillPayment fetch:', e.message); }
 
-    // Оновлюємо документ — тепер з реальним payUrl і статусом open
-    const { doc, updateDoc } = window.__FS;
+    // Оновлюємо статус на open і додаємо payUrl — клієнт побачить через onSnapshot
     await updateDoc(doc(db,'venues',venueId,'bills',billRef.id), {
       status: 'open',
       payUrl: payUrl || null,
