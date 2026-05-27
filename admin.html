@@ -5582,6 +5582,11 @@ window.placeTableOrder = async function() {
 };
 
 window.openTableDetail = function(id) {
+  // Throttle: ігноруємо повторні виклики протягом 800мс (iOS генерує кілька click подій)
+  const now = Date.now();
+  if(window.__lastTableOpen && now - window.__lastTableOpen < 800) return;
+  window.__lastTableOpen = now;
+
   selectedTable = tables.find(tbl => String(tbl.id) === String(id));
   if(!selectedTable) return;
   const t = selectedTable;
@@ -5795,7 +5800,6 @@ window.billOnline = async function(){
 
     if(data.payUrl){
       const payUrl = data.payUrl;
-
       // Записуємо в bills — клієнт отримає payUrl через onSnapshot
       try {
         const {collection,addDoc,serverTimestamp} = window.__FS;
