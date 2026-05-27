@@ -4583,38 +4583,6 @@ function subscribeOrders() {
       renderOrders();
       updateOrderBadge();
       playNewOrderSound();
-
-      // Автооновлення статусу столів по активних замовленнях
-      if (tables.length) {
-        const todayStart = new Date(); todayStart.setHours(0,0,0,0);
-        const todayMs = todayStart.getTime();
-        const {doc, updateDoc} = window.__FS;
-
-        // Збираємо які столи мають активні замовлення СЬОГОДНІ
-        const occupiedNums = new Set();
-        orders.forEach(o => {
-          if (!o.tableId) return;
-          if (o.status === 'cancelled' || o.status === 'done') return;
-          // dateMs=0 означає optimistic update (serverTimestamp ще не прийшов) — вважаємо сьогоднішнім
-          if (o.dateMs !== 0 && o.dateMs < todayMs) return;
-          occupiedNums.add(String(o.tableId));
-        });
-
-        let changed = false;
-        tables.forEach(tbl => {
-          const shouldBeOccupied = occupiedNums.has(String(tbl.num));
-          if (shouldBeOccupied && tbl.status === 'free') {
-            tbl.status = 'occupied';
-            changed = true;
-            updateDoc(doc(db,'venues',venueId,'tables',String(tbl.id)), {
-              status: 'occupied',
-              updatedAt: new Date().toISOString(),
-            }).catch(e => console.warn('table sync:', e.message));
-          }
-          // Не повертаємо автоматично в free — тільки офіціант вручну
-        });
-        if (changed) renderTables();
-      }
     } catch(e) { console.warn('subscribeOrders render error:', e.message); }
   }, err => { console.warn('subscribeOrders:', err.message); });
 }
@@ -6027,31 +5995,33 @@ async function loadSubscription(){
 
 // Ініціалізація UI
 // Завантажуємо столи при відкритті вкладки
+let unsubTables = null;
 async function loadTablesFromFirestore() {
   if(!db||!window.__FS) return;
-  const {collection, getDocs} = window.__FS;
+  const {collection, onSnapshot} = window.__FS;
+  // Відписуємось від попередньої підписки якщо є
+  if(unsubTables) { unsubTables(); unsubTables = null; }
   try {
-    const snap = await getDocs(collection(db,'venues',venueId,'tables'));
-    if(snap.empty) {
-      // Немає столів — показуємо підказку
-      document.getElementById('tables-grid').innerHTML =
-        '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">' +
-        '🪑 Столів ще немає. Натисніть "🪑 Синх. столи" в POS-інтеграції або додайте вручну.</div>';
-      return;
-    }
-    tables = snap.docs.map(d => ({
-      ...d.data(),
-      id: d.id,
-      status: d.data().status || 'free',
-      orders: d.data().orders || [],
-      amount: d.data().amount || 0,
-      startTime: d.data().startTime || '',
-      staffId: d.data().staffId || '',
-    }));
-    // Витягуємо унікальні зони
-    zones = [...new Set(tables.map(tbl => tbl.zone).filter(Boolean))];
-    renderZoneTabs();
-    renderTables();
+    unsubTables = onSnapshot(collection(db,'venues',venueId,'tables'), snap => {
+      if(snap.empty) {
+        document.getElementById('tables-grid').innerHTML =
+          '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted)">' +
+          '🪑 Столів ще немає. Натисніть "🪑 Синх. столи" в POS-інтеграції або додайте вручну.</div>';
+        return;
+      }
+      tables = snap.docs.map(d => ({
+        ...d.data(),
+        id: d.id,
+        status: d.data().status || 'free',
+        orders: d.data().orders || [],
+        amount: d.data().amount || 0,
+        startTime: d.data().startTime || '',
+        staffId: d.data().staffId || '',
+      }));
+      zones = [...new Set(tables.map(tbl => tbl.zone).filter(Boolean))];
+      renderZoneTabs();
+      renderTables();
+    }, e => console.warn('loadTablesFromFirestore:', e.message));
   } catch(e) {
     console.warn('loadTablesFromFirestore:', e.message);
   }
