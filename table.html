@@ -627,7 +627,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 </script>
 <script type="module">
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, doc, getDoc, getDocs, addDoc, onSnapshot, query, where, orderBy, serverTimestamp }
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, onSnapshot, query, where, orderBy, serverTimestamp }
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
@@ -677,6 +677,7 @@ async function init() {
 
     // Підписка на рахунок столу в реальному часі
     if (tableNum) {
+      // Якщо клієнт повернувся після оплати — не показуємо старий рахунок
       subscribeToTableBill();
     }
   } catch(e) {
@@ -731,7 +732,6 @@ function subscribeToTableBill() {
         .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
       openBillData = bills[0];
       showBillBanner(openBillData);
-      // Якщо sheet відкритий — оновлюємо вміст з актуальним payUrl
       const overlay = document.getElementById('bill-overlay');
       if (overlay && overlay.classList.contains('open')) {
         renderBillContent(document.getElementById('bill-content'), openBillData);
