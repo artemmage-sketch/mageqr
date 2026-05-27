@@ -499,7 +499,7 @@
 </div>
 
 <!-- BILL BANNER (якщо є відкритий рахунок) -->
-<div class="bill-banner" id="bill-banner" onclick="openBill()">
+<div class="bill-banner" id="bill-banner" data-action="open-bill">
   <div class="bb-label">💳 Відкритий рахунок</div>
   <div class="bb-amount" id="bb-amount">—</div>
   <div class="bb-desc" id="bb-desc">Натисніть щоб оплатити</div>
@@ -517,7 +517,7 @@
     <div class="ac-arrow">→</div>
   </a>
 
-  <div class="action-card" onclick="openBill()">
+  <div class="action-card" data-action="open-bill">
     <div class="ac-icon">💳</div>
     <div class="ac-body">
       <div class="ac-title">Рахунок</div>
@@ -526,7 +526,7 @@
     <div class="ac-arrow">→</div>
   </div>
 
-  <div class="action-card" onclick="openTips()">
+  <div class="action-card" data-action="open-tips">
     <div class="ac-icon">💸</div>
     <div class="ac-body">
       <div class="ac-title">Чайові</div>
@@ -535,7 +535,7 @@
     <div class="ac-arrow">→</div>
   </div>
 
-  <div class="action-card" onclick="openReview()">
+  <div class="action-card" data-action="open-review">
     <div class="ac-icon">⭐</div>
     <div class="ac-body">
       <div class="ac-title">Залишити відгук</div>
@@ -579,7 +579,7 @@
       <input type="text" id="review-name"
         style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--font);font-size:.9rem;padding:.75rem;outline:none;margin-bottom:.875rem"
         placeholder="Ваше ім'я (необов'язково)"/>
-      <button class="pay-btn online" onclick="submitReview()" id="review-btn">
+      <button class="pay-btn online" data-action="submit-review" id="review-btn">
         <span class="btn-spinner"></span>
         <span class="btn-text">✓ Надіслати відгук</span>
       </button>
@@ -605,7 +605,7 @@
           oninput="selectTip(null, this.value)"/>
         <span style="color:var(--muted);font-size:.9rem" id="tip-currency-sym">₴</span>
       </div>
-      <button class="pay-btn online" onclick="payTips()" id="tips-btn">
+      <button class="pay-btn online" data-action="pay-tips" id="tips-btn">
         <span class="btn-spinner"></span>
         <span class="btn-text">💸 Надіслати чайові</span>
       </button>
@@ -848,11 +848,7 @@ function renderBillContent(content, bill) {
     </div>
     <div class="pay-qr-wrap" id="pay-qr-wrap"></div>`;
 
-  // Вішаємо обробники напряму на кнопки (не через onclick в HTML)
-  const onlineBtn = content.querySelector('[data-action="pay-online"]');
-  const cashBtn   = content.querySelector('[data-action="pay-cash"]');
-  if (onlineBtn) onlineBtn.addEventListener('click', () => payOnline());
-  if (cashBtn)   cashBtn.addEventListener('click',   () => payCash());
+  // Обробники через event delegation (document.addEventListener вище)
 }
 
 window.payOnline = async function() {
@@ -1104,6 +1100,23 @@ document.querySelectorAll('.sheet').forEach(sheet => {
     }
   });
 });
+
+// ── ДЕЛЕГУВАННЯ ПОДІЙ (замість onclick в HTML) ──────────────────
+document.addEventListener('click', function(e) {
+  const action = e.target.closest('[data-action]')?.dataset?.action;
+  if (!action) return;
+  e.stopPropagation();
+  switch(action) {
+    case 'open-bill':   openBill();   break;
+    case 'open-tips':   openTips();   break;
+    case 'open-review': openReview(); break;
+    case 'pay-online':  payOnline();  break;
+    case 'pay-cash':       payCash();       break;
+    case 'submit-review':  submitReview();  break;
+    case 'pay-tips':       payTips();       break;
+  }
+});
+
 
 init();
 </script>
