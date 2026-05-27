@@ -471,8 +471,9 @@
   .no-bill .nb-icon { font-size: 2.5rem; margin-bottom: .5rem; }
   .no-bill .nb-text { font-size: .85rem; line-height: 1.5; }
 
-  /* ── SPINNER in button ── */
-  .btn-spinner {
+  .lang-bar{display:flex;gap:.25rem;padding:.5rem .75rem;background:var(--card);border-bottom:1px solid var(--border);justify-content:flex-end;width:100%;max-width:420px;border-radius:12px;margin:.5rem 0}
+  .lang-btn{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
+  .lang-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
     width: 18px; height: 18px;
     border: 2px solid rgba(0,0,0,.3);
     border-top-color: #0F1F0F;
@@ -496,6 +497,17 @@
   <div class="venue-logo" id="venue-logo">✦</div>
   <div class="venue-name" id="venue-name">Mage QR Rest</div>
   <div class="table-badge" id="table-badge">🪑 Стіл —</div>
+</div>
+
+<!-- LANG BAR -->
+<div class="lang-bar" id="lang-bar">
+  <button class="lang-btn active" data-lang="uk">🇺🇦 UA</button>
+  <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
+  <button class="lang-btn" data-lang="pl">🇵🇱 PL</button>
+  <button class="lang-btn" data-lang="de">🇩🇪 DE</button>
+  <button class="lang-btn" data-lang="ro">🇷🇴 RO</button>
+  <button class="lang-btn" data-lang="es">🇪🇸 ES</button>
+  <button class="lang-btn" data-lang="cnr">🇲🇪 MNE</button>
 </div>
 
 <!-- BILL BANNER (якщо є відкритий рахунок) -->
@@ -631,7 +643,304 @@ import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, onSn
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { getAuth } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-// ── INIT ────────────────────────────────────────────────────────
+// ── UI STRINGS — переклад інтерфейсу ─────────────────────────────
+const UI = {
+  uk: {
+    loading:'Завантаження...',
+    tableBadge:'🪑 Стіл №',
+    bbLabel:'💳 ВІДКРИТИЙ РАХУНОК', bbDesc:'Натисніть щоб оплатити', bbCta:'Оплатити →',
+    menuTitle:'Меню та замовлення', menuDesc:'Переглядайте страви і замовляйте без офіціанта',
+    billTitle:'Рахунок', billDesc:'Переглянути та оплатити рахунок за столом',
+    billOpenDesc:'Є відкритий рахунок — оплатіть онлайн',
+    tipsTitle:'Чайові', tipsDesc:'Подякувати персоналу напряму',
+    reviewTitle:'Залишити відгук', reviewDesc:'Ваша думка допомагає нам ставати кращими',
+    billSheetTitle:'💳 Ваш рахунок',
+    reviewSheetTitle:'⭐ Ваш відгук',
+    reviewQuestion:'Як вам у нас сьогодні?',
+    reviewPh:'Напишіть що сподобалось або що варто покращити...',
+    reviewNamePh:"Ваше ім'я (необов'язково)",
+    reviewBtn:'✓ Надіслати відгук',
+    tipsSheetTitle:'💸 Чайові',
+    tipsStaffLabel:'Оберіть кому залишити чайові:',
+    tipsAmountLabel:'Сума чайових:',
+    tipsCustomPh:'Своя сума',
+    tipsBtn:'💸 Надіслати чайові',
+    noBill:'Рахунок ще не виставлений.\nЗверніться до офіціанта.',
+    payOnlineBtn:'💳 Оплатити онлайн',
+    payCashBtn:'💵 Оплачу готівкою / карткою',
+    payCashAlert:'✓ Попросіть офіціанта розрахувати вас готівкою або через термінал.',
+    reviewRatingAlert:'Оберіть оцінку',
+    tipsAmountAlert:'Оберіть суму чайових',
+    tipsThanks:'Дякуємо за чайові!',
+    reviewThanks:'Дякуємо за відгук!',
+    billTotal:'Разом',
+    askForWaiter:'Попросіть офіціанта',
+    askForWaiterDesc:'Офіціант надішле вам QR-код або посилання для оплати',
+  },
+  en: {
+    loading:'Loading...',
+    tableBadge:'🪑 Table №',
+    bbLabel:'💳 OPEN BILL', bbDesc:'Tap to pay', bbCta:'Pay →',
+    menuTitle:'Menu & orders', menuDesc:'Browse dishes and order without a waiter',
+    billTitle:'Bill', billDesc:'View and pay your table bill',
+    billOpenDesc:'Open bill — pay online',
+    tipsTitle:'Tips', tipsDesc:'Thank the staff directly',
+    reviewTitle:'Leave a review', reviewDesc:'Your opinion helps us improve',
+    billSheetTitle:'💳 Your bill',
+    reviewSheetTitle:'⭐ Your review',
+    reviewQuestion:'How was your experience today?',
+    reviewPh:'Write what you liked or what could be improved...',
+    reviewNamePh:'Your name (optional)',
+    reviewBtn:'✓ Submit review',
+    tipsSheetTitle:'💸 Tips',
+    tipsStaffLabel:'Choose who to tip:',
+    tipsAmountLabel:'Tip amount:',
+    tipsCustomPh:'Custom amount',
+    tipsBtn:'💸 Send tips',
+    noBill:'Bill not issued yet.\nPlease ask your waiter.',
+    payOnlineBtn:'💳 Pay online',
+    payCashBtn:'💵 Pay with cash / card',
+    payCashAlert:'✓ Please ask the waiter to process your cash or card payment.',
+    reviewRatingAlert:'Please select a rating',
+    tipsAmountAlert:'Please select a tip amount',
+    tipsThanks:'Thank you for the tips!',
+    reviewThanks:'Thank you for your review!',
+    billTotal:'Total',
+    askForWaiter:'Ask the waiter',
+    askForWaiterDesc:'The waiter will send you a QR code or payment link',
+  },
+  pl: {
+    loading:'Ładowanie...',
+    tableBadge:'🪑 Stolik №',
+    bbLabel:'💳 OTWARTY RACHUNEK', bbDesc:'Dotknij aby zapłacić', bbCta:'Zapłać →',
+    menuTitle:'Menu i zamówienia', menuDesc:'Przeglądaj dania i zamawiaj bez kelnera',
+    billTitle:'Rachunek', billDesc:'Wyświetl i opłać rachunek za stolik',
+    billOpenDesc:'Otwarty rachunek — zapłać online',
+    tipsTitle:'Napiwki', tipsDesc:'Podziękuj personelowi bezpośrednio',
+    reviewTitle:'Zostaw opinię', reviewDesc:'Twoja opinia pomaga nam się rozwijać',
+    billSheetTitle:'💳 Twój rachunek',
+    reviewSheetTitle:'⭐ Twoja opinia',
+    reviewQuestion:'Jak ci u nas dzisiaj?',
+    reviewPh:'Napisz co ci się podobało lub co można poprawić...',
+    reviewNamePh:'Twoje imię (opcjonalnie)',
+    reviewBtn:'✓ Wyślij opinię',
+    tipsSheetTitle:'💸 Napiwki',
+    tipsStaffLabel:'Wybierz komu zostawić napiwek:',
+    tipsAmountLabel:'Kwota napiwku:',
+    tipsCustomPh:'Własna kwota',
+    tipsBtn:'💸 Wyślij napiwek',
+    noBill:'Rachunek nie został jeszcze wystawiony.\nPoproś kelnera.',
+    payOnlineBtn:'💳 Zapłać online',
+    payCashBtn:'💵 Zapłacę gotówką / kartą',
+    payCashAlert:'✓ Poproś kelnera o rozliczenie gotówką lub kartą.',
+    reviewRatingAlert:'Wybierz ocenę',
+    tipsAmountAlert:'Wybierz kwotę napiwku',
+    tipsThanks:'Dziękujemy za napiwek!',
+    reviewThanks:'Dziękujemy za opinię!',
+    billTotal:'Razem',
+    askForWaiter:'Poproś kelnera',
+    askForWaiterDesc:'Kelner wyśle ci kod QR lub link do płatności',
+  },
+  de: {
+    loading:'Laden...',
+    tableBadge:'🪑 Tisch №',
+    bbLabel:'💳 OFFENE RECHNUNG', bbDesc:'Tippen zum Bezahlen', bbCta:'Bezahlen →',
+    menuTitle:'Speisekarte & Bestellungen', menuDesc:'Gerichte ansehen und ohne Kellner bestellen',
+    billTitle:'Rechnung', billDesc:'Rechnung ansehen und bezahlen',
+    billOpenDesc:'Offene Rechnung — online bezahlen',
+    tipsTitle:'Trinkgeld', tipsDesc:'Dem Personal direkt danken',
+    reviewTitle:'Bewertung hinterlassen', reviewDesc:'Ihre Meinung hilft uns besser zu werden',
+    billSheetTitle:'💳 Ihre Rechnung',
+    reviewSheetTitle:'⭐ Ihre Bewertung',
+    reviewQuestion:'Wie war es heute bei uns?',
+    reviewPh:'Schreiben Sie was Ihnen gefallen hat oder was verbessert werden könnte...',
+    reviewNamePh:'Ihr Name (optional)',
+    reviewBtn:'✓ Bewertung senden',
+    tipsSheetTitle:'💸 Trinkgeld',
+    tipsStaffLabel:'Wählen Sie wem Sie Trinkgeld geben möchten:',
+    tipsAmountLabel:'Trinkgeldbetrag:',
+    tipsCustomPh:'Eigener Betrag',
+    tipsBtn:'💸 Trinkgeld senden',
+    noBill:'Rechnung noch nicht ausgestellt.\nBitte fragen Sie den Kellner.',
+    payOnlineBtn:'💳 Online bezahlen',
+    payCashBtn:'💵 Bar / Karte bezahlen',
+    payCashAlert:'✓ Bitte bitten Sie den Kellner um Abrechnung in bar oder per Karte.',
+    reviewRatingAlert:'Bitte Bewertung auswählen',
+    tipsAmountAlert:'Bitte Trinkgeldbetrag auswählen',
+    tipsThanks:'Danke für das Trinkgeld!',
+    reviewThanks:'Danke für Ihre Bewertung!',
+    billTotal:'Gesamt',
+    askForWaiter:'Kellner bitten',
+    askForWaiterDesc:'Der Kellner sendet Ihnen einen QR-Code oder Zahlungslink',
+  },
+  ro: {
+    loading:'Se încarcă...',
+    tableBadge:'🪑 Masa №',
+    bbLabel:'💳 NOTĂ DESCHISĂ', bbDesc:'Apasă pentru a plăti', bbCta:'Plătește →',
+    menuTitle:'Meniu și comenzi', menuDesc:'Răsfoiți preparatele și comandați fără chelner',
+    billTitle:'Notă de plată', billDesc:'Vizualizați și plătiți nota de la masă',
+    billOpenDesc:'Notă deschisă — plătiți online',
+    tipsTitle:'Bacșiș', tipsDesc:'Mulțumiți personalului direct',
+    reviewTitle:'Lăsați o recenzie', reviewDesc:'Opinia dvs. ne ajută să ne îmbunătățim',
+    billSheetTitle:'💳 Nota dvs.',
+    reviewSheetTitle:'⭐ Recenzia dvs.',
+    reviewQuestion:'Cum v-a fost astăzi la noi?',
+    reviewPh:'Scrieți ce v-a plăcut sau ce ar putea fi îmbunătățit...',
+    reviewNamePh:'Numele dvs. (opțional)',
+    reviewBtn:'✓ Trimite recenzia',
+    tipsSheetTitle:'💸 Bacșiș',
+    tipsStaffLabel:'Alegeți cui să lăsați bacșiș:',
+    tipsAmountLabel:'Suma bacșișului:',
+    tipsCustomPh:'Sumă personalizată',
+    tipsBtn:'💸 Trimite bacșiș',
+    noBill:'Nota nu a fost emisă încă.\nVă rugăm să cereți chelnerul.',
+    payOnlineBtn:'💳 Plătește online',
+    payCashBtn:'💵 Plătesc numerar / card',
+    payCashAlert:'✓ Vă rugăm să cereți chelnerului să proceseze plata în numerar sau cu cardul.',
+    reviewRatingAlert:'Selectați o evaluare',
+    tipsAmountAlert:'Selectați suma bacșișului',
+    tipsThanks:'Mulțumim pentru bacșiș!',
+    reviewThanks:'Mulțumim pentru recenzie!',
+    billTotal:'Total',
+    askForWaiter:'Cereți chelnerul',
+    askForWaiterDesc:'Chelnerul vă va trimite un cod QR sau un link de plată',
+  },
+  es: {
+    loading:'Cargando...',
+    tableBadge:'🪑 Mesa №',
+    bbLabel:'💳 CUENTA ABIERTA', bbDesc:'Toca para pagar', bbCta:'Pagar →',
+    menuTitle:'Menú y pedidos', menuDesc:'Explora los platos y pide sin camarero',
+    billTitle:'Cuenta', billDesc:'Ver y pagar la cuenta de la mesa',
+    billOpenDesc:'Cuenta abierta — pagar online',
+    tipsTitle:'Propinas', tipsDesc:'Agradece al personal directamente',
+    reviewTitle:'Dejar una reseña', reviewDesc:'Tu opinión nos ayuda a mejorar',
+    billSheetTitle:'💳 Tu cuenta',
+    reviewSheetTitle:'⭐ Tu reseña',
+    reviewQuestion:'¿Cómo fue tu experiencia hoy?',
+    reviewPh:'Escribe qué te gustó o qué podría mejorar...',
+    reviewNamePh:'Tu nombre (opcional)',
+    reviewBtn:'✓ Enviar reseña',
+    tipsSheetTitle:'💸 Propinas',
+    tipsStaffLabel:'Elige a quién dejar propina:',
+    tipsAmountLabel:'Monto de la propina:',
+    tipsCustomPh:'Monto personalizado',
+    tipsBtn:'💸 Enviar propina',
+    noBill:'La cuenta aún no ha sido emitida.\nPor favor pide al camarero.',
+    payOnlineBtn:'💳 Pagar online',
+    payCashBtn:'💵 Pagar en efectivo / tarjeta',
+    payCashAlert:'✓ Por favor pide al camarero que procese tu pago en efectivo o tarjeta.',
+    reviewRatingAlert:'Selecciona una valoración',
+    tipsAmountAlert:'Selecciona el monto de la propina',
+    tipsThanks:'¡Gracias por la propina!',
+    reviewThanks:'¡Gracias por tu reseña!',
+    billTotal:'Total',
+    askForWaiter:'Pedir al camarero',
+    askForWaiterDesc:'El camarero te enviará un código QR o enlace de pago',
+  },
+  cnr: {
+    loading:'Učitavanje...',
+    tableBadge:'🪑 Sto №',
+    bbLabel:'💳 OTVORENI RAČUN', bbDesc:'Dodirnite za plaćanje', bbCta:'Plati →',
+    menuTitle:'Meni i narudžbine', menuDesc:'Pregledajte jela i naručite bez konobara',
+    billTitle:'Račun', billDesc:'Pregledajte i platite račun za sto',
+    billOpenDesc:'Otvoreni račun — platite online',
+    tipsTitle:'Napojnica', tipsDesc:'Zahvalite osoblju direktno',
+    reviewTitle:'Ostavite recenziju', reviewDesc:'Vaše mišljenje nam pomaže da se poboljšamo',
+    billSheetTitle:'💳 Vaš račun',
+    reviewSheetTitle:'⭐ Vaša recenzija',
+    reviewQuestion:'Kako vam je bilo danas kod nas?',
+    reviewPh:'Napišite šta vam se svidjelo ili šta bi moglo biti bolje...',
+    reviewNamePh:'Vaše ime (opciono)',
+    reviewBtn:'✓ Pošalji recenziju',
+    tipsSheetTitle:'💸 Napojnica',
+    tipsStaffLabel:'Izaberite kome ostaviti napojnicu:',
+    tipsAmountLabel:'Iznos napojnice:',
+    tipsCustomPh:'Vlastiti iznos',
+    tipsBtn:'💸 Pošalji napojnicu',
+    noBill:'Račun još nije izdat.\nMolimo pitajte konobara.',
+    payOnlineBtn:'💳 Platite online',
+    payCashBtn:'💵 Platim gotovinom / karticom',
+    payCashAlert:'✓ Molimo zamolite konobara da obradi vaše plaćanje gotovinom ili karticom.',
+    reviewRatingAlert:'Odaberite ocjenu',
+    tipsAmountAlert:'Odaberite iznos napojnice',
+    tipsThanks:'Hvala na napojnici!',
+    reviewThanks:'Hvala na recenziji!',
+    billTotal:'Ukupno',
+    askForWaiter:'Zamolite konobara',
+    askForWaiterDesc:'Konobar će vam poslati QR kod ili link za plaćanje',
+  },
+};
+
+let currentLang = localStorage.getItem('mq_table_lang') || 'uk';
+
+function ui(key) {
+  return (UI[currentLang] || UI.uk)[key] || UI.uk[key] || key;
+}
+
+function applyLang() {
+  // Loader
+  const lt = document.querySelector('.loader-text');
+  if (lt) lt.textContent = ui('loading');
+  // Table badge
+  if (tableNum) $('table-badge').textContent = ui('tableBadge') + tableNum;
+  // Bill banner
+  const bbLabel = document.querySelector('.bb-label');
+  const bbDesc = $('bb-desc');
+  const bbCta = document.querySelector('.bb-cta');
+  if (bbLabel) bbLabel.textContent = ui('bbLabel');
+  if (bbDesc && !bbDesc.dataset.custom) bbDesc.textContent = ui('bbDesc');
+  if (bbCta) bbCta.textContent = ui('bbCta');
+  // Action cards
+  const titles = document.querySelectorAll('.ac-title');
+  const descs  = document.querySelectorAll('.ac-desc');
+  if (titles[0]) titles[0].textContent = ui('menuTitle');
+  if (descs[0])  descs[0].textContent  = ui('menuDesc');
+  if (titles[1]) titles[1].textContent = ui('billTitle');
+  const billDesc = $('bill-action-desc');
+  if (billDesc && !billDesc.dataset.custom) billDesc.textContent = ui('billDesc');
+  if (titles[2]) titles[2].textContent = ui('tipsTitle');
+  if (descs[2])  descs[2].textContent  = ui('tipsDesc');
+  if (titles[3]) titles[3].textContent = ui('reviewTitle');
+  if (descs[3])  descs[3].textContent  = ui('reviewDesc');
+  // Sheet titles
+  const sheetTitles = document.querySelectorAll('.sheet-title');
+  if (sheetTitles[0]) sheetTitles[0].textContent = ui('billSheetTitle');
+  if (sheetTitles[1]) sheetTitles[1].textContent = ui('reviewSheetTitle');
+  if (sheetTitles[2]) sheetTitles[2].textContent = ui('tipsSheetTitle');
+  // Review sheet
+  const rq = document.querySelector('#review-content > div');
+  if (rq) rq.textContent = ui('reviewQuestion');
+  const rt = $('review-text');
+  if (rt) rt.placeholder = ui('reviewPh');
+  const rn = $('review-name');
+  if (rn) rn.placeholder = ui('reviewNamePh');
+  const rb = document.querySelector('#review-btn .btn-text');
+  if (rb) rb.textContent = ui('reviewBtn');
+  // Tips sheet
+  const tsl = $('tips-staff-label');
+  if (tsl) tsl.textContent = ui('tipsStaffLabel');
+  const tal = document.querySelector('#tips-content > div:nth-child(3)');
+  if (tal) tal.textContent = ui('tipsAmountLabel');
+  const tc = $('tip-custom');
+  if (tc) tc.placeholder = ui('tipsCustomPh');
+  const tb = document.querySelector('#tips-btn .btn-text');
+  if (tb) tb.textContent = ui('tipsBtn');
+  // Lang bar active
+  document.querySelectorAll('.lang-btn[data-lang]').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-lang') === currentLang);
+  });
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('mq_table_lang', lang);
+  applyLang();
+}
+
+// Ініціалізуємо lang-bar
+document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
+  btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang')));
+});
 const app  = getApps().length ? getApps()[0] : initializeApp(window.__MQ_CFG);
 const db   = getFirestore(app);
 const CF   = window.__CF_URL;
@@ -743,14 +1052,14 @@ function subscribeToTableBill() {
 function showBillBanner(bill) {
   const banner = $('bill-banner');
   $('bb-amount').textContent = mCur(bill.total || 0);
-  $('bb-desc').textContent = `${bill.items?.length || 0} позицій · Натисніть щоб оплатити`;
-  $('bill-action-desc').textContent = 'Є відкритий рахунок — оплатіть онлайн';
+  $('bb-desc').textContent = `${bill.items?.length || 0} · ${ui('bbDesc')}`;
+  $('bill-action-desc').textContent = ui('billOpenDesc');
   banner.style.display = 'block';
 }
 
 function hideBillBanner() {
   $('bill-banner').style.display = 'none';
-  $('bill-action-desc').textContent = 'Переглянути та оплатити рахунок за столом';
+  $('bill-action-desc').textContent = ui('billDesc');
 }
 
 // ── РАХУНОК ─────────────────────────────────────────────────────
@@ -760,7 +1069,7 @@ window.openBill = function() {
     content.innerHTML = `
       <div class="no-bill">
         <div class="nb-icon">🧾</div>
-        <div class="nb-text">Рахунок ще не виставлений.<br/>Зверніться до офіціанта.</div>
+        <div class="nb-text">${ui('noBill').replace('\n','<br/>')}</div>
       </div>`;
   } else {
     renderBillContent(content, openBillData);
@@ -789,7 +1098,7 @@ async function loadTableOrders(content) {
       content.innerHTML = `
         <div class="no-bill">
           <div class="nb-icon">🧾</div>
-          <div class="nb-text">Рахунок ще не виставлений.<br/>Зверніться до офіціанта або зробіть замовлення через меню.</div>
+          <div class="nb-text">${ui('noBill').replace('\n','<br/>')}</div>
         </div>`;
       return;
     }
@@ -820,7 +1129,7 @@ async function loadTableOrders(content) {
     renderBillContent(content, openBillData);
 
   } catch(e) {
-    content.innerHTML = `<div class="no-bill"><div class="nb-icon">⚠️</div><div class="nb-text">Не вдалось завантажити. Зверніться до офіціанта.</div></div>`;
+    content.innerHTML = `<div class="no-bill"><div class="nb-icon">⚠️</div><div class="nb-text">${ui('noBill').replace('\n','<br/>')}</div></div>`;
     console.error('loadTableOrders:', e);
   }
 }
@@ -839,16 +1148,16 @@ function renderBillContent(content, bill) {
   content.innerHTML = `
     ${itemsHtml}
     <div class="bill-total">
-      <span class="bt-label">Разом</span>
+      <span class="bt-label">${ui('billTotal')}</span>
       <span class="bt-amount">${mCur(total)}</span>
     </div>
     <div class="pay-methods">
       <button class="pay-btn online" id="pay-online-btn" onclick="payOnline()">
         <span class="btn-spinner"></span>
-        <span class="btn-text">💳 Оплатити онлайн</span>
+        <span class="btn-text">${ui('payOnlineBtn')}</span>
       </button>
       <button class="pay-btn cash" onclick="payCash()">
-        💵 Оплачу готівкою / карткою
+        ${ui('payCashBtn')}
       </button>
     </div>
     <div class="pay-qr-wrap" id="pay-qr-wrap"></div>`;
@@ -929,7 +1238,7 @@ window.payOnline = async function() {
 window.payCash = function() {
   closeOverlay('bill-overlay');
   // Показуємо підтвердження
-  setTimeout(() => alert('✓ Попросіть офіціанта розрахувати вас готівкою або через термінал.'), 200);
+  setTimeout(() => alert(ui('payCashAlert')), 200);
 };
 
 window.copyPayUrl = function() {
@@ -949,7 +1258,7 @@ window.setStar = function(n) {
 };
 
 window.submitReview = async function() {
-  if (!selectedStar) { alert('Оберіть оцінку'); return; }
+  if (!selectedStar) { alert(ui('reviewRatingAlert')); return; }
   const btn = $('review-btn');
   btn.classList.add('paying');
   btn.disabled = true;
@@ -966,7 +1275,7 @@ window.submitReview = async function() {
     $('review-content').innerHTML = `
       <div class="success-wrap">
         <div class="success-icon">🙏</div>
-        <div class="success-title">Дякуємо за відгук!</div>
+        <div class="success-title">${ui('reviewThanks')}</div>
         <div class="success-desc">Ваша думка дуже важлива для нас. Раді бачити вас знову!</div>
       </div>`;
   } catch(e) {
@@ -1028,7 +1337,7 @@ window.selectTip = function(preset, custom) {
 };
 
 window.payTips = async function() {
-  if (!selectedTip || selectedTip < 1) { alert('Оберіть суму чайових'); return; }
+  if (!selectedTip || selectedTip < 1) { alert(ui('tipsAmountAlert')); return; }
   const btn = $('tips-btn');
   btn.classList.add('paying');
   btn.disabled = true;
@@ -1119,7 +1428,7 @@ document.addEventListener('click', function(e) {
 });
 
 
-init();
+init().then(() => applyLang());
 </script>
 </body>
 </html>
