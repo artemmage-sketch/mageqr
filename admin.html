@@ -5661,9 +5661,10 @@ window.setTableStatus = function(status) {
   renderTables();
   updateTableStatus(selectedTable.id, {status});
   notify({free:'Стіл звільнено',occupied:'Стіл відкрито',paid:'Стіл оплачено'}[status]||'Оновлено','ok');
-  // При звільненні або оплаті — закриваємо всі активні замовлення столу
+  // При звільненні або оплаті — закриваємо всі відкриті bills столу
   if(status === 'free' || status === 'paid') {
-    const {doc, updateDoc} = window.__FS;
+    const {doc, updateDoc, collection, getDocs, query, where} = window.__FS;
+    // Закриваємо активні замовлення
     orders.filter(o =>
       String(o.tableId) === String(selectedTable.num) &&
       ['new','preparing'].includes(o.status)
@@ -5673,6 +5674,19 @@ window.setTableStatus = function(status) {
         paidAt: new Date().toISOString(),
       }).catch(e => console.warn('setTableStatus order close:', e.message));
     });
+    // Закриваємо відкриті bills
+    getDocs(query(
+      collection(db,'venues',venueId,'bills'),
+      where('tableNum','==', selectedTable.num),
+      where('status','in',['open','pending_payment'])
+    )).then(snap => {
+      snap.forEach(d => {
+        updateDoc(doc(db,'venues',venueId,'bills',d.id), {
+          status: 'closed',
+          closedAt: new Date().toISOString(),
+        }).catch(e => console.warn('bill close:', e.message));
+      });
+    }).catch(e => console.warn('bills query:', e.message));
   }
 };
 // ── РАХУНОК СТОЛУ ──────────────────────────────────────────
