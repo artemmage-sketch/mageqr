@@ -752,7 +752,6 @@ function hideBillBanner() {
 // ── РАХУНОК ─────────────────────────────────────────────────────
 window.openBill = function() {
   const content = $('bill-content');
-
   if (!openBillData) {
     content.innerHTML = `
       <div class="no-bill">
@@ -903,12 +902,6 @@ window.payOnline = async function() {
     }
 
     qrWrap.innerHTML = `
-      <a href="${payUrl}" target="_blank" rel="noopener"
-        style="display:block;width:100%;padding:.875rem;background:var(--green);color:#0F1F0F;
-               border-radius:14px;text-align:center;font-size:1rem;font-weight:600;
-               text-decoration:none;margin-bottom:1rem">
-        💳 Перейти до оплати
-      </a>
       <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:.75rem">або відскануйте QR-код:</div>
       <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(payUrl)}"
         style="width:180px;height:180px;display:block;margin:0 auto;border-radius:8px;background:#fff;padding:4px"/>
@@ -917,6 +910,8 @@ window.payOnline = async function() {
         🔗 Копіювати посилання
       </button>`;
     qrWrap.style.display = 'block';
+    // Відкриваємо оплату напряму — Safari блокує target=_blank в async
+    window.location.href = payUrl;
 
   } catch(e) {
     console.error('[payOnline] error:', e);
