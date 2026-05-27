@@ -727,11 +727,15 @@ function subscribeToTableBill() {
       openBillData = null;
       hideBillBanner();
     } else {
-      // Беремо найновіший рахунок
       const bills = snap.docs.map(d => ({ id: d.id, ...d.data() }))
         .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
       openBillData = bills[0];
       showBillBanner(openBillData);
+      // Якщо sheet відкритий — оновлюємо вміст з актуальним payUrl
+      const overlay = document.getElementById('bill-overlay');
+      if (overlay && overlay.classList.contains('open')) {
+        renderBillContent(document.getElementById('bill-content'), openBillData);
+      }
     }
   });
 }
