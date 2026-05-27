@@ -4586,13 +4586,38 @@ function subscribeOrders() {
 
       // Автооновлення статусу столів по активних замовленнях
       if (tables.length) {
-        let changed = false;
+        const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+        const todayMs = todayStart.getTime();
+        const {doc, updateDoc} = window.__FS;
+
+        // Збираємо які столи мають активні замовлення СЬОГОДНІ
+        const occupiedNums = new Set();
         orders.forEach(o => {
-          if (!o.tableId || o.status === 'cancelled' || o.status === 'done') return;
-          const tbl = tables.find(tb => String(tb.num) === String(o.tableId));
-          if (tbl && tbl.status === 'free') {
+          if (!o.tableId) return;
+          if (o.status === 'cancelled' || o.status === 'done') return;
+          if (o.dateMs < todayMs) return; // ігноруємо вчорашні і старіші
+          occupiedNums.add(String(o.tableId));
+        });
+
+        let changed = false;
+        tables.forEach(tbl => {
+          const shouldBeOccupied = occupiedNums.has(String(tbl.num));
+          if (shouldBeOccupied && tbl.status === 'free') {
             tbl.status = 'occupied';
             changed = true;
+            // Синхронізуємо в Firestore
+            updateDoc(doc(db,'venues',venueId,'tables',String(tbl.id)), {
+              status: 'occupied',
+              updatedAt: new Date().toISOString(),
+            }).catch(e => console.warn('table sync:', e.message));
+          } else if (!shouldBeOccupied && (tbl.status === 'occupied' || tbl.status === 'paid')) {
+            // Немає активних замовлень сьогодні — повертаємо в free
+            tbl.status = 'free';
+            changed = true;
+            updateDoc(doc(db,'venues',venueId,'tables',String(tbl.id)), {
+              status: 'free',
+              updatedAt: new Date().toISOString(),
+            }).catch(e => console.warn('table sync:', e.message));
           }
         });
         if (changed) renderTables();
@@ -5517,7 +5542,7 @@ window.placeTableOrder = async function() {
   btn.disabled = true;
 
   try {
-    const { collection, addDoc, serverTimestamp } = window.__FS;
+    const { collection, addDoc } = window.__FS;
     // Отримуємо поточний лічильник замовлень
     const orderNum = Date.now().toString().slice(-4);
     await addDoc(collection(db,'venues',venueId,'orders'), {
@@ -5647,7 +5672,7 @@ window.createBill = async function() {
   }
 
   try {
-    const { collection, addDoc, serverTimestamp } = window.__FS;
+    const { collection, addDoc } = window.__FS;
     // Спочатку створюємо інвойс Monobank щоб отримати payUrl
     let payUrl = null;
     try {
@@ -5680,7 +5705,7 @@ window.createBill = async function() {
       status:     'open',
       payUrl:     payUrl || null,
       orderIds:   tableOrders.map(o => o.id),
-      createdAt:  serverTimestamp(),
+      createdAt:  new Date().toISOString(),
     });
 
     if(payUrl) {
