@@ -838,19 +838,21 @@ function renderBillContent(content, bill) {
       <span class="bt-amount">${mCur(total)}</span>
     </div>
     <div class="pay-methods">
-      <button class="pay-btn online" id="pay-online-btn" onclick="payOnline()">
+      <button class="pay-btn online" id="pay-online-btn" data-action="pay-online">
         <span class="btn-spinner"></span>
         <span class="btn-text">💳 Оплатити онлайн</span>
       </button>
-      <button class="pay-btn cash" onclick="payCash()">
+      <button class="pay-btn cash" data-action="pay-cash">
         💵 Оплачу готівкою / карткою
       </button>
     </div>
-    <div class="pay-qr-wrap" id="pay-qr-wrap">
-      <img id="pay-qr-img" src="" alt="QR"/>
-      <div class="pay-qr-url" id="pay-qr-url"></div>
-      <button class="copy-btn" onclick="copyPayUrl()">🔗 Копіювати посилання</button>
-    </div>`;
+    <div class="pay-qr-wrap" id="pay-qr-wrap"></div>`;
+
+  // Вішаємо обробники напряму на кнопки (не через onclick в HTML)
+  const onlineBtn = content.querySelector('[data-action="pay-online"]');
+  const cashBtn   = content.querySelector('[data-action="pay-cash"]');
+  if (onlineBtn) onlineBtn.addEventListener('click', () => payOnline());
+  if (cashBtn)   cashBtn.addEventListener('click',   () => payCash());
 }
 
 window.payOnline = async function() {
