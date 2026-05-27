@@ -5665,18 +5665,30 @@ window.setTableStatus = function(status) {
   renderTables();
   updateTableStatus(selectedTable.id, {status});
   notify({free:'Стіл звільнено',occupied:'Стіл відкрито',paid:'Стіл оплачено'}[status]||'Оновлено','ok');
+  // При звільненні або оплаті — закриваємо всі активні замовлення столу
+  if(status === 'free' || status === 'paid') {
+    const {doc, updateDoc} = window.__FS;
+    orders.filter(o =>
+      String(o.tableId) === String(selectedTable.num) &&
+      ['new','preparing','done'].includes(o.status) &&
+      !o.paidAt
+    ).forEach(o => {
+      updateDoc(doc(db,'venues',venueId,'orders',o.id), {
+        status: 'done',
+        paidAt: new Date().toISOString(),
+      }).catch(e => console.warn('setTableStatus order close:', e.message));
+    });
+  }
 };
 // ── РАХУНОК СТОЛУ ──────────────────────────────────────────
 // Готівка/термінал
 // Виставити рахунок з адмін панелі (зберігається в Firestore bills/{id})
 window.createBill = async function() {
   if(!selectedTable) return;
-  // Тільки сьогоднішні активні замовлення
-  const todayStartMs = (() => { const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); })();
   const tableOrders = orders.filter(o =>
     String(o.tableId) === String(selectedTable.num) &&
     ['new','preparing','done'].includes(o.status) &&
-    (o.dateMs === 0 || (o.dateMs || 0) >= todayStartMs)
+    !o.paidAt
   );
   if(!tableOrders.length) { notify(t('noOrders'),'err'); return; }
 
