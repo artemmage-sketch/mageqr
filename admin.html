@@ -5396,11 +5396,13 @@ let selectedTable=null;
 let editStaffId=null;
 
 function renderTables(){
+  if(document.getElementById('modal-table-detail').classList.contains('open') ||
+     document.getElementById('modal-table-order').classList.contains('open')) return;
   const filtered=activeZone?tables.filter(tbl=>tbl.zone===activeZone):tables;
   const stMap={free:'ts-free',occupied:'ts-occupied',ordered:'ts-ordered',paid:'ts-paid'};
   const stLabel={free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('activeOrders'),paid:t('paid')};
   document.getElementById('tables-grid').innerHTML=filtered.map(tbl=>`
-    <div class="table-card ${tbl.status}" data-table-id="${tbl.id}" style="cursor:pointer">
+    <div class="table-card ${tbl.status}" onclick="openTableDetail('${tbl.id}')">
       <div class="table-num">${tbl.num}</div>
       <div class="table-zone">${tbl.zone} · ${tbl.seats} місць</div>
       <div><span class="table-status ${stMap[tbl.status]||'ts-free'}">${stLabel[tbl.status]||t('tableFree')}</span></div>
@@ -5632,13 +5634,6 @@ window.openTableDetail = function(id) {
 }
 window.openTableDetail=openTableDetail;
 
-// ── Event delegation для карток столів (замість onclick в кожній картці) ──
-document.getElementById('tables-grid').addEventListener('click', function(e) {
-  const card = e.target.closest('[data-table-id]');
-  if (!card) return;
-  openTableDetail(card.dataset.tableId);
-});
-
 function selectSplit(el,n,total){document.querySelectorAll('.split-person').forEach(e=>e.classList.remove('selected'));el.classList.add('selected');notify(`Рахунок розділено на ${n}: ≈₴${Math.ceil(total/n)} з особи`,'ok');}
 window.selectSplit=selectSplit;
 function selectTip(btn,pct){document.querySelectorAll('.tips-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('tips-custom-val').value='';if(selectedTable&&selectedTable.amount)notify(`${t('tipsWord')} ${pct}% = ${cur(Math.round(selectedTable.amount*parseInt(pct)/100))}`,'ok');}
@@ -5767,7 +5762,7 @@ window.billCash = billCash;
 // Онлайн оплата через Monobank
 window.billOnline = async function(){
   if(!selectedTable) return;
-  const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&(o.status==='new'||o.status==='preparing'));
+  const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&(['new','preparing','done'].includes(o.status)));
   // Ручна сума має пріоритет
   const manualAmt = parseInt(document.getElementById('manual-amount')?.value)||0;
   const total = manualAmt > 0 ? manualAmt : tableOrders.reduce((s,o)=>s+(o.total||0),0);
@@ -5780,7 +5775,8 @@ window.billOnline = async function(){
   try {
     const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     const token = await getAuth().currentUser.getIdToken();
-    const items = tableOrders.flatMap(o=>o.items||[]);
+    let items = tableOrders.flatMap(o=>o.items||[]);
+    if(!items.length) items = [{id:'manual',itemId:'manual',name:`Рахунок стіл №${selectedTable.num}`,price:total,qty:1}];
     const res = await fetch(`${window.__CF_URL}/createOrder`,{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
@@ -5799,9 +5795,23 @@ window.billOnline = async function(){
 
     if(data.payUrl){
       const payUrl = data.payUrl;
+
+      // Записуємо в колекцію bills — клієнт отримає payUrl через onSnapshot
+      try {
+        const {collection,addDoc,serverTimestamp} = window.__FS;
+        await addDoc(collection(db,'venues',venueId,'bills'), {
+          tableNum:  selectedTable.num,
+          items,
+          total,
+          status:    'open',
+          payUrl,
+          orderIds:  tableOrders.map(o=>o.id),
+          createdAt: serverTimestamp(),
+        });
+      } catch(e){ console.warn('bills write:', e.message); }
+
       document.getElementById('bill-pay-link').textContent = payUrl;
       document.getElementById('bill-pay-link-wrap').style.display = 'block';
-      // Показуємо QR для посилання на оплату
       const qrWrap = document.getElementById('bill-pay-link-wrap');
       const existingQr = document.getElementById('bill-pay-qr');
       if(!existingQr) {
