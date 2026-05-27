@@ -768,9 +768,14 @@ async function loadTableOrders(content) {
 
   try {
     const ordersRef = collection(db, 'venues', venueId, 'orders');
+    // Беремо тільки сьогоднішні активні замовлення (не виконані і не скасовані)
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const { Timestamp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
     const q = query(ordersRef,
       where('tableId', '==', String(tableNum)),
-      where('status', 'in', ['new','preparing','done']),
+      where('status', 'in', ['new', 'preparing']),
+      where('createdAt', '>=', Timestamp.fromDate(todayStart)),
       orderBy('createdAt', 'desc')
     );
     const snap = await getDocs(q);
@@ -873,17 +878,23 @@ window.payOnline = async function() {
       return;
     }
 
-    // Є payUrl — відкриваємо на всіх пристроях
-    window.open(payUrl, '_blank');
-
-    // Також показуємо QR якщо відкриття заблоковано
+    // Є payUrl — показуємо кнопку-посилання + QR
+    // НЕ використовуємо window.open — iOS Safari блокує його з async функцій
     const qrWrap = $('pay-qr-wrap');
     qrWrap.innerHTML = `
-      <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:.5rem">Або відскануйте QR:</div>
+      <a href="${payUrl}" target="_blank" rel="noopener"
+        style="display:block;width:100%;padding:.875rem;background:var(--green);color:#0F1F0F;
+               border-radius:14px;text-align:center;font-size:1rem;font-weight:600;
+               text-decoration:none;margin-bottom:1rem">
+        💳 Перейти до оплати
+      </a>
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:.75rem">або відскануйте QR-код:</div>
       <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(payUrl)}"
         style="width:180px;height:180px;display:block;margin:0 auto;border-radius:8px;background:#fff;padding:4px"/>
-      <div style="font-size:11px;color:var(--muted);word-break:break-all;margin-top:.5rem;text-align:center">${payUrl}</div>
-      <button class="copy-btn" style="display:block;margin:.5rem auto 0" onclick="navigator.clipboard?.writeText('${payUrl}').catch(()=>{})">🔗 Копіювати</button>`;
+      <button class="copy-btn" style="display:block;margin:.75rem auto 0"
+        onclick="navigator.clipboard?.writeText('${payUrl}').then(()=>this.textContent='✓ Скопійовано').catch(()=>{})">
+        🔗 Копіювати посилання
+      </button>`;
     qrWrap.style.display = 'block';
 
   } catch(e) {
