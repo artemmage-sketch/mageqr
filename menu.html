@@ -131,7 +131,7 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .user-bar-logout{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;padding:3px 10px;cursor:pointer;font-family:var(--font-body)}
 .user-bar-login{background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:12px;padding:4px 12px;cursor:pointer;font-family:var(--font-body);margin-left:auto;font-weight:600}
 /* ── VENUE INFO BOTTOM ── */
-.venue-info-block{max-width:640px;margin:0 auto;padding:.875rem;padding-bottom:100px}
+.venue-info-block{max-width:640px;margin:0 auto;padding:.875rem;padding-bottom:1.5rem}
 .vi-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:.75rem;overflow:hidden}
 .vi-row{display:flex;align-items:center;gap:.875rem;padding:.875rem 1rem;border-bottom:1px solid var(--border)}
 .vi-row:last-child{border-bottom:none}
@@ -1871,13 +1871,19 @@ function updateCart() {
   const n = count(), t = total();
   const fab = $('cart-fab');
   if (!fab) return;
+  const infoBlock = $('venue-info-block');
+  const menuBody  = document.querySelector('.menu-body');
   if (n > 0) {
     fab.classList.remove('hidden');
     fab.style.display = 'flex';
     $('cart-badge').textContent = n + ' · ' + t + ' грн';
+    if (infoBlock && infoBlock.style.display !== 'none') infoBlock.style.paddingBottom = '90px';
+    else if (menuBody) menuBody.style.paddingBottom = '90px';
   } else {
     fab.classList.add('hidden');
     fab.style.display = 'none';
+    if (infoBlock && infoBlock.style.display !== 'none') infoBlock.style.paddingBottom = '1.5rem';
+    else if (menuBody) menuBody.style.paddingBottom = '0';
   }
 }
 
