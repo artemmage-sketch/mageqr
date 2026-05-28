@@ -622,10 +622,9 @@ setPersistence(auth, browserLocalPersistence).catch(e => console.warn('persisten
 // ── AUTH STATE ───────────────────────────────────────────────────
 let currentUser = null;
 let selectedGender = null;
-let authMode = 'signin'; // signin | signup
+let authMode = 'signin';
 let pendingEmail = null;
 let pendingPass  = null;
-
 let currentEditField = null;
 let editGenderValue  = null;
 let currentUserProfile = null;
