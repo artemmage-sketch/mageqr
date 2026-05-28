@@ -848,27 +848,6 @@ function renderUserBar(user) {
   document.getElementById('ub-logout-btn').textContent = ui('authLogout');
 }
 
-window.openProfile = function() {
-  if (!currentUser) return;
-  const name   = currentUser.displayName || currentUser.email?.split('@')[0] || '?';
-  const avatar = name.charAt(0).toUpperCase();
-  document.getElementById('prof-avatar').textContent = avatar;
-  document.getElementById('prof-name').textContent   = name;
-  document.getElementById('prof-email').textContent  = currentUser.email || '';
-  const p = currentUserProfile;
-  const gMap = { male: ui('authMale'), female: ui('authFemale'), other: ui('authOther') };
-  document.getElementById('prof-gender').textContent = p?.gender   ? `${ui('authGender')}: ${gMap[p.gender]||p.gender}` : '';
-  document.getElementById('prof-age').textContent    = p?.ageGroup ? `${ui('authAge')}: ${p.ageGroup}` : '';
-  document.getElementById('prof-city').textContent   = p?.city     ? `📍 ${p.city}` : '';
-  document.getElementById('prof-lang').textContent   = `🌐 ${(p?.lastLang||'uk').toUpperCase()}`;
-  document.getElementById('prof-logout-btn').textContent = `👋 ${ui('authLogout')}`;
-  document.getElementById('prof-close-btn').textContent  = `✕ Закрити`;
-  document.getElementById('profile-overlay').classList.add('open');
-};
-
-window.closeProfile = function() {
-  document.getElementById('profile-overlay').classList.remove('open');
-};
 
 function renderGuestBar() {
   document.getElementById('user-bar').style.display = 'none';
