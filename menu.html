@@ -803,20 +803,20 @@ async function loadProfileOrders() {
   emptyEl.style.display = 'block';
   listEl.querySelectorAll('.prof-order-card').forEach(el => el.remove());
   try {
-    const { collection: col, query: q, where, orderBy, limit, getDocs: gd } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const { collection: col, query: q, where, getDocs: gd } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
     const snap = await gd(q(
       col(db, 'venues', venueId, 'orders'),
-      where('uid', '==', currentUser.uid),
-      orderBy('createdAt', 'desc'),
-      limit(20)
+      where('uid', '==', currentUser.uid)
     ));
     if (snap.empty) {
       emptyEl.textContent = ui('profNoOrders') || 'Замовлень ще немає';
       return;
     }
     emptyEl.style.display = 'none';
-    snap.docs.forEach(d => {
-      const o = d.data();
+    const docs = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    docs.forEach(o => {
       const date = o.createdAt?.seconds
         ? new Date(o.createdAt.seconds*1000).toLocaleDateString('uk-UA', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
         : '—';
@@ -825,7 +825,7 @@ async function loadProfileOrders() {
       card.className = 'prof-order-card';
       card.innerHTML = `
         <div class="prof-order-head">
-          <span class="prof-order-num">#${o.num||d.id.slice(-4)}</span>
+          <span class="prof-order-num">#${o.num||o.id.slice(-4)}</span>
           <span class="prof-order-date">${date}</span>
         </div>
         <div class="prof-order-items">${itemsStr}</div>
@@ -833,7 +833,7 @@ async function loadProfileOrders() {
       listEl.insertBefore(card, emptyEl);
     });
   } catch(e) {
-    emptyEl.textContent = 'Помилка завантаження';
+    emptyEl.textContent = ui('profNoOrders') || 'Замовлень ще немає';
     console.warn('loadProfileOrders:', e);
   }
 };
