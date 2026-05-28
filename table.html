@@ -986,6 +986,25 @@ async function init() {
 
     // Підписка на рахунок столу в реальному часі
     if (tableNum) {
+      // Закриваємо старі bills з минулих сесій (старіші за сьогодні)
+      try {
+        const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+        const staleBills = await getDocs(query(
+          collection(db, 'venues', venueId, 'bills'),
+          where('tableNum', '==', Number(tableNum)),
+          where('status', 'in', ['open', 'pending_payment'])
+        ));
+        staleBills.forEach(d => {
+          const createdSec = d.data().createdAt?.seconds || 0;
+          if (createdSec * 1000 < todayStart.getTime()) {
+            updateDoc(doc(db, 'venues', venueId, 'bills', d.id), {
+              status: 'closed',
+              closedAt: new Date().toISOString(),
+            }).catch(() => {});
+          }
+        });
+      } catch(e) { console.warn('stale bills:', e.message); }
+
       // Якщо клієнт повернувся після оплати — закриваємо bill одразу
       const urlParams = new URLSearchParams(location.search);
       if (urlParams.get('paid') === '1') {
