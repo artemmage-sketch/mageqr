@@ -76,7 +76,25 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .qty-btn{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:none;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text)}
 .qty-val{font-size:15px;font-weight:600;min-width:22px;text-align:center}
 .add-cart-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-body)}
-/* ── AUTH ── */
+/* ── PROFILE CABINET ── */
+.prof-screen{display:none}
+.prof-screen.active{display:block}
+.prof-menu-item{width:100%;display:flex;align-items:center;gap:.875rem;padding:.875rem 1.25rem;background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:15px;text-align:left;transition:background .12s;color:var(--text)}
+.prof-menu-item:hover{background:var(--bg2)}
+.prof-menu-icon{font-size:1.1rem;width:24px;text-align:center;flex-shrink:0}
+.prof-menu-label{flex:1}
+.prof-menu-arrow{color:var(--muted);font-size:1.2rem}
+.prof-data-row{display:flex;align-items:center;padding:.875rem 1.25rem;cursor:pointer;transition:background .12s;border-bottom:1px solid var(--border)}
+.prof-data-row:last-child{border-bottom:none}
+.prof-data-row:hover{background:var(--bg2)}
+.prof-data-label{font-size:14px;font-weight:500;color:var(--text);min-width:100px}
+.prof-data-value{flex:1;font-size:14px;color:var(--muted);text-align:right;padding-right:.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+.prof-order-card{background:var(--bg2);border-radius:10px;padding:.875rem;margin-bottom:.75rem;font-size:13px}
+.prof-order-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.375rem}
+.prof-order-num{font-weight:600;color:var(--text)}
+.prof-order-date{color:var(--muted);font-size:12px}
+.prof-order-items{color:var(--muted);margin-bottom:.375rem;line-height:1.4}
+.prof-order-total{font-weight:600;color:var(--accent)}
 .auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s}
 .auth-overlay.open{opacity:1;pointer-events:all}
 .auth-box{background:var(--card);border-radius:var(--radius);width:100%;max-width:400px;padding:1.75rem;box-shadow:0 8px 40px rgba(0,0,0,.25)}
@@ -202,22 +220,120 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
 <!-- PROFILE OVERLAY -->
 <div class="auth-overlay" id="profile-overlay" onclick="if(event.target===this)closeProfile()">
-  <div class="auth-box" onclick="event.stopPropagation()" style="max-width:360px">
-    <div style="display:flex;align-items:center;gap:.875rem;margin-bottom:1.25rem">
-      <div class="user-bar-avatar" id="prof-avatar" style="width:48px;height:48px;font-size:1.2rem;flex-shrink:0">?</div>
-      <div>
-        <div style="font-weight:600;font-size:1rem" id="prof-name">—</div>
-        <div style="font-size:12px;color:var(--muted)" id="prof-email">—</div>
+  <div class="auth-box" onclick="event.stopPropagation()" style="max-width:400px;padding:0;overflow:hidden;border-radius:var(--radius)">
+
+    <!-- ЕКРАН 1: Головна кабінету -->
+    <div id="prof-screen-main" class="prof-screen active">
+      <!-- Шапка з ім'ям -->
+      <div style="padding:1.5rem 1.25rem 1rem;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:.875rem">
+          <div class="user-bar-avatar" id="prof-avatar" style="width:52px;height:52px;font-size:1.3rem;flex-shrink:0">?</div>
+          <div>
+            <div style="font-weight:700;font-size:1.1rem;font-family:var(--font-head)" id="prof-name">—</div>
+            <div style="font-size:12px;color:var(--muted)" id="prof-email">—</div>
+          </div>
+          <button onclick="closeProfile()" style="margin-left:auto;background:none;border:none;font-size:1.2rem;color:var(--muted);cursor:pointer;padding:4px">✕</button>
+        </div>
+      </div>
+      <!-- Пункти меню -->
+      <div style="padding:.75rem 0">
+        <button class="prof-menu-item" onclick="profNav('orders')">
+          <span class="prof-menu-icon">📋</span>
+          <span class="prof-menu-label" id="prof-lbl-orders">Історія замовлень</span>
+          <span class="prof-menu-arrow">›</span>
+        </button>
+        <button class="prof-menu-item" onclick="profNav('settings')">
+          <span class="prof-menu-icon">👤</span>
+          <span class="prof-menu-label" id="prof-lbl-settings">Особисті дані та Налаштування</span>
+          <span class="prof-menu-arrow">›</span>
+        </button>
+      </div>
+      <div style="padding:.5rem 1.25rem 1.25rem;border-top:1px solid var(--border)">
+        <button id="prof-logout-btn" onclick="closeProfile();doSignOut()" style="width:100%;padding:.875rem;border:1.5px solid var(--border);border-radius:10px;background:none;color:var(--text);font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-body)">Вийти</button>
       </div>
     </div>
-    <div style="background:var(--bg2);border-radius:10px;padding:.75rem 1rem;font-size:13px;color:var(--muted);margin-bottom:1rem;line-height:1.8">
-      <div id="prof-gender"></div>
-      <div id="prof-age"></div>
-      <div id="prof-city"></div>
-      <div id="prof-lang"></div>
+
+    <!-- ЕКРАН 2: Особисті дані -->
+    <div id="prof-screen-settings" class="prof-screen">
+      <div style="display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border)">
+        <button onclick="profNav('main')" style="background:none;border:none;font-size:1.1rem;color:var(--accent);cursor:pointer;padding:4px 8px 4px 0">‹</button>
+        <div style="font-weight:600;font-size:1rem" id="prof-lbl-settings-title">Особисті дані та Налаштування</div>
+      </div>
+      <div style="padding:.75rem 0">
+        <div class="prof-data-row" onclick="profEditField('name')">
+          <span class="prof-data-label" id="prof-lbl-name">Ім'я</span>
+          <span class="prof-data-value" id="prof-data-name">—</span>
+          <span class="prof-menu-arrow">›</span>
+        </div>
+        <div class="prof-data-row" onclick="profEditField('email')">
+          <span class="prof-data-label" id="prof-lbl-email-f">Ел. пошта</span>
+          <span class="prof-data-value" id="prof-data-email">—</span>
+          <span class="prof-menu-arrow">›</span>
+        </div>
+        <div class="prof-data-row" onclick="profEditField('city')">
+          <span class="prof-data-label" id="prof-lbl-city-f">Місто</span>
+          <span class="prof-data-value" id="prof-data-city">—</span>
+          <span class="prof-menu-arrow">›</span>
+        </div>
+        <div class="prof-data-row" onclick="profEditField('gender')">
+          <span class="prof-data-label" id="prof-lbl-gender-f">Стать</span>
+          <span class="prof-data-value" id="prof-data-gender">—</span>
+          <span class="prof-menu-arrow">›</span>
+        </div>
+        <div class="prof-data-row" onclick="profEditField('age')">
+          <span class="prof-data-label" id="prof-lbl-age-f">Вік</span>
+          <span class="prof-data-value" id="prof-data-age">—</span>
+          <span class="prof-menu-arrow">›</span>
+        </div>
+      </div>
     </div>
-    <button id="prof-logout-btn" class="auth-btn" style="background:none;border:1px solid var(--border);color:var(--muted);margin-top:0" onclick="closeProfile();doSignOut()">👋 —</button>
-    <button id="prof-close-btn" class="auth-skip" onclick="closeProfile()">✕ Закрити</button>
+
+    <!-- ЕКРАН 3: Редагування поля -->
+    <div id="prof-screen-edit" class="prof-screen">
+      <div style="display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border)">
+        <button onclick="profNav('settings')" style="background:none;border:none;font-size:1.1rem;color:var(--accent);cursor:pointer;padding:4px 8px 4px 0">‹</button>
+        <div style="font-weight:600;font-size:1rem" id="prof-edit-title">Редагування</div>
+      </div>
+      <div style="padding:1.25rem">
+        <!-- Звичайний текстовий input -->
+        <div id="prof-edit-text-wrap">
+          <input class="auth-input" type="text" id="prof-edit-input" style="margin-bottom:1rem"/>
+        </div>
+        <!-- Вибір статі -->
+        <div id="prof-edit-gender-wrap" style="display:none;margin-bottom:1rem">
+          <div class="auth-gender-row">
+            <button class="auth-gender-btn" id="pe-g-male" onclick="selectEditGender('male')">—</button>
+            <button class="auth-gender-btn" id="pe-g-female" onclick="selectEditGender('female')">—</button>
+            <button class="auth-gender-btn" id="pe-g-other" onclick="selectEditGender('other')">—</button>
+          </div>
+        </div>
+        <!-- Вибір віку -->
+        <div id="prof-edit-age-wrap" style="display:none;margin-bottom:1rem">
+          <select class="auth-select" id="prof-edit-age-sel">
+            <option value="">—</option>
+            <option value="16-20">16–20</option>
+            <option value="21-25">21–25</option>
+            <option value="26-35">26–35</option>
+            <option value="36-45">36–45</option>
+            <option value="46+">46+</option>
+          </select>
+        </div>
+        <div class="auth-err" id="prof-edit-err"></div>
+        <button class="auth-btn" id="prof-edit-save-btn" onclick="profSaveField()">Зберегти</button>
+      </div>
+    </div>
+
+    <!-- ЕКРАН 4: Історія замовлень -->
+    <div id="prof-screen-orders" class="prof-screen">
+      <div style="display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border)">
+        <button onclick="profNav('main')" style="background:none;border:none;font-size:1.1rem;color:var(--accent);cursor:pointer;padding:4px 8px 4px 0">‹</button>
+        <div style="font-weight:600;font-size:1rem" id="prof-lbl-orders-title">Історія замовлень</div>
+      </div>
+      <div id="prof-orders-list" style="padding:.75rem 1.25rem;max-height:420px;overflow-y:auto">
+        <div style="text-align:center;color:var(--muted);padding:2rem 0;font-size:14px" id="prof-orders-empty">Завантаження...</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -510,9 +626,196 @@ let authMode = 'signin'; // signin | signup
 let pendingEmail = null;
 let pendingPass  = null;
 
-let currentUserProfile = null;
+let currentEditField = null;
+let editGenderValue  = null;
 
-onAuthStateChanged(auth, async user => {
+window.openProfile = function() {
+  if (!currentUser) return;
+  profNav('main');
+  fillProfileMain();
+  document.getElementById('profile-overlay').classList.add('open');
+};
+
+window.closeProfile = function() {
+  document.getElementById('profile-overlay').classList.remove('open');
+};
+
+window.profNav = function(screen) {
+  document.querySelectorAll('.prof-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('prof-screen-' + screen).classList.add('active');
+  if (screen === 'settings') fillProfileSettings();
+  if (screen === 'orders')   loadProfileOrders();
+};
+
+function fillProfileMain() {
+  const name   = currentUser.displayName || currentUser.email?.split('@')[0] || '?';
+  const avatar = name.charAt(0).toUpperCase();
+  document.getElementById('prof-avatar').textContent = avatar;
+  document.getElementById('prof-name').textContent   = name;
+  document.getElementById('prof-email').textContent  = currentUser.email || '';
+  document.getElementById('prof-logout-btn').textContent = ui('authLogout');
+  document.getElementById('prof-lbl-orders').textContent  = ui('profOrders') || 'Історія замовлень';
+  document.getElementById('prof-lbl-settings').textContent = ui('profSettings') || 'Особисті дані та Налаштування';
+}
+
+function fillProfileSettings() {
+  const p = currentUserProfile || {};
+  const gMap = { male: ui('authMale'), female: ui('authFemale'), other: ui('authOther') };
+  document.getElementById('prof-data-name').textContent   = currentUser.displayName || '—';
+  document.getElementById('prof-data-email').textContent  = currentUser.email || '—';
+  document.getElementById('prof-data-city').textContent   = p.city     || '—';
+  document.getElementById('prof-data-gender').textContent = gMap[p.gender] || '—';
+  document.getElementById('prof-data-age').textContent    = p.ageGroup || '—';
+  document.getElementById('prof-lbl-settings-title').textContent = ui('profSettings') || 'Особисті дані та Налаштування';
+  document.getElementById('prof-lbl-name').textContent    = ui('authNamePh') || "Ім'я";
+  document.getElementById('prof-lbl-email-f').textContent = 'Ел. пошта';
+  document.getElementById('prof-lbl-city-f').textContent  = ui('authCityPh') || 'Місто';
+  document.getElementById('prof-lbl-gender-f').textContent= ui('authGender') || 'Стать';
+  document.getElementById('prof-lbl-age-f').textContent   = ui('authAge')    || 'Вік';
+}
+
+window.profEditField = function(field) {
+  currentEditField = field;
+  editGenderValue  = null;
+  const p = currentUserProfile || {};
+  const titles = {
+    name:   ui('authNamePh') || "Ім'я",
+    email:  'Ел. пошта',
+    city:   ui('authCityPh') || 'Місто',
+    gender: ui('authGender') || 'Стать',
+    age:    ui('authAge')    || 'Вік',
+  };
+  document.getElementById('prof-edit-title').textContent = titles[field] || field;
+  document.getElementById('prof-edit-err').textContent = '';
+
+  // Показуємо правильний input
+  const textWrap   = document.getElementById('prof-edit-text-wrap');
+  const genderWrap = document.getElementById('prof-edit-gender-wrap');
+  const ageWrap    = document.getElementById('prof-edit-age-wrap');
+  textWrap.style.display   = 'none';
+  genderWrap.style.display = 'none';
+  ageWrap.style.display    = 'none';
+
+  if (field === 'gender') {
+    genderWrap.style.display = 'block';
+    document.getElementById('pe-g-male').textContent   = ui('authMale');
+    document.getElementById('pe-g-female').textContent = ui('authFemale');
+    document.getElementById('pe-g-other').textContent  = ui('authOther');
+    // Підсвічуємо поточне значення
+    ['male','female','other'].forEach(g => {
+      document.getElementById('pe-g-'+g).classList.toggle('active', g === p.gender);
+    });
+    editGenderValue = p.gender || null;
+  } else if (field === 'age') {
+    ageWrap.style.display = 'block';
+    document.getElementById('prof-edit-age-sel').value = p.ageGroup || '';
+  } else if (field === 'email') {
+    // Email не редагуємо — показуємо лише
+    textWrap.style.display = 'block';
+    const inp = document.getElementById('prof-edit-input');
+    inp.value = currentUser.email || '';
+    inp.disabled = true;
+    inp.placeholder = '';
+  } else {
+    textWrap.style.display = 'block';
+    const inp = document.getElementById('prof-edit-input');
+    inp.disabled = false;
+    inp.type = 'text';
+    inp.value = field === 'name' ? (currentUser.displayName||'') : (p.city||'');
+    inp.placeholder = titles[field];
+  }
+
+  profNav('edit');
+};
+
+window.selectEditGender = function(g) {
+  editGenderValue = g;
+  ['male','female','other'].forEach(id => {
+    document.getElementById('pe-g-'+id).classList.toggle('active', id === g);
+  });
+};
+
+window.profSaveField = async function() {
+  const errEl = document.getElementById('prof-edit-err');
+  errEl.textContent = '';
+  const p = currentUserProfile || {};
+
+  try {
+    if (currentEditField === 'gender') {
+      if (!editGenderValue) { errEl.textContent = ui('authErrGender'); return; }
+      await setDoc(doc(db,'users',currentUser.uid), { gender: editGenderValue }, { merge:true });
+      currentUserProfile = { ...p, gender: editGenderValue };
+
+    } else if (currentEditField === 'age') {
+      const val = document.getElementById('prof-edit-age-sel').value;
+      if (!val) { errEl.textContent = ui('authErrAge'); return; }
+      await setDoc(doc(db,'users',currentUser.uid), { ageGroup: val }, { merge:true });
+      currentUserProfile = { ...p, ageGroup: val };
+
+    } else if (currentEditField === 'name') {
+      const val = document.getElementById('prof-edit-input').value.trim();
+      if (!val) { errEl.textContent = ui('authErrName'); return; }
+      await updateProfile(currentUser, { displayName: val });
+      await setDoc(doc(db,'users',currentUser.uid), { name: val }, { merge:true });
+      currentUserProfile = { ...p, name: val };
+
+    } else if (currentEditField === 'city') {
+      const val = document.getElementById('prof-edit-input').value.trim();
+      await setDoc(doc(db,'users',currentUser.uid), { city: val }, { merge:true });
+      currentUserProfile = { ...p, city: val };
+
+    } else if (currentEditField === 'email') {
+      profNav('settings'); return; // email не редагуємо
+    }
+    profNav('settings');
+  } catch(e) {
+    errEl.textContent = e.message;
+  }
+};
+
+async function loadProfileOrders() {
+  const listEl = document.getElementById('prof-orders-list');
+  const emptyEl = document.getElementById('prof-orders-empty');
+  document.getElementById('prof-lbl-orders-title').textContent = ui('profOrders') || 'Історія замовлень';
+  if (!currentUser) return;
+  emptyEl.textContent = '⏳ Завантаження...';
+  emptyEl.style.display = 'block';
+  listEl.querySelectorAll('.prof-order-card').forEach(el => el.remove());
+  try {
+    const { collection: col, query: q, where, orderBy, limit, getDocs: gd } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const snap = await gd(q(
+      col(db, 'venues', venueId, 'orders'),
+      where('uid', '==', currentUser.uid),
+      orderBy('createdAt', 'desc'),
+      limit(20)
+    ));
+    if (snap.empty) {
+      emptyEl.textContent = ui('profNoOrders') || 'Замовлень ще немає';
+      return;
+    }
+    emptyEl.style.display = 'none';
+    snap.docs.forEach(d => {
+      const o = d.data();
+      const date = o.createdAt?.seconds
+        ? new Date(o.createdAt.seconds*1000).toLocaleDateString('uk-UA', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
+        : '—';
+      const itemsStr = (o.items||[]).map(i => `${i.name} ×${i.qty}`).join(', ');
+      const card = document.createElement('div');
+      card.className = 'prof-order-card';
+      card.innerHTML = `
+        <div class="prof-order-head">
+          <span class="prof-order-num">#${o.num||d.id.slice(-4)}</span>
+          <span class="prof-order-date">${date}</span>
+        </div>
+        <div class="prof-order-items">${itemsStr}</div>
+        <div class="prof-order-total">${mCur(o.total||0)}</div>`;
+      listEl.insertBefore(card, emptyEl);
+    });
+  } catch(e) {
+    emptyEl.textContent = 'Помилка завантаження';
+    console.warn('loadProfileOrders:', e);
+  }
+};
   currentUser = user;
   if (user) {
     // Завантажуємо профіль з Firestore
@@ -815,6 +1118,9 @@ const UI_STRINGS = {
     authErrAge:'Оберіть вікову категорію',
     authErrGender:'Оберіть стать',
     authResetSent:'Лист відновлення надіслано на вашу пошту',
+    profOrders:'Історія замовлень',
+    profSettings:'Особисті дані та Налаштування',
+    profNoOrders:'Замовлень ще немає',
   },
   en: {
     cart:'🛒 Cart', yourOrder:'🛒 Your order', orderType:'Order type',
@@ -860,6 +1166,9 @@ const UI_STRINGS = {
     authErrAge:'Please select age range',
     authErrGender:'Please select gender',
     authResetSent:'Reset email sent to your address',
+    profOrders:'Order history',
+    profSettings:'Personal data & Settings',
+    profNoOrders:'No orders yet',
   },
   pl: {
     cart:'🛒 Koszyk', yourOrder:'🛒 Twoje zamówienie', orderType:'Typ zamówienia',
@@ -905,6 +1214,9 @@ const UI_STRINGS = {
     authErrAge:'Wybierz przedział wiekowy',
     authErrGender:'Wybierz płeć',
     authResetSent:'Link resetowania wysłany na twój email',
+    profOrders:'Historia zamówień',
+    profSettings:'Dane osobowe i Ustawienia',
+    profNoOrders:'Brak zamówień',
   },
   de: {
     cart:'🛒 Warenkorb', yourOrder:'🛒 Ihre Bestellung', orderType:'Bestellart',
@@ -950,6 +1262,9 @@ const UI_STRINGS = {
     authErrAge:'Bitte Altersgruppe wählen',
     authErrGender:'Bitte Geschlecht wählen',
     authResetSent:'Reset-E-Mail wurde gesendet',
+    profOrders:'Bestellverlauf',
+    profSettings:'Persönliche Daten & Einstellungen',
+    profNoOrders:'Noch keine Bestellungen',
   },
   ro: {
     cart:'🛒 Coș', yourOrder:'🛒 Comanda ta', orderType:'Tip comandă',
@@ -995,6 +1310,9 @@ const UI_STRINGS = {
     authErrAge:'Selectați grupa de vârstă',
     authErrGender:'Selectați genul',
     authResetSent:'Email de resetare trimis la adresa dvs.',
+    profOrders:'Istoricul comenzilor',
+    profSettings:'Date personale și Setări',
+    profNoOrders:'Nicio comandă încă',
   },
   es: {
     cart:'🛒 Carrito', yourOrder:'🛒 Tu pedido', orderType:'Tipo de pedido',
@@ -1040,6 +1358,9 @@ const UI_STRINGS = {
     authErrAge:'Por favor selecciona rango de edad',
     authErrGender:'Por favor selecciona género',
     authResetSent:'Email de restablecimiento enviado a tu dirección',
+    profOrders:'Historial de pedidos',
+    profSettings:'Datos personales y Configuración',
+    profNoOrders:'Sin pedidos todavía',
   },
   cnr: {
     cart:'🛒 Korpa', yourOrder:'🛒 Vaša narudžbina', orderType:'Tip narudžbine',
@@ -1085,6 +1406,9 @@ const UI_STRINGS = {
     authErrAge:'Odaberite starosnu grupu',
     authErrGender:'Odaberite pol',
     authResetSent:'Email za reset poslan na vašu adresu',
+    profOrders:'Historija narudžbina',
+    profSettings:'Lični podaci i Podešavanja',
+    profNoOrders:'Još nema narudžbina',
   },
 };
 
