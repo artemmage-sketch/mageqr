@@ -216,8 +216,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       <div id="prof-city"></div>
       <div id="prof-lang"></div>
     </div>
-    <button class="auth-btn" style="background:none;border:1px solid var(--border);color:var(--muted);margin-top:0" onclick="closeProfile();doSignOut()">👋 —</button>
-    <button class="auth-skip" onclick="closeProfile()">✕ —</button>
+    <button id="prof-logout-btn" class="auth-btn" style="background:none;border:1px solid var(--border);color:var(--muted);margin-top:0" onclick="closeProfile();doSignOut()">👋 —</button>
+    <button id="prof-close-btn" class="auth-skip" onclick="closeProfile()">✕ Закрити</button>
   </div>
 </div>
 
@@ -551,12 +551,12 @@ window.openProfile = function() {
   document.getElementById('prof-email').textContent  = currentUser.email || '';
   const p = currentUserProfile;
   const gMap = { male: ui('authMale'), female: ui('authFemale'), other: ui('authOther') };
-  document.getElementById('prof-gender').textContent = p?.gender  ? `${ui('authGender')}: ${gMap[p.gender]||p.gender}` : '';
+  document.getElementById('prof-gender').textContent = p?.gender   ? `${ui('authGender')}: ${gMap[p.gender]||p.gender}` : '';
   document.getElementById('prof-age').textContent    = p?.ageGroup ? `${ui('authAge')}: ${p.ageGroup}` : '';
-  document.getElementById('prof-city').textContent   = p?.city    ? `📍 ${p.city}` : '';
+  document.getElementById('prof-city').textContent   = p?.city     ? `📍 ${p.city}` : '';
   document.getElementById('prof-lang').textContent   = `🌐 ${(p?.lastLang||'uk').toUpperCase()}`;
-  document.querySelector('#profile-overlay #prof-avatar + div + button').textContent = `👋 ${ui('authLogout')}`;
-  document.querySelector('#profile-overlay .auth-skip').textContent = `✕ ${ui('continueBtn')||'Закрити'}`;
+  document.getElementById('prof-logout-btn').textContent = `👋 ${ui('authLogout')}`;
+  document.getElementById('prof-close-btn').textContent  = `✕ Закрити`;
   document.getElementById('profile-overlay').classList.add('open');
 };
 
