@@ -1639,8 +1639,60 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <label class="field-label" data-i18n="venueHours" data-i18n="venueHours" data-i18n="venueHours">Години роботи</label>
               <input id="set-hours" type="text" placeholder="Пн-Нд: 10:00 — 22:00" data-i18n-ph="phHours"/>
             </div>
+            <div class="field-row">
+              <label class="field-label">📶 WiFi пароль</label>
+              <input id="set-wifi" type="text" placeholder="mypassword123"/>
+            </div>
+            <div class="field-row span2">
+              <label class="field-label">📝 Про заклад (короткий опис)</label>
+              <textarea id="set-about" rows="3" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:var(--font);resize:vertical;outline:none" placeholder="Розкажіть про ваш заклад..."></textarea>
+            </div>
           </div>
         </div>
+
+        <!-- СОЦМЕРЕЖІ -->
+        <div class="settings-section">
+          <h3>🔗 Соцмережі та посилання</h3>
+          <div class="grid-2">
+            <div class="field-row">
+              <label class="field-label">🌐 Google Maps / Google Business</label>
+              <input id="set-social-google" type="text" placeholder="https://maps.google.com/..."/>
+            </div>
+            <div class="field-row">
+              <label class="field-label">📸 Instagram</label>
+              <input id="set-social-instagram" type="text" placeholder="https://instagram.com/yourpage"/>
+            </div>
+            <div class="field-row">
+              <label class="field-label">🎵 TikTok</label>
+              <input id="set-social-tiktok" type="text" placeholder="https://tiktok.com/@yourpage"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- ПРАВОВА ІНФОРМАЦІЯ -->
+        <div class="settings-section">
+          <h3>📄 Правова інформація</h3>
+          <div style="display:flex;flex-direction:column;gap:1rem">
+            <div class="field-row">
+              <label class="field-label">ℹ️ Інформація про компанію</label>
+              <textarea id="set-legal-company" rows="4" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:var(--font);resize:vertical;outline:none" placeholder="Юридична назва, реєстраційні дані..."></textarea>
+            </div>
+            <div class="field-row">
+              <label class="field-label">🍪 Політика використання файлів cookie</label>
+              <textarea id="set-legal-cookie" rows="4" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:var(--font);resize:vertical;outline:none" placeholder="Ми використовуємо файли cookie..."></textarea>
+            </div>
+            <div class="field-row">
+              <label class="field-label">📋 Умови користування</label>
+              <textarea id="set-legal-terms" rows="4" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:var(--font);resize:vertical;outline:none" placeholder="Умови використання сервісу..."></textarea>
+            </div>
+            <div class="field-row">
+              <label class="field-label">🔒 Політика конфіденційності</label>
+              <textarea id="set-legal-privacy" rows="4" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:var(--font);resize:vertical;outline:none" placeholder="Ми захищаємо ваші персональні дані..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ПРИХОВАНИЙ КІНЕЦЬ grid-2 -->
 
         <!-- ЛОГОТИП -->
         <div class="settings-section">
@@ -1869,7 +1921,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div id="table-status-display" style="font-weight:600;font-size:15px;margin-bottom:1rem"></div>
 
         <div style="display:flex;flex-direction:column;gap:.375rem">
-          <button class="btn btn-success btn-sm" onclick="setTableStatus('occupied')" data-i18n="tableOpen">🪑 Відкрити стіл</button>
+          <button class="btn btn-success btn-sm" onclick="setTableStatus('occupied')">🪑 Відкрити стіл</button>
           <button class="btn btn-outline btn-sm" onclick="setTableStatus('free')" data-i18n="tableFreeBtn">✓ Звільнити стіл</button>
           <button class="btn btn-accent btn-sm" onclick="markPaid()" data-i18n="tablePaid" data-i18n="tablePaid">💳 Оплачено</button>
         </div>
@@ -1886,7 +1938,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
       <!-- Ручне введення суми -->
       <div style="margin-bottom:.75rem">
-        <div style="font-size:11px;color:var(--muted);margin-bottom:.375rem" data-i18n="manualAmountLbl">💰 Довільна сума (якщо замовлення не в системі):</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:.375rem">💰 Довільна сума (якщо замовлення не в системі):</div>
         <div style="display:flex;gap:.5rem;align-items:center">
           <input type="number" id="manual-amount" placeholder="0" min="0" step="1"
             style="flex:1;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:15px;outline:none"/>
@@ -1896,10 +1948,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
       <!-- Кнопки дій -->
       <div id="table-bill-actions" style="display:flex;flex-direction:column;gap:.5rem">
-        <button class="btn btn-accent btn-sm" style="font-size:13px" onclick="openTableOrder()" data-i18n="newTableOrder">
+        <button class="btn btn-accent btn-sm" style="font-size:13px" onclick="openTableOrder()">
           🍽️ <span>Нове замовлення за столом</span>
         </button>
-        <button class="btn btn-outline btn-sm" style="font-size:13px" onclick="createBill()" data-i18n="createBillBtn">
+        <button class="btn btn-outline btn-sm" style="font-size:13px" onclick="createBill()">
           🧾 Виставити рахунок клієнту (QR оплата)
         </button>
         <button class="btn btn-success btn-sm" onclick="billCash()" style="font-size:13px">
@@ -1930,7 +1982,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
     <!-- Пошук страв -->
     <div style="margin-bottom:.75rem">
-      <input type="text" id="to-search" placeholder="Пошук страви..." data-i18n-ph="tableOrderSearch"
+      <input type="text" id="to-search" placeholder="Пошук страви..." 
         style="width:100%;padding:.625rem .875rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;outline:none"
         oninput="renderTableOrderItems()"/>
     </div>
@@ -1943,20 +1995,20 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
     <!-- Кошик замовлення -->
     <div style="border-top:1px solid var(--border);padding-top:.875rem">
-      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem" data-i18n="orderCartTitle">🛒 Замовлення</div>
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem">🛒 Замовлення</div>
       <div id="to-cart" style="display:flex;flex-direction:column;gap:.375rem;margin-bottom:.75rem;max-height:160px;overflow-y:auto">
         <div style="color:var(--muted);font-size:13px;text-align:center;padding:.5rem">Додайте страви вище</div>
       </div>
       <div style="display:flex;justify-content:space-between;font-weight:700;font-size:15px;margin-bottom:.875rem">
-        <span data-i18n="total">Разом:</span>
+        <span>Разом:</span>
         <span id="to-total" style="color:var(--accent)">—</span>
       </div>
       <!-- Коментар -->
       <div style="margin-bottom:.75rem">
-        <input type="text" id="to-comment" placeholder="Коментар до замовлення (необов'язково)" data-i18n-ph="orderCommentPh"
+        <input type="text" id="to-comment" placeholder="Коментар до замовлення (необов'язково)"
           style="width:100%;padding:.5rem .875rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px;outline:none"/>
       </div>
-      <button class="btn btn-accent" style="width:100%;padding:.75rem;font-size:15px" onclick="placeTableOrder()" data-i18n="placeOrderBtn">
+      <button class="btn btn-accent" style="width:100%;padding:.75rem;font-size:15px" onclick="placeTableOrder()">
         ✓ Оформити замовлення
       </button>
     </div>
@@ -2349,16 +2401,7 @@ var I18N = {
     billOnline:'Надіслати посилання на оплату (Monobank)',
     billLinkReady:'Посилання для клієнта:',
     billScanQR:'Клієнт сканує QR для оплати:',
-    manualCharge:'Послуги / рахунок',
-    newTableOrder:'🍽️ Нове замовлення за столом',
-    createBillBtn:'🧾 Виставити рахунок клієнту (QR оплата)',
-    manualAmountLbl:'💰 Довільна сума (якщо замовлення не в системі):',
-    addDishesAbove:'Додайте страви вище',
-    placeOrderBtn:'✓ Оформити замовлення',
-    orderCartTitle:'🛒 Замовлення',
-    orderCommentPh:"Коментар до замовлення (необов'язково)",
-    tableOrderSearch:'Пошук страви...',
-    noActiveOrders:'Активних замовлень немає'},
+    manualCharge:'Послуги / рахунок'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2710,16 +2753,7 @@ var I18N = {
     billOnline:'Send payment link (Monobank)',
     billLinkReady:'Payment link for client:',
     billScanQR:'Client scans QR to pay:',
-    manualCharge:'Services / charge',
-    newTableOrder:'🍽️ New table order',
-    createBillBtn:'🧾 Send bill to client (QR payment)',
-    manualAmountLbl:'💰 Custom amount (if order not in system):',
-    addDishesAbove:'Add dishes above',
-    placeOrderBtn:'✓ Place order',
-    orderCartTitle:'🛒 Order',
-    orderCommentPh:'Order comment (optional)',
-    tableOrderSearch:'Search dish...',
-    noActiveOrders:'No active orders'},
+    manualCharge:'Services / charge'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -3071,16 +3105,7 @@ var I18N = {
     billOnline:'Wyślij link do płatności (Monobank)',
     billLinkReady:'Link dla klienta:',
     billScanQR:'Klient skanuje QR aby zapłacić:',
-    manualCharge:'Usługi / rachunek',
-    newTableOrder:'🍽️ Nowe zamówienie przy stoliku',
-    createBillBtn:'🧾 Wystaw rachunek klientowi (płatność QR)',
-    manualAmountLbl:'💰 Kwota własna (jeśli zamówienie nie w systemie):',
-    addDishesAbove:'Dodaj dania powyżej',
-    placeOrderBtn:'✓ Złóż zamówienie',
-    orderCartTitle:'🛒 Zamówienie',
-    orderCommentPh:'Komentarz do zamówienia (opcjonalnie)',
-    tableOrderSearch:'Szukaj dania...',
-    noActiveOrders:'Brak aktywnych zamówień'},
+    manualCharge:'Usługi / rachunek'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -3432,16 +3457,7 @@ var I18N = {
     billOnline:'Zahlungslink senden (Monobank)',
     billLinkReady:'Zahlungslink für Kunden:',
     billScanQR:'Kunde scannt QR zum Bezahlen:',
-    manualCharge:'Leistungen / Rechnung',
-    newTableOrder:'🍽️ Neue Tischbestellung',
-    createBillBtn:'🧾 Rechnung an Kunden senden (QR-Zahlung)',
-    manualAmountLbl:'💰 Eigener Betrag (falls Bestellung nicht im System):',
-    addDishesAbove:'Gerichte oben hinzufügen',
-    placeOrderBtn:'✓ Bestellung aufgeben',
-    orderCartTitle:'🛒 Bestellung',
-    orderCommentPh:'Bestellkommentar (optional)',
-    tableOrderSearch:'Gericht suchen...',
-    noActiveOrders:'Keine aktiven Bestellungen'},
+    manualCharge:'Leistungen / Rechnung'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -3793,16 +3809,7 @@ var I18N = {
     billOnline:'Trimite link de plată (Monobank)',
     billLinkReady:'Link de plată pentru client:',
     billScanQR:'Clientul scanează QR pentru plată:',
-    manualCharge:'Servicii / notă',
-    newTableOrder:'🍽️ Comandă nouă la masă',
-    createBillBtn:'🧾 Trimite nota clientului (plată QR)',
-    manualAmountLbl:'💰 Sumă personalizată (dacă comanda nu e în sistem):',
-    addDishesAbove:'Adaugă preparate mai sus',
-    placeOrderBtn:'✓ Plasează comanda',
-    orderCartTitle:'🛒 Comandă',
-    orderCommentPh:'Comentariu la comandă (opțional)',
-    tableOrderSearch:'Caută preparat...',
-    noActiveOrders:'Fără comenzi active'},
+    manualCharge:'Servicii / notă'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -4154,16 +4161,7 @@ var I18N = {
     billOnline:'Enviar enlace de pago (Monobank)',
     billLinkReady:'Enlace de pago para el cliente:',
     billScanQR:'El cliente escanea QR para pagar:',
-    manualCharge:'Servicios / cargo',
-    newTableOrder:'🍽️ Nuevo pedido en mesa',
-    createBillBtn:'🧾 Enviar cuenta al cliente (pago QR)',
-    manualAmountLbl:'💰 Monto personalizado (si el pedido no está en el sistema):',
-    addDishesAbove:'Agrega platos arriba',
-    placeOrderBtn:'✓ Realizar pedido',
-    orderCartTitle:'🛒 Pedido',
-    orderCommentPh:'Comentario del pedido (opcional)',
-    tableOrderSearch:'Buscar plato...',
-    noActiveOrders:'Sin pedidos activos'},
+    manualCharge:'Servicios / cargo'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -4515,16 +4513,7 @@ var I18N = {
     billOnline:'Pošalji link za plaćanje (Monobank)',
     billLinkReady:'Link za klijenta:',
     billScanQR:'Klijent skenira QR za plaćanje:',
-    manualCharge:'Usluge / račun',
-    newTableOrder:'🍽️ Nova narudžbina za sto',
-    createBillBtn:'🧾 Pošalji račun klijentu (QR plaćanje)',
-    manualAmountLbl:'💰 Vlastiti iznos (ako narudžbina nije u sistemu):',
-    addDishesAbove:'Dodajte jela gore',
-    placeOrderBtn:'✓ Naruči',
-    orderCartTitle:'🛒 Narudžbina',
-    orderCommentPh:'Komentar uz narudžbinu (opciono)',
-    tableOrderSearch:'Traži jelo...',
-    noActiveOrders:'Nema aktivnih narudžbina'},
+    manualCharge:'Usluge / račun'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -5075,6 +5064,15 @@ async function loadSettings(){
     if(d.phone)document.getElementById('set-phone').value=d.phone;
     if(d.address)document.getElementById('set-addr').value=d.address;
     if(d.hours)document.getElementById('set-hours')&&(document.getElementById('set-hours').value=d.hours);
+    if(d.wifi)document.getElementById('set-wifi')&&(document.getElementById('set-wifi').value=d.wifi);
+    if(d.about)document.getElementById('set-about')&&(document.getElementById('set-about').value=d.about);
+    if(d.socialGoogle)document.getElementById('set-social-google')&&(document.getElementById('set-social-google').value=d.socialGoogle);
+    if(d.socialInstagram)document.getElementById('set-social-instagram')&&(document.getElementById('set-social-instagram').value=d.socialInstagram);
+    if(d.socialTiktok)document.getElementById('set-social-tiktok')&&(document.getElementById('set-social-tiktok').value=d.socialTiktok);
+    if(d.legalCompany)document.getElementById('set-legal-company')&&(document.getElementById('set-legal-company').value=d.legalCompany);
+    if(d.legalCookie)document.getElementById('set-legal-cookie')&&(document.getElementById('set-legal-cookie').value=d.legalCookie);
+    if(d.legalTerms)document.getElementById('set-legal-terms')&&(document.getElementById('set-legal-terms').value=d.legalTerms);
+    if(d.legalPrivacy)document.getElementById('set-legal-privacy')&&(document.getElementById('set-legal-privacy').value=d.legalPrivacy);
     if(d.logoUrl){document.getElementById('set-logo-url').value=d.logoUrl;window.previewLogoUrl(d.logoUrl);}
     else if(d.logoEmoji){document.getElementById('set-logo-emoji').value=d.logoEmoji;window.previewLogoEmoji(d.logoEmoji);}
     if(d.bannerUrl){document.getElementById('set-banner-url').value=d.bannerUrl;window.previewBannerUrl(d.bannerUrl);}
@@ -5093,7 +5091,25 @@ window.saveSettings=async function(){
     if(bannerFile){bannerUrl=await uploadSettingsFile(bannerFile,`venues/${venueId}/settings/banner_${Date.now()}`,'banner-upload-status');document.getElementById('set-banner-url').value=bannerUrl;bannerFile=null;}
     const currencyCode = document.getElementById('set-currency')?.value || 'UAH';
     if(CURRENCIES[currencyCode]) venueCurrency = CURRENCIES[currencyCode];
-    const data={name:document.getElementById('set-name').value.trim(),tagline:document.getElementById('set-tag').value.trim(),city:document.getElementById('set-city')?.value.trim()||'',phone:document.getElementById('set-phone').value.trim(),address:document.getElementById('set-addr').value.trim(),hours:document.getElementById('set-hours')?.value.trim()||'',logoUrl,logoEmoji:document.getElementById('set-logo-emoji').value.trim(),bannerUrl,currency:currencyCode,updatedAt:new Date().toISOString()};
+    const data={
+      name:document.getElementById('set-name').value.trim(),
+      tagline:document.getElementById('set-tag').value.trim(),
+      city:document.getElementById('set-city')?.value.trim()||'',
+      phone:document.getElementById('set-phone').value.trim(),
+      address:document.getElementById('set-addr').value.trim(),
+      hours:document.getElementById('set-hours')?.value.trim()||'',
+      wifi:document.getElementById('set-wifi')?.value.trim()||'',
+      about:document.getElementById('set-about')?.value.trim()||'',
+      socialGoogle:document.getElementById('set-social-google')?.value.trim()||'',
+      socialInstagram:document.getElementById('set-social-instagram')?.value.trim()||'',
+      socialTiktok:document.getElementById('set-social-tiktok')?.value.trim()||'',
+      legalCompany:document.getElementById('set-legal-company')?.value.trim()||'',
+      legalCookie:document.getElementById('set-legal-cookie')?.value.trim()||'',
+      legalTerms:document.getElementById('set-legal-terms')?.value.trim()||'',
+      legalPrivacy:document.getElementById('set-legal-privacy')?.value.trim()||'',
+      logoUrl,logoEmoji:document.getElementById('set-logo-emoji').value.trim(),
+      bannerUrl,currency:currencyCode,updatedAt:new Date().toISOString()
+    };
     await setDoc(doc(db,'venues',venueId,'settings','main'),data);
     if(data.name)document.getElementById('sb-venue-name').textContent=data.name;
     notify(t('notifSettingsSaved'),'ok');
@@ -5572,7 +5588,7 @@ function renderTableOrderCart() {
   const wrap = document.getElementById('to-cart');
   const totalEl = document.getElementById('to-total');
   if(!entries.length) {
-    wrap.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:.5rem">'+t('addDishesAbove')+'</div>';
+    wrap.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:.5rem">Додайте страви вище</div>';
     totalEl.textContent = '—';
     return;
   }
@@ -5639,7 +5655,7 @@ window.placeTableOrder = async function() {
   } catch(e) {
     notify(t('notifError')+': '+e.message, 'err');
   } finally {
-    btn.textContent = t('placeOrderBtn');
+    btn.textContent = '✓ Оформити замовлення';
     btn.disabled = false;
   }
 };
