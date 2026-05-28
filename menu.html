@@ -130,7 +130,34 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .user-bar-name{font-weight:500;color:var(--text);flex:1}
 .user-bar-logout{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;padding:3px 10px;cursor:pointer;font-family:var(--font-body)}
 .user-bar-login{background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:12px;padding:4px 12px;cursor:pointer;font-family:var(--font-body);margin-left:auto;font-weight:600}
-.cart-fab{position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;border:none;border-radius:30px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:all .25s;white-space:nowrap;font-family:var(--font-body);z-index:40}
+/* ── VENUE INFO BOTTOM ── */
+.venue-info-block{max-width:640px;margin:0 auto;padding:.875rem;padding-bottom:100px}
+.vi-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:.75rem;overflow:hidden}
+.vi-row{display:flex;align-items:center;gap:.875rem;padding:.875rem 1rem;border-bottom:1px solid var(--border)}
+.vi-row:last-child{border-bottom:none}
+.vi-icon{width:36px;height:36px;border-radius:10px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.vi-body{flex:1;min-width:0}
+.vi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.vi-value{font-size:14px;color:var(--text);word-break:break-all}
+.vi-copy{background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer;flex-shrink:0;font-family:var(--font-body);transition:all .15s}
+.vi-copy:hover{border-color:var(--accent);color:var(--accent)}
+.vi-about{padding:.875rem 1rem;font-size:13px;color:var(--muted);line-height:1.6}
+.vi-about-full{display:none}
+.vi-about-toggle{background:none;border:none;color:var(--accent);font-size:13px;cursor:pointer;padding:0;font-family:var(--font-body);margin-top:.25rem}
+.vi-social-row{display:flex;gap:.625rem;padding:.875rem 1rem;flex-wrap:wrap}
+.vi-social-btn{display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border:1px solid var(--border);border-radius:10px;background:none;color:var(--text);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;font-family:var(--font-body);transition:all .15s;flex:1;justify-content:center}
+.vi-social-btn:hover{border-color:var(--accent);color:var(--accent)}
+.vi-map{width:100%;height:200px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:.75rem}
+.vi-map iframe{width:100%;height:100%;border:none}
+.vi-map-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.75rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);color:var(--text);font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;font-family:var(--font-body);transition:all .15s}
+.vi-map-btn:hover{border-color:var(--accent);color:var(--accent)}
+.vi-legal-item{border-bottom:1px solid var(--border)}
+.vi-legal-item:last-child{border-bottom:none}
+.vi-legal-head{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1rem;cursor:pointer;font-size:14px;font-weight:500}
+.vi-legal-head:hover{background:var(--bg2)}
+.vi-legal-arrow{color:var(--muted);font-size:1rem;transition:transform .2s}
+.vi-legal-arrow.open{transform:rotate(90deg)}
+.vi-legal-body{display:none;padding:.75rem 1rem 1rem;font-size:13px;color:var(--muted);line-height:1.6;white-space:pre-wrap};bottom:1.25rem;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;border:none;border-radius:30px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:all .25s;white-space:nowrap;font-family:var(--font-body);z-index:40}
 .cart-fab.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(20px)}
 .cart-badge{background:rgba(255,255,255,.25);border-radius:12px;padding:2px 10px;font-size:13px}
 .cart-list{display:flex;flex-direction:column;gap:.5rem;max-height:240px;overflow-y:auto;margin-bottom:.875rem}
@@ -436,7 +463,112 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 <div class="cat-bar" id="cat-bar"></div>
 <div class="menu-body" id="menu-body"></div>
 
-<button class="cart-fab hidden" id="cart-fab" onclick="openCart()">
+<!-- VENUE INFO BOTTOM -->
+<div class="venue-info-block" id="venue-info-block" style="display:none">
+
+  <!-- Про заклад -->
+  <div class="vi-section" id="vi-about-wrap" style="display:none">
+    <div class="vi-about">
+      <span id="vi-about-short"></span>
+      <span class="vi-about-full" id="vi-about-full"></span>
+      <div><button class="vi-about-toggle" id="vi-about-btn" onclick="toggleAbout()"></button></div>
+    </div>
+  </div>
+
+  <!-- Контакти -->
+  <div class="vi-section" id="vi-contacts-wrap" style="display:none">
+    <div class="vi-row" id="vi-wifi-row" style="display:none">
+      <div class="vi-icon">📶</div>
+      <div class="vi-body">
+        <div class="vi-label" id="vi-lbl-wifi">WiFi</div>
+        <div class="vi-value" id="vi-wifi-val"></div>
+      </div>
+      <button class="vi-copy" onclick="viCopy('vi-wifi-val')" id="vi-lbl-copy">⎘</button>
+    </div>
+    <div class="vi-row" id="vi-addr-row" style="display:none">
+      <div class="vi-icon">📍</div>
+      <div class="vi-body">
+        <div class="vi-label" id="vi-lbl-addr">Адреса</div>
+        <div class="vi-value" id="vi-addr-val"></div>
+      </div>
+      <button class="vi-copy" onclick="viCopy('vi-addr-val')">⎘</button>
+    </div>
+    <div class="vi-row" id="vi-phone-row" style="display:none">
+      <div class="vi-icon">📞</div>
+      <div class="vi-body">
+        <div class="vi-label" id="vi-lbl-phone">Телефон</div>
+        <div class="vi-value" id="vi-phone-val"></div>
+      </div>
+      <button class="vi-copy" onclick="viCopy('vi-phone-val')">⎘</button>
+    </div>
+    <div class="vi-row" id="vi-hours-row" style="display:none">
+      <div class="vi-icon">🕐</div>
+      <div class="vi-body">
+        <div class="vi-label" id="vi-lbl-hours">Робочий час</div>
+        <div class="vi-value" id="vi-hours-val"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Соцмережі -->
+  <div class="vi-section" id="vi-social-wrap" style="display:none">
+    <div class="vi-social-row">
+      <a class="vi-social-btn" id="vi-social-google" href="#" target="_blank" rel="noopener" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+        <span id="vi-lbl-google">Google</span>
+      </a>
+      <a class="vi-social-btn" id="vi-social-instagram" href="#" target="_blank" rel="noopener" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="url(#ig)" stroke-width="2"><defs><linearGradient id="ig" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f09433"/><stop offset="50%" stop-color="#e6683c"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="#e6683c" stroke="none"/></svg>
+        <span id="vi-lbl-instagram">Instagram</span>
+      </a>
+      <a class="vi-social-btn" id="vi-social-tiktok" href="#" target="_blank" rel="noopener" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
+        <span id="vi-lbl-tiktok">TikTok</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Карта -->
+  <div id="vi-map-wrap" style="display:none">
+    <div class="vi-map" id="vi-map-frame"></div>
+    <a class="vi-map-btn" id="vi-map-link" href="#" target="_blank" rel="noopener">
+      🗺 <span id="vi-lbl-getlocation">Відкрити на картах</span>
+    </a>
+  </div>
+
+  <!-- Правова інформація -->
+  <div class="vi-section" id="vi-legal-wrap" style="display:none">
+    <div class="vi-legal-item" id="vi-legal-company-wrap" style="display:none">
+      <div class="vi-legal-head" onclick="toggleLegal('company')">
+        <span id="vi-lbl-company">ℹ️ Інформація про компанію</span>
+        <span class="vi-legal-arrow" id="vi-arr-company">›</span>
+      </div>
+      <div class="vi-legal-body" id="vi-legal-company-body"></div>
+    </div>
+    <div class="vi-legal-item" id="vi-legal-cookie-wrap" style="display:none">
+      <div class="vi-legal-head" onclick="toggleLegal('cookie')">
+        <span id="vi-lbl-cookie">🍪 Політика використання файлів cookie</span>
+        <span class="vi-legal-arrow" id="vi-arr-cookie">›</span>
+      </div>
+      <div class="vi-legal-body" id="vi-legal-cookie-body"></div>
+    </div>
+    <div class="vi-legal-item" id="vi-legal-terms-wrap" style="display:none">
+      <div class="vi-legal-head" onclick="toggleLegal('terms')">
+        <span id="vi-lbl-terms">📋 Умови користування</span>
+        <span class="vi-legal-arrow" id="vi-arr-terms">›</span>
+      </div>
+      <div class="vi-legal-body" id="vi-legal-terms-body"></div>
+    </div>
+    <div class="vi-legal-item" id="vi-legal-privacy-wrap" style="display:none">
+      <div class="vi-legal-head" onclick="toggleLegal('privacy')">
+        <span id="vi-lbl-privacy">🔒 Політика конфіденційності</span>
+        <span class="vi-legal-arrow" id="vi-arr-privacy">›</span>
+      </div>
+      <div class="vi-legal-body" id="vi-legal-privacy-body"></div>
+    </div>
+  </div>
+
+</div>
   🛒 Кошик <span class="cart-badge" id="cart-badge">0 грн</span>
 </button>
 
@@ -1133,6 +1265,18 @@ const UI_STRINGS = {
     profOrders:'Історія замовлень',
     profSettings:'Особисті дані та Налаштування',
     profNoOrders:'Замовлень ще немає',
+    viWifi:'WiFi пароль',
+    viAddress:'Адреса',
+    viPhone:'Телефон',
+    viHours:'Робочий час',
+    viCopy:'Скопійовано!',
+    viShowMore:'показати більше',
+    viShowLess:'згорнути',
+    viGetLocation:'Відкрити на картах',
+    viCompany:'ℹ️ Інформація про компанію',
+    viCookie:'🍪 Політика використання файлів cookie',
+    viTerms:'📋 Умови користування',
+    viPrivacy:'🔒 Політика конфіденційності',
   },
   en: {
     cart:'🛒 Cart', yourOrder:'🛒 Your order', orderType:'Order type',
@@ -1181,6 +1325,12 @@ const UI_STRINGS = {
     profOrders:'Order history',
     profSettings:'Personal data & Settings',
     profNoOrders:'No orders yet',
+        viWifi:'WiFi password',
+    viAddress:'Address',viPhone:'Phone',viHours:'Working hours',
+    viCopy:'Copied!',viShowMore:'show more',viShowLess:'collapse',
+    viGetLocation:'Open on maps',
+    viCompany:'ℹ️ Company information',viCookie:'🍪 Cookie policy',
+    viTerms:'📋 Terms of use',viPrivacy:'🔒 Privacy policy',
   },
   pl: {
     cart:'🛒 Koszyk', yourOrder:'🛒 Twoje zamówienie', orderType:'Typ zamówienia',
@@ -1229,6 +1379,12 @@ const UI_STRINGS = {
     profOrders:'Historia zamówień',
     profSettings:'Dane osobowe i Ustawienia',
     profNoOrders:'Brak zamówień',
+        viWifi:'Hasło WiFi',
+    viAddress:'Adres',viPhone:'Telefon',viHours:'Godziny pracy',
+    viCopy:'Skopiowano!',viShowMore:'pokaż więcej',viShowLess:'zwiń',
+    viGetLocation:'Otwórz na mapach',
+    viCompany:'ℹ️ Informacje o firmie',viCookie:'🍪 Polityka cookies',
+    viTerms:'📋 Warunki użytkowania',viPrivacy:'🔒 Polityka prywatności',
   },
   de: {
     cart:'🛒 Warenkorb', yourOrder:'🛒 Ihre Bestellung', orderType:'Bestellart',
@@ -1277,6 +1433,12 @@ const UI_STRINGS = {
     profOrders:'Bestellverlauf',
     profSettings:'Persönliche Daten & Einstellungen',
     profNoOrders:'Noch keine Bestellungen',
+        viWifi:'WLAN-Passwort',
+    viAddress:'Adresse',viPhone:'Telefon',viHours:'Öffnungszeiten',
+    viCopy:'Kopiert!',viShowMore:'mehr anzeigen',viShowLess:'einklappen',
+    viGetLocation:'Auf Karten öffnen',
+    viCompany:'ℹ️ Firmeninformationen',viCookie:'🍪 Cookie-Richtlinie',
+    viTerms:'📋 Nutzungsbedingungen',viPrivacy:'🔒 Datenschutzrichtlinie',
   },
   ro: {
     cart:'🛒 Coș', yourOrder:'🛒 Comanda ta', orderType:'Tip comandă',
@@ -1325,6 +1487,12 @@ const UI_STRINGS = {
     profOrders:'Istoricul comenzilor',
     profSettings:'Date personale și Setări',
     profNoOrders:'Nicio comandă încă',
+        viWifi:'Parolă WiFi',
+    viAddress:'Adresă',viPhone:'Telefon',viHours:'Program de lucru',
+    viCopy:'Copiat!',viShowMore:'arată mai mult',viShowLess:'restrânge',
+    viGetLocation:'Deschide pe hărți',
+    viCompany:'ℹ️ Informații despre companie',viCookie:'🍪 Politica cookie',
+    viTerms:'📋 Termeni de utilizare',viPrivacy:'🔒 Politica de confidențialitate',
   },
   es: {
     cart:'🛒 Carrito', yourOrder:'🛒 Tu pedido', orderType:'Tipo de pedido',
@@ -1373,6 +1541,12 @@ const UI_STRINGS = {
     profOrders:'Historial de pedidos',
     profSettings:'Datos personales y Configuración',
     profNoOrders:'Sin pedidos todavía',
+        viWifi:'Contraseña WiFi',
+    viAddress:'Dirección',viPhone:'Teléfono',viHours:'Horario de trabajo',
+    viCopy:'¡Copiado!',viShowMore:'mostrar más',viShowLess:'colapsar',
+    viGetLocation:'Abrir en mapas',
+    viCompany:'ℹ️ Información de la empresa',viCookie:'🍪 Política de cookies',
+    viTerms:'📋 Términos de uso',viPrivacy:'🔒 Política de privacidad',
   },
   cnr: {
     cart:'🛒 Korpa', yourOrder:'🛒 Vaša narudžbina', orderType:'Tip narudžbine',
@@ -1421,6 +1595,12 @@ const UI_STRINGS = {
     profOrders:'Historija narudžbina',
     profSettings:'Lični podaci i Podešavanja',
     profNoOrders:'Još nema narudžbina',
+        viWifi:'WiFi lozinka',
+    viAddress:'Adresa',viPhone:'Telefon',viHours:'Radno vrijeme',
+    viCopy:'Kopirano!',viShowMore:'prikaži više',viShowLess:'skupi',
+    viGetLocation:'Otvori na mapama',
+    viCompany:'ℹ️ Informacije o kompaniji',viCookie:'🍪 Politika kolačića',
+    viTerms:'📋 Uslovi korišćenja',viPrivacy:'🔒 Politika privatnosti',
   },
 };
 
@@ -1526,6 +1706,7 @@ window.setLang = function(lang) {
   renderMenu();
   applyUILang();
   applyAuthLang();
+  applyVenueInfoLang();
   localStorage.setItem('mq_lang', lang);
   // Зберігаємо мову в профілі якщо авторизований
   if (currentUser) {
@@ -2039,6 +2220,8 @@ function applySettings(s) {
   if (line3) tagHtml += `<div style="margin-top:2px">🕐 ${line3}</div>`;
   $('venue-tag').innerHTML = tagHtml;
   if (s.city) { const cityEl = $('cli-city'); if (cityEl) cityEl.value = s.city; window._venueCity = s.city; }
+  // Заповнюємо блок інформації внизу меню
+  renderVenueInfo(s);
   if (tableId) {
     // Показуємо стіл в шапці
     $('venue-tag').innerHTML += `<div style="margin-top:3px"><span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Стіл №${tableId}</span></div>`;
@@ -2067,6 +2250,119 @@ function applyDesign(d) {
     $('font-link').href = `https://fonts.googleapis.com/css2?family=${d.fontHead.replace(/ /g, '+')}:wght@500;600&family=${(d.fontBody || 'DM Sans').replace(/ /g, '+')}:wght@300;400;500&display=swap`;
   }
 }
+
+// ── VENUE INFO BLOCK ─────────────────────────────────────────────
+let _venueSettings = {};
+
+function renderVenueInfo(s) {
+  _venueSettings = s;
+  const block = $('venue-info-block');
+  if (!block) return;
+  let hasAny = false;
+
+  // Про заклад
+  if (s.about) {
+    const SHORT = 120;
+    const short = s.about.length > SHORT ? s.about.slice(0, SHORT) + '...' : s.about;
+    $('vi-about-short').textContent = short;
+    $('vi-about-full').textContent = s.about;
+    $('vi-about-btn').textContent = s.about.length > SHORT ? ui('viShowMore') : '';
+    $('vi-about-btn').style.display = s.about.length > SHORT ? 'inline' : 'none';
+    $('vi-about-wrap').style.display = 'block';
+    hasAny = true;
+  }
+
+  // Контакти
+  let hasContact = false;
+  if (s.wifi)    { $('vi-wifi-val').textContent = s.wifi;    $('vi-wifi-row').style.display = 'flex';  hasContact = true; }
+  if (s.address) { $('vi-addr-val').textContent = s.address; $('vi-addr-row').style.display = 'flex';  hasContact = true; }
+  if (s.phone)   { $('vi-phone-val').textContent = s.phone;  $('vi-phone-row').style.display = 'flex'; hasContact = true; }
+  if (s.hours)   { $('vi-hours-val').textContent = s.hours;  $('vi-hours-row').style.display = 'flex'; hasContact = true; }
+  if (hasContact) { $('vi-contacts-wrap').style.display = 'block'; hasAny = true; }
+
+  // Соцмережі
+  let hasSocial = false;
+  if (s.socialGoogle)    { const el = $('vi-social-google');    el.href = s.socialGoogle;    el.style.display = 'flex'; hasSocial = true; }
+  if (s.socialInstagram) { const el = $('vi-social-instagram'); el.href = s.socialInstagram; el.style.display = 'flex'; hasSocial = true; }
+  if (s.socialTiktok)    { const el = $('vi-social-tiktok');    el.href = s.socialTiktok;    el.style.display = 'flex'; hasSocial = true; }
+  if (hasSocial) { $('vi-social-wrap').style.display = 'block'; hasAny = true; }
+
+  // Карта
+  if (s.address) {
+    const q = encodeURIComponent(s.address);
+    $('vi-map-frame').innerHTML = `<iframe src="https://maps.google.com/maps?q=${q}&output=embed&z=15" allowfullscreen loading="lazy"></iframe>`;
+    $('vi-map-link').href = `https://maps.google.com/maps?q=${q}`;
+    $('vi-map-wrap').style.display = 'block';
+    hasAny = true;
+  }
+
+  // Правова інформація
+  let hasLegal = false;
+  const legalItems = [
+    ['company', s.legalCompany], ['cookie', s.legalCookie],
+    ['terms', s.legalTerms],     ['privacy', s.legalPrivacy],
+  ];
+  legalItems.forEach(([key, val]) => {
+    if (val) {
+      $('vi-legal-' + key + '-body').textContent = val;
+      $('vi-legal-' + key + '-wrap').style.display = 'block';
+      hasLegal = true;
+    }
+  });
+  if (hasLegal) { $('vi-legal-wrap').style.display = 'block'; hasAny = true; }
+
+  if (hasAny) block.style.display = 'block';
+  applyVenueInfoLang();
+}
+
+function applyVenueInfoLang() {
+  if ($('vi-lbl-wifi'))     $('vi-lbl-wifi').textContent     = ui('viWifi');
+  if ($('vi-lbl-addr'))     $('vi-lbl-addr').textContent     = ui('viAddress');
+  if ($('vi-lbl-phone'))    $('vi-lbl-phone').textContent    = ui('viPhone');
+  if ($('vi-lbl-hours'))    $('vi-lbl-hours').textContent    = ui('viHours');
+  if ($('vi-lbl-google'))   $('vi-lbl-google').textContent   = 'Google';
+  if ($('vi-lbl-instagram'))$('vi-lbl-instagram').textContent= 'Instagram';
+  if ($('vi-lbl-tiktok'))   $('vi-lbl-tiktok').textContent   = 'TikTok';
+  if ($('vi-lbl-getlocation')) $('vi-lbl-getlocation').textContent = ui('viGetLocation');
+  if ($('vi-lbl-company'))  $('vi-lbl-company').textContent  = ui('viCompany');
+  if ($('vi-lbl-cookie'))   $('vi-lbl-cookie').textContent   = ui('viCookie');
+  if ($('vi-lbl-terms'))    $('vi-lbl-terms').textContent    = ui('viTerms');
+  if ($('vi-lbl-privacy'))  $('vi-lbl-privacy').textContent  = ui('viPrivacy');
+  if ($('vi-about-btn') && $('vi-about-full')?.style.display === 'block')
+    $('vi-about-btn').textContent = ui('viShowLess');
+  else if ($('vi-about-btn') && _venueSettings?.about?.length > 120)
+    $('vi-about-btn').textContent = ui('viShowMore');
+}
+
+window.toggleAbout = function() {
+  const full = $('vi-about-full');
+  const btn  = $('vi-about-btn');
+  const short = $('vi-about-short');
+  if (full.style.display === 'block') {
+    full.style.display = 'none';
+    short.style.display = 'inline';
+    btn.textContent = ui('viShowMore');
+  } else {
+    full.style.display = 'block';
+    short.style.display = 'none';
+    btn.textContent = ui('viShowLess');
+  }
+};
+
+window.toggleLegal = function(key) {
+  const body  = $('vi-legal-' + key + '-body');
+  const arrow = $('vi-arr-' + key);
+  const isOpen = body.style.display === 'block';
+  body.style.display  = isOpen ? 'none' : 'block';
+  arrow.classList.toggle('open', !isOpen);
+};
+
+window.viCopy = function(elId) {
+  const val = $(elId)?.textContent || '';
+  navigator.clipboard?.writeText(val).then(() => {
+    toast(ui('viCopy'));
+  }).catch(() => {});
+};
 
 async function init() {
   try {
