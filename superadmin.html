@@ -1065,15 +1065,20 @@ let usersPage = 1;
 const USERS_PER_PAGE = 25;
 
 window.loadUsers = async function() {
+  const emptyEl = document.getElementById('u-empty');
+  if (emptyEl) emptyEl.textContent = '⏳ Завантаження...';
   try {
-    const {collection, getDocs, orderBy, query} = window.__FS;
-    const snap = await getDocs(query(collection(db,'users'), orderBy('createdAt','desc')));
-    allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const {collection, getDocs} = window.__FS;
+    const snap = await getDocs(collection(db,'users'));
+    allUsers = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
     renderUsersMetrics();
     renderUsersCharts();
     renderUsersTable();
   } catch(e) {
     console.warn('loadUsers:', e.message);
+    if (emptyEl) emptyEl.textContent = 'Помилка: ' + e.message;
   }
 };
 
