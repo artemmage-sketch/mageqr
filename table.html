@@ -986,7 +986,24 @@ async function init() {
 
     // Підписка на рахунок столу в реальному часі
     if (tableNum) {
-      // Якщо клієнт повернувся після оплати — не показуємо старий рахунок
+      // Якщо клієнт повернувся після оплати — закриваємо bill одразу
+      const urlParams = new URLSearchParams(location.search);
+      if (urlParams.get('paid') === '1') {
+        window.history.replaceState({}, '', `table.html?v=${venueId}&t=${tableNum}`);
+        try {
+          const billsSnap = await getDocs(query(
+            collection(db, 'venues', venueId, 'bills'),
+            where('tableNum', '==', Number(tableNum)),
+            where('status', 'in', ['open', 'pending_payment'])
+          ));
+          billsSnap.forEach(d => {
+            updateDoc(doc(db, 'venues', venueId, 'bills', d.id), {
+              status: 'paid',
+              paidAt: new Date().toISOString(),
+            }).catch(e => console.warn('close bill:', e.message));
+          });
+        } catch(e) { console.warn('close bills after payment:', e.message); }
+      }
       subscribeToTableBill();
     }
   } catch(e) {
