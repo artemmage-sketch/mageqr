@@ -628,6 +628,26 @@ let pendingPass  = null;
 
 let currentEditField = null;
 let editGenderValue  = null;
+let currentUserProfile = null;
+
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  if (user) {
+    try {
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      currentUserProfile = snap.exists() ? snap.data() : null;
+      await setDoc(doc(db, 'users', user.uid), {
+        lastLang: currentLang,
+        lastSeen: serverTimestamp(),
+      }, { merge: true });
+    } catch(e){}
+    renderUserBar(user);
+    closeAuth();
+  } else {
+    currentUserProfile = null;
+    renderGuestBar();
+  }
+});
 
 window.openProfile = function() {
   if (!currentUser) return;
