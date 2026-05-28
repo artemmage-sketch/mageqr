@@ -5740,8 +5740,7 @@ window.createBill = async function() {
   const todayStartMs = (() => { const d = new Date(); d.setHours(0,0,0,0); return d.getTime(); })();
   const tableOrders = orders.filter(o =>
     String(o.tableId) === String(selectedTable.num) &&
-    ['new','preparing','done'].includes(o.status) &&
-    (o.dateMs || 0) >= todayStartMs
+    ['new','preparing'].includes(o.status)
   );
   if(!tableOrders.length) { notify(t('noOrders'),'err'); return; }
 
@@ -5765,18 +5764,18 @@ window.createBill = async function() {
     const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     const token = await getAuth().currentUser.getIdToken();
 
-    // Зберігаємо рахунок в Firestore
+    // Зберігаємо рахунок в Firestore зі статусом pending поки не отримаємо payUrl
     const billRef = await addDoc(collection(db,'venues',venueId,'bills'), {
       tableNum:   selectedTable.num,
       items:      allItems,
       total,
-      status:     'open',
+      status:     'pending',
       payUrl:     null,
       orderIds:   tableOrders.map(o => o.id),
       createdAt:  serverTimestamp(),
     });
 
-    // Генеруємо платіжне посилання через окремий ендпоінт
+    // Генеруємо платіжне посилання
     let payUrl = null;
     try {
       const payRes2 = await fetch(`${window.__CF_URL}/createBillPayment`, {
@@ -5797,6 +5796,13 @@ window.createBill = async function() {
         console.warn('createBillPayment:', payData2);
       }
     } catch(e) { console.warn('createBillPayment fetch:', e.message); }
+
+    // Оновлюємо bill в Firestore з реальним payUrl і статусом open
+    const { doc: docFn, updateDoc } = window.__FS;
+    await updateDoc(docFn(db,'venues',venueId,'bills',billRef.id), {
+      status: 'open',
+      payUrl:  payUrl || null,
+    });
 
     if(payUrl) {
       document.getElementById('bill-pay-link').textContent = payUrl;
@@ -6840,7 +6846,7 @@ function applyAdminLang(lang) {
   // 1. Nav-item через data-i18n
   document.querySelectorAll('.nav-item[data-i18n]').forEach(btn => {
     const key = btn.getAttribute('data-i18n');
-    const badge = btn.querySelector('[id]');
+    const badge = btn.querySelector('#new-badge') || btn.querySelector('[id]');
     btn.textContent = t(key);
     if(badge) btn.appendChild(badge);
   });
