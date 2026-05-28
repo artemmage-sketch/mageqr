@@ -837,24 +837,6 @@ async function loadProfileOrders() {
     console.warn('loadProfileOrders:', e);
   }
 };
-  currentUser = user;
-  if (user) {
-    // Завантажуємо профіль з Firestore
-    try {
-      const snap = await getDoc(doc(db, 'users', user.uid));
-      currentUserProfile = snap.exists() ? snap.data() : null;
-      await setDoc(doc(db, 'users', user.uid), {
-        lastLang: currentLang,
-        lastSeen: serverTimestamp(),
-      }, { merge: true });
-    } catch(e){}
-    renderUserBar(user);
-    closeAuth();
-  } else {
-    currentUserProfile = null;
-    renderGuestBar();
-  }
-});
 
 function renderUserBar(user) {
   const name   = user.displayName || user.email?.split('@')[0] || '?';
