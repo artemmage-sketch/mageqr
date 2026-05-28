@@ -918,9 +918,9 @@ window.doGoogleSignIn = async function() {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    // Зберігаємо в users якщо новий
     const snap = await getDoc(doc(db, 'users', user.uid));
     if (!snap.exists()) {
+      // Новий користувач — зберігаємо базовий профіль і показуємо крок 2
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         email: user.email,
@@ -930,7 +930,15 @@ window.doGoogleSignIn = async function() {
         createdAt: serverTimestamp(),
         lastSeen: serverTimestamp(),
       });
+      // Показуємо крок 2 для збору статі/віку/міста
+      selectedGender = null;
+      document.getElementById('auth-step-1').classList.remove('active');
+      document.getElementById('auth-step-2').classList.add('active');
+      document.getElementById('auth-err-2').textContent = '';
+      // Ім'я вже є з Google — заповнюємо
+      document.getElementById('reg-name').value = user.displayName || '';
     }
+    // Якщо вже існує — onAuthStateChanged закриє модал автоматично
   } catch(e) {
     document.getElementById('auth-err-1').textContent = e.message;
   }
@@ -971,20 +979,35 @@ window.doRegisterStep2 = async function() {
   if (!age)           { errEl.textContent = ui('authErrAge');    return; }
 
   try {
-    const cred = await createUserWithEmailAndPassword(auth, pendingEmail, pendingPass);
-    await updateProfile(cred.user, { displayName: name });
-    await setDoc(doc(db, 'users', cred.user.uid), {
-      uid:       cred.user.uid,
-      email:     pendingEmail,
-      name,
-      gender:    selectedGender,
-      ageGroup:  age,
-      city:      city || '',
-      provider:  'email',
-      lang:      currentLang,
-      createdAt: serverTimestamp(),
-      lastSeen:  serverTimestamp(),
-    });
+    // Якщо вже авторизований (Google) — просто оновлюємо профіль
+    if (auth.currentUser) {
+      await updateProfile(auth.currentUser, { displayName: name });
+      await setDoc(doc(db, 'users', auth.currentUser.uid), {
+        name,
+        gender:   selectedGender,
+        ageGroup: age,
+        city:     city || '',
+        lang:     currentLang,
+        lastSeen: serverTimestamp(),
+      }, { merge: true });
+      currentUserProfile = { ...(currentUserProfile||{}), name, gender: selectedGender, ageGroup: age, city };
+    } else {
+      // Email реєстрація — створюємо акаунт
+      const cred = await createUserWithEmailAndPassword(auth, pendingEmail, pendingPass);
+      await updateProfile(cred.user, { displayName: name });
+      await setDoc(doc(db, 'users', cred.user.uid), {
+        uid:       cred.user.uid,
+        email:     pendingEmail,
+        name,
+        gender:    selectedGender,
+        ageGroup:  age,
+        city:      city || '',
+        provider:  'email',
+        lang:      currentLang,
+        createdAt: serverTimestamp(),
+        lastSeen:  serverTimestamp(),
+      });
+    }
   } catch(e) {
     const code = e.code || '';
     if (code.includes('email-already')) errEl.textContent = ui('authErrExists');
