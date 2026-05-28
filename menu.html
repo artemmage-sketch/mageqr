@@ -629,6 +629,7 @@ let pendingPass  = null;
 let currentEditField = null;
 let editGenderValue  = null;
 let currentUserProfile = null;
+let currentLang = localStorage.getItem('mq_lang') || 'uk';
 
 onAuthStateChanged(auth, async user => {
   currentUser = user;
@@ -1105,7 +1106,6 @@ const tableId  = params.get('t') || null;
 let allItems = [], allCats = [], activeCat = null;
 let cart = {}, detItem = null, detQty = 1, design = {};
 let orderType = 'dine_in';
-let currentLang = 'uk';
 let orderingSettings = {};
 let selectedTime = null;
 let cutleryCount = 1;
