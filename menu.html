@@ -630,6 +630,7 @@ let currentEditField = null;
 let editGenderValue  = null;
 let currentUserProfile = null;
 let currentLang = localStorage.getItem('mq_lang') || 'uk';
+let pendingGoogleProfile = false; // флаг: новий Google юзер ще заповнює крок 2
 
 onAuthStateChanged(auth, async user => {
   currentUser = user;
@@ -643,7 +644,8 @@ onAuthStateChanged(auth, async user => {
       }, { merge: true });
     } catch(e){}
     renderUserBar(user);
-    closeAuth();
+    // Не закриваємо модал якщо новий Google юзер ще заповнює крок 2
+    if (!pendingGoogleProfile) closeAuth();
   } else {
     currentUserProfile = null;
     renderGuestBar();
@@ -913,6 +915,7 @@ window.doGoogleSignIn = async function() {
         lastSeen: serverTimestamp(),
       });
       // Показуємо крок 2 для збору статі/віку/міста
+      pendingGoogleProfile = true;
       selectedGender = null;
       document.getElementById('auth-step-1').classList.remove('active');
       document.getElementById('auth-step-2').classList.add('active');
@@ -973,6 +976,8 @@ window.doRegisterStep2 = async function() {
         lastSeen: serverTimestamp(),
       }, { merge: true });
       currentUserProfile = { ...(currentUserProfile||{}), name, gender: selectedGender, ageGroup: age, city };
+      pendingGoogleProfile = false;
+      closeAuth();
     } else {
       // Email реєстрація — створюємо акаунт
       const cred = await createUserWithEmailAndPassword(auth, pendingEmail, pendingPass);
