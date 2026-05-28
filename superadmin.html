@@ -1065,6 +1065,8 @@ let usersPage = 1;
 const USERS_PER_PAGE = 25;
 
 window.loadUsers = async function() {
+  const btn = document.querySelector('#t-users .btn-accent');
+  if (btn) { btn.textContent = '⏳ Завантаження...'; btn.disabled = true; }
   const emptyEl = document.getElementById('u-empty');
   if (emptyEl) emptyEl.textContent = '⏳ Завантаження...';
   try {
@@ -1079,6 +1081,8 @@ window.loadUsers = async function() {
   } catch(e) {
     console.warn('loadUsers:', e.message);
     if (emptyEl) emptyEl.textContent = 'Помилка: ' + e.message;
+  } finally {
+    if (btn) { btn.textContent = '🔄 Оновити'; btn.disabled = false; }
   }
 };
 
