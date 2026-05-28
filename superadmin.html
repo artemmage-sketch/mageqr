@@ -228,6 +228,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <div class="sb-section">Бізнес</div>
     <button class="nav-btn" onclick="nav(this,'t-plans')"><span class="nav-icon">💎</span> Тарифи</button>
     <button class="nav-btn" onclick="nav(this,'t-revenue')"><span class="nav-icon">💰</span> Доходи</button>
+    <button class="nav-btn" onclick="nav(this,'t-users')"><span class="nav-icon">👥</span> Користувачі</button>
     <div class="sb-bottom">
       <div class="sb-user">
         <div class="sb-avatar">SA</div>
@@ -387,9 +388,94 @@ tr:hover td{background:rgba(255,255,255,.02)}
         </div>
       </div>
     </div>
-  </div>
-</div>
-</div>
+
+    <!-- USERS TAB -->
+    <div id="t-users" class="tab-section">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title">Зареєстровані користувачі</div>
+          <div class="topbar-sub">Клієнти, що авторизувались в меню</div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm" onclick="exportUsersCSV()">⬇️ Експорт CSV</button>
+          <button class="btn btn-accent btn-sm" onclick="loadUsers()">🔄 Оновити</button>
+        </div>
+      </div>
+      <div class="content">
+        <!-- Метрики -->
+        <div class="stats-row">
+          <div class="stat-card purple"><div class="stat-label">Всього користувачів</div><div class="stat-val purple" id="u-total">—</div></div>
+          <div class="stat-card green"><div class="stat-label">Нових за тиждень</div><div class="stat-val green" id="u-week">—</div></div>
+          <div class="stat-card amber"><div class="stat-label">Через Google</div><div class="stat-val amber" id="u-google">—</div></div>
+          <div class="stat-card red"><div class="stat-label">Через Email</div><div class="stat-val red" id="u-email">—</div></div>
+        </div>
+
+        <!-- Фільтри -->
+        <div style="display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap">
+          <input id="u-search" type="text" placeholder="🔍 Пошук за ім'ям, email, містом..." style="flex:1;min-width:200px" oninput="renderUsersTable()"/>
+          <select id="u-gender-filter" style="width:140px" onchange="renderUsersTable()">
+            <option value="">Будь-яка стать</option>
+            <option value="male">Чоловік</option>
+            <option value="female">Жінка</option>
+            <option value="other">Інше</option>
+          </select>
+          <select id="u-age-filter" style="width:150px" onchange="renderUsersTable()">
+            <option value="">Будь-який вік</option>
+            <option value="16-20">16–20</option>
+            <option value="21-25">21–25</option>
+            <option value="26-35">26–35</option>
+            <option value="36-45">36–45</option>
+            <option value="46+">46+</option>
+          </select>
+          <select id="u-provider-filter" style="width:140px" onchange="renderUsersTable()">
+            <option value="">Всі методи</option>
+            <option value="google">Google</option>
+            <option value="email">Email</option>
+          </select>
+        </div>
+
+        <!-- Демографія -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+          <div class="chart-card">
+            <div class="chart-title">Розподіл за статтю</div>
+            <div id="u-gender-chart" style="padding:.75rem 0"></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Розподіл за віком</div>
+            <div id="u-age-chart" style="padding:.75rem 0"></div>
+          </div>
+        </div>
+
+        <!-- Топ міст -->
+        <div class="chart-card" style="margin-bottom:1.5rem">
+          <div class="chart-title">Топ міст</div>
+          <div id="u-cities-chart" style="padding:.75rem 0"></div>
+        </div>
+
+        <!-- Таблиця -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+          <table style="width:100%;border-collapse:collapse" id="u-table">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);font-size:11px;color:var(--muted);text-transform:uppercase">
+                <th style="padding:.75rem 1rem;text-align:left">Ім'я</th>
+                <th style="padding:.75rem 1rem;text-align:left">Email</th>
+                <th style="padding:.75rem 1rem;text-align:left">Стать</th>
+                <th style="padding:.75rem 1rem;text-align:left">Вік</th>
+                <th style="padding:.75rem 1rem;text-align:left">Місто</th>
+                <th style="padding:.75rem 1rem;text-align:left">Мова</th>
+                <th style="padding:.75rem 1rem;text-align:left">Метод</th>
+                <th style="padding:.75rem 1rem;text-align:left">Реєстрація</th>
+              </tr>
+            </thead>
+            <tbody id="u-tbody"></tbody>
+          </table>
+          <div id="u-empty" style="text-align:center;padding:2rem;color:var(--muted);display:none">
+            Користувачів ще немає або завантаження...
+          </div>
+        </div>
+        <div id="u-pagination" style="display:flex;gap:.5rem;justify-content:center;margin-top:1rem;flex-wrap:wrap"></div>
+      </div>
+    </div>
 
 <!-- ADD VENUE MODAL -->
 <div class="overlay" id="modal-venue" onclick="closeModal('modal-venue')">
@@ -973,14 +1059,170 @@ function renderActivity(){
   document.getElementById('activity-full').innerHTML=html;
 }
 
+// ── USERS ───────────────────────────────────────────────────
+let allUsers = [];
+let usersPage = 1;
+const USERS_PER_PAGE = 25;
+
+window.loadUsers = async function() {
+  try {
+    const {collection, getDocs, orderBy, query} = window.__FS;
+    const snap = await getDocs(query(collection(db,'users'), orderBy('createdAt','desc')));
+    allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderUsersMetrics();
+    renderUsersCharts();
+    renderUsersTable();
+  } catch(e) {
+    console.warn('loadUsers:', e.message);
+  }
+};
+
+function renderUsersMetrics() {
+  document.getElementById('u-total').textContent = allUsers.length;
+  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  document.getElementById('u-week').textContent =
+    allUsers.filter(u => (u.createdAt?.seconds||0)*1000 > weekAgo).length;
+  document.getElementById('u-google').textContent =
+    allUsers.filter(u => u.provider === 'google').length;
+  document.getElementById('u-email').textContent =
+    allUsers.filter(u => u.provider === 'email').length;
+}
+
+function renderUsersCharts() {
+  // Гендер
+  const gCount = { male:0, female:0, other:0, '':0 };
+  allUsers.forEach(u => { gCount[u.gender||'']++; });
+  const gLabels = { male:'Чоловік', female:'Жінка', other:'Інше', '':'Не вказано' };
+  const gColors = { male:'#6C63FF', female:'#F472B6', other:'#F59E0B', '':'#4B5563' };
+  const gTotal  = allUsers.length || 1;
+  document.getElementById('u-gender-chart').innerHTML = Object.entries(gCount)
+    .filter(([,v])=>v>0)
+    .map(([k,v]) => `
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem">
+        <div style="width:10px;height:10px;border-radius:50%;background:${gColors[k]};flex-shrink:0"></div>
+        <div style="flex:1;font-size:13px">${gLabels[k]}</div>
+        <div style="width:120px;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden">
+          <div style="width:${Math.round(v/gTotal*100)}%;height:100%;background:${gColors[k]}"></div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);min-width:40px;text-align:right">${v} (${Math.round(v/gTotal*100)}%)</div>
+      </div>`).join('');
+
+  // Вік
+  const aGroups = ['16-20','21-25','26-35','36-45','46+',''];
+  const aCount = {}; aGroups.forEach(g => aCount[g]=0);
+  allUsers.forEach(u => { const g = u.ageGroup||''; if(aCount[g]!==undefined) aCount[g]++; else aCount['']++; });
+  const aLabels = {'16-20':'16–20','21-25':'21–25','26-35':'26–35','36-45':'36–45','46+':'46+','':'Не вказано'};
+  const aColors = ['#6C63FF','#10B981','#F59E0B','#EF4444','#A78BFA','#4B5563'];
+  document.getElementById('u-age-chart').innerHTML = aGroups
+    .filter(g => aCount[g]>0)
+    .map((g,i) => `
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem">
+        <div style="width:10px;height:10px;border-radius:50%;background:${aColors[i]};flex-shrink:0"></div>
+        <div style="flex:1;font-size:13px">${aLabels[g]}</div>
+        <div style="width:120px;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden">
+          <div style="width:${Math.round(aCount[g]/gTotal*100)}%;height:100%;background:${aColors[i]}"></div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);min-width:40px;text-align:right">${aCount[g]} (${Math.round(aCount[g]/gTotal*100)}%)</div>
+      </div>`).join('');
+
+  // Топ міст
+  const cities = {};
+  allUsers.forEach(u => { if(u.city) cities[u.city] = (cities[u.city]||0)+1; });
+  const sorted = Object.entries(cities).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const maxC = sorted[0]?.[1] || 1;
+  document.getElementById('u-cities-chart').innerHTML = sorted.length
+    ? sorted.map(([city,cnt]) => `
+        <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem">
+          <div style="width:120px;font-size:13px;color:var(--text)">${city}</div>
+          <div style="flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden">
+            <div style="width:${Math.round(cnt/maxC*100)}%;height:100%;background:var(--accent)"></div>
+          </div>
+          <div style="font-size:12px;color:var(--muted);min-width:30px;text-align:right">${cnt}</div>
+        </div>`).join('')
+    : '<div style="color:var(--muted);font-size:13px">Міста не вказані</div>';
+}
+
+window.renderUsersTable = function() {
+  const search   = (document.getElementById('u-search')?.value||'').toLowerCase();
+  const gFilter  = document.getElementById('u-gender-filter')?.value||'';
+  const aFilter  = document.getElementById('u-age-filter')?.value||'';
+  const pFilter  = document.getElementById('u-provider-filter')?.value||'';
+
+  let filtered = allUsers.filter(u => {
+    if (gFilter && (u.gender||'') !== gFilter) return false;
+    if (aFilter && (u.ageGroup||'') !== aFilter) return false;
+    if (pFilter && (u.provider||'') !== pFilter) return false;
+    if (search) {
+      const hay = `${u.name||''} ${u.email||''} ${u.city||''}`.toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  const total  = filtered.length;
+  const pages  = Math.max(1, Math.ceil(total / USERS_PER_PAGE));
+  usersPage    = Math.min(usersPage, pages);
+  const slice  = filtered.slice((usersPage-1)*USERS_PER_PAGE, usersPage*USERS_PER_PAGE);
+
+  const gLabels = { male:'♂ Чоловік', female:'♀ Жінка', other:'⚧ Інше', '':'—' };
+  const tbody = document.getElementById('u-tbody');
+  const empty = document.getElementById('u-empty');
+  if (!slice.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    tbody.innerHTML = slice.map(u => {
+      const reg = u.createdAt?.seconds
+        ? new Date(u.createdAt.seconds*1000).toLocaleDateString('uk-UA')
+        : '—';
+      const providerBadge = u.provider === 'google'
+        ? '<span style="background:#4285F422;color:#4285F4;border-radius:4px;padding:1px 6px;font-size:11px">Google</span>'
+        : '<span style="background:#6C63FF22;color:#A78BFA;border-radius:4px;padding:1px 6px;font-size:11px">Email</span>';
+      return `<tr style="border-bottom:1px solid var(--border);transition:background .1s" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
+        <td style="padding:.625rem 1rem;font-weight:500">${u.name||'—'}</td>
+        <td style="padding:.625rem 1rem;color:var(--muted);font-size:12px">${u.email||'—'}</td>
+        <td style="padding:.625rem 1rem;font-size:13px">${gLabels[u.gender||'']}</td>
+        <td style="padding:.625rem 1rem;font-size:13px">${u.ageGroup||'—'}</td>
+        <td style="padding:.625rem 1rem;font-size:13px">${u.city||'—'}</td>
+        <td style="padding:.625rem 1rem;font-size:13px">${(u.lastLang||u.lang||'uk').toUpperCase()}</td>
+        <td style="padding:.625rem 1rem">${providerBadge}</td>
+        <td style="padding:.625rem 1rem;color:var(--muted);font-size:12px">${reg}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Пагінація
+  const pg = document.getElementById('u-pagination');
+  pg.innerHTML = Array.from({length:pages},(_,i)=>i+1).map(p =>
+    `<button class="btn btn-sm ${p===usersPage?'btn-accent':'btn-outline'}" onclick="setUsersPage(${p})">${p}</button>`
+  ).join('');
+};
+
+window.setUsersPage = function(p) { usersPage = p; renderUsersTable(); };
+
+window.exportUsersCSV = function() {
+  const rows = [['UID','Ім\'я','Email','Стать','Вік','Місто','Мова','Метод','Реєстрація']];
+  allUsers.forEach(u => {
+    const reg = u.createdAt?.seconds ? new Date(u.createdAt.seconds*1000).toLocaleDateString('uk-UA') : '';
+    rows.push([u.id,u.name||'',u.email||'',u.gender||'',u.ageGroup||'',u.city||'',u.lastLang||u.lang||'',u.provider||'',reg]);
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\ufeff'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `users_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+};
+
 // ── NAV ─────────────────────────────────────────────────────
 window.nav = function(btn, tab){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));
   document.getElementById(tab).classList.add('active');
-  // При переході на тарифи — рендеримо плани
   if(tab === 't-plans') loadPlansFromFirestore();
+  if(tab === 't-users') loadUsers();
 };
 
 // ── MODAL ───────────────────────────────────────────────────
