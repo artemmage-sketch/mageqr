@@ -111,7 +111,8 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .user-bar-avatar{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0}
 .user-bar-name{font-weight:500;color:var(--text);flex:1}
 .user-bar-logout{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;padding:3px 10px;cursor:pointer;font-family:var(--font-body)}
-.user-bar-login{background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:12px;padding:4px 12px;cursor:pointer;font-family:var(--font-body);margin-left:auto;font-weight:600};bottom:1.25rem;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;border:none;border-radius:30px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:all .25s;white-space:nowrap;font-family:var(--font-body);z-index:40}
+.user-bar-login{background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:12px;padding:4px 12px;cursor:pointer;font-family:var(--font-body);margin-left:auto;font-weight:600}
+.cart-fab{position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;border:none;border-radius:30px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:all .25s;white-space:nowrap;font-family:var(--font-body);z-index:40}
 .cart-fab.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(20px)}
 .cart-badge{background:rgba(255,255,255,.25);border-radius:12px;padding:2px 10px;font-size:13px}
 .cart-list{display:flex;flex-direction:column;gap:.5rem;max-height:240px;overflow-y:auto;margin-bottom:.875rem}
@@ -190,13 +191,34 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 <!-- ПЕРЕМИКАЧ МОВ -->
 <!-- USER BAR -->
 <div id="user-bar" class="user-bar" style="display:none">
-  <div class="user-bar-avatar" id="ub-avatar">?</div>
-  <div class="user-bar-name" id="ub-name"></div>
+  <div class="user-bar-avatar" id="ub-avatar" onclick="openProfile()" style="cursor:pointer">?</div>
+  <div class="user-bar-name" id="ub-name" onclick="openProfile()" style="cursor:pointer"></div>
   <button class="user-bar-logout" id="ub-logout-btn" onclick="doSignOut()">—</button>
 </div>
 <div id="user-bar-guest" class="user-bar" style="display:none">
   <span style="color:var(--muted);font-size:12px;flex:1" id="ub-guest-text">Замовляєте як гість</span>
   <button class="user-bar-login" onclick="openAuth()">—</button>
+</div>
+
+<!-- PROFILE OVERLAY -->
+<div class="auth-overlay" id="profile-overlay" onclick="if(event.target===this)closeProfile()">
+  <div class="auth-box" onclick="event.stopPropagation()" style="max-width:360px">
+    <div style="display:flex;align-items:center;gap:.875rem;margin-bottom:1.25rem">
+      <div class="user-bar-avatar" id="prof-avatar" style="width:48px;height:48px;font-size:1.2rem;flex-shrink:0">?</div>
+      <div>
+        <div style="font-weight:600;font-size:1rem" id="prof-name">—</div>
+        <div style="font-size:12px;color:var(--muted)" id="prof-email">—</div>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border-radius:10px;padding:.75rem 1rem;font-size:13px;color:var(--muted);margin-bottom:1rem;line-height:1.8">
+      <div id="prof-gender"></div>
+      <div id="prof-age"></div>
+      <div id="prof-city"></div>
+      <div id="prof-lang"></div>
+    </div>
+    <button class="auth-btn" style="background:none;border:1px solid var(--border);color:var(--muted);margin-top:0" onclick="closeProfile();doSignOut()">👋 —</button>
+    <button class="auth-skip" onclick="closeProfile()">✕ —</button>
+  </div>
 </div>
 
 <!-- AUTH MODAL -->
@@ -471,12 +493,15 @@ import {
   GoogleAuthProvider, signInWithPopup,
   createUserWithEmailAndPassword, signInWithEmailAndPassword,
   sendPasswordResetEmail, updateProfile,
+  browserLocalPersistence, setPersistence,
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
 const cfg = window.__MQ_CFG;
 const app  = getApps().length ? getApps()[0] : initializeApp(cfg);
 const db   = getFirestore(app);
 const auth = getAuth(app);
+// Зберігаємо сесію між перезавантаженнями
+setPersistence(auth, browserLocalPersistence).catch(e => console.warn('persistence:', e));
 
 // ── AUTH STATE ───────────────────────────────────────────────────
 let currentUser = null;
@@ -485,11 +510,15 @@ let authMode = 'signin'; // signin | signup
 let pendingEmail = null;
 let pendingPass  = null;
 
+let currentUserProfile = null;
+
 onAuthStateChanged(auth, async user => {
   currentUser = user;
   if (user) {
-    // Зберігаємо/оновлюємо мову користувача
+    // Завантажуємо профіль з Firestore
     try {
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      currentUserProfile = snap.exists() ? snap.data() : null;
       await setDoc(doc(db, 'users', user.uid), {
         lastLang: currentLang,
         lastSeen: serverTimestamp(),
@@ -498,19 +527,42 @@ onAuthStateChanged(auth, async user => {
     renderUserBar(user);
     closeAuth();
   } else {
+    currentUserProfile = null;
     renderGuestBar();
   }
 });
 
 function renderUserBar(user) {
-  const name = user.displayName || user.email?.split('@')[0] || '?';
+  const name   = user.displayName || user.email?.split('@')[0] || '?';
   const avatar = name.charAt(0).toUpperCase();
   document.getElementById('user-bar').style.display = 'flex';
   document.getElementById('user-bar-guest').style.display = 'none';
   document.getElementById('ub-avatar').textContent = avatar;
-  document.getElementById('ub-name').textContent = `${ui('authHello')}, ${name}`;
+  document.getElementById('ub-name').textContent   = `${ui('authHello')}, ${name}`;
   document.getElementById('ub-logout-btn').textContent = ui('authLogout');
 }
+
+window.openProfile = function() {
+  if (!currentUser) return;
+  const name   = currentUser.displayName || currentUser.email?.split('@')[0] || '?';
+  const avatar = name.charAt(0).toUpperCase();
+  document.getElementById('prof-avatar').textContent = avatar;
+  document.getElementById('prof-name').textContent   = name;
+  document.getElementById('prof-email').textContent  = currentUser.email || '';
+  const p = currentUserProfile;
+  const gMap = { male: ui('authMale'), female: ui('authFemale'), other: ui('authOther') };
+  document.getElementById('prof-gender').textContent = p?.gender  ? `${ui('authGender')}: ${gMap[p.gender]||p.gender}` : '';
+  document.getElementById('prof-age').textContent    = p?.ageGroup ? `${ui('authAge')}: ${p.ageGroup}` : '';
+  document.getElementById('prof-city').textContent   = p?.city    ? `📍 ${p.city}` : '';
+  document.getElementById('prof-lang').textContent   = `🌐 ${(p?.lastLang||'uk').toUpperCase()}`;
+  document.querySelector('#profile-overlay #prof-avatar + div + button').textContent = `👋 ${ui('authLogout')}`;
+  document.querySelector('#profile-overlay .auth-skip').textContent = `✕ ${ui('continueBtn')||'Закрити'}`;
+  document.getElementById('profile-overlay').classList.add('open');
+};
+
+window.closeProfile = function() {
+  document.getElementById('profile-overlay').classList.remove('open');
+};
 
 function renderGuestBar() {
   document.getElementById('user-bar').style.display = 'none';
