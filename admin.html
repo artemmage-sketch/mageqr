@@ -5813,6 +5813,7 @@ window.createBill = async function() {
     // Зберігаємо рахунок в Firestore зі статусом pending поки не отримаємо payUrl
     const billRef = await addDoc(collection(db,'venues',venueId,'bills'), {
       tableNum:   selectedTable.num,
+      sessionId:  selectedTable.startTime || new Date().toISOString().slice(0,16),
       items:      allItems,
       total,
       status:     'pending',
