@@ -1989,6 +1989,13 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         </div>
       </div>
     </div>
+    <!-- Вибір офіціанта -->
+    <div style="margin-bottom:.875rem" id="mo-waiter-wrap">
+      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="assignWaiter">Офіціант</label>
+      <select id="mo-waiter" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
+        <option value="">— Не призначено —</option>
+      </select>
+    </div>
     <!-- Страви -->
     <div style="margin-bottom:.875rem">
       <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderDishes">Страви</label>
@@ -2079,6 +2086,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <span style="font-size:13px;color:var(--muted)" id="manual-currency-sym">₴</span>
         </div>
       </div>
+
+      <!-- Вибір офіціанта -->
+      <div id="table-waiter-wrap" style="margin-bottom:.875rem"></div>
 
       <!-- Кнопки дій -->
       <div id="table-bill-actions" style="display:flex;flex-direction:column;gap:.5rem">
@@ -2338,6 +2348,9 @@ var I18N = {
     notSet:'не вказано',
     noStaff:'Персонал не додано',
     tipsWord:'чайових',
+    assignWaiter:'Офіціант', noWaiter:'Без офіціанта',
+    newWaiter:'Новий офіціант', editWaiter:'Редагувати',
+    staffNameRequired:"Введіть ім'я", confirmDelete:'Видалити?',
     noMonoId:'⚠️ Без Mono ID',
     sortOrder:'Порядок',
     catNamePh:'Роли',
@@ -2716,6 +2729,9 @@ var I18N = {
     notSet:'not set',
     noStaff:'No staff added',
     tipsWord:'in tips',
+    assignWaiter:'Waiter', noWaiter:'No waiter',
+    newWaiter:'New waiter', editWaiter:'Edit',
+    staffNameRequired:'Enter name', confirmDelete:'Delete?',
     noMonoId:'⚠️ No Mono ID',
     sortOrder:'Order',
     catNamePh:'Rolls',
@@ -3094,6 +3110,9 @@ var I18N = {
     notSet:'nie podano',
     noStaff:'Brak personelu',
     tipsWord:'napiwków',
+    assignWaiter:'Kelner', noWaiter:'Bez kelnera',
+    newWaiter:'Nowy kelner', editWaiter:'Edytuj',
+    staffNameRequired:'Podaj imię', confirmDelete:'Usunąć?',
     noMonoId:'⚠️ Brak Mono ID',
     sortOrder:'Kolejność',
     catNamePh:'Role',
@@ -3472,6 +3491,9 @@ var I18N = {
     notSet:'nicht angegeben',
     noStaff:'Kein Personal hinzugefügt',
     tipsWord:'Trinkgeld',
+    assignWaiter:'Kellner', noWaiter:'Kein Kellner',
+    newWaiter:'Neuer Kellner', editWaiter:'Bearbeiten',
+    staffNameRequired:'Name eingeben', confirmDelete:'Löschen?',
     noMonoId:'⚠️ Keine Mono-ID',
     sortOrder:'Reihenfolge',
     catNamePh:'Rollen',
@@ -3850,6 +3872,9 @@ var I18N = {
     notSet:'nespecificat',
     noStaff:'Niciun personal adăugat',
     tipsWord:'bacșiș',
+    assignWaiter:'Chelner', noWaiter:'Fără chelner',
+    newWaiter:'Chelner nou', editWaiter:'Editare',
+    staffNameRequired:'Introduceți numele', confirmDelete:'Șterge?',
     noMonoId:'⚠️ Fără Mono ID',
     sortOrder:'Ordine',
     catNamePh:'Rulouri',
@@ -4228,6 +4253,9 @@ var I18N = {
     notSet:'no especificado',
     noStaff:'Sin personal agregado',
     tipsWord:'en propinas',
+    assignWaiter:'Camarero', noWaiter:'Sin camarero',
+    newWaiter:'Nuevo camarero', editWaiter:'Editar',
+    staffNameRequired:'Ingrese el nombre', confirmDelete:'¿Eliminar?',
     noMonoId:'⚠️ Sin Mono ID',
     sortOrder:'Orden',
     catNamePh:'Rollos',
@@ -4606,6 +4634,9 @@ var I18N = {
     notSet:'nije navedeno',
     noStaff:'Nije dodano osoblje',
     tipsWord:'napojnice',
+    assignWaiter:'Konobar', noWaiter:'Bez konobara',
+    newWaiter:'Novi konobar', editWaiter:'Uredi',
+    staffNameRequired:'Unesite ime', confirmDelete:'Obrisati?',
     noMonoId:'⚠️ Bez Mono ID',
     sortOrder:'Redoslijed',
     catNamePh:'Rolovi',
@@ -4904,6 +4935,7 @@ async function initFirebase() {
     renderPresetsRow();
     loadDesignSettings();
     loadTablesFromFirestore();
+    loadStaffFromFirestore();
     applyAdminLang(adminLang);
     setTimeout(() => loadBilling(), 500);
   });
@@ -5938,7 +5970,6 @@ window.openManualOrder = function() {
   document.getElementById('mo-name').value = '';
   document.getElementById('mo-phone').value = '';
   document.getElementById('mo-comment').value = '';
-  document.getElementById('mo-persons').value = '1';
   document.getElementById('mo-type').value = 'dine_in';
   document.getElementById('mo-payment').value = 'cash';
   moCutleryNeeded = true;
@@ -5962,6 +5993,18 @@ window.openManualOrder = function() {
   const sel = document.getElementById('mo-table');
   sel.innerHTML = '<option value="">— Оберіть стіл —</option>' +
     tables.map(t => `<option value="${t.num}">Стіл №${t.num} (${t.zone}) — ${t.status === 'free' ? 'Вільний' : 'Зайнятий'}</option>`).join('');
+  // Заповнюємо список офіціантів
+  const waiterSel = document.getElementById('mo-waiter');
+  if(waiterSel) {
+    waiterSel.innerHTML = `<option value="">— ${t('noWaiter')||'Не призначено'} —</option>` +
+      staff.map(s=>`<option value="${s.id}">${s.emoji||'👤'} ${s.name}</option>`).join('');
+    // Якщо обраний стіл вже має офіціанта — вибираємо його
+    const tableNum = document.getElementById('mo-table')?.value;
+    if(tableNum) {
+      const tbl = tables.find(t=>String(t.num)===String(tableNum));
+      if(tbl?.staffId) waiterSel.value = tbl.staffId;
+    }
+  }
   toggleMoTable();
   renderMoItems();
   renderMoCart();
@@ -6068,6 +6111,8 @@ window.placeManualOrder = async function() {
   const phone     = phoneNum ? (phoneNum.startsWith('+') ? phoneNum : phoneCode + phoneNum) : '';
   const comment   = document.getElementById('mo-comment').value.trim();
   const payment   = document.getElementById('mo-payment').value;
+  const waiterId  = document.getElementById('mo-waiter')?.value || null;
+  const waiter    = waiterId ? staff.find(s=>s.id===waiterId) : null;
   const pickupTime = orderType === 'takeaway' ? (document.getElementById('mo-pickup-time')?.value || null) : null;
   const cutlery = { needed: moCutleryNeeded, count: moCutleryCount };
 
@@ -6127,6 +6172,8 @@ window.placeManualOrder = async function() {
           pickupTime,
           paymentMethod: payment,
           cutlery,
+          staffId:   waiterId || null,
+          staffName: waiter?.name || null,
           source: 'admin',
         }),
       });
@@ -6150,6 +6197,8 @@ window.placeManualOrder = async function() {
         cutlery,
         num: orderNum,
         status: 'new',
+        staffId:   waiterId || null,
+        staffName: waiter?.name || null,
         source: 'admin',
         createdAt: serverTimestamp(),
       });
@@ -6233,6 +6282,7 @@ window.openTableDetail = function(id) {
   const manualInput = document.getElementById('manual-amount');
   if(manualInput) manualInput.value = '';
   openModal('modal-table-detail');
+  renderTableWaiterSelect();
 }
 window.openTableDetail=openTableDetail;
 
@@ -6555,38 +6605,131 @@ function renderStaff(){
     <div class="item-row" style="margin-bottom:.5rem">
       <div class="item-em">${s.emoji||'👤'}</div>
       <div class="item-body"><div class="item-name">${s.name}</div><div class="item-sub">${s.role} · Mono ID: ${s.monoId||'<span style="color:var(--amber)">не вказано</span>'}</div></div>
-      <div style="font-size:12px;font-weight:600;color:var(--green);margin-right:.5rem">₴${s.tipsToday}</div>
+      <div style="font-size:12px;font-weight:600;color:var(--green);margin-right:.5rem">₴${s.tipsToday||0}</div>
       <div class="item-btns">
         <button class="icon-btn" onclick="openEditStaff('${s.id}')">✏️</button>
         <button class="icon-btn del" onclick="deleteStaff('${s.id}')">🗑️</button>
       </div>
-    </div>`).join('')||'<div style="color:var(--muted);font-size:13px">Персонал не додано</div>';
+    </div>`).join('')||`<div style="color:var(--muted);font-size:13px">${t('noStaff')||'Персонал не додано'}</div>`;
   document.getElementById('staff-tips-grid').innerHTML=staff.map(s=>`
     <div class="staff-card">
       <div class="staff-avatar">${s.emoji||'👤'}</div>
       <div class="staff-name">${s.name}</div>
       <div class="staff-role">${s.role}</div>
-      <div class="staff-tips-total">₴${s.tipsToday} ${t('tipsWord')}</div>
+      <div class="staff-tips-total">₴${s.tipsToday||0} ${t('tipsWord')}</div>
       ${!s.monoId?'<div style="font-size:10px;color:var(--amber)">⚠️ Без Mono ID</div>':''}
     </div>`).join('');
 }
-function openAddStaff(){editStaffId=null;document.getElementById('staff-modal-title').textContent='Новий офіціант';['sf-name','sf-mono-id'].forEach(f=>document.getElementById(f).value='');document.getElementById('sf-emoji').value='';openModal('modal-add-staff');}
+
+function openAddStaff(){
+  editStaffId=null;
+  document.getElementById('staff-modal-title').textContent=t('newWaiter')||'Новий офіціант';
+  ['sf-name','sf-mono-id'].forEach(f=>document.getElementById(f).value='');
+  document.getElementById('sf-emoji').value='';
+  document.getElementById('sf-role').value='Офіціант';
+  openModal('modal-add-staff');
+}
+
 function openEditStaff(id){
-  editStaffId=id;const s=staff.find(x=>x.id===id);
-  document.getElementById('staff-modal-title').textContent='Редагувати: '+s.name;
+  editStaffId=id;
+  const s=staff.find(x=>x.id===id);
+  if(!s) return;
+  document.getElementById('staff-modal-title').textContent=(t('editWaiter')||'Редагувати')+': '+s.name;
   document.getElementById('sf-name').value=s.name;
   document.getElementById('sf-emoji').value=s.emoji||'';
   document.getElementById('sf-role').value=s.role;
   document.getElementById('sf-mono-id').value=s.monoId||'';
   openModal('modal-add-staff');
 }
-function saveStaff(){
-  const name=document.getElementById('sf-name').value.trim();if(!name){notify("Введіть ім'я",'err');return;}
-  const data={name,emoji:document.getElementById('sf-emoji').value||'👤',role:document.getElementById('sf-role').value,monoId:document.getElementById('sf-mono-id').value.trim(),tipsToday:0};
-  if(editStaffId)Object.assign(staff.find(s=>s.id===editStaffId),data);else{data.id='s'+Date.now();staff.push(data);}
-  closeModal('modal-add-staff');renderStaff();notify('✅ Збережено!','ok');
+
+async function saveStaff(){
+  const name=document.getElementById('sf-name').value.trim();
+  if(!name){notify(t('staffNameRequired')||"Введіть ім'я",'err');return;}
+  const data={
+    name,
+    emoji: document.getElementById('sf-emoji').value||'👤',
+    role:  document.getElementById('sf-role').value,
+    monoId:document.getElementById('sf-mono-id').value.trim(),
+    tipsToday:0,
+  };
+  try {
+    const {doc, setDoc, collection, addDoc, serverTimestamp} = window.__FS;
+    if(editStaffId){
+      Object.assign(staff.find(s=>s.id===editStaffId), data);
+      await setDoc(doc(db,'venues',venueId,'staff',editStaffId), {...data, updatedAt: serverTimestamp()}, {merge:true});
+    } else {
+      const ref = await addDoc(collection(db,'venues',venueId,'staff'), {...data, createdAt: serverTimestamp()});
+      data.id = ref.id;
+      staff.push(data);
+    }
+    closeModal('modal-add-staff');
+    renderStaff();
+    notify('✅ '+t('saved'),'ok');
+  } catch(e) {
+    notify(t('notifError')+': '+e.message,'err');
+  }
 }
-function deleteStaff(id){if(confirm('Видалити?')){staff=staff.filter(s=>s.id!==id);renderStaff();}}
+
+async function deleteStaff(id){
+  if(!confirm(t('confirmDelete')||'Видалити?')) return;
+  try {
+    const {doc, deleteDoc} = window.__FS;
+    await deleteDoc(doc(db,'venues',venueId,'staff',id));
+    staff = staff.filter(s=>s.id!==id);
+    renderStaff();
+  } catch(e) {
+    notify(t('notifError')+': '+e.message,'err');
+  }
+}
+
+async function loadStaffFromFirestore(){
+  if(!db||!window.__FS) return;
+  try {
+    const {collection, getDocs} = window.__FS;
+    const snap = await getDocs(collection(db,'venues',venueId,'staff'));
+    if(!snap.empty){
+      staff = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    }
+    renderStaff();
+  } catch(e){ console.warn('loadStaff:', e.message); }
+}
+
+// Призначення офіціанта на стіл
+window.assignWaiterToTable = async function(staffId){
+  if(!selectedTable) return;
+  const s = staff.find(x=>x.id===staffId);
+  if(!s) return;
+  try {
+    await updateTableStatus(selectedTable.id, {
+      staffId: s.id,
+      staffName: s.name,
+      staffEmoji: s.emoji||'👤',
+    });
+    selectedTable.staffId = s.id;
+    selectedTable.staffName = s.name;
+    selectedTable.staffEmoji = s.emoji||'👤';
+    // Оновлюємо відображення в модалці
+    renderTableWaiterSelect();
+    notify(`✅ Призначено: ${s.name}`,'ok');
+  } catch(e){ notify(t('notifError')+': '+e.message,'err'); }
+};
+
+function renderTableWaiterSelect(){
+  const wrap = document.getElementById('table-waiter-wrap');
+  if(!wrap) return;
+  const current = selectedTable?.staffName || '';
+  wrap.innerHTML = `
+    <div style="font-size:12px;color:var(--muted);margin-bottom:.375rem">${t('assignWaiter')||'Офіціант'}</div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+      ${staff.map(s=>`
+        <div onclick="assignWaiterToTable('${s.id}')"
+          style="display:flex;align-items:center;gap:.375rem;padding:.375rem .625rem;border-radius:8px;border:1px solid ${selectedTable?.staffId===s.id?'var(--accent)':'var(--border)'};background:${selectedTable?.staffId===s.id?'var(--accent-soft)':'none'};cursor:pointer;font-size:12px">
+          ${s.emoji||'👤'} ${s.name}
+        </div>`).join('')}
+      ${current?`<div onclick="assignWaiterToTable('')" style="padding:.375rem .625rem;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:11px;color:var(--muted)">${t('noWaiter')||'Без офіціанта'}</div>`:''}
+    </div>`;
+}
+
 window.openAddStaff=openAddStaff;window.openEditStaff=openEditStaff;window.saveStaff=saveStaff;window.deleteStaff=deleteStaff;
 
 // ── ПІДПИСКА (стара вкладка - для loadSubscription) ──
