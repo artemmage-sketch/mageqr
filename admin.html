@@ -355,7 +355,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     </div>
     <div style="padding:.5rem 0;flex:1">
       <div class="nav-section" data-i18n="menuGroup">Меню</div>
-      <button class="nav-item active" onclick="nav(this,'t-orders')" data-i18n="orders">🧾 Замовлення<span id="new-badge" style="background:#EF4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;min-width:18px;height:18px;padding:0 4px;margin-left:6px;display:none;align-items:center;justify-content:center;line-height:18px;vertical-align:middle"></span></button>
+      <button class="nav-item active" onclick="nav(this,'t-orders')" data-i18n="orders">🧾 Замовлення<span id="new-badge" style="margin-left:auto;background:#EF4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;min-width:18px;height:18px;display:none;align-items:center;justify-content:center;flex-shrink:0"></span></button>
       <button class="nav-item" onclick="nav(this,'t-items')" data-i18n="dishes">🍽️ Страви</button>
       <button class="nav-item" onclick="nav(this,'t-cats')" data-i18n="categories">📂 Категорії</button>
       <div class="nav-section" data-i18n="venueGroup">Заклад</div>
@@ -1922,6 +1922,37 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <option value="">— Оберіть стіл —</option>
       </select>
     </div>
+    <!-- Поля доставки (тільки для delivery) -->
+    <div id="mo-delivery-wrap" style="display:none;margin-bottom:.875rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem">
+        <div>
+          <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem" data-i18n="city">Місто</label>
+          <input id="mo-city" type="text" placeholder="Місто" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem" data-i18n="street">Вулиця та будинок</label>
+          <input id="mo-street" type="text" placeholder="вул. Шевченка, 1" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem">
+        <div>
+          <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem" data-i18n="apt">Квартира</label>
+          <input id="mo-apt" type="text" placeholder="№" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem" data-i18n="entrance">Під'їзд</label>
+          <input id="mo-entrance" type="text" placeholder="№" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+        </div>
+        <div>
+          <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem" data-i18n="floor">Поверх</label>
+          <input id="mo-floor" type="text" placeholder="№" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem" data-i18n="courierComment">Коментар для кур'єра</label>
+        <input id="mo-courier-comment" type="text" placeholder="Код домофону, орієнтир..." style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+      </div>
+    </div>
     <!-- Клієнт -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:.875rem">
       <div>
@@ -1930,7 +1961,22 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       </div>
       <div>
         <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderPhone">Телефон</label>
-        <input id="mo-phone" type="tel" placeholder="+380..." style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+        <div style="display:flex;gap:.375rem">
+          <select id="mo-phone-code" style="width:100px;padding:.5rem .375rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px" onchange="document.getElementById('mo-phone').value=this.value">
+            <option value="+380">🇺🇦 +380</option>
+            <option value="+1">🇺🇸 +1</option>
+            <option value="+48">🇵🇱 +48</option>
+            <option value="+49">🇩🇪 +49</option>
+            <option value="+40">🇷🇴 +40</option>
+            <option value="+34">🇪🇸 +34</option>
+            <option value="+382">🇲🇪 +382</option>
+            <option value="+44">🇬🇧 +44</option>
+            <option value="+33">🇫🇷 +33</option>
+            <option value="+39">🇮🇹 +39</option>
+            <option value="+7">🇷🇺 +7</option>
+          </select>
+          <input id="mo-phone" type="tel" placeholder="0938521479" style="flex:1;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+        </div>
       </div>
     </div>
     <!-- Страви -->
@@ -4901,10 +4947,9 @@ function playNewOrderSound() {
 function updateOrderBadge(){
   const n = orders.filter(o => o.status==='new' || o.status==='preparing').length;
   const b = document.getElementById('new-badge');
-  if(b) {
-    b.textContent = n || '';
+  if(b){
+    b.textContent = n;
     b.style.display = n ? 'inline-flex' : 'none';
-    b.style.cssText = `background:#EF4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;min-width:18px;height:18px;line-height:18px;text-align:center;padding:0 3px;margin-left:6px;display:${n?'inline-flex':'none'};align-items:center;justify-content:center;vertical-align:middle;flex-shrink:0`;
   }
 }
 
@@ -5867,7 +5912,10 @@ window.openManualOrder = function() {
   document.getElementById('mo-payment').value = 'cash';
   // Автоматичний код країни по мові адміна
   const phoneCodes = {uk:'+380',en:'+1',pl:'+48',de:'+49',ro:'+40',es:'+34',cnr:'+382'};
-  document.getElementById('mo-phone').value = phoneCodes[adminLang] || '+380';
+  const code = phoneCodes[adminLang] || '+380';
+  const codeSelect = document.getElementById('mo-phone-code');
+  if(codeSelect) { codeSelect.value = code; }
+  document.getElementById('mo-phone').value = '';
   // Заповнюємо список столів
   const sel = document.getElementById('mo-table');
   sel.innerHTML = '<option value="">— Оберіть стіл —</option>' +
@@ -5881,6 +5929,7 @@ window.openManualOrder = function() {
 window.toggleMoTable = function() {
   const type = document.getElementById('mo-type').value;
   document.getElementById('mo-table-wrap').style.display = type === 'dine_in' ? 'block' : 'none';
+  document.getElementById('mo-delivery-wrap').style.display = type === 'delivery' ? 'block' : 'none';
 };
 
 window.renderMoItems = function() {
@@ -5936,10 +5985,25 @@ window.placeManualOrder = async function() {
   const orderType = document.getElementById('mo-type').value;
   const tableNum  = orderType === 'dine_in' ? document.getElementById('mo-table').value : null;
   const name      = document.getElementById('mo-name').value.trim() || (tableNum ? `Стіл №${tableNum}` : 'Гість');
-  const phone     = document.getElementById('mo-phone').value.trim();
+  const phoneCode = document.getElementById('mo-phone-code')?.value || '+380';
+  const phoneNum  = document.getElementById('mo-phone').value.trim();
+  const phone     = phoneNum ? (phoneNum.startsWith('+') ? phoneNum : phoneCode + phoneNum) : '';
   const comment   = document.getElementById('mo-comment').value.trim();
   const payment   = document.getElementById('mo-payment').value;
   const persons   = parseInt(document.getElementById('mo-persons').value) || 1;
+
+  // Адреса доставки
+  let deliveryAddress = null;
+  let deliveryComment = null;
+  if (orderType === 'delivery') {
+    const city    = document.getElementById('mo-city')?.value.trim() || '';
+    const street  = document.getElementById('mo-street')?.value.trim() || '';
+    const apt     = document.getElementById('mo-apt')?.value.trim() || '';
+    const entrance= document.getElementById('mo-entrance')?.value.trim() || '';
+    const floor   = document.getElementById('mo-floor')?.value.trim() || '';
+    deliveryAddress = [city, street, apt?'кв.'+apt:'', entrance?'під.'+entrance:'', floor?'пов.'+floor:''].filter(Boolean).join(', ');
+    deliveryComment = document.getElementById('mo-courier-comment')?.value.trim() || '';
+  }
 
   const items = entries.map(({item, qty}) => ({
     id: item.id, itemId: item.id, name: item.name, price: item.price, qty,
@@ -5979,6 +6043,8 @@ window.placeManualOrder = async function() {
           clientName: name,
           clientPhone: phone,
           comment,
+          deliveryAddress,
+          deliveryComment,
           paymentMethod: payment,
           cutlery: { needed: true, count: persons },
           source: 'admin',
@@ -5997,6 +6063,8 @@ window.placeManualOrder = async function() {
         clientName: name,
         clientPhone: phone,
         comment,
+        deliveryAddress,
+        deliveryComment,
         paymentMethod: payment,
         cutlery: { needed: true, count: persons },
         num: orderNum,
