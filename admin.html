@@ -1929,7 +1929,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <input id="mo-name" type="text" placeholder="Необов'язково" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
       </div>
       <div>
-        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Телефон</label>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderPhone">Телефон</label>
         <input id="mo-phone" type="tel" placeholder="+380..." style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
       </div>
     </div>
@@ -1944,7 +1944,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div style="font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:.375rem">Замовлення</div>
       <div id="mo-cart-list" style="display:flex;flex-direction:column;gap:.25rem;margin-bottom:.5rem"></div>
       <div style="display:flex;justify-content:space-between;font-weight:600;font-size:15px">
-        <span>Разом:</span>
+        <span data-i18n="total">Разом:</span>
         <span id="mo-total" style="color:var(--accent)">₴0</span>
       </div>
     </div>
@@ -5861,6 +5861,9 @@ window.openManualOrder = function() {
   document.getElementById('mo-persons').value = '1';
   document.getElementById('mo-type').value = 'dine_in';
   document.getElementById('mo-payment').value = 'cash';
+  // Автоматичний код країни по мові адміна
+  const phoneCodes = {uk:'+380',en:'+1',pl:'+48',de:'+49',ro:'+40',es:'+34',cnr:'+382'};
+  document.getElementById('mo-phone').value = phoneCodes[adminLang] || '+380';
   // Заповнюємо список столів
   const sel = document.getElementById('mo-table');
   sel.innerHTML = '<option value="">— Оберіть стіл —</option>' +
@@ -7241,6 +7244,8 @@ function applyAdminLang(lang) {
     btn.textContent = t(key);
     if(badge) btn.appendChild(badge);
   });
+  // Оновлюємо badge після відновлення
+  updateOrderBadge();
 
   // 2. Всі data-i18n елементи
   document.querySelectorAll('[data-i18n]').forEach(el => {
