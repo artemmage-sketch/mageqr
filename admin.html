@@ -355,7 +355,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     </div>
     <div style="padding:.5rem 0;flex:1">
       <div class="nav-section" data-i18n="menuGroup">Меню</div>
-      <button class="nav-item active" onclick="nav(this,'t-orders')" data-i18n="orders">🧾 Замовлення<span id="new-badge" style="background:#EF4444;color:#fff;font-size:10px;border-radius:10px;padding:1px 7px;margin-left:auto;display:none"></span></button>
+      <button class="nav-item active" onclick="nav(this,'t-orders')" data-i18n="orders">🧾 Замовлення<span id="new-badge" style="background:#EF4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;min-width:18px;height:18px;padding:0 4px;margin-left:6px;display:none;align-items:center;justify-content:center;line-height:18px"></span></button>
       <button class="nav-item" onclick="nav(this,'t-items')" data-i18n="dishes">🍽️ Страви</button>
       <button class="nav-item" onclick="nav(this,'t-cats')" data-i18n="categories">📂 Категорії</button>
       <div class="nav-section" data-i18n="venueGroup">Заклад</div>
@@ -4901,7 +4901,7 @@ function playNewOrderSound() {
 function updateOrderBadge(){
   const n=orders.filter(o=>o.status==='new'||o.status==='preparing').length;
   const b=document.getElementById('new-badge');
-  if(b){b.textContent=n||'';b.style.display=n?'inline-block':'none';}
+  if(b){b.textContent=n||'';b.style.display=n?'inline-flex':'none';}
 }
 
 window.setStatus = async function(id, status) {
