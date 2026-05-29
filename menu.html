@@ -4,502 +4,448 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
 <meta name="robots" content="noindex,nofollow"/>
-<title>Стіл — Mage QR Rest</title>
+<title>Меню</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link id="font-link" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=DM+Sans:wght@400;500;600&display=swap');
-
-  :root {
-    --accent: #C1440E;
-    --accent2: #E8581F;
-    --bg: #0F0F0F;
-    --bg2: #1A1A1A;
-    --card: #1F1F1F;
-    --border: rgba(255,255,255,.08);
-    --text: #F5F5F5;
-    --muted: rgba(255,255,255,.45);
-    --green: #22C55E;
-    --amber: #F59E0B;
-    --red: #EF4444;
-    --radius: 20px;
-    --font-head: 'Unbounded', sans-serif;
-    --font: 'DM Sans', sans-serif;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
-
-  body {
-    font-family: var(--font);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  /* ── HEADER ── */
-  .header {
-    width: 100%;
-    max-width: 420px;
-    padding: 1.5rem 1.25rem 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: .5rem;
-  }
-
-  .venue-logo {
-    width: 64px; height: 64px;
-    border-radius: 18px;
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    overflow: hidden;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 2rem;
-  }
-  .venue-logo img { width: 100%; height: 100%; object-fit: cover; }
-
-  .venue-name {
-    font-family: var(--font-head);
-    font-size: 1.1rem;
-    font-weight: 700;
-    text-align: center;
-    margin-top: .25rem;
-  }
-
-  .table-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: .375rem;
-    background: var(--accent);
-    color: #fff;
-    font-family: var(--font-head);
-    font-size: .7rem;
-    font-weight: 700;
-    letter-spacing: .03em;
-    padding: .3rem .8rem;
-    border-radius: 20px;
-    margin-top: .125rem;
-  }
-
-  /* ── BILL BANNER ── */
-  .bill-banner {
-    width: calc(100% - 2.5rem);
-    max-width: 395px;
-    margin: 1.25rem auto 0;
-    background: linear-gradient(135deg, #1A2F1A, #0F1F0F);
-    border: 1.5px solid rgba(34,197,94,.3);
-    border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    display: none;
-    cursor: pointer;
-    transition: transform .15s;
-    position: relative;
-    overflow: hidden;
-  }
-  .bill-banner:active { transform: scale(.98); }
-  .bill-banner::before {
-    content: '';
-    position: absolute;
-    top: -30px; right: -30px;
-    width: 100px; height: 100px;
-    background: rgba(34,197,94,.08);
-    border-radius: 50%;
-  }
-  .bill-banner .bb-label {
-    font-size: .7rem;
-    color: rgba(34,197,94,.7);
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    font-weight: 600;
-    margin-bottom: .25rem;
-  }
-  .bill-banner .bb-amount {
-    font-family: var(--font-head);
-    font-size: 1.6rem;
-    font-weight: 900;
-    color: var(--green);
-    letter-spacing: -.02em;
-  }
-  .bill-banner .bb-desc {
-    font-size: .75rem;
-    color: var(--muted);
-    margin-top: .25rem;
-  }
-  .bill-banner .bb-cta {
-    position: absolute;
-    right: 1.25rem;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--green);
-    color: #0F1F0F;
-    font-weight: 700;
-    font-size: .8rem;
-    padding: .5rem 1rem;
-    border-radius: 12px;
-    white-space: nowrap;
-  }
-
-  /* ── MAIN ACTIONS ── */
-  .actions {
-    width: calc(100% - 2.5rem);
-    max-width: 395px;
-    margin: 1.25rem auto 0;
-    display: flex;
-    flex-direction: column;
-    gap: .75rem;
-  }
-
-  .action-card {
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    cursor: pointer;
-    text-decoration: none;
-    color: var(--text);
-    transition: all .18s;
-    position: relative;
-    overflow: hidden;
-  }
-  .action-card:active { transform: scale(.97); }
-  .action-card.primary {
-    background: linear-gradient(135deg, #2A1208, #1A0A04);
-    border-color: rgba(193,68,14,.4);
-  }
-  .action-card.primary:hover { border-color: var(--accent); }
-
-  .action-card .ac-icon {
-    width: 52px; height: 52px;
-    border-radius: 14px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-    background: rgba(255,255,255,.06);
-  }
-  .action-card.primary .ac-icon {
-    background: rgba(193,68,14,.2);
-  }
-
-  .action-card .ac-body { flex: 1; }
-  .action-card .ac-title {
-    font-weight: 600;
-    font-size: 1rem;
-    margin-bottom: .2rem;
-  }
-  .action-card .ac-desc {
-    font-size: .78rem;
-    color: var(--muted);
-    line-height: 1.4;
-  }
-  .action-card .ac-arrow {
-    color: var(--muted);
-    font-size: 1.1rem;
-    flex-shrink: 0;
-  }
-  .action-card.primary .ac-arrow { color: var(--accent2); }
-
-  /* ── FOOTER ── */
-  .footer {
-    margin: 2rem auto 1.5rem;
-    text-align: center;
-    font-size: .7rem;
-    color: rgba(255,255,255,.2);
-  }
-
-  /* ── OVERLAYS ── */
-  .overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.7);
-    backdrop-filter: blur(4px);
-    display: flex; align-items: flex-end; justify-content: center;
-    z-index: 100;
-    opacity: 0; pointer-events: none;
-    transition: opacity .2s;
-  }
-  .overlay.open { opacity: 1; pointer-events: all; }
-
-  .sheet {
-    background: var(--card);
-    border-radius: 24px 24px 0 0;
-    width: 100%; max-width: 420px;
-    padding: 1.5rem 1.5rem 2rem;
-    max-height: 90vh;
-    overflow-y: auto;
-    transform: translateY(100%);
-    transition: transform .25s cubic-bezier(.2,.8,.2,1);
-  }
-  .overlay.open .sheet { transform: translateY(0); }
-
-  .sheet-handle {
-    width: 36px; height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    margin: 0 auto 1.25rem;
-  }
-  .sheet-title {
-    font-family: var(--font-head);
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-  }
-
-  /* ── BILL SHEET ── */
-  .bill-item {
-    display: flex;
-    justify-content: space-between;
-    padding: .6rem 0;
-    border-bottom: 1px solid var(--border);
-    font-size: .9rem;
-  }
-  .bill-item:last-child { border-bottom: none; }
-  .bill-item .bi-name { color: var(--text); flex: 1; }
-  .bill-item .bi-qty { color: var(--muted); margin: 0 .5rem; }
-  .bill-item .bi-price { font-weight: 600; }
-
-  .bill-total {
-    display: flex;
-    justify-content: space-between;
-    padding: .875rem 0 .5rem;
-    border-top: 2px solid var(--border);
-    margin-top: .375rem;
-  }
-  .bill-total .bt-label {
-    font-family: var(--font-head);
-    font-size: .9rem;
-    font-weight: 700;
-  }
-  .bill-total .bt-amount {
-    font-family: var(--font-head);
-    font-size: 1.1rem;
-    font-weight: 900;
-    color: var(--green);
-  }
-
-  .pay-methods { display: flex; flex-direction: column; gap: .625rem; margin-top: 1.25rem; }
-
-  .pay-btn {
-    width: 100%;
-    padding: .875rem;
-    border-radius: 14px;
-    border: none;
-    font-family: var(--font);
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all .15s;
-    display: flex; align-items: center; justify-content: center; gap: .5rem;
-  }
-  .pay-btn.online {
-    background: var(--green);
-    color: #0F1F0F;
-  }
-  .pay-btn.cash {
-    background: transparent;
-    color: var(--muted);
-    border: 1.5px solid var(--border);
-  }
-  .pay-btn.online:active, .pay-btn.cash:active { transform: scale(.97); }
-
-  /* pay QR */
-  .pay-qr-wrap {
-    display: none;
-    text-align: center;
-    margin-top: 1.25rem;
-    background: var(--bg2);
-    border-radius: 16px;
-    padding: 1.25rem;
-  }
-  .pay-qr-wrap img {
-    width: 180px; height: 180px;
-    border-radius: 12px;
-    background: #fff;
-    padding: 4px;
-    margin: 0 auto .75rem;
-    display: block;
-  }
-  .pay-qr-url {
-    font-size: .7rem;
-    color: var(--muted);
-    word-break: break-all;
-    margin-bottom: .75rem;
-  }
-  .copy-btn {
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    color: var(--muted);
-    padding: .5rem 1.25rem;
-    border-radius: 10px;
-    font-size: .8rem;
-    cursor: pointer;
-    font-family: var(--font);
-  }
-
-  /* ── REVIEW SHEET ── */
-  .stars { display: flex; gap: .5rem; justify-content: center; margin: .5rem 0 1rem; }
-  .star {
-    font-size: 2rem; cursor: pointer;
-    transition: transform .1s;
-    filter: grayscale(1) opacity(.4);
-  }
-  .star.active { filter: none; transform: scale(1.15); }
-
-  .review-textarea {
-    width: 100%;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    color: var(--text);
-    font-family: var(--font);
-    font-size: .9rem;
-    padding: .875rem;
-    resize: none;
-    outline: none;
-    margin-bottom: .875rem;
-  }
-  .review-textarea:focus { border-color: var(--accent); }
-
-  /* ── TIPS SHEET ── */
-  .tip-amounts { display: flex; gap: .5rem; flex-wrap: wrap; margin: .75rem 0; }
-  .tip-chip {
-    flex: 1; min-width: 60px;
-    padding: .6rem;
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    text-align: center;
-    font-weight: 600;
-    font-size: .9rem;
-    cursor: pointer;
-    background: transparent;
-    color: var(--text);
-    transition: all .15s;
-    font-family: var(--font);
-  }
-  .tip-chip.active {
-    border-color: var(--accent);
-    background: rgba(193,68,14,.15);
-    color: var(--accent2);
-  }
-
-  .tip-custom-wrap {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    margin-bottom: 1rem;
-  }
-  .tip-custom-wrap input {
-    flex: 1;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    color: var(--text);
-    font-family: var(--font);
-    font-size: 1rem;
-    padding: .75rem;
-    outline: none;
-  }
-  .tip-custom-wrap input:focus { border-color: var(--accent); }
-
-  .staff-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: .625rem;
-    margin: .75rem 0;
-  }
-  .staff-card {
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: .625rem .5rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all .15s;
-  }
-  .staff-card.active {
-    border-color: var(--accent);
-    background: rgba(193,68,14,.1);
-  }
-  .staff-card .sc-avatar { font-size: 1.75rem; margin-bottom: .25rem; }
-  .staff-card .sc-name { font-size: .7rem; font-weight: 600; }
-  .staff-card .sc-role { font-size: .65rem; color: var(--muted); }
-
-  /* ── SUCCESS ── */
-  .success-wrap {
-    text-align: center;
-    padding: 1rem 0 .5rem;
-  }
-  .success-icon { font-size: 3.5rem; margin-bottom: .75rem; }
-  .success-title {
-    font-family: var(--font-head);
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: .375rem;
-  }
-  .success-desc { font-size: .85rem; color: var(--muted); line-height: 1.5; }
-
-  /* ── LOADING ── */
-  #loading {
-    position: fixed; inset: 0;
-    background: var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    flex-direction: column;
-    gap: .75rem;
-    z-index: 200;
-    transition: opacity .3s;
-  }
-  #loading.hidden { opacity: 0; pointer-events: none; }
-  .loader {
-    width: 36px; height: 36px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loader-text { font-size: .8rem; color: var(--muted); }
-
-  /* ── NO BILL ── */
-  .no-bill {
-    text-align: center;
-    padding: 1.5rem 0;
-    color: var(--muted);
-  }
-  .no-bill .nb-icon { font-size: 2.5rem; margin-bottom: .5rem; }
-  .no-bill .nb-text { font-size: .85rem; line-height: 1.5; }
-
-  .lang-bar{display:flex;gap:.25rem;padding:.5rem .75rem;background:var(--card);border-bottom:1px solid var(--border);justify-content:flex-end;width:100%;max-width:420px;border-radius:12px;margin:.5rem 0}
-  .lang-btn{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
-  .lang-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-    width: 18px; height: 18px;
-    border: 2px solid rgba(0,0,0,.3);
-    border-top-color: #0F1F0F;
-    border-radius: 50%;
-    animation: spin .6s linear infinite;
-    display: none;
-  }
-  .paying .btn-spinner { display: block; }
-  .paying .btn-text { display: none; }
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --accent:#C1440E;--bg:#FBF8F4;--bg2:#F4EFE8;--card:#FFFFFF;
+  --text:#1A1208;--muted:#7A6E62;--border:#E0D8CE;
+  --radius:14px;--font-head:'Playfair Display',serif;
+  --font-body:'DM Sans',sans-serif;--font-size:15px;
+}
+html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:var(--text);font-size:var(--font-size)}
+.loader{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:.75rem}
+.loader-logo{font-family:var(--font-head);font-size:1.5rem;color:var(--accent)}
+.loader-spin{width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader.gone{display:none}
+.banner-photo{width:100%;height:160px;background:var(--accent);position:relative;overflow:hidden}
+.banner-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.banner-photo-placeholder{width:100%;height:100%;background:var(--accent)}
+.venue-header{background:var(--card);border-bottom:1px solid var(--border);padding:.875rem 1rem;display:flex;align-items:center;gap:1rem}
+.venue-logo{width:72px;height:72px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;overflow:hidden;border:2px solid var(--border)}
+.venue-logo img{width:100%;height:100%;object-fit:cover}
+.venue-name{font-family:var(--font-head);font-size:1.35rem;color:var(--text);font-weight:600;line-height:1.2}
+.venue-tag{font-size:13px;color:var(--muted);margin-top:.2rem}
+.lang-bar{display:flex;gap:.25rem;padding:.375rem .75rem;background:var(--card);border-bottom:1px solid var(--border);justify-content:flex-end}
+.lang-btn{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
+.lang-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cat-bar{background:var(--card);border-bottom:1px solid var(--border);padding:.625rem 1rem;display:flex;gap:.5rem;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:10}
+.cat-bar::-webkit-scrollbar{display:none}
+.cat-pill{padding:5px 14px;border-radius:20px;font-size:13px;border:1px solid var(--border);white-space:nowrap;cursor:pointer;background:var(--card);color:var(--muted);transition:all .15s;font-family:var(--font-body);flex-shrink:0}
+.cat-pill.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.menu-body{padding:.875rem;max-width:640px;margin:0 auto;padding-bottom:.25rem}
+.dish-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);display:flex;gap:.875rem;padding:.875rem;margin-bottom:.625rem;cursor:pointer;transition:box-shadow .15s;position:relative}
+.dish-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.dish-img{width:80px;height:80px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--bg2)}
+.dish-img-ph{width:80px;height:80px;border-radius:10px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0}
+.dish-body{flex:1;min-width:0}
+.dish-name{font-weight:600;font-size:14px;color:var(--text);line-height:1.3}
+.dish-desc{font-size:12px;color:var(--muted);margin-top:.25rem;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dish-weight{font-size:11px;color:var(--muted);margin-top:.25rem}
+.dish-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem}
+.dish-price{font-family:var(--font-head);font-size:1.05rem;color:var(--accent);font-weight:600}
+.add-btn{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;line-height:1}
+.add-btn:active{transform:scale(.9)}
+.add-btn.added{background:#2D6A4F;font-size:.8rem}
+.qty-chip{position:absolute;top:.5rem;right:.5rem;background:var(--accent);color:#fff;font-size:10px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.open{opacity:1;pointer-events:all}
+.sheet{background:var(--card);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;transform:translateY(100%);transition:transform .25s;scroll-behavior:auto}
+.overlay.open .sheet{transform:translateY(0)}
+.sh-handle{width:36px;height:3px;background:var(--border);border-radius:2px;margin:10px auto}
+.det-img{width:100%;max-height:380px;object-fit:contain;background:#f5f0eb}
+.det-body{padding:1rem}
+.det-name{font-family:var(--font-head);font-size:1.3rem;line-height:1.2;margin-bottom:.375rem}
+.det-img-wrap{position:relative}
+.det-close{position:absolute;top:.625rem;right:.625rem;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);border:none;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;z-index:2;backdrop-filter:blur(4px)}
+.det-meta{display:flex;align-items:center;gap:.75rem;margin-bottom:.625rem;flex-wrap:wrap}
+.det-weight{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:.25rem}
+.det-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:.875rem}
+.det-allergens{margin-bottom:.875rem}
+.det-allergens-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.375rem}
+.allergen-tag{display:inline-flex;align-items:center;gap:.25rem;background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--muted);margin:.2rem .2rem 0 0}
+.allergen-tag.warn{background:#FEF3C7;border-color:#FDE68A;color:#92400E}
+.det-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:.875rem}
+.det-price{font-family:var(--font-head);font-size:1.4rem;color:var(--accent);font-weight:600}
+.dish-allergens{display:flex;gap:.25rem;flex-wrap:wrap;margin-top:.375rem}
+.a-chip{font-size:10px;padding:1px 7px;border-radius:10px;background:#FEF3C7;color:#92400E;border:1px solid #FDE68A}
+.qty-ctrl{display:flex;align-items:center;gap:.625rem}
+.qty-btn{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:none;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text)}
+.qty-val{font-size:15px;font-weight:600;min-width:22px;text-align:center}
+.add-cart-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-body)}
+/* ── PROFILE CABINET ── */
+.prof-screen{display:none}
+.prof-screen.active{display:block}
+.prof-menu-item{width:100%;display:flex;align-items:center;gap:.875rem;padding:.875rem 1.25rem;background:none;border:none;cursor:pointer;font-family:var(--font-body);font-size:15px;text-align:left;transition:background .12s;color:var(--text)}
+.prof-menu-item:hover{background:var(--bg2)}
+.prof-menu-icon{font-size:1.1rem;width:24px;text-align:center;flex-shrink:0}
+.prof-menu-label{flex:1}
+.prof-menu-arrow{color:var(--muted);font-size:1.2rem}
+.prof-data-row{display:flex;align-items:center;padding:.875rem 1.25rem;cursor:pointer;transition:background .12s;border-bottom:1px solid var(--border)}
+.prof-data-row:last-child{border-bottom:none}
+.prof-data-row:hover{background:var(--bg2)}
+.prof-data-label{font-size:14px;font-weight:500;color:var(--text);min-width:100px}
+.prof-data-value{flex:1;font-size:14px;color:var(--muted);text-align:right;padding-right:.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+.prof-order-card{background:var(--bg2);border-radius:10px;padding:.875rem;margin-bottom:.75rem;font-size:13px}
+.prof-order-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.375rem}
+.prof-order-num{font-weight:600;color:var(--text)}
+.prof-order-date{color:var(--muted);font-size:12px}
+.prof-order-items{color:var(--muted);margin-bottom:.375rem;line-height:1.4}
+.prof-order-total{font-weight:600;color:var(--accent)}
+.auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .2s}
+.auth-overlay.open{opacity:1;pointer-events:all}
+.auth-box{background:var(--card);border-radius:var(--radius);width:100%;max-width:400px;padding:1.75rem;box-shadow:0 8px 40px rgba(0,0,0,.25)}
+.auth-logo{text-align:center;font-family:var(--font-head);font-size:1.3rem;font-weight:600;color:var(--accent);margin-bottom:.25rem}
+.auth-subtitle{text-align:center;font-size:.82rem;color:var(--muted);margin-bottom:1.25rem}
+.auth-tabs{display:flex;gap:.5rem;margin-bottom:1.25rem;background:var(--bg2);border-radius:10px;padding:3px}
+.auth-tab{flex:1;padding:.5rem;border:none;background:none;border-radius:8px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s}
+.auth-tab.active{background:var(--card);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.auth-field{margin-bottom:.875rem}
+.auth-label{font-size:12px;color:var(--muted);margin-bottom:.375rem;display:block}
+.auth-input{width:100%;padding:.625rem .875rem;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:var(--font-body);outline:none;transition:border .15s}
+.auth-input:focus{border-color:var(--accent)}
+.auth-select{width:100%;padding:.625rem .875rem;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:var(--font-body);outline:none;appearance:none;cursor:pointer}
+.auth-select:focus{border-color:var(--accent)}
+.auth-gender-row{display:flex;gap:.5rem}
+.auth-gender-btn{flex:1;padding:.5rem;border:1.5px solid var(--border);border-radius:10px;background:none;color:var(--muted);font-size:13px;cursor:pointer;transition:all .15s;font-family:var(--font-body)}
+.auth-gender-btn.active{border-color:var(--accent);background:rgba(193,68,14,.08);color:var(--text)}
+.auth-btn{width:100%;padding:.75rem;border:none;border-radius:10px;background:var(--accent);color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-body);transition:opacity .15s;margin-top:.25rem}
+.auth-btn:hover{opacity:.88}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed}
+.auth-google-btn{width:100%;padding:.7rem;border:1.5px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font-body);display:flex;align-items:center;justify-content:center;gap:.625rem;transition:all .15s;margin-bottom:.875rem}
+.auth-google-btn:hover{border-color:var(--accent)}
+.auth-divider{display:flex;align-items:center;gap:.75rem;margin:.875rem 0;color:var(--muted);font-size:12px}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.auth-skip{width:100%;padding:.5rem;border:none;background:none;color:var(--muted);font-size:13px;cursor:pointer;margin-top:.625rem;font-family:var(--font-body)}
+.auth-skip:hover{color:var(--text)}
+.auth-err{color:#EF4444;font-size:12px;margin-top:.5rem;text-align:center;min-height:18px}
+.auth-step{display:none}
+.auth-step.active{display:block}
+/* USER BAR */
+.user-bar{background:var(--card);border-bottom:1px solid var(--border);padding:.5rem 1rem;display:flex;align-items:center;gap:.625rem;max-width:640px;margin:0 auto;font-size:13px}
+.user-bar-avatar{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0}
+.user-bar-name{font-weight:500;color:var(--text);flex:1}
+.user-bar-logout{background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:12px;padding:3px 10px;cursor:pointer;font-family:var(--font-body)}
+.user-bar-login{background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:12px;padding:4px 12px;cursor:pointer;font-family:var(--font-body);margin-left:auto;font-weight:600}
+/* ── VENUE INFO BOTTOM ── */
+.venue-info-block{max-width:640px;margin:0 auto;padding:.875rem;padding-bottom:1.5rem}
+.vi-section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:.75rem;overflow:hidden}
+.vi-row{display:flex;align-items:center;gap:.875rem;padding:.875rem 1rem;border-bottom:1px solid var(--border)}
+.vi-row:last-child{border-bottom:none}
+.vi-icon{width:36px;height:36px;border-radius:10px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.vi-body{flex:1;min-width:0}
+.vi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.vi-value{font-size:14px;color:var(--text);word-break:break-all}
+.vi-copy{background:none;border:1px solid var(--border);border-radius:8px;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer;flex-shrink:0;font-family:var(--font-body);transition:all .15s}
+.vi-copy:hover{border-color:var(--accent);color:var(--accent)}
+.vi-about{padding:.875rem 1rem;font-size:13px;color:var(--muted);line-height:1.6}
+.vi-about-full{display:none}
+.vi-about-toggle{background:none;border:none;color:var(--accent);font-size:13px;cursor:pointer;padding:0;font-family:var(--font-body);margin-top:.25rem}
+.vi-social-row{display:flex;gap:.625rem;padding:.875rem 1rem;flex-wrap:wrap}
+.vi-social-btn{display:flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border:1px solid var(--border);border-radius:10px;background:none;color:var(--text);font-size:13px;font-weight:500;cursor:pointer;text-decoration:none;font-family:var(--font-body);transition:all .15s;flex:1;justify-content:center}
+.vi-social-btn:hover{border-color:var(--accent);color:var(--accent)}
+.vi-map{width:100%;height:200px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:.75rem}
+.vi-map iframe{width:100%;height:100%;border:none}
+.vi-map-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.75rem;border:1px solid var(--border);border-radius:var(--radius);background:var(--card);color:var(--text);font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;font-family:var(--font-body);transition:all .15s}
+.vi-map-btn:hover{border-color:var(--accent);color:var(--accent)}
+.vi-legal-item{border-bottom:1px solid var(--border)}
+.vi-legal-item:last-child{border-bottom:none}
+.vi-legal-head{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1rem;cursor:pointer;font-size:14px;font-weight:500}
+.vi-legal-head:hover{background:var(--bg2)}
+.vi-legal-arrow{color:var(--muted);font-size:1rem;transition:transform .2s}
+.vi-legal-arrow.open{transform:rotate(90deg)}
+.vi-legal-body{display:none;padding:.75rem 1rem 1rem;font-size:13px;color:var(--muted);line-height:1.6;white-space:pre-wrap}
+.cart-fab{position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;border:none;border-radius:30px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.75rem;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:all .25s;white-space:nowrap;font-family:var(--font-body);z-index:40}
+.cart-fab.hidden{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(20px);display:none}
+.cart-badge{background:rgba(255,255,255,.25);border-radius:12px;padding:2px 10px;font-size:13px}
+.cart-list{display:flex;flex-direction:column;gap:.5rem;max-height:240px;overflow-y:auto;margin-bottom:.875rem}
+.cart-row{display:flex;align-items:center;gap:.75rem;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.cart-row:last-child{border:none}
+.c-img{width:40px;height:40px;border-radius:8px;object-fit:cover;background:var(--bg2);flex-shrink:0}
+.c-img-ph{width:40px;height:40px;border-radius:8px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.c-info{flex:1;min-width:0}
+.c-name{font-size:13px;font-weight:500}
+.c-price{font-size:12px;color:var(--muted)}
+.c-qty{display:flex;align-items:center;gap:.375rem}
+.cq-btn{width:24px;height:24px;border-radius:50%;border:1px solid var(--border);background:none;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text)}
+.cq-val{font-size:13px;font-weight:600;min-width:16px;text-align:center}
+.cart-total{display:flex;justify-content:space-between;font-weight:600;font-size:15px;border-top:1px solid var(--border);padding-top:.75rem;margin-bottom:.875rem}
+.cart-total-price{color:var(--accent);font-family:var(--font-head)}
+.order-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-body)}
+.order-btn:disabled{opacity:.5;cursor:not-allowed}
+.success{position:fixed;inset:0;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;z-index:200}
+.success.open{display:flex}
+.s-icon{font-size:4rem;margin-bottom:1rem}
+.s-title{font-family:var(--font-head);font-size:1.5rem;margin-bottom:.5rem}
+.s-num{font-family:var(--font-head);font-size:2rem;color:var(--accent);background:var(--bg2);border-radius:10px;padding:.5rem 1.5rem;margin:1rem 0}
+.s-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:1.5rem}
+.back-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px 28px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-body)}
+.empty{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-icon{font-size:2.5rem;margin-bottom:.625rem;opacity:.4}
+.toast{position:fixed;bottom:6rem;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:300;white-space:nowrap}
+.toast.on{opacity:1}
+.order-type-bar{background:var(--card);border-bottom:1px solid var(--border);padding:.5rem 1rem;display:flex;gap:.375rem;position:sticky;top:0;z-index:11}
+.order-type-btn{flex:1;padding:7px 4px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s;font-family:var(--font-body);text-align:center}
+.order-type-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.order-type-btn:disabled{opacity:.35;cursor:not-allowed}
+.form-section{background:var(--bg2);border-radius:10px;padding:.875rem;margin-bottom:.75rem}
+.form-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.625rem}
+.time-slots{display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.375rem}
+.time-slot{padding:5px 12px;border-radius:20px;font-size:12px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;transition:all .15s}
+.time-slot.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cutlery-row{display:flex;align-items:center;gap:.5rem}
+.cutlery-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:none;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pay-opts{display:flex;gap:.5rem;margin-top:.375rem}
+.pay-opt{flex:1;padding:8px;border-radius:8px;border:1.5px solid var(--border);background:var(--card);font-size:12px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s}
+.pay-opt.active{border-color:var(--accent);background:var(--accent-soft,#FAECE7);color:var(--accent)}
 </style>
 </head>
-<body>
+<body class="public-menu">
+<script src="anti-scraping.js"></script>
+<script>
+window.__MQ_CFG = {
+  apiKey: "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
+  authDomain: "mageqrrest.firebaseapp.com",
+  projectId: "mageqrrest",
+  storageBucket: "mageqrrest.firebasestorage.app",
+  messagingSenderId: "207231972557",
+  appId: "1:207231972557:web:f8234c22e6b32a0a2ee584"
+};
+window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
+</script>
 
-<div id="loading">
-  <div class="loader"></div>
-  <div class="loader-text">Завантаження...</div>
+<div class="loader" id="loader">
+  <div class="loader-logo">✦ Завантаження...</div>
+  <div class="loader-spin"></div>
 </div>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="venue-logo" id="venue-logo">✦</div>
-  <div class="venue-name" id="venue-name">Mage QR Rest</div>
-  <div class="table-badge" id="table-badge">🪑 Стіл —</div>
+<div class="banner-photo" id="banner-photo">
+  <img id="banner-img" src="" alt="" style="display:none"/>
+  <div class="banner-photo-placeholder" id="banner-placeholder"></div>
+</div>
+<div class="venue-header">
+  <div class="venue-logo" id="venue-logo">🍽️</div>
+  <div>
+    <div class="venue-name" id="venue-name">Меню</div>
+    <div class="venue-tag" id="venue-tag"></div>
+  </div>
 </div>
 
-<!-- LANG BAR -->
+<!-- ПЕРЕМИКАЧ МОВ -->
+<!-- USER BAR -->
+<div id="user-bar" class="user-bar" style="display:none">
+  <div class="user-bar-avatar" id="ub-avatar" onclick="openProfile()" style="cursor:pointer">?</div>
+  <div class="user-bar-name" id="ub-name" onclick="openProfile()" style="cursor:pointer"></div>
+  <button class="user-bar-logout" id="ub-logout-btn" onclick="doSignOut()">—</button>
+</div>
+<div id="user-bar-guest" class="user-bar" style="display:none">
+  <span style="color:var(--muted);font-size:12px;flex:1" id="ub-guest-text">Замовляєте як гість</span>
+  <button class="user-bar-login" onclick="openAuth()">—</button>
+</div>
+
+<!-- PROFILE OVERLAY -->
+<div class="auth-overlay" id="profile-overlay" onclick="if(event.target===this)closeProfile()">
+  <div class="auth-box" onclick="event.stopPropagation()" style="max-width:400px;padding:0;overflow:hidden;border-radius:var(--radius)">
+
+    <!-- ЕКРАН 1: Головна кабінету -->
+    <div id="prof-screen-main" class="prof-screen active">
+      <!-- Шапка з ім'ям -->
+      <div style="padding:1.5rem 1.25rem 1rem;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:.875rem">
+          <div class="user-bar-avatar" id="prof-avatar" style="width:52px;height:52px;font-size:1.3rem;flex-shrink:0">?</div>
+          <div>
+            <div style="font-weight:700;font-size:1.1rem;font-family:var(--font-head)" id="prof-name">—</div>
+            <div style="font-size:12px;color:var(--muted)" id="prof-email">—</div>
+          </div>
+          <button onclick="closeProfile()" style="margin-left:auto;background:none;border:none;font-size:1.2rem;color:var(--muted);cursor:pointer;padding:4px">✕</button>
+        </div>
+      </div>
+      <!-- Пункти меню -->
+      <div style="padding:.75rem 0">
+        <button class="prof-menu-item" onclick="profNav('orders')">
+          <span class="prof-menu-icon">📋</span>
+          <span class="prof-menu-label" id="prof-lbl-orders">Історія замовлень</span>
+          <span class="prof-menu-arrow">›</span>
+        </button>
+        <button class="prof-menu-item" onclick="profNav('settings')">
+          <span class="prof-menu-icon">👤</span>
+          <span class="prof-menu-label" id="prof-lbl-settings">Особисті дані та Налаштування</span>
+          <span class="prof-menu-arrow">›</span>
+        </button>
+      </div>
+      <div style="padding:.5rem 1.25rem 1.25rem;border-top:1px solid var(--border)">
+        <button id="prof-logout-btn" onclick="closeProfile();doSignOut()" style="width:100%;padding:.875rem;border:1.5px solid var(--border);border-radius:10px;background:none;color:var(--text);font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-body)">Вийти</button>
+      </div>
+    </div>
+
+    <!-- ЕКРАН 2: Особисті дані -->
+    <div id="prof-screen-settings" class="prof-screen">
+      <div style="display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border)">
+        <button onclick="profNav('main')" style="background:none;border:none;font-size:1.1rem;color:var(--accent);cursor:pointer;padding:4px 8px 4px 0">‹</button>
+        <div style="font-weight:600;font-size:1rem" id="prof-lbl-settings-title">Особисті дані та Налаштування</div>
+      </div>
+      <div style="padding:.75rem 0">
+        <div class="prof-data-row" onclick="profEditField('name')">
+          <span class="prof-data-label" id="prof-lbl-name">Ім'я</span>
+          <span class="prof-data-value" id="prof-data-name">—</span>
+          <span class="prof-menu-arrow">›</span>
+        </div>
+        <div class="prof-data-row" onclick="profEditField('email')">
+          <span class="prof-data-label" id="prof-lbl-email-f">Ел. пошта</span>
+          <span class="prof-data-value" id="prof-data-email">—</span>
+          <span class="prof-menu-arrow">›</span>
+        </div>
+        <div class="prof-data-row" onclick="profEditField('city')">
+          <span class="prof-data-label" id="prof-lbl-city-f">Місто</span>
+          <span class="prof-data-value" id="prof-data-city">—</span>
+          <span class="prof-menu-arrow">›</span>
+        </div>
+        <div class="prof-data-row" onclick="profEditField('gender')">
+          <span class="prof-data-label" id="prof-lbl-gender-f">Стать</span>
+          <span class="prof-data-value" id="prof-data-gender">—</span>
+          <span class="prof-menu-arrow">›</span>
+        </div>
+        <div class="prof-data-row" onclick="profEditField('age')">
+          <span class="prof-data-label" id="prof-lbl-age-f">Вік</span>
+          <span class="prof-data-value" id="prof-data-age">—</span>
+          <span class="prof-menu-arrow">›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ЕКРАН 3: Редагування поля -->
+    <div id="prof-screen-edit" class="prof-screen">
+      <div style="display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border)">
+        <button onclick="profNav('settings')" style="background:none;border:none;font-size:1.1rem;color:var(--accent);cursor:pointer;padding:4px 8px 4px 0">‹</button>
+        <div style="font-weight:600;font-size:1rem" id="prof-edit-title">Редагування</div>
+      </div>
+      <div style="padding:1.25rem">
+        <!-- Звичайний текстовий input -->
+        <div id="prof-edit-text-wrap">
+          <input class="auth-input" type="text" id="prof-edit-input" style="margin-bottom:1rem"/>
+        </div>
+        <!-- Вибір статі -->
+        <div id="prof-edit-gender-wrap" style="display:none;margin-bottom:1rem">
+          <div class="auth-gender-row">
+            <button class="auth-gender-btn" id="pe-g-male" onclick="selectEditGender('male')">—</button>
+            <button class="auth-gender-btn" id="pe-g-female" onclick="selectEditGender('female')">—</button>
+            <button class="auth-gender-btn" id="pe-g-other" onclick="selectEditGender('other')">—</button>
+          </div>
+        </div>
+        <!-- Вибір віку -->
+        <div id="prof-edit-age-wrap" style="display:none;margin-bottom:1rem">
+          <select class="auth-select" id="prof-edit-age-sel">
+            <option value="">—</option>
+            <option value="16-20">16–20</option>
+            <option value="21-25">21–25</option>
+            <option value="26-35">26–35</option>
+            <option value="36-45">36–45</option>
+            <option value="46+">46+</option>
+          </select>
+        </div>
+        <div class="auth-err" id="prof-edit-err"></div>
+        <button class="auth-btn" id="prof-edit-save-btn" onclick="profSaveField()">Зберегти</button>
+      </div>
+    </div>
+
+    <!-- ЕКРАН 4: Історія замовлень -->
+    <div id="prof-screen-orders" class="prof-screen">
+      <div style="display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid var(--border)">
+        <button onclick="profNav('main')" style="background:none;border:none;font-size:1.1rem;color:var(--accent);cursor:pointer;padding:4px 8px 4px 0">‹</button>
+        <div style="font-weight:600;font-size:1rem" id="prof-lbl-orders-title">Історія замовлень</div>
+      </div>
+      <div id="prof-orders-list" style="padding:.75rem 1.25rem;max-height:420px;overflow-y:auto">
+        <div style="text-align:center;color:var(--muted);padding:2rem 0;font-size:14px" id="prof-orders-empty">Завантаження...</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="auth-overlay" id="auth-overlay" onclick="if(event.target===this)closeAuth()">
+  <div class="auth-box" onclick="event.stopPropagation()">
+    <div class="auth-logo">✦ Mage QR Rest</div>
+    <div class="auth-subtitle" id="auth-subtitle"></div>
+
+    <div class="auth-tabs" id="auth-tabs">
+      <button class="auth-tab active" id="tab-signin" onclick="switchAuthTab('signin')">—</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">—</button>
+    </div>
+
+    <!-- КРОК 1: Email/pass або Google -->
+    <div class="auth-step active" id="auth-step-1">
+      <button class="auth-google-btn" id="auth-google-btn" onclick="doGoogleSignIn()">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+        <span id="auth-google-text">—</span>
+      </button>
+      <div class="auth-divider"><span id="auth-or-text">—</span></div>
+      <div class="auth-field">
+        <label class="auth-label" id="auth-email-label">Email</label>
+        <input class="auth-input" type="email" id="auth-email" autocomplete="email"/>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" id="auth-pass-label">—</label>
+        <input class="auth-input" type="password" id="auth-pass" autocomplete="current-password"/>
+      </div>
+      <div class="auth-err" id="auth-err-1"></div>
+      <button class="auth-btn" id="auth-main-btn" onclick="doEmailAuth()">—</button>
+      <div style="text-align:center;margin-top:.75rem">
+        <button style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:var(--font-body)" id="auth-forgot-btn" onclick="showForgot()">—</button>
+      </div>
+      <button class="auth-skip" id="auth-skip-btn" onclick="closeAuth()">—</button>
+    </div>
+
+    <!-- КРОК 2 (реєстрація): Ім'я, стать, вік, місто -->
+    <div class="auth-step" id="auth-step-2">
+      <div class="auth-field">
+        <label class="auth-label" id="reg-name-label">—</label>
+        <input class="auth-input" type="text" id="reg-name" autocomplete="name"/>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" id="reg-gender-label">—</label>
+        <div class="auth-gender-row">
+          <button class="auth-gender-btn" id="g-male" onclick="selectGender('male')">—</button>
+          <button class="auth-gender-btn" id="g-female" onclick="selectGender('female')">—</button>
+          <button class="auth-gender-btn" id="g-other" onclick="selectGender('other')">—</button>
+        </div>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" id="reg-age-label">—</label>
+        <select class="auth-select" id="reg-age">
+          <option value="">—</option>
+          <option value="16-20">16–20</option>
+          <option value="21-25">21–25</option>
+          <option value="26-35">26–35</option>
+          <option value="36-45">36–45</option>
+          <option value="46+">46+</option>
+        </select>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" id="reg-city-label">—</label>
+        <input class="auth-input" type="text" id="reg-city" autocomplete="address-level2"/>
+      </div>
+      <div class="auth-err" id="auth-err-2"></div>
+      <button class="auth-btn" id="reg-submit-btn" onclick="doRegisterStep2()">—</button>
+    </div>
+
+    <!-- Скидання паролю -->
+    <div class="auth-step" id="auth-step-reset">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:1rem" id="reset-desc">—</p>
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input class="auth-input" type="email" id="reset-email" autocomplete="email"/>
+      </div>
+      <div class="auth-err" id="auth-err-reset"></div>
+      <button class="auth-btn" id="reset-send-btn" onclick="doResetPassword()">—</button>
+      <button class="auth-skip" onclick="switchAuthTab('signin')">← —</button>
+    </div>
+  </div>
+</div>
+
 <div class="lang-bar" id="lang-bar">
   <button class="lang-btn active" data-lang="uk">🇺🇦 UA</button>
   <button class="lang-btn" data-lang="en">🇬🇧 EN</button>
@@ -510,949 +456,2058 @@
   <button class="lang-btn" data-lang="cnr">🇲🇪 MNE</button>
 </div>
 
-<!-- BILL BANNER (якщо є відкритий рахунок) -->
-<div class="bill-banner" id="bill-banner" data-action="open-bill">
-  <div class="bb-label">💳 Відкритий рахунок</div>
-  <div class="bb-amount" id="bb-amount">—</div>
-  <div class="bb-desc" id="bb-desc">Натисніть щоб оплатити</div>
-  <div class="bb-cta">Оплатити →</div>
+<div id="order-type-bar" class="order-type-bar" style="display:none">
+  <button class="order-type-btn active" id="ot-dine" onclick="setOrderType('dine_in')">🪑 В закладі</button>
+  <button class="order-type-btn" id="ot-take" onclick="setOrderType('takeaway')">🥡 З собою</button>
+  <button class="order-type-btn" id="ot-del" onclick="setOrderType('delivery')">🚗 Доставка</button>
 </div>
+<div class="cat-bar" id="cat-bar"></div>
+<div class="menu-body" id="menu-body"></div>
 
-<!-- ACTIONS -->
-<div class="actions">
-  <a class="action-card primary" id="menu-link" href="#">
-    <div class="ac-icon">🍽️</div>
-    <div class="ac-body">
-      <div class="ac-title">Меню та замовлення</div>
-      <div class="ac-desc">Переглядайте страви і замовляйте без офіціанта</div>
-    </div>
-    <div class="ac-arrow">→</div>
-  </a>
+<!-- VENUE INFO BOTTOM -->
+<div class="venue-info-block" id="venue-info-block" style="display:none">
 
-  <div class="action-card" data-action="open-bill">
-    <div class="ac-icon">💳</div>
-    <div class="ac-body">
-      <div class="ac-title">Рахунок</div>
-      <div class="ac-desc" id="bill-action-desc">Переглянути та оплатити рахунок за столом</div>
-    </div>
-    <div class="ac-arrow">→</div>
-  </div>
-
-  <div class="action-card" data-action="open-tips">
-    <div class="ac-icon">💸</div>
-    <div class="ac-body">
-      <div class="ac-title">Чайові</div>
-      <div class="ac-desc">Подякувати персоналу напряму</div>
-    </div>
-    <div class="ac-arrow">→</div>
-  </div>
-
-  <div class="action-card" data-action="open-review">
-    <div class="ac-icon">⭐</div>
-    <div class="ac-body">
-      <div class="ac-title">Залишити відгук</div>
-      <div class="ac-desc">Ваша думка допомагає нам ставати кращими</div>
-    </div>
-    <div class="ac-arrow">→</div>
-  </div>
-</div>
-
-<div class="footer">✦ Mage QR Rest · MAGE GROUP</div>
-
-<!-- ─── BILL SHEET ─────────────────────────────── -->
-<div class="overlay" id="bill-overlay" onclick="if(event.target===this)closeOverlay('bill-overlay')">
-  <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">💳 Ваш рахунок</div>
-
-    <div id="bill-content">
-      <!-- заповнюється JS -->
+  <!-- Про заклад -->
+  <div class="vi-section" id="vi-about-wrap" style="display:none">
+    <div class="vi-about">
+      <span id="vi-about-short"></span>
+      <span class="vi-about-full" id="vi-about-full"></span>
+      <div><button class="vi-about-toggle" id="vi-about-btn" onclick="toggleAbout()"></button></div>
     </div>
   </div>
-</div>
 
-<!-- ─── REVIEW SHEET ───────────────────────────── -->
-<div class="overlay" id="review-overlay" onclick="if(event.target===this)closeOverlay('review-overlay')">
-  <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">⭐ Ваш відгук</div>
-
-    <div id="review-content">
-      <div style="font-size:.85rem;color:var(--muted);margin-bottom:.75rem">Як вам у нас сьогодні?</div>
-      <div class="stars" id="stars">
-        <span class="star" onclick="setStar(1)">★</span>
-        <span class="star" onclick="setStar(2)">★</span>
-        <span class="star" onclick="setStar(3)">★</span>
-        <span class="star" onclick="setStar(4)">★</span>
-        <span class="star" onclick="setStar(5)">★</span>
+  <!-- Контакти -->
+  <div class="vi-section" id="vi-contacts-wrap" style="display:none">
+    <div class="vi-row" id="vi-wifi-row" style="display:none">
+      <div class="vi-icon">📶</div>
+      <div class="vi-body">
+        <div class="vi-label" id="vi-lbl-wifi">WiFi</div>
+        <div class="vi-value" id="vi-wifi-val"></div>
       </div>
-      <textarea class="review-textarea" id="review-text" rows="3"
-        placeholder="Напишіть що сподобалось або що варто покращити..."></textarea>
-      <input type="text" id="review-name"
-        style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--font);font-size:.9rem;padding:.75rem;outline:none;margin-bottom:.875rem"
-        placeholder="Ваше ім'я (необов'язково)"/>
-      <button class="pay-btn online" data-action="submit-review" id="review-btn">
-        <span class="btn-spinner"></span>
-        <span class="btn-text">✓ Надіслати відгук</span>
+      <button class="vi-copy" onclick="viCopy('vi-wifi-val')" id="vi-lbl-copy">⎘</button>
+    </div>
+    <div class="vi-row" id="vi-addr-row" style="display:none">
+      <div class="vi-icon">📍</div>
+      <div class="vi-body">
+        <div class="vi-label" id="vi-lbl-addr">Адреса</div>
+        <div class="vi-value" id="vi-addr-val"></div>
+      </div>
+      <button class="vi-copy" onclick="viCopy('vi-addr-val')">⎘</button>
+    </div>
+    <div class="vi-row" id="vi-phone-row" style="display:none">
+      <div class="vi-icon">📞</div>
+      <div class="vi-body">
+        <div class="vi-label" id="vi-lbl-phone">Телефон</div>
+        <div class="vi-value" id="vi-phone-val"></div>
+      </div>
+      <button class="vi-copy" onclick="viCopy('vi-phone-val')">⎘</button>
+    </div>
+    <div class="vi-row" id="vi-hours-row" style="display:none">
+      <div class="vi-icon">🕐</div>
+      <div class="vi-body">
+        <div class="vi-label" id="vi-lbl-hours">Робочий час</div>
+        <div class="vi-value" id="vi-hours-val"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Соцмережі -->
+  <div class="vi-section" id="vi-social-wrap" style="display:none">
+    <div class="vi-social-row">
+      <a class="vi-social-btn" id="vi-social-google" href="#" target="_blank" rel="noopener" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+        <span id="vi-lbl-google">Google</span>
+      </a>
+      <a class="vi-social-btn" id="vi-social-instagram" href="#" target="_blank" rel="noopener" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="url(#ig)" stroke-width="2"><defs><linearGradient id="ig" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f09433"/><stop offset="50%" stop-color="#e6683c"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="#e6683c" stroke="none"/></svg>
+        <span id="vi-lbl-instagram">Instagram</span>
+      </a>
+      <a class="vi-social-btn" id="vi-social-tiktok" href="#" target="_blank" rel="noopener" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
+        <span id="vi-lbl-tiktok">TikTok</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Карта -->
+  <div id="vi-map-wrap" style="display:none">
+    <div class="vi-map" id="vi-map-frame"></div>
+    <a class="vi-map-btn" id="vi-map-link" href="#" target="_blank" rel="noopener">
+      🗺 <span id="vi-lbl-getlocation">Відкрити на картах</span>
+    </a>
+  </div>
+
+  <!-- Правова інформація -->
+  <div class="vi-section" id="vi-legal-wrap" style="display:none">
+    <div class="vi-legal-item" id="vi-legal-company-wrap" style="display:none">
+      <div class="vi-legal-head" onclick="toggleLegal('company')">
+        <span id="vi-lbl-company">ℹ️ Інформація про компанію</span>
+        <span class="vi-legal-arrow" id="vi-arr-company">›</span>
+      </div>
+      <div class="vi-legal-body" id="vi-legal-company-body"></div>
+    </div>
+    <div class="vi-legal-item" id="vi-legal-cookie-wrap" style="display:none">
+      <div class="vi-legal-head" onclick="toggleLegal('cookie')">
+        <span id="vi-lbl-cookie">🍪 Політика використання файлів cookie</span>
+        <span class="vi-legal-arrow" id="vi-arr-cookie">›</span>
+      </div>
+      <div class="vi-legal-body" id="vi-legal-cookie-body"></div>
+    </div>
+    <div class="vi-legal-item" id="vi-legal-terms-wrap" style="display:none">
+      <div class="vi-legal-head" onclick="toggleLegal('terms')">
+        <span id="vi-lbl-terms">📋 Умови користування</span>
+        <span class="vi-legal-arrow" id="vi-arr-terms">›</span>
+      </div>
+      <div class="vi-legal-body" id="vi-legal-terms-body"></div>
+    </div>
+    <div class="vi-legal-item" id="vi-legal-privacy-wrap" style="display:none">
+      <div class="vi-legal-head" onclick="toggleLegal('privacy')">
+        <span id="vi-lbl-privacy">🔒 Політика конфіденційності</span>
+        <span class="vi-legal-arrow" id="vi-arr-privacy">›</span>
+      </div>
+      <div class="vi-legal-body" id="vi-legal-privacy-body"></div>
+    </div>
+  </div>
+
+</div>
+<button class="cart-fab hidden" id="cart-fab" onclick="openCart()">
+  🛒 Кошик <span class="cart-badge" id="cart-badge">0 грн</span>
+</button>
+
+<!-- Деталі страви -->
+<div class="overlay" id="det-ov" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div class="det-img-wrap">
+      <img id="det-img" src="" alt="" style="display:none" class="det-img"/>
+      <button class="det-close" id="det-close-btn" style="display:none" onclick="document.getElementById('det-ov').classList.remove('open')">✕</button>
+    </div>
+    <div class="det-body">
+      <div class="det-name" id="det-name"></div>
+      <div class="det-meta">
+        <div class="det-weight" id="det-weight" style="display:none">⚖️ <span id="det-weight-val"></span></div>
+      </div>
+      <div class="det-desc" id="det-desc"></div>
+      <div class="det-allergens" id="det-allergens" style="display:none">
+        <div class="det-allergens-title">⚠️ Алергени</div>
+        <div id="det-allergens-list"></div>
+      </div>
+      <div class="det-foot">
+        <div class="det-price" id="det-price"></div>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="dQty(-1)">−</button>
+          <div class="qty-val" id="det-qty">1</div>
+          <button class="qty-btn" onclick="dQty(1)">+</button>
+        </div>
+        <button class="add-cart-btn" id="add-cart-btn" onclick="addFromDet()">Додати</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Кошик -->
+<div class="overlay" id="cart-ov" onclick="if(event.target===this)closeCart()">
+  <div class="sheet">
+    <div class="sh-handle"></div>
+    <div style="padding:0 1rem 1.5rem">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <div style="font-family:var(--font-head);font-size:1.2rem;font-weight:600" id="cart-title">🛒 Ваше замовлення</div>
+        <button onclick="closeCart()" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.4rem;line-height:1;padding:4px 8px;border-radius:6px" title="Закрити">✕</button>
+      </div>
+
+      <div class="cart-list" id="cart-list"></div>
+      <div class="cart-total"><span id="total-label">Разом:</span><span class="cart-total-price" id="cart-total-val">0 грн</span></div>
+
+      <div class="form-section">
+        <div class="form-section-title" id="order-type-title">Тип замовлення</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem" id="order-type-opts-grid"></div>
+      </div>
+
+      <div class="form-section" id="form-table">
+        <div class="form-section-title" id="table-num-title">🪑 Номер столу</div>
+        <div id="table-auto-display" style="display:none;font-size:18px;font-weight:700;color:var(--accent);padding:.5rem 0"></div>
+        <input id="cli-table" type="number" placeholder="Введіть номер столу" style="font-size:16px;padding:12px"/>
+      </div>
+
+      <div class="form-section" id="form-time" style="display:none">
+        <div class="form-section-title" id="pickup-time-title">🕐 Час самовиносу</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:.625rem" id="min-time-note">Мін. 40 хвилин від зараз</div>
+        <div class="time-slots" id="time-slots"></div>
+      </div>
+
+      <div class="form-section" id="form-address" style="display:none">
+        <div class="form-section-title" id="delivery-addr-title">📍 Адреса доставки</div>
+        <div id="delivery-price-info" style="font-size:13px;margin-bottom:.75rem;color:var(--accent);font-weight:500"></div>
+        <div style="margin-bottom:.75rem">
+          <label id="lbl-city" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Місто *</label>
+          <input id="cli-city" type="text" placeholder="Місто" style="font-size:16px;padding:12px"/>
+        </div>
+        <div style="margin-bottom:.75rem;position:relative">
+          <label id="lbl-street" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Вулиця та будинок *</label>
+          <input id="cli-address" type="text" placeholder="вул. Шевченка, 12" style="font-size:16px;padding:12px" autocomplete="off"/>
+          <div id="address-suggestions" style="display:none;position:absolute;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-top:4px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.15);z-index:100"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem">
+          <div>
+            <label id="lbl-apt" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Квартира</label>
+            <input id="cli-apt" type="text" placeholder="42" style="font-size:16px;padding:12px;width:100%"/>
+          </div>
+          <div>
+            <label id="lbl-entrance" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Під'їзд</label>
+            <input id="cli-entrance" type="text" placeholder="2" style="font-size:16px;padding:12px;width:100%"/>
+          </div>
+        </div>
+        <div style="margin-bottom:.75rem">
+          <label id="lbl-floor" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Поверх</label>
+          <input id="cli-floor" type="text" placeholder="5" style="font-size:16px;padding:12px;width:100%"/>
+        </div>
+        <div>
+          <label id="lbl-courier" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Коментар для кур'єра</label>
+          <textarea id="cli-delivery-comment" rows="2" placeholder="Код домофону, орієнтир..." style="font-size:15px;padding:12px;width:100%;border:1px solid var(--border);border-radius:8px;background:var(--bg);font-family:var(--font-body);resize:none;outline:none;color:var(--text)"></textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title" id="contacts-title">👤 Контактні дані</div>
+        <div style="margin-bottom:.75rem">
+          <label id="lbl-name" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Ім'я <span id="name-required-star">*</span></label>
+          <input id="cli-name" type="text" placeholder="Ваше ім'я" style="font-size:16px;padding:12px"/>
+        </div>
+        <div>
+        <div id="form-phone-block"><label id="lbl-phone" style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Телефон *</label>
+          <div style="display:flex;align-items:center;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg)">
+            <span style="padding:12px;font-size:16px;color:var(--text);font-weight:600;border-right:1px solid var(--border);background:var(--bg2)">+38</span>
+            <input id="cli-phone" type="tel" placeholder="0XXXXXXXXX" maxlength="10"
+              style="border:none;border-radius:0;flex:1;font-size:16px;padding:12px;background:var(--bg);color:var(--text);outline:none"
+              oninput="this.value=this.value.replace(/[^0-9]/g,'')"/>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="form-section" id="form-cutlery">
+        <div class="form-section-title" id="cutlery-title">🍴 Прибори</div>
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <button class="cutlery-btn" onclick="changeCutlery(-1)" style="width:40px;height:40px;font-size:1.3rem;border-radius:50%;border:1.5px solid var(--border);background:none;cursor:pointer">−</button>
+          <span id="cutlery-val" style="font-size:20px;font-weight:700;min-width:36px;text-align:center">1</span>
+          <button class="cutlery-btn" onclick="changeCutlery(1)" style="width:40px;height:40px;font-size:1.3rem;border-radius:50%;border:1.5px solid var(--border);background:none;cursor:pointer">+</button>
+          <span id="lbl-persons" style="font-size:14px;color:var(--muted)">осіб</span>
+          <button onclick="setCutleryNone()" id="cutlery-none-btn"
+            style="margin-left:auto;font-size:13px;padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:none;cursor:pointer;color:var(--muted)">
+            Не потрібні
+          </button>
+        </div>
+      </div>
+
+      <div class="form-section" id="form-comment">
+        <div class="form-section-title" id="comment-label">💬 Коментар для закладу</div>
+        <textarea id="cli-comment" rows="2" placeholder="Побажання, алергії..."
+          style="font-size:15px;padding:12px;width:100%;border:1px solid var(--border);border-radius:8px;background:var(--bg);font-family:var(--font-body);resize:none;outline:none;color:var(--text)"></textarea>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title" id="payment-title">💳 Спосіб оплати</div>
+        <div style="display:flex;gap:.5rem">
+          <div class="pay-opt active" id="pay-opt-cash" onclick="selectPayment('cash')" style="flex:1;padding:12px;font-size:14px;text-align:center">💵 Готівкою при отриманні</div>
+          <div class="pay-opt" id="pay-opt-online" onclick="selectPayment('online')" style="flex:1;padding:12px;font-size:14px;text-align:center;display:none">💳 Карткою онлайн</div>
+        </div>
+      </div>
+
+      <button class="order-btn" id="order-btn" onclick="placeOrder()" style="font-size:16px;padding:16px;margin-top:.5rem">
+        Оформити замовлення
       </button>
+      <div style="text-align:center;margin-top:1rem">
+        <span id="continue-btn" style="font-size:14px;color:var(--muted);cursor:pointer" onclick="closeCart()">← Продовжити вибір</span>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ─── TIPS SHEET ─────────────────────────────── -->
-<div class="overlay" id="tips-overlay" onclick="if(event.target===this)closeOverlay('tips-overlay')">
-  <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">💸 Чайові</div>
-
-    <div id="tips-content">
-      <div style="font-size:.85rem;color:var(--muted);margin-bottom:.75rem" id="tips-staff-label">
-        Оберіть кому залишити чайові:
-      </div>
-      <div class="staff-grid" id="staff-grid"></div>
-      <div style="font-size:.85rem;color:var(--muted);margin:.75rem 0 .375rem">Сума чайових:</div>
-      <div class="tip-amounts" id="tip-amounts"></div>
-      <div class="tip-custom-wrap">
-        <input type="number" id="tip-custom" placeholder="Своя сума" min="10" step="5"
-          oninput="selectTip(null, this.value)"/>
-        <span style="color:var(--muted);font-size:.9rem" id="tip-currency-sym">₴</span>
-      </div>
-      <button class="pay-btn online" data-action="pay-tips" id="tips-btn">
-        <span class="btn-spinner"></span>
-        <span class="btn-text">💸 Надіслати чайові</span>
-      </button>
-    </div>
-  </div>
+<!-- Успіх -->
+<div class="success" id="success">
+  <div class="s-icon" id="s-icon">✅</div>
+  <div class="s-title" id="s-title">Замовлення прийнято!</div>
+  <div class="s-num" id="s-num" style="display:none"></div>
+  <div class="s-sub" id="s-sub">Очікуйте підтвердження від закладу.<br/>Орієнтовний час — 20–35 хвилин.</div>
+  <button class="back-btn" id="back-btn" onclick="resetSuccess()">← Назад до меню</button>
 </div>
 
-<script src="anti-scraping.js"></script>
-<script>
-window.__MQ_CFG = {
-  apiKey:            "AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA",
-  authDomain:        "mageqrrest.firebaseapp.com",
-  projectId:         "mageqrrest",
-  storageBucket:     "mageqrrest.firebasestorage.app",
-  messagingSenderId: "207231972557",
-  appId:             "1:207231972557:web:f8234c22e6b32a0a2ee584",
-};
-window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
-</script>
+<div class="toast" id="toast"></div>
+
 <script type="module">
 import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, onSnapshot, query, where, orderBy, serverTimestamp }
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, serverTimestamp }
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { getAuth } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {
+  getAuth, onAuthStateChanged, signOut,
+  GoogleAuthProvider, signInWithPopup,
+  createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  sendPasswordResetEmail, updateProfile,
+  browserLocalPersistence, setPersistence,
+} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-// ── UI STRINGS — переклад інтерфейсу ─────────────────────────────
-const UI = {
-  uk: {
-    loading:'Завантаження...',
-    tableBadge:'🪑 Стіл №',
-    bbLabel:'💳 ВІДКРИТИЙ РАХУНОК', bbDesc:'Натисніть щоб оплатити', bbCta:'Оплатити →',
-    menuTitle:'Меню та замовлення', menuDesc:'Переглядайте страви і замовляйте без офіціанта',
-    billTitle:'Рахунок', billDesc:'Переглянути та оплатити рахунок за столом',
-    billOpenDesc:'Є відкритий рахунок — оплатіть онлайн',
-    tipsTitle:'Чайові', tipsDesc:'Подякувати персоналу напряму',
-    reviewTitle:'Залишити відгук', reviewDesc:'Ваша думка допомагає нам ставати кращими',
-    billSheetTitle:'💳 Ваш рахунок',
-    reviewSheetTitle:'⭐ Ваш відгук',
-    reviewQuestion:'Як вам у нас сьогодні?',
-    reviewPh:'Напишіть що сподобалось або що варто покращити...',
-    reviewNamePh:"Ваше ім'я (необов'язково)",
-    reviewBtn:'✓ Надіслати відгук',
-    tipsSheetTitle:'💸 Чайові',
-    tipsStaffLabel:'Оберіть кому залишити чайові:',
-    tipsAmountLabel:'Сума чайових:',
-    tipsCustomPh:'Своя сума',
-    tipsBtn:'💸 Надіслати чайові',
-    noBill:'Рахунок ще не виставлений.\nЗверніться до офіціанта.',
-    payOnlineBtn:'💳 Оплатити онлайн',
-    payCashBtn:'💵 Оплачу готівкою / карткою',
-    payCashAlert:'✓ Попросіть офіціанта розрахувати вас готівкою або через термінал.',
-    reviewRatingAlert:'Оберіть оцінку',
-    tipsAmountAlert:'Оберіть суму чайових',
-    tipsThanks:'Дякуємо за чайові!',
-    reviewThanks:'Дякуємо за відгук!',
-    billTotal:'Разом',
-    askForWaiter:'Попросіть офіціанта',
-    askForWaiterDesc:'Офіціант надішле вам QR-код або посилання для оплати',
-  },
-  en: {
-    loading:'Loading...',
-    tableBadge:'🪑 Table №',
-    bbLabel:'💳 OPEN BILL', bbDesc:'Tap to pay', bbCta:'Pay →',
-    menuTitle:'Menu & orders', menuDesc:'Browse dishes and order without a waiter',
-    billTitle:'Bill', billDesc:'View and pay your table bill',
-    billOpenDesc:'Open bill — pay online',
-    tipsTitle:'Tips', tipsDesc:'Thank the staff directly',
-    reviewTitle:'Leave a review', reviewDesc:'Your opinion helps us improve',
-    billSheetTitle:'💳 Your bill',
-    reviewSheetTitle:'⭐ Your review',
-    reviewQuestion:'How was your experience today?',
-    reviewPh:'Write what you liked or what could be improved...',
-    reviewNamePh:'Your name (optional)',
-    reviewBtn:'✓ Submit review',
-    tipsSheetTitle:'💸 Tips',
-    tipsStaffLabel:'Choose who to tip:',
-    tipsAmountLabel:'Tip amount:',
-    tipsCustomPh:'Custom amount',
-    tipsBtn:'💸 Send tips',
-    noBill:'Bill not issued yet.\nPlease ask your waiter.',
-    payOnlineBtn:'💳 Pay online',
-    payCashBtn:'💵 Pay with cash / card',
-    payCashAlert:'✓ Please ask the waiter to process your cash or card payment.',
-    reviewRatingAlert:'Please select a rating',
-    tipsAmountAlert:'Please select a tip amount',
-    tipsThanks:'Thank you for the tips!',
-    reviewThanks:'Thank you for your review!',
-    billTotal:'Total',
-    askForWaiter:'Ask the waiter',
-    askForWaiterDesc:'The waiter will send you a QR code or payment link',
-  },
-  pl: {
-    loading:'Ładowanie...',
-    tableBadge:'🪑 Stolik №',
-    bbLabel:'💳 OTWARTY RACHUNEK', bbDesc:'Dotknij aby zapłacić', bbCta:'Zapłać →',
-    menuTitle:'Menu i zamówienia', menuDesc:'Przeglądaj dania i zamawiaj bez kelnera',
-    billTitle:'Rachunek', billDesc:'Wyświetl i opłać rachunek za stolik',
-    billOpenDesc:'Otwarty rachunek — zapłać online',
-    tipsTitle:'Napiwki', tipsDesc:'Podziękuj personelowi bezpośrednio',
-    reviewTitle:'Zostaw opinię', reviewDesc:'Twoja opinia pomaga nam się rozwijać',
-    billSheetTitle:'💳 Twój rachunek',
-    reviewSheetTitle:'⭐ Twoja opinia',
-    reviewQuestion:'Jak ci u nas dzisiaj?',
-    reviewPh:'Napisz co ci się podobało lub co można poprawić...',
-    reviewNamePh:'Twoje imię (opcjonalnie)',
-    reviewBtn:'✓ Wyślij opinię',
-    tipsSheetTitle:'💸 Napiwki',
-    tipsStaffLabel:'Wybierz komu zostawić napiwek:',
-    tipsAmountLabel:'Kwota napiwku:',
-    tipsCustomPh:'Własna kwota',
-    tipsBtn:'💸 Wyślij napiwek',
-    noBill:'Rachunek nie został jeszcze wystawiony.\nPoproś kelnera.',
-    payOnlineBtn:'💳 Zapłać online',
-    payCashBtn:'💵 Zapłacę gotówką / kartą',
-    payCashAlert:'✓ Poproś kelnera o rozliczenie gotówką lub kartą.',
-    reviewRatingAlert:'Wybierz ocenę',
-    tipsAmountAlert:'Wybierz kwotę napiwku',
-    tipsThanks:'Dziękujemy za napiwek!',
-    reviewThanks:'Dziękujemy za opinię!',
-    billTotal:'Razem',
-    askForWaiter:'Poproś kelnera',
-    askForWaiterDesc:'Kelner wyśle ci kod QR lub link do płatności',
-  },
-  de: {
-    loading:'Laden...',
-    tableBadge:'🪑 Tisch №',
-    bbLabel:'💳 OFFENE RECHNUNG', bbDesc:'Tippen zum Bezahlen', bbCta:'Bezahlen →',
-    menuTitle:'Speisekarte & Bestellungen', menuDesc:'Gerichte ansehen und ohne Kellner bestellen',
-    billTitle:'Rechnung', billDesc:'Rechnung ansehen und bezahlen',
-    billOpenDesc:'Offene Rechnung — online bezahlen',
-    tipsTitle:'Trinkgeld', tipsDesc:'Dem Personal direkt danken',
-    reviewTitle:'Bewertung hinterlassen', reviewDesc:'Ihre Meinung hilft uns besser zu werden',
-    billSheetTitle:'💳 Ihre Rechnung',
-    reviewSheetTitle:'⭐ Ihre Bewertung',
-    reviewQuestion:'Wie war es heute bei uns?',
-    reviewPh:'Schreiben Sie was Ihnen gefallen hat oder was verbessert werden könnte...',
-    reviewNamePh:'Ihr Name (optional)',
-    reviewBtn:'✓ Bewertung senden',
-    tipsSheetTitle:'💸 Trinkgeld',
-    tipsStaffLabel:'Wählen Sie wem Sie Trinkgeld geben möchten:',
-    tipsAmountLabel:'Trinkgeldbetrag:',
-    tipsCustomPh:'Eigener Betrag',
-    tipsBtn:'💸 Trinkgeld senden',
-    noBill:'Rechnung noch nicht ausgestellt.\nBitte fragen Sie den Kellner.',
-    payOnlineBtn:'💳 Online bezahlen',
-    payCashBtn:'💵 Bar / Karte bezahlen',
-    payCashAlert:'✓ Bitte bitten Sie den Kellner um Abrechnung in bar oder per Karte.',
-    reviewRatingAlert:'Bitte Bewertung auswählen',
-    tipsAmountAlert:'Bitte Trinkgeldbetrag auswählen',
-    tipsThanks:'Danke für das Trinkgeld!',
-    reviewThanks:'Danke für Ihre Bewertung!',
-    billTotal:'Gesamt',
-    askForWaiter:'Kellner bitten',
-    askForWaiterDesc:'Der Kellner sendet Ihnen einen QR-Code oder Zahlungslink',
-  },
-  ro: {
-    loading:'Se încarcă...',
-    tableBadge:'🪑 Masa №',
-    bbLabel:'💳 NOTĂ DESCHISĂ', bbDesc:'Apasă pentru a plăti', bbCta:'Plătește →',
-    menuTitle:'Meniu și comenzi', menuDesc:'Răsfoiți preparatele și comandați fără chelner',
-    billTitle:'Notă de plată', billDesc:'Vizualizați și plătiți nota de la masă',
-    billOpenDesc:'Notă deschisă — plătiți online',
-    tipsTitle:'Bacșiș', tipsDesc:'Mulțumiți personalului direct',
-    reviewTitle:'Lăsați o recenzie', reviewDesc:'Opinia dvs. ne ajută să ne îmbunătățim',
-    billSheetTitle:'💳 Nota dvs.',
-    reviewSheetTitle:'⭐ Recenzia dvs.',
-    reviewQuestion:'Cum v-a fost astăzi la noi?',
-    reviewPh:'Scrieți ce v-a plăcut sau ce ar putea fi îmbunătățit...',
-    reviewNamePh:'Numele dvs. (opțional)',
-    reviewBtn:'✓ Trimite recenzia',
-    tipsSheetTitle:'💸 Bacșiș',
-    tipsStaffLabel:'Alegeți cui să lăsați bacșiș:',
-    tipsAmountLabel:'Suma bacșișului:',
-    tipsCustomPh:'Sumă personalizată',
-    tipsBtn:'💸 Trimite bacșiș',
-    noBill:'Nota nu a fost emisă încă.\nVă rugăm să cereți chelnerul.',
-    payOnlineBtn:'💳 Plătește online',
-    payCashBtn:'💵 Plătesc numerar / card',
-    payCashAlert:'✓ Vă rugăm să cereți chelnerului să proceseze plata în numerar sau cu cardul.',
-    reviewRatingAlert:'Selectați o evaluare',
-    tipsAmountAlert:'Selectați suma bacșișului',
-    tipsThanks:'Mulțumim pentru bacșiș!',
-    reviewThanks:'Mulțumim pentru recenzie!',
-    billTotal:'Total',
-    askForWaiter:'Cereți chelnerul',
-    askForWaiterDesc:'Chelnerul vă va trimite un cod QR sau un link de plată',
-  },
-  es: {
-    loading:'Cargando...',
-    tableBadge:'🪑 Mesa №',
-    bbLabel:'💳 CUENTA ABIERTA', bbDesc:'Toca para pagar', bbCta:'Pagar →',
-    menuTitle:'Menú y pedidos', menuDesc:'Explora los platos y pide sin camarero',
-    billTitle:'Cuenta', billDesc:'Ver y pagar la cuenta de la mesa',
-    billOpenDesc:'Cuenta abierta — pagar online',
-    tipsTitle:'Propinas', tipsDesc:'Agradece al personal directamente',
-    reviewTitle:'Dejar una reseña', reviewDesc:'Tu opinión nos ayuda a mejorar',
-    billSheetTitle:'💳 Tu cuenta',
-    reviewSheetTitle:'⭐ Tu reseña',
-    reviewQuestion:'¿Cómo fue tu experiencia hoy?',
-    reviewPh:'Escribe qué te gustó o qué podría mejorar...',
-    reviewNamePh:'Tu nombre (opcional)',
-    reviewBtn:'✓ Enviar reseña',
-    tipsSheetTitle:'💸 Propinas',
-    tipsStaffLabel:'Elige a quién dejar propina:',
-    tipsAmountLabel:'Monto de la propina:',
-    tipsCustomPh:'Monto personalizado',
-    tipsBtn:'💸 Enviar propina',
-    noBill:'La cuenta aún no ha sido emitida.\nPor favor pide al camarero.',
-    payOnlineBtn:'💳 Pagar online',
-    payCashBtn:'💵 Pagar en efectivo / tarjeta',
-    payCashAlert:'✓ Por favor pide al camarero que procese tu pago en efectivo o tarjeta.',
-    reviewRatingAlert:'Selecciona una valoración',
-    tipsAmountAlert:'Selecciona el monto de la propina',
-    tipsThanks:'¡Gracias por la propina!',
-    reviewThanks:'¡Gracias por tu reseña!',
-    billTotal:'Total',
-    askForWaiter:'Pedir al camarero',
-    askForWaiterDesc:'El camarero te enviará un código QR o enlace de pago',
-  },
-  cnr: {
-    loading:'Učitavanje...',
-    tableBadge:'🪑 Sto №',
-    bbLabel:'💳 OTVORENI RAČUN', bbDesc:'Dodirnite za plaćanje', bbCta:'Plati →',
-    menuTitle:'Meni i narudžbine', menuDesc:'Pregledajte jela i naručite bez konobara',
-    billTitle:'Račun', billDesc:'Pregledajte i platite račun za sto',
-    billOpenDesc:'Otvoreni račun — platite online',
-    tipsTitle:'Napojnica', tipsDesc:'Zahvalite osoblju direktno',
-    reviewTitle:'Ostavite recenziju', reviewDesc:'Vaše mišljenje nam pomaže da se poboljšamo',
-    billSheetTitle:'💳 Vaš račun',
-    reviewSheetTitle:'⭐ Vaša recenzija',
-    reviewQuestion:'Kako vam je bilo danas kod nas?',
-    reviewPh:'Napišite šta vam se svidjelo ili šta bi moglo biti bolje...',
-    reviewNamePh:'Vaše ime (opciono)',
-    reviewBtn:'✓ Pošalji recenziju',
-    tipsSheetTitle:'💸 Napojnica',
-    tipsStaffLabel:'Izaberite kome ostaviti napojnicu:',
-    tipsAmountLabel:'Iznos napojnice:',
-    tipsCustomPh:'Vlastiti iznos',
-    tipsBtn:'💸 Pošalji napojnicu',
-    noBill:'Račun još nije izdat.\nMolimo pitajte konobara.',
-    payOnlineBtn:'💳 Platite online',
-    payCashBtn:'💵 Platim gotovinom / karticom',
-    payCashAlert:'✓ Molimo zamolite konobara da obradi vaše plaćanje gotovinom ili karticom.',
-    reviewRatingAlert:'Odaberite ocjenu',
-    tipsAmountAlert:'Odaberite iznos napojnice',
-    tipsThanks:'Hvala na napojnici!',
-    reviewThanks:'Hvala na recenziji!',
-    billTotal:'Ukupno',
-    askForWaiter:'Zamolite konobara',
-    askForWaiterDesc:'Konobar će vam poslati QR kod ili link za plaćanje',
-  },
+const cfg = window.__MQ_CFG;
+const app  = getApps().length ? getApps()[0] : initializeApp(cfg);
+const db   = getFirestore(app);
+const auth = getAuth(app);
+// Зберігаємо сесію між перезавантаженнями
+setPersistence(auth, browserLocalPersistence).catch(e => console.warn('persistence:', e));
+
+// ── AUTH STATE ───────────────────────────────────────────────────
+let currentUser = null;
+let selectedGender = null;
+let authMode = 'signin'; // signin | signup
+let pendingEmail = null;
+let pendingPass  = null;
+
+let currentEditField = null;
+let editGenderValue  = null;
+let currentUserProfile = null;
+let currentLang = localStorage.getItem('mq_lang') || 'uk';
+let pendingGoogleProfile = false; // флаг: новий Google юзер ще заповнює крок 2
+
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  if (user) {
+    try {
+      const snap = await getDoc(doc(db, 'users', user.uid));
+      currentUserProfile = snap.exists() ? snap.data() : null;
+      await setDoc(doc(db, 'users', user.uid), {
+        lastLang: currentLang,
+        lastSeen: serverTimestamp(),
+      }, { merge: true });
+    } catch(e){}
+    renderUserBar(user);
+    // Не закриваємо модал якщо новий Google юзер ще заповнює крок 2
+    if (!pendingGoogleProfile) closeAuth();
+  } else {
+    currentUserProfile = null;
+    renderGuestBar();
+  }
+});
+
+window.openProfile = function() {
+  if (!currentUser) return;
+  profNav('main');
+  fillProfileMain();
+  document.getElementById('profile-overlay').classList.add('open');
 };
 
-let currentLang = localStorage.getItem('mq_table_lang') || 'uk';
+window.closeProfile = function() {
+  document.getElementById('profile-overlay').classList.remove('open');
+};
 
-function ui(key) {
-  return (UI[currentLang] || UI.uk)[key] || UI.uk[key] || key;
+window.profNav = function(screen) {
+  document.querySelectorAll('.prof-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('prof-screen-' + screen).classList.add('active');
+  if (screen === 'settings') fillProfileSettings();
+  if (screen === 'orders')   loadProfileOrders();
+};
+
+function fillProfileMain() {
+  const name   = currentUser.displayName || currentUser.email?.split('@')[0] || '?';
+  const avatar = name.charAt(0).toUpperCase();
+  document.getElementById('prof-avatar').textContent = avatar;
+  document.getElementById('prof-name').textContent   = name;
+  document.getElementById('prof-email').textContent  = currentUser.email || '';
+  document.getElementById('prof-logout-btn').textContent = ui('authLogout');
+  document.getElementById('prof-lbl-orders').textContent  = ui('profOrders') || 'Історія замовлень';
+  document.getElementById('prof-lbl-settings').textContent = ui('profSettings') || 'Особисті дані та Налаштування';
 }
 
-function applyLang() {
-  // Loader
-  const lt = document.querySelector('.loader-text');
-  if (lt) lt.textContent = ui('loading');
-  // Table badge
-  if (tableNum) $('table-badge').textContent = ui('tableBadge') + tableNum;
-  // Bill banner
-  const bbLabel = document.querySelector('.bb-label');
-  const bbDesc = $('bb-desc');
-  const bbCta = document.querySelector('.bb-cta');
-  if (bbLabel) bbLabel.textContent = ui('bbLabel');
-  if (bbDesc && !bbDesc.dataset.custom) bbDesc.textContent = ui('bbDesc');
-  if (bbCta) bbCta.textContent = ui('bbCta');
-  // Action cards
-  const titles = document.querySelectorAll('.ac-title');
-  const descs  = document.querySelectorAll('.ac-desc');
-  if (titles[0]) titles[0].textContent = ui('menuTitle');
-  if (descs[0])  descs[0].textContent  = ui('menuDesc');
-  if (titles[1]) titles[1].textContent = ui('billTitle');
-  const billDesc = $('bill-action-desc');
-  if (billDesc && !billDesc.dataset.custom) billDesc.textContent = ui('billDesc');
-  if (titles[2]) titles[2].textContent = ui('tipsTitle');
-  if (descs[2])  descs[2].textContent  = ui('tipsDesc');
-  if (titles[3]) titles[3].textContent = ui('reviewTitle');
-  if (descs[3])  descs[3].textContent  = ui('reviewDesc');
-  // Sheet titles
-  const sheetTitles = document.querySelectorAll('.sheet-title');
-  if (sheetTitles[0]) sheetTitles[0].textContent = ui('billSheetTitle');
-  if (sheetTitles[1]) sheetTitles[1].textContent = ui('reviewSheetTitle');
-  if (sheetTitles[2]) sheetTitles[2].textContent = ui('tipsSheetTitle');
-  // Review sheet
-  const rq = document.querySelector('#review-content > div');
-  if (rq) rq.textContent = ui('reviewQuestion');
-  const rt = $('review-text');
-  if (rt) rt.placeholder = ui('reviewPh');
-  const rn = $('review-name');
-  if (rn) rn.placeholder = ui('reviewNamePh');
-  const rb = document.querySelector('#review-btn .btn-text');
-  if (rb) rb.textContent = ui('reviewBtn');
-  // Tips sheet
-  const tsl = $('tips-staff-label');
-  if (tsl) tsl.textContent = ui('tipsStaffLabel');
-  const tal = document.querySelector('#tips-content > div:nth-child(3)');
-  if (tal) tal.textContent = ui('tipsAmountLabel');
-  const tc = $('tip-custom');
-  if (tc) tc.placeholder = ui('tipsCustomPh');
-  const tb = document.querySelector('#tips-btn .btn-text');
-  if (tb) tb.textContent = ui('tipsBtn');
-  // Lang bar active
-  document.querySelectorAll('.lang-btn[data-lang]').forEach(b => {
-    b.classList.toggle('active', b.getAttribute('data-lang') === currentLang);
+function fillProfileSettings() {
+  const p = currentUserProfile || {};
+  const gMap = { male: ui('authMale'), female: ui('authFemale'), other: ui('authOther') };
+  document.getElementById('prof-data-name').textContent   = currentUser.displayName || '—';
+  document.getElementById('prof-data-email').textContent  = currentUser.email || '—';
+  document.getElementById('prof-data-city').textContent   = p.city     || '—';
+  document.getElementById('prof-data-gender').textContent = gMap[p.gender] || '—';
+  document.getElementById('prof-data-age').textContent    = p.ageGroup || '—';
+  document.getElementById('prof-lbl-settings-title').textContent = ui('profSettings') || 'Особисті дані та Налаштування';
+  document.getElementById('prof-lbl-name').textContent    = ui('authNamePh') || "Ім'я";
+  document.getElementById('prof-lbl-email-f').textContent = 'Ел. пошта';
+  document.getElementById('prof-lbl-city-f').textContent  = ui('authCityPh') || 'Місто';
+  document.getElementById('prof-lbl-gender-f').textContent= ui('authGender') || 'Стать';
+  document.getElementById('prof-lbl-age-f').textContent   = ui('authAge')    || 'Вік';
+}
+
+window.profEditField = function(field) {
+  currentEditField = field;
+  editGenderValue  = null;
+  const p = currentUserProfile || {};
+  const titles = {
+    name:   ui('authNamePh') || "Ім'я",
+    email:  'Ел. пошта',
+    city:   ui('authCityPh') || 'Місто',
+    gender: ui('authGender') || 'Стать',
+    age:    ui('authAge')    || 'Вік',
+  };
+  document.getElementById('prof-edit-title').textContent = titles[field] || field;
+  document.getElementById('prof-edit-err').textContent = '';
+
+  // Показуємо правильний input
+  const textWrap   = document.getElementById('prof-edit-text-wrap');
+  const genderWrap = document.getElementById('prof-edit-gender-wrap');
+  const ageWrap    = document.getElementById('prof-edit-age-wrap');
+  textWrap.style.display   = 'none';
+  genderWrap.style.display = 'none';
+  ageWrap.style.display    = 'none';
+
+  if (field === 'gender') {
+    genderWrap.style.display = 'block';
+    document.getElementById('pe-g-male').textContent   = ui('authMale');
+    document.getElementById('pe-g-female').textContent = ui('authFemale');
+    document.getElementById('pe-g-other').textContent  = ui('authOther');
+    // Підсвічуємо поточне значення
+    ['male','female','other'].forEach(g => {
+      document.getElementById('pe-g-'+g).classList.toggle('active', g === p.gender);
+    });
+    editGenderValue = p.gender || null;
+  } else if (field === 'age') {
+    ageWrap.style.display = 'block';
+    document.getElementById('prof-edit-age-sel').value = p.ageGroup || '';
+  } else if (field === 'email') {
+    // Email не редагуємо — показуємо лише
+    textWrap.style.display = 'block';
+    const inp = document.getElementById('prof-edit-input');
+    inp.value = currentUser.email || '';
+    inp.disabled = true;
+    inp.placeholder = '';
+  } else {
+    textWrap.style.display = 'block';
+    const inp = document.getElementById('prof-edit-input');
+    inp.disabled = false;
+    inp.type = 'text';
+    inp.value = field === 'name' ? (currentUser.displayName||'') : (p.city||'');
+    inp.placeholder = titles[field];
+  }
+
+  profNav('edit');
+};
+
+window.selectEditGender = function(g) {
+  editGenderValue = g;
+  ['male','female','other'].forEach(id => {
+    document.getElementById('pe-g-'+id).classList.toggle('active', id === g);
   });
+};
+
+window.profSaveField = async function() {
+  const errEl = document.getElementById('prof-edit-err');
+  errEl.textContent = '';
+  const p = currentUserProfile || {};
+
+  try {
+    if (currentEditField === 'gender') {
+      if (!editGenderValue) { errEl.textContent = ui('authErrGender'); return; }
+      await setDoc(doc(db,'users',currentUser.uid), { gender: editGenderValue }, { merge:true });
+      currentUserProfile = { ...p, gender: editGenderValue };
+
+    } else if (currentEditField === 'age') {
+      const val = document.getElementById('prof-edit-age-sel').value;
+      if (!val) { errEl.textContent = ui('authErrAge'); return; }
+      await setDoc(doc(db,'users',currentUser.uid), { ageGroup: val }, { merge:true });
+      currentUserProfile = { ...p, ageGroup: val };
+
+    } else if (currentEditField === 'name') {
+      const val = document.getElementById('prof-edit-input').value.trim();
+      if (!val) { errEl.textContent = ui('authErrName'); return; }
+      await updateProfile(currentUser, { displayName: val });
+      await setDoc(doc(db,'users',currentUser.uid), { name: val }, { merge:true });
+      currentUserProfile = { ...p, name: val };
+
+    } else if (currentEditField === 'city') {
+      const val = document.getElementById('prof-edit-input').value.trim();
+      await setDoc(doc(db,'users',currentUser.uid), { city: val }, { merge:true });
+      currentUserProfile = { ...p, city: val };
+
+    } else if (currentEditField === 'email') {
+      profNav('settings'); return; // email не редагуємо
+    }
+    profNav('settings');
+  } catch(e) {
+    errEl.textContent = e.message;
+  }
+};
+
+async function loadProfileOrders() {
+  const listEl = document.getElementById('prof-orders-list');
+  const emptyEl = document.getElementById('prof-orders-empty');
+  document.getElementById('prof-lbl-orders-title').textContent = ui('profOrders') || 'Історія замовлень';
+  if (!currentUser) return;
+  emptyEl.textContent = '⏳ Завантаження...';
+  emptyEl.style.display = 'block';
+  listEl.querySelectorAll('.prof-order-card').forEach(el => el.remove());
+  try {
+    const { collection: col, query: q, where, getDocs: gd } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const snap = await gd(q(
+      col(db, 'venues', venueId, 'orders'),
+      where('uid', '==', currentUser.uid)
+    ));
+    if (snap.empty) {
+      emptyEl.textContent = ui('profNoOrders') || 'Замовлень ще немає';
+      return;
+    }
+    emptyEl.style.display = 'none';
+    const docs = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    docs.forEach(o => {
+      const date = o.createdAt?.seconds
+        ? new Date(o.createdAt.seconds*1000).toLocaleDateString('uk-UA', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
+        : '—';
+      const itemsStr = (o.items||[]).map(i => `${i.name} ×${i.qty}`).join(', ');
+      const card = document.createElement('div');
+      card.className = 'prof-order-card';
+      card.innerHTML = `
+        <div class="prof-order-head">
+          <span class="prof-order-num">#${o.num||o.id.slice(-4)}</span>
+          <span class="prof-order-date">${date}</span>
+        </div>
+        <div class="prof-order-items">${itemsStr}</div>
+        <div class="prof-order-total">${mCur(o.total||0)}</div>`;
+      listEl.insertBefore(card, emptyEl);
+    });
+  } catch(e) {
+    emptyEl.textContent = ui('profNoOrders') || 'Замовлень ще немає';
+    console.warn('loadProfileOrders:', e);
+  }
+};
+
+function renderUserBar(user) {
+  const name   = user.displayName || user.email?.split('@')[0] || '?';
+  const avatar = name.charAt(0).toUpperCase();
+  document.getElementById('user-bar').style.display = 'flex';
+  document.getElementById('user-bar-guest').style.display = 'none';
+  document.getElementById('ub-avatar').textContent = avatar;
+  document.getElementById('ub-name').textContent   = `${ui('authHello')}, ${name}`;
+  document.getElementById('ub-logout-btn').textContent = ui('authLogout');
 }
 
-function setLang(lang) {
-  currentLang = lang;
-  localStorage.setItem('mq_table_lang', lang);
-  applyLang();
+
+function renderGuestBar() {
+  document.getElementById('user-bar').style.display = 'none';
+  document.getElementById('user-bar-guest').style.display = 'flex';
+  document.getElementById('ub-guest-text').textContent = ui('authSkip');
+  document.getElementById('ub-login-btn') && (document.getElementById('ub-login-btn').textContent = ui('authLogin'));
+  const loginBtn = document.getElementById('user-bar-guest').querySelector('.user-bar-login');
+  if (loginBtn) loginBtn.textContent = ui('authLogin');
 }
 
-// Ініціалізуємо lang-bar
-document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
-  btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang')));
-});
-const app  = getApps().length ? getApps()[0] : initializeApp(window.__MQ_CFG);
-const db   = getFirestore(app);
-const CF   = window.__CF_URL;
-const $    = id => document.getElementById(id);
+window.openAuth = function() {
+  switchAuthTab(authMode);
+  applyAuthLang();
+  document.getElementById('auth-overlay').classList.add('open');
+};
+window.closeAuth = function() {
+  document.getElementById('auth-overlay').classList.remove('open');
+};
+
+window.switchAuthTab = function(mode) {
+  authMode = mode;
+  document.getElementById('auth-step-1').classList.toggle('active', true);
+  document.getElementById('auth-step-2').classList.remove('active');
+  document.getElementById('auth-step-reset').classList.remove('active');
+  document.getElementById('tab-signin').classList.toggle('active', mode === 'signin');
+  document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+  document.getElementById('auth-err-1').textContent = '';
+  const isSignin = mode === 'signin';
+  document.getElementById('auth-main-btn').textContent = isSignin ? ui('authSignInBtn') : ui('authSignUpBtn');
+  document.getElementById('auth-forgot-btn').textContent = isSignin ? ui('authForgot') : '';
+  document.getElementById('auth-forgot-btn').style.display = isSignin ? 'inline' : 'none';
+  document.getElementById('auth-pass').autocomplete = isSignin ? 'current-password' : 'new-password';
+};
+
+window.showForgot = function() {
+  document.getElementById('auth-step-1').classList.remove('active');
+  document.getElementById('auth-step-reset').classList.add('active');
+  document.getElementById('reset-email').value = document.getElementById('auth-email').value;
+};
+
+window.selectGender = function(g) {
+  selectedGender = g;
+  ['male','female','other'].forEach(id => {
+    document.getElementById('g-'+id).classList.toggle('active', id === g);
+  });
+};
+
+window.doGoogleSignIn = async function() {
+  try {
+    const provider = new GoogleAuthProvider();
+    // Встановлюємо флаг ДО входу — onAuthStateChanged не закриє модал
+    pendingGoogleProfile = true;
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (!snap.exists()) {
+      // Новий користувач — зберігаємо базовий профіль і показуємо крок 2
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName || '',
+        provider: 'google',
+        lang: currentLang,
+        createdAt: serverTimestamp(),
+        lastSeen: serverTimestamp(),
+      });
+      selectedGender = null;
+      document.getElementById('auth-step-1').classList.remove('active');
+      document.getElementById('auth-step-2').classList.add('active');
+      document.getElementById('auth-err-2').textContent = '';
+      document.getElementById('reg-name').value = user.displayName || '';
+    } else {
+      // Вже існує — скидаємо флаг і закриваємо
+      pendingGoogleProfile = false;
+      closeAuth();
+    }
+  } catch(e) {
+    pendingGoogleProfile = false;
+    document.getElementById('auth-err-1').textContent = e.message;
+  }
+};
+
+window.doEmailAuth = async function() {
+  const email = document.getElementById('auth-email').value.trim();
+  const pass  = document.getElementById('auth-pass').value;
+  const errEl = document.getElementById('auth-err-1');
+  errEl.textContent = '';
+  if (!email || !pass) { errEl.textContent = ui('authErrEmail'); return; }
+
+  if (authMode === 'signin') {
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch(e) {
+      errEl.textContent = ui('authErrEmail');
+    }
+  } else {
+    // Реєстрація — зберігаємо credentials і переходимо до кроку 2
+    pendingEmail = email;
+    pendingPass  = pass;
+    document.getElementById('auth-step-1').classList.remove('active');
+    document.getElementById('auth-step-2').classList.add('active');
+    document.getElementById('auth-err-2').textContent = '';
+  }
+};
+
+window.doRegisterStep2 = async function() {
+  const name   = document.getElementById('reg-name').value.trim();
+  const age    = document.getElementById('reg-age').value;
+  const city   = document.getElementById('reg-city').value.trim();
+  const errEl  = document.getElementById('auth-err-2');
+  errEl.textContent = '';
+
+  if (!name)          { errEl.textContent = ui('authErrName');   return; }
+  if (!selectedGender){ errEl.textContent = ui('authErrGender'); return; }
+  if (!age)           { errEl.textContent = ui('authErrAge');    return; }
+
+  try {
+    // Якщо вже авторизований (Google) — просто оновлюємо профіль
+    if (auth.currentUser) {
+      await updateProfile(auth.currentUser, { displayName: name });
+      await setDoc(doc(db, 'users', auth.currentUser.uid), {
+        name,
+        gender:   selectedGender,
+        ageGroup: age,
+        city:     city || '',
+        lang:     currentLang,
+        lastSeen: serverTimestamp(),
+      }, { merge: true });
+      currentUserProfile = { ...(currentUserProfile||{}), name, gender: selectedGender, ageGroup: age, city };
+      pendingGoogleProfile = false;
+      closeAuth();
+    } else {
+      // Email реєстрація — створюємо акаунт
+      const cred = await createUserWithEmailAndPassword(auth, pendingEmail, pendingPass);
+      await updateProfile(cred.user, { displayName: name });
+      await setDoc(doc(db, 'users', cred.user.uid), {
+        uid:       cred.user.uid,
+        email:     pendingEmail,
+        name,
+        gender:    selectedGender,
+        ageGroup:  age,
+        city:      city || '',
+        provider:  'email',
+        lang:      currentLang,
+        createdAt: serverTimestamp(),
+        lastSeen:  serverTimestamp(),
+      });
+    }
+  } catch(e) {
+    const code = e.code || '';
+    if (code.includes('email-already')) errEl.textContent = ui('authErrExists');
+    else if (code.includes('weak'))     errEl.textContent = ui('authErrWeak');
+    else errEl.textContent = e.message;
+  }
+};
+
+window.doResetPassword = async function() {
+  const email = document.getElementById('reset-email').value.trim();
+  const errEl = document.getElementById('auth-err-reset');
+  errEl.textContent = '';
+  if (!email) { errEl.textContent = 'Email?'; return; }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    errEl.style.color = 'var(--green)';
+    errEl.textContent = ui('authResetSent');
+  } catch(e) {
+    errEl.style.color = '#EF4444';
+    errEl.textContent = e.message;
+  }
+};
+
+window.doSignOut = async function() {
+  await signOut(auth);
+};
+
+function applyAuthLang() {
+  document.getElementById('auth-subtitle').textContent  = ui('authSubtitle');
+  document.getElementById('tab-signin').textContent     = ui('signIn');
+  document.getElementById('tab-signup').textContent     = ui('signUp');
+  document.getElementById('auth-google-text').textContent = ui('authGoogle');
+  document.getElementById('auth-or-text').textContent   = ui('authOr');
+  document.getElementById('auth-email-label').textContent = 'Email';
+  document.getElementById('auth-pass-label').textContent  = ui('authPassPh');
+  document.getElementById('auth-email').placeholder     = ui('authEmailPh');
+  document.getElementById('auth-pass').placeholder      = ui('authPassPh');
+  document.getElementById('auth-skip-btn').textContent  = ui('authSkip');
+  document.getElementById('auth-forgot-btn').textContent= ui('authForgot');
+  document.getElementById('auth-main-btn').textContent  = authMode === 'signin' ? ui('authSignInBtn') : ui('authSignUpBtn');
+  // Крок 2
+  document.getElementById('reg-name-label').textContent  = ui('authNamePh');
+  document.getElementById('reg-name').placeholder        = ui('authNamePh');
+  document.getElementById('reg-gender-label').textContent= ui('authGender');
+  document.getElementById('g-male').textContent          = ui('authMale');
+  document.getElementById('g-female').textContent        = ui('authFemale');
+  document.getElementById('g-other').textContent         = ui('authOther');
+  document.getElementById('reg-age-label').textContent   = ui('authAge');
+  document.getElementById('reg-age').options[0].textContent = ui('authAgeSelect');
+  document.getElementById('reg-city-label').textContent  = ui('authCityPh');
+  document.getElementById('reg-city').placeholder        = ui('authCityPh');
+  document.getElementById('reg-submit-btn').textContent  = ui('authSignUpBtn');
+  // Reset
+  document.getElementById('reset-desc').textContent     = ui('authEmailPh');
+  document.getElementById('reset-send-btn').textContent = ui('authReset');
+  // User bar
+  if (currentUser) renderUserBar(currentUser);
+  else renderGuestBar();
+}
 
 const params   = new URLSearchParams(location.search);
-const venueId  = (params.get('v') || '').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,50) || 'demo';
-const tableNum = params.get('t') || null;
+const rawVenueId = params.get('v') || 'demo';
+const venueId  = rawVenueId.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 50) || 'demo';
 
-let venueSettings = {};
-let openBillData  = null;   // поточний відкритий рахунок
-let staff         = [];
-let selectedStar  = 0;
-let selectedStaff = null;
-let selectedTip   = null;
-let currSymbol    = '₴';
-let currPostfix   = false;
+// Валюта закладу (завантажується з settings)
+let menuCurrencySymbol = '₴';
+let menuCurrencyPostfix = false; // true = символ після числа (грн, zł...)
 
-function mCur(n) {
-  return currPostfix ? `${n} ${currSymbol}` : `${currSymbol}${n}`;
+function mCur(amount) {
+  if (menuCurrencyPostfix) return amount + ' ' + menuCurrencySymbol;
+  return menuCurrencySymbol + amount;
+}
+const tableId  = params.get('t') || null;
+
+let allItems = [], allCats = [], activeCat = null;
+let cart = {}, detItem = null, detQty = 1, design = {};
+let orderType = 'dine_in';
+let orderingSettings = {};
+let selectedTime = null;
+let cutleryCount = 1;
+let cutleryNeeded = true;
+let selectedPayment = 'cash';
+
+const $ = id => document.getElementById(id);
+
+// ── UI STRINGS — повний переклад інтерфейсу ──────────────
+const UI_STRINGS = {
+  uk: {
+    cart:'🛒 Кошик', yourOrder:'🛒 Ваше замовлення', orderType:'Тип замовлення',
+    dineIn:'🪑 В закладі', takeaway:'🥡 З собою', delivery:'🚗 Доставка',
+    contacts:'👤 Контактні дані', nameLbl:"Ім'я *", phoneLbl:'Телефон *',
+    cutlery:'🍴 Прибори', persons:'осіб', noCutlery:'Не потрібні',
+    comment:'💬 Коментар для закладу', commentPh:'Побажання, алергії...',
+    payment:'💳 Спосіб оплати', cash:'💵 Готівкою при отриманні', online:'💳 Карткою онлайн',
+    placeOrder:'Оформити замовлення', continueBtn:'← Продовжити вибір', total:'Разом:',
+    tableNum:'🪑 Номер столу', tableInput:'Введіть номер столу',
+    pickupTime:'🕐 Час самовиносу', minTime:'Мін. 40 хвилин від зараз',
+    deliveryAddr:'📍 Адреса доставки', city:'Місто *', street:'Вулиця та будинок *',
+    apt:'Квартира', entrance:"Під'їзд", floor:'Поверх',
+    courierComment:"Коментар для кур'єра", courierPh:'Код домофону, орієнтир...',
+    orderDone:'Замовлення прийнято!', waitConfirm:'Очікуйте підтвердження від закладу.',
+    backToMenu:'← Назад до меню', noDishes:'У цій категорії немає страв',
+    emptyCart:'Кошик порожній', add:'Додати', discount:'Знижка', namePh:"Ваше ім'я",
+    // AUTH
+    signIn:'Вхід', signUp:'Реєстрація',
+    authTitle:'Увійдіть або зареєструйтесь',
+    authSubtitle:'Зберігайте замовлення та отримуйте персональні пропозиції',
+    authGoogle:'Увійти через Google',
+    authEmailPh:'Ваша електронна пошта',
+    authPassPh:'Пароль (мін. 6 символів)',
+    authNamePh:"Ваше ім'я",
+    authCityPh:'Місто проживання',
+    authAge:'Вік',
+    authAgeSelect:'Оберіть вік',
+    authGender:'Стать',
+    authMale:'Чоловік', authFemale:'Жінка', authOther:'Інше',
+    authSignInBtn:'Увійти',
+    authSignUpBtn:'Зареєструватись',
+    authForgot:'Забули пароль?',
+    authReset:'Надіслати відновлення',
+    authSkip:'Продовжити без входу',
+    authHello:'Привіт',
+    authLogout:'Вийти',
+    authLogin:'Увійти',
+    authOr:'або',
+    authErrEmail:'Невірний email або пароль',
+    authErrExists:'Цей email вже зареєстрований',
+    authErrWeak:'Пароль занадто слабкий (мін. 6 символів)',
+    authErrName:"Введіть ваше ім'я",
+    authErrAge:'Оберіть вікову категорію',
+    authErrGender:'Оберіть стать',
+    authResetSent:'Лист відновлення надіслано на вашу пошту',
+    profOrders:'Історія замовлень',
+    profSettings:'Особисті дані та Налаштування',
+    profNoOrders:'Замовлень ще немає',
+    viWifi:'WiFi пароль',
+    viAddress:'Адреса',
+    viPhone:'Телефон',
+    viHours:'Робочий час',
+    viCopy:'Скопійовано!',
+    viShowMore:'показати більше',
+    viShowLess:'згорнути',
+    viGetLocation:'Відкрити на картах',
+    viCompany:'ℹ️ Інформація про компанію',
+    viCookie:'🍪 Політика використання файлів cookie',
+    viTerms:'📋 Умови користування',
+    viPrivacy:'🔒 Політика конфіденційності',
+  },
+  en: {
+    cart:'🛒 Cart', yourOrder:'🛒 Your order', orderType:'Order type',
+    dineIn:'🪑 Dine in', takeaway:'🥡 Takeaway', delivery:'🚗 Delivery',
+    contacts:'👤 Contact details', nameLbl:'Name *', phoneLbl:'Phone *',
+    cutlery:'🍴 Cutlery', persons:'persons', noCutlery:'Not needed',
+    comment:'💬 Comment for venue', commentPh:'Wishes, allergies...',
+    payment:'💳 Payment method', cash:'💵 Cash on delivery', online:'💳 Pay online',
+    placeOrder:'Place order', continueBtn:'← Continue shopping', total:'Total:',
+    tableNum:'🪑 Table number', tableInput:'Enter table number',
+    pickupTime:'🕐 Pickup time', minTime:'Min. 40 minutes from now',
+    deliveryAddr:'📍 Delivery address', city:'City *', street:'Street and building *',
+    apt:'Apartment', entrance:'Entrance', floor:'Floor',
+    courierComment:'Comment for courier', courierPh:'Intercom code, landmark...',
+    orderDone:'Order accepted!', waitConfirm:'Awaiting confirmation from the venue.',
+    backToMenu:'← Back to menu', noDishes:'No dishes in this category',
+    emptyCart:'Cart is empty', add:'Add', discount:'Discount', namePh:'Your name',
+    signIn:'Sign in', signUp:'Sign up',
+    authTitle:'Sign in or create account',
+    authSubtitle:'Save orders and get personalized offers',
+    authGoogle:'Continue with Google',
+    authEmailPh:'Your email address',
+    authPassPh:'Password (min. 6 characters)',
+    authNamePh:'Your name',
+    authCityPh:'City of residence',
+    authAge:'Age',
+    authAgeSelect:'Select age range',
+    authGender:'Gender',
+    authMale:'Male', authFemale:'Female', authOther:'Other',
+    authSignInBtn:'Sign in',
+    authSignUpBtn:'Create account',
+    authForgot:'Forgot password?',
+    authReset:'Send reset email',
+    authSkip:'Continue without signing in',
+    authHello:'Hello',
+    authLogout:'Sign out',
+    authLogin:'Sign in',
+    authOr:'or',
+    authErrEmail:'Invalid email or password',
+    authErrExists:'This email is already registered',
+    authErrWeak:'Password too weak (min. 6 characters)',
+    authErrName:'Please enter your name',
+    authErrAge:'Please select age range',
+    authErrGender:'Please select gender',
+    authResetSent:'Reset email sent to your address',
+    profOrders:'Order history',
+    profSettings:'Personal data & Settings',
+    profNoOrders:'No orders yet',
+        viWifi:'WiFi password',
+    viAddress:'Address',viPhone:'Phone',viHours:'Working hours',
+    viCopy:'Copied!',viShowMore:'show more',viShowLess:'collapse',
+    viGetLocation:'Open on maps',
+    viCompany:'ℹ️ Company information',viCookie:'🍪 Cookie policy',
+    viTerms:'📋 Terms of use',viPrivacy:'🔒 Privacy policy',
+  },
+  pl: {
+    cart:'🛒 Koszyk', yourOrder:'🛒 Twoje zamówienie', orderType:'Typ zamówienia',
+    dineIn:'🪑 Na miejscu', takeaway:'🥡 Na wynos', delivery:'🚗 Dostawa',
+    contacts:'👤 Dane kontaktowe', nameLbl:'Imię *', phoneLbl:'Telefon *',
+    cutlery:'🍴 Sztućce', persons:'osób', noCutlery:'Nie potrzeba',
+    comment:'💬 Komentarz dla lokalu', commentPh:'Życzenia, alergie...',
+    payment:'💳 Metoda płatności', cash:'💵 Gotówka przy odbiorze', online:'💳 Płatność online',
+    placeOrder:'Złóż zamówienie', continueBtn:'← Kontynuuj zakupy', total:'Razem:',
+    tableNum:'🪑 Numer stolika', tableInput:'Wpisz numer stolika',
+    pickupTime:'🕐 Czas odbioru', minTime:'Min. 40 minut od teraz',
+    deliveryAddr:'📍 Adres dostawy', city:'Miasto *', street:'Ulica i numer *',
+    apt:'Mieszkanie', entrance:'Klatka', floor:'Piętro',
+    courierComment:'Komentarz dla kuriera', courierPh:'Kod domofonu, punkt orientacyjny...',
+    orderDone:'Zamówienie przyjęte!', waitConfirm:'Czekaj na potwierdzenie od lokalu.',
+    backToMenu:'← Powrót do menu', noDishes:'Brak dań w tej kategorii',
+    emptyCart:'Koszyk jest pusty', add:'Dodaj', discount:'Zniżka', namePh:'Twoje imię',
+    signIn:'Zaloguj się', signUp:'Rejestracja',
+    authTitle:'Zaloguj się lub utwórz konto',
+    authSubtitle:'Zapisuj zamówienia i otrzymuj spersonalizowane oferty',
+    authGoogle:'Kontynuuj z Google',
+    authEmailPh:'Twój adres e-mail',
+    authPassPh:'Hasło (min. 6 znaków)',
+    authNamePh:'Twoje imię',
+    authCityPh:'Miasto zamieszkania',
+    authAge:'Wiek',
+    authAgeSelect:'Wybierz przedział wiekowy',
+    authGender:'Płeć',
+    authMale:'Mężczyzna', authFemale:'Kobieta', authOther:'Inne',
+    authSignInBtn:'Zaloguj się',
+    authSignUpBtn:'Utwórz konto',
+    authForgot:'Zapomniałeś hasła?',
+    authReset:'Wyślij reset hasła',
+    authSkip:'Kontynuuj bez logowania',
+    authHello:'Cześć',
+    authLogout:'Wyloguj',
+    authLogin:'Zaloguj',
+    authOr:'lub',
+    authErrEmail:'Nieprawidłowy email lub hasło',
+    authErrExists:'Ten email jest już zarejestrowany',
+    authErrWeak:'Hasło zbyt słabe (min. 6 znaków)',
+    authErrName:'Wprowadź swoje imię',
+    authErrAge:'Wybierz przedział wiekowy',
+    authErrGender:'Wybierz płeć',
+    authResetSent:'Link resetowania wysłany na twój email',
+    profOrders:'Historia zamówień',
+    profSettings:'Dane osobowe i Ustawienia',
+    profNoOrders:'Brak zamówień',
+        viWifi:'Hasło WiFi',
+    viAddress:'Adres',viPhone:'Telefon',viHours:'Godziny pracy',
+    viCopy:'Skopiowano!',viShowMore:'pokaż więcej',viShowLess:'zwiń',
+    viGetLocation:'Otwórz na mapach',
+    viCompany:'ℹ️ Informacje o firmie',viCookie:'🍪 Polityka cookies',
+    viTerms:'📋 Warunki użytkowania',viPrivacy:'🔒 Polityka prywatności',
+  },
+  de: {
+    cart:'🛒 Warenkorb', yourOrder:'🛒 Ihre Bestellung', orderType:'Bestellart',
+    dineIn:'🪑 Im Lokal', takeaway:'🥡 Zum Mitnehmen', delivery:'🚗 Lieferung',
+    contacts:'👤 Kontaktdaten', nameLbl:'Name *', phoneLbl:'Telefon *',
+    cutlery:'🍴 Besteck', persons:'Personen', noCutlery:'Nicht nötig',
+    comment:'💬 Kommentar für das Lokal', commentPh:'Wünsche, Allergien...',
+    payment:'💳 Zahlungsmethode', cash:'💵 Bar bei Lieferung', online:'💳 Online bezahlen',
+    placeOrder:'Bestellung aufgeben', continueBtn:'← Weiter einkaufen', total:'Gesamt:',
+    tableNum:'🪑 Tischnummer', tableInput:'Tischnummer eingeben',
+    pickupTime:'🕐 Abholzeit', minTime:'Mind. 40 Minuten ab jetzt',
+    deliveryAddr:'📍 Lieferadresse', city:'Stadt *', street:'Straße und Nummer *',
+    apt:'Wohnung', entrance:'Eingang', floor:'Etage',
+    courierComment:'Kommentar für Kurier', courierPh:'Türcode, Orientierungspunkt...',
+    orderDone:'Bestellung angenommen!', waitConfirm:'Bitte warten Sie auf Bestätigung.',
+    backToMenu:'← Zurück zum Menü', noDishes:'Keine Gerichte in dieser Kategorie',
+    emptyCart:'Warenkorb ist leer', add:'Hinzufügen', discount:'Rabatt', namePh:'Ihr Name',
+    signIn:'Anmelden', signUp:'Registrieren',
+    authTitle:'Anmelden oder Konto erstellen',
+    authSubtitle:'Bestellungen speichern und personalisierte Angebote erhalten',
+    authGoogle:'Mit Google fortfahren',
+    authEmailPh:'Ihre E-Mail-Adresse',
+    authPassPh:'Passwort (mind. 6 Zeichen)',
+    authNamePh:'Ihr Name',
+    authCityPh:'Wohnort',
+    authAge:'Alter',
+    authAgeSelect:'Altersgruppe wählen',
+    authGender:'Geschlecht',
+    authMale:'Männlich', authFemale:'Weiblich', authOther:'Divers',
+    authSignInBtn:'Anmelden',
+    authSignUpBtn:'Konto erstellen',
+    authForgot:'Passwort vergessen?',
+    authReset:'Reset-E-Mail senden',
+    authSkip:'Ohne Anmeldung fortfahren',
+    authHello:'Hallo',
+    authLogout:'Abmelden',
+    authLogin:'Anmelden',
+    authOr:'oder',
+    authErrEmail:'Falsche E-Mail oder Passwort',
+    authErrExists:'Diese E-Mail ist bereits registriert',
+    authErrWeak:'Passwort zu schwach (mind. 6 Zeichen)',
+    authErrName:'Bitte geben Sie Ihren Namen ein',
+    authErrAge:'Bitte Altersgruppe wählen',
+    authErrGender:'Bitte Geschlecht wählen',
+    authResetSent:'Reset-E-Mail wurde gesendet',
+    profOrders:'Bestellverlauf',
+    profSettings:'Persönliche Daten & Einstellungen',
+    profNoOrders:'Noch keine Bestellungen',
+        viWifi:'WLAN-Passwort',
+    viAddress:'Adresse',viPhone:'Telefon',viHours:'Öffnungszeiten',
+    viCopy:'Kopiert!',viShowMore:'mehr anzeigen',viShowLess:'einklappen',
+    viGetLocation:'Auf Karten öffnen',
+    viCompany:'ℹ️ Firmeninformationen',viCookie:'🍪 Cookie-Richtlinie',
+    viTerms:'📋 Nutzungsbedingungen',viPrivacy:'🔒 Datenschutzrichtlinie',
+  },
+  ro: {
+    cart:'🛒 Coș', yourOrder:'🛒 Comanda ta', orderType:'Tip comandă',
+    dineIn:'🪑 La local', takeaway:'🥡 De luat', delivery:'🚗 Livrare',
+    contacts:'👤 Date contact', nameLbl:'Nume *', phoneLbl:'Telefon *',
+    cutlery:'🍴 Tacâmuri', persons:'persoane', noCutlery:'Nu e nevoie',
+    comment:'💬 Comentariu pentru local', commentPh:'Dorințe, alergii...',
+    payment:'💳 Metodă de plată', cash:'💵 Numerar la livrare', online:'💳 Plată online',
+    placeOrder:'Plasează comanda', continueBtn:'← Continuă cumpărăturile', total:'Total:',
+    tableNum:'🪑 Numărul mesei', tableInput:'Introduceți numărul mesei',
+    pickupTime:'🕐 Ora ridicării', minTime:'Min. 40 minute de acum',
+    deliveryAddr:'📍 Adresa de livrare', city:'Oraș *', street:'Stradă și număr *',
+    apt:'Apartament', entrance:'Intrare', floor:'Etaj',
+    courierComment:'Comentariu pentru curier', courierPh:'Cod interfon, reper...',
+    orderDone:'Comandă acceptată!', waitConfirm:'Așteptați confirmarea de la local.',
+    backToMenu:'← Înapoi la meniu', noDishes:'Nu sunt preparate în această categorie',
+    emptyCart:'Coșul este gol', add:'Adaugă', discount:'Reducere', namePh:'Numele tău',
+    signIn:'Autentificare', signUp:'Înregistrare',
+    authTitle:'Autentificați-vă sau creați cont',
+    authSubtitle:'Salvați comenzile și primiți oferte personalizate',
+    authGoogle:'Continuați cu Google',
+    authEmailPh:'Adresa dvs. de e-mail',
+    authPassPh:'Parolă (min. 6 caractere)',
+    authNamePh:'Numele dvs.',
+    authCityPh:'Orașul de reședință',
+    authAge:'Vârstă',
+    authAgeSelect:'Selectați grupa de vârstă',
+    authGender:'Gen',
+    authMale:'Masculin', authFemale:'Feminin', authOther:'Altul',
+    authSignInBtn:'Autentificare',
+    authSignUpBtn:'Creare cont',
+    authForgot:'Ați uitat parola?',
+    authReset:'Trimite email de resetare',
+    authSkip:'Continuați fără autentificare',
+    authHello:'Bună',
+    authLogout:'Deconectare',
+    authLogin:'Autentificare',
+    authOr:'sau',
+    authErrEmail:'Email sau parolă incorectă',
+    authErrExists:'Acest email este deja înregistrat',
+    authErrWeak:'Parola prea slabă (min. 6 caractere)',
+    authErrName:'Introduceți numele dvs.',
+    authErrAge:'Selectați grupa de vârstă',
+    authErrGender:'Selectați genul',
+    authResetSent:'Email de resetare trimis la adresa dvs.',
+    profOrders:'Istoricul comenzilor',
+    profSettings:'Date personale și Setări',
+    profNoOrders:'Nicio comandă încă',
+        viWifi:'Parolă WiFi',
+    viAddress:'Adresă',viPhone:'Telefon',viHours:'Program de lucru',
+    viCopy:'Copiat!',viShowMore:'arată mai mult',viShowLess:'restrânge',
+    viGetLocation:'Deschide pe hărți',
+    viCompany:'ℹ️ Informații despre companie',viCookie:'🍪 Politica cookie',
+    viTerms:'📋 Termeni de utilizare',viPrivacy:'🔒 Politica de confidențialitate',
+  },
+  es: {
+    cart:'🛒 Carrito', yourOrder:'🛒 Tu pedido', orderType:'Tipo de pedido',
+    dineIn:'🪑 En el local', takeaway:'🥡 Para llevar', delivery:'🚗 Entrega',
+    contacts:'👤 Datos de contacto', nameLbl:'Nombre *', phoneLbl:'Teléfono *',
+    cutlery:'🍴 Cubiertos', persons:'personas', noCutlery:'No necesario',
+    comment:'💬 Comentario para el local', commentPh:'Deseos, alergias...',
+    payment:'💳 Método de pago', cash:'💵 Efectivo al recibir', online:'💳 Pago online',
+    placeOrder:'Realizar pedido', continueBtn:'← Seguir comprando', total:'Total:',
+    tableNum:'🪑 Número de mesa', tableInput:'Ingrese número de mesa',
+    pickupTime:'🕐 Hora de recogida', minTime:'Mín. 40 minutos desde ahora',
+    deliveryAddr:'📍 Dirección de entrega', city:'Ciudad *', street:'Calle y número *',
+    apt:'Apartamento', entrance:'Entrada', floor:'Piso',
+    courierComment:'Comentario para el repartidor', courierPh:'Código de portero, referencia...',
+    orderDone:'¡Pedido aceptado!', waitConfirm:'Espere la confirmación del local.',
+    backToMenu:'← Volver al menú', noDishes:'No hay platos en esta categoría',
+    emptyCart:'El carrito está vacío', add:'Agregar', discount:'Descuento', namePh:'Tu nombre',
+    signIn:'Iniciar sesión', signUp:'Registrarse',
+    authTitle:'Inicia sesión o crea una cuenta',
+    authSubtitle:'Guarda pedidos y recibe ofertas personalizadas',
+    authGoogle:'Continuar con Google',
+    authEmailPh:'Tu correo electrónico',
+    authPassPh:'Contraseña (mín. 6 caracteres)',
+    authNamePh:'Tu nombre',
+    authCityPh:'Ciudad de residencia',
+    authAge:'Edad',
+    authAgeSelect:'Selecciona rango de edad',
+    authGender:'Género',
+    authMale:'Masculino', authFemale:'Femenino', authOther:'Otro',
+    authSignInBtn:'Iniciar sesión',
+    authSignUpBtn:'Crear cuenta',
+    authForgot:'¿Olvidaste tu contraseña?',
+    authReset:'Enviar email de restablecimiento',
+    authSkip:'Continuar sin iniciar sesión',
+    authHello:'Hola',
+    authLogout:'Cerrar sesión',
+    authLogin:'Iniciar sesión',
+    authOr:'o',
+    authErrEmail:'Email o contraseña incorrectos',
+    authErrExists:'Este email ya está registrado',
+    authErrWeak:'Contraseña demasiado débil (mín. 6 caracteres)',
+    authErrName:'Por favor ingresa tu nombre',
+    authErrAge:'Por favor selecciona rango de edad',
+    authErrGender:'Por favor selecciona género',
+    authResetSent:'Email de restablecimiento enviado a tu dirección',
+    profOrders:'Historial de pedidos',
+    profSettings:'Datos personales y Configuración',
+    profNoOrders:'Sin pedidos todavía',
+        viWifi:'Contraseña WiFi',
+    viAddress:'Dirección',viPhone:'Teléfono',viHours:'Horario de trabajo',
+    viCopy:'¡Copiado!',viShowMore:'mostrar más',viShowLess:'colapsar',
+    viGetLocation:'Abrir en mapas',
+    viCompany:'ℹ️ Información de la empresa',viCookie:'🍪 Política de cookies',
+    viTerms:'📋 Términos de uso',viPrivacy:'🔒 Política de privacidad',
+  },
+  cnr: {
+    cart:'🛒 Korpa', yourOrder:'🛒 Vaša narudžbina', orderType:'Tip narudžbine',
+    dineIn:'🪑 U lokalu', takeaway:'🥡 Za ponijeti', delivery:'🚗 Dostava',
+    contacts:'👤 Kontakt podaci', nameLbl:'Ime *', phoneLbl:'Telefon *',
+    cutlery:'🍴 Pribor', persons:'osoba', noCutlery:'Nije potrebno',
+    comment:'💬 Komentar za lokal', commentPh:'Želje, alergije...',
+    payment:'💳 Način plaćanja', cash:'💵 Gotovina pri preuzimanju', online:'💳 Online plaćanje',
+    placeOrder:'Naruči', continueBtn:'← Nastavi kupovinu', total:'Ukupno:',
+    tableNum:'🪑 Broj stola', tableInput:'Unesite broj stola',
+    pickupTime:'🕐 Vrijeme preuzimanja', minTime:'Min. 40 minuta od sada',
+    deliveryAddr:'📍 Adresa dostave', city:'Grad *', street:'Ulica i broj *',
+    apt:'Stan', entrance:'Ulaz', floor:'Sprat',
+    courierComment:'Komentar za dostavljača', courierPh:'Kod interfona, orijentir...',
+    orderDone:'Narudžbina prihvaćena!', waitConfirm:'Čekajte potvrdu od lokala.',
+    backToMenu:'← Nazad na meni', noDishes:'Nema jela u ovoj kategoriji',
+    emptyCart:'Korpa je prazna', add:'Dodaj', discount:'Popust', namePh:'Vaše ime',
+    signIn:'Prijava', signUp:'Registracija',
+    authTitle:'Prijavite se ili kreirajte nalog',
+    authSubtitle:'Čuvajte narudžbine i dobijajte personalizovane ponude',
+    authGoogle:'Nastavite sa Google-om',
+    authEmailPh:'Vaša email adresa',
+    authPassPh:'Lozinka (min. 6 znakova)',
+    authNamePh:'Vaše ime',
+    authCityPh:'Grad stanovanja',
+    authAge:'Starost',
+    authAgeSelect:'Odaberite starosnu grupu',
+    authGender:'Pol',
+    authMale:'Muški', authFemale:'Ženski', authOther:'Drugo',
+    authSignInBtn:'Prijavi se',
+    authSignUpBtn:'Kreiraj nalog',
+    authForgot:'Zaboravili ste lozinku?',
+    authReset:'Pošalji email za reset',
+    authSkip:'Nastavi bez prijave',
+    authHello:'Zdravo',
+    authLogout:'Odjavi se',
+    authLogin:'Prijavi se',
+    authOr:'ili',
+    authErrEmail:'Pogrešan email ili lozinka',
+    authErrExists:'Ovaj email je već registrovan',
+    authErrWeak:'Lozinka je preslaba (min. 6 znakova)',
+    authErrName:'Unesite vaše ime',
+    authErrAge:'Odaberite starosnu grupu',
+    authErrGender:'Odaberite pol',
+    authResetSent:'Email za reset poslan na vašu adresu',
+    profOrders:'Historija narudžbina',
+    profSettings:'Lični podaci i Podešavanja',
+    profNoOrders:'Još nema narudžbina',
+        viWifi:'WiFi lozinka',
+    viAddress:'Adresa',viPhone:'Telefon',viHours:'Radno vrijeme',
+    viCopy:'Kopirano!',viShowMore:'prikaži više',viShowLess:'skupi',
+    viGetLocation:'Otvori na mapama',
+    viCompany:'ℹ️ Informacije o kompaniji',viCookie:'🍪 Politika kolačića',
+    viTerms:'📋 Uslovi korišćenja',viPrivacy:'🔒 Politika privatnosti',
+  },
+};
+
+function ui(key) {
+  return (UI_STRINGS[currentLang] || UI_STRINGS.uk)[key] || (UI_STRINGS.uk)[key] || key;
 }
 
-// ── LOAD DATA ───────────────────────────────────────────────────
+function applyUILang() {
+  // FAB кошик
+  const badge = $('cart-badge');
+  const fab = $('cart-fab');
+  if (fab && badge) {
+    const bt = badge.textContent;
+    fab.innerHTML = ui('cart') + ' <span class="cart-badge" id="cart-badge">' + bt + '</span>';
+    // Зберігаємо стан видимості
+    if (count() === 0) fab.style.display = 'none';
+  }
+  // Текстові елементи за id
+  const set = (id, key) => { const el = $(id); if (el) el.textContent = ui(key); };
+  set('cart-title', 'yourOrder');
+  set('order-type-title', 'orderType');
+  set('contacts-title', 'contacts');
+  set('payment-title', 'payment');
+  set('continue-btn', 'continueBtn');
+  set('comment-label', 'comment');
+  set('total-label', 'total');
+  set('cutlery-title', 'cutlery');
+  set('lbl-persons', 'persons');
+  set('cutlery-none-btn', 'noCutlery');
+  set('table-num-title', 'tableNum');
+  set('pickup-time-title', 'pickupTime');
+  set('delivery-addr-title', 'deliveryAddr');
+  set('min-time-note', 'minTime');
+  set('lbl-name', 'nameLbl');
+  set('lbl-phone', 'phoneLbl');
+  set('lbl-city', 'city');
+  set('lbl-street', 'street');
+  set('lbl-apt', 'apt');
+  set('lbl-entrance', 'entrance');
+  set('lbl-floor', 'floor');
+  set('lbl-courier', 'courierComment');
+  set('back-btn', 'backToMenu');
+  // Кнопки
+  const ob = $('order-btn');
+  if (ob && !ob.disabled) ob.textContent = ui('placeOrder');
+  const pc = $('pay-opt-cash');
+  if (pc) pc.textContent = ui('cash');
+  const po = $('pay-opt-online');
+  if (po) po.textContent = ui('online');
+  const ab = $('add-cart-btn');
+  if (ab) ab.textContent = ui('add');
+  // Placeholders
+  const ph = (id, key) => { const el = $(id); if (el) el.placeholder = ui(key); };
+  ph('cli-table', 'tableInput');
+  ph('cli-name', 'namePh');
+  ph('cli-comment', 'commentPh');
+  ph('cli-delivery-comment', 'courierPh');
+  // Верхній бар з урахуванням знижок
+  const discMap = {
+    'ot-dine': orderingSettings.discounts?.dineIn,
+    'ot-take': orderingSettings.discounts?.takeaway,
+    'ot-del':  orderingSettings.discounts?.delivery,
+  };
+  const keyMap = { 'ot-dine': 'dineIn', 'ot-take': 'takeaway', 'ot-del': 'delivery' };
+  Object.entries(discMap).forEach(([id, disc]) => {
+    const el = $(id);
+    if (!el) return;
+    const dt = disc?.pct ? ' −' + disc.pct + '%' : disc?.fix ? ' −' + mCur(disc.fix) : '';
+    el.textContent = ui(keyMap[id]) + dt;
+  });
+}
+// ─────────────────────────────────────────────────────────
+
+// Іконки алергенів
+const ALLERGEN_ICONS = {
+  'Глютен': '🌾', 'Пшениця': '🌾', 'Молоко': '🥛', 'Лактоза': '🥛', 'Яйця': '🥚',
+  'Горіхи': '🥜', 'Арахіс': '🥜', 'Риба': '🐟', 'Молюски': '🦐', 'Ракоподібні': '🦞',
+  'Соя': '🫘', 'Селера': '🥬', 'Гірчиця': '🌶️', 'Кунжут': '🌰',
+  'Сірчистий ангідрид': '⚗️', 'Люпин': '🌸',
+};
+
+function fmtWeight(w) {
+  if (!w) return '';
+  w = String(w).trim();
+  if (/^[\d.,]+$/.test(w)) return w + ' г';
+  return w;
+}
+
+// ── МОВА ─────────────────────────────────────────────────
+function itemName(it) {
+  if (!it) return '';
+  return it['name_' + currentLang] || it.name || '';
+}
+function itemDesc(it) {
+  if (!it) return '';
+  return it['desc_' + currentLang] || it.desc || '';
+}
+
+window.setLang = function(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn[data-lang]').forEach(b => {
+    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+  });
+  renderCats();
+  renderMenu();
+  applyUILang();
+  applyAuthLang();
+  applyVenueInfoLang();
+  localStorage.setItem('mq_lang', lang);
+  // Зберігаємо мову в профілі якщо авторизований
+  if (currentUser) {
+    setDoc(doc(db, 'users', currentUser.uid), { lastLang: lang }, { merge: true }).catch(()=>{});
+  }
+};
+
+function initLangBar() {
+  document.getElementById('lang-bar').style.display = 'flex';
+  document.querySelectorAll('.lang-btn[data-lang]').forEach(btn => {
+    btn.addEventListener('click', () => setLang(btn.getAttribute('data-lang')));
+  });
+  const saved = localStorage.getItem('mq_lang');
+  if (saved && saved !== 'uk') setLang(saved);
+  applyAuthLang();
+  // Показуємо guest bar одразу (auth стан прийде пізніше через onAuthStateChanged)
+  document.getElementById('user-bar-guest').style.display = 'flex';
+  renderGuestBar();
+}
+// ─────────────────────────────────────────────────────────
+
+function renderCats() {
+  $('cat-bar').innerHTML = allCats.map(c => {
+    const catName = c['name_' + currentLang] || c.name || '';
+    return `<button class="cat-pill${c.name === activeCat ? ' active' : ''}" onclick="setCat('${c.name}')">${c.emoji ? c.emoji + ' ' : ''}${catName}</button>`;
+  }).join('');
+}
+window.setCat = name => { activeCat = name; renderCats(); renderMenu(); };
+
+function renderMenu() {
+  const list = (activeCat ? allItems.filter(i => i.category === activeCat) : allItems).filter(itemAvailable);
+  if (!list.length) {
+    $('menu-body').innerHTML = `<div class="empty"><div class="empty-icon">🍽️</div><div>${ui('noDishes')}</div></div>`;
+    return;
+  }
+  $('menu-body').innerHTML = list.map(it => `
+    <div class="dish-card" onclick="openDet('${it.id}')">
+      ${it.photoUrl ? `<img class="dish-img" src="${it.photoUrl}" alt="${itemName(it)}" loading="lazy"/>` : '<div class="dish-img-ph">🍽️</div>'}
+      <div class="dish-body">
+        <div class="dish-name">${itemName(it)}</div>
+        ${design.showDesc !== false && itemDesc(it) ? `<div class="dish-desc">${itemDesc(it)}</div>` : ''}
+        ${design.showWeight !== false && it.weight ? `<div class="dish-weight">⚖️ ${fmtWeight(it.weight)}</div>` : ''}
+        ${it.allergens && it.allergens.length ? `<div class="dish-allergens">${it.allergens.slice(0, 4).map(a => `<span class="a-chip">${ALLERGEN_ICONS[a] || ''}${a}</span>`).join('')}</div>` : ''}
+        <div class="dish-footer">
+          ${design.showPrices !== false ? `<div class="dish-price">
+            ${(() => {
+              const p = itemPrice(it);
+              const disc = getDiscount(p);
+              const final = Math.max(0, p - disc);
+              if (disc > 0) return '<span style="color:var(--green,#059669)">' + final + ' грн</span><span style="text-decoration:line-through;color:var(--muted);font-size:13px;margin-left:6px">' + p + '</span>';
+              return mCur(p);
+            })()}
+          </div>` : '<div></div>'}
+          <button class="add-btn${cart[it.id] ? ' added' : ''}" id="ab-${it.id}" onclick="event.stopPropagation();qAdd('${it.id}')">${cart[it.id] ? '✓' : '+'}</button>
+        </div>
+      </div>
+      ${cart[it.id] ? `<div class="qty-chip">${cart[it.id]}</div>` : ''}
+    </div>`).join('');
+}
+
+window.openDet = id => {
+  detItem = allItems.find(x => x.id === id);
+  if (!detItem) return;
+  detQty = cart[id] || 1;
+  const img = $('det-img');
+  const closeBtn = $('det-close-btn');
+  if (detItem.photoUrl) {
+    img.src = detItem.photoUrl;
+    img.alt = itemName(detItem);
+    img.style.display = 'block';
+    closeBtn.style.display = 'flex';
+  } else {
+    img.style.display = 'none';
+    closeBtn.style.display = 'none';
+  }
+  $('det-name').textContent = itemName(detItem);
+  $('det-desc').textContent = itemDesc(detItem) || '';
+  const _dp = itemPrice(detItem);
+  const _dd = getDiscount(_dp);
+  const _df = Math.max(0, _dp - _dd);
+  if (_dd > 0) {
+    $('det-price').innerHTML = '<span style="color:var(--green,#059669)">' + _df + ' грн</span> <span style="text-decoration:line-through;color:var(--muted);font-size:1rem">' + _dp + '</span>';
+  } else {
+    $('det-price').textContent = mCur(_dp);
+  }
+  $('det-qty').textContent = detQty;
+  const weightEl = $('det-weight');
+  if (detItem.weight) {
+    $('det-weight-val').textContent = fmtWeight(detItem.weight);
+    weightEl.style.display = 'flex';
+  } else {
+    weightEl.style.display = 'none';
+  }
+  const allergEl = $('det-allergens');
+  const allergList = $('det-allergens-list');
+  if (detItem.allergens && detItem.allergens.length) {
+    allergList.innerHTML = detItem.allergens.map(a =>
+      `<span class="allergen-tag warn">${ALLERGEN_ICONS[a] || '⚠️'} ${a}</span>`
+    ).join('');
+    allergEl.style.display = 'block';
+  } else {
+    allergEl.style.display = 'none';
+  }
+  const acb = $('add-cart-btn');
+  if (acb) acb.textContent = ui('add');
+  $('det-ov').classList.add('open');
+};
+
+window.dQty = d => { detQty = Math.max(1, detQty + d); $('det-qty').textContent = detQty; };
+window.addFromDet = () => {
+  if (!detItem) return;
+  cart[detItem.id] = detQty;
+  $('det-ov').classList.remove('open');
+  updateCart();
+  renderMenu();
+  toast('✓ ' + itemName(detItem));
+};
+window.qAdd = id => {
+  cart[id] = (cart[id] || 0) + 1;
+  const b = $('ab-' + id);
+  if (b) { b.classList.add('added'); b.textContent = '✓'; setTimeout(() => { b.classList.remove('added'); b.textContent = '+'; }, 700); }
+  updateCart();
+};
+
+function itemPrice(it) {
+  if (!it) return 0;
+  const typeKey = { dine_in: 'dineIn', takeaway: 'takeaway', delivery: 'delivery' }[orderType] || 'dineIn';
+  return it.prices?.[typeKey] || it.price || 0;
+}
+function itemAvailable(it) {
+  if (!it?.availability) return true;
+  const typeKey = { dine_in: 'dineIn', takeaway: 'takeaway', delivery: 'delivery' }[orderType] || 'dineIn';
+  return it.availability[typeKey] !== false;
+}
+function total() {
+  return Object.entries(cart).reduce((s, [id, q]) => {
+    const it = allItems.find(x => x.id === id);
+    return it ? s + itemPrice(it) * q : s;
+  }, 0);
+}
+function getDiscount(subtotal) {
+  const disc = orderingSettings.discounts;
+  if (!disc) return 0;
+  const d = { dine_in: disc.dineIn, takeaway: disc.takeaway, delivery: disc.delivery }[orderType] || {};
+  if (d.pct) return Math.round(subtotal * d.pct / 100);
+  if (d.fix) return Math.min(d.fix, subtotal);
+  return 0;
+}
+function discountName() {
+  const disc = orderingSettings.discounts;
+  if (!disc) return '';
+  const d = { dine_in: disc.dineIn, takeaway: disc.takeaway, delivery: disc.delivery }[orderType] || {};
+  return d.name || '';
+}
+function totalWithDiscount() { return Math.max(0, total() - getDiscount(total())); }
+function count() { return Object.values(cart).reduce((a, b) => a + b, 0); }
+
+function updateCart() {
+  const n = count(), t = total();
+  const fab = $('cart-fab');
+  if (!fab) return;
+  const infoBlock = $('venue-info-block');
+  const menuBody  = document.querySelector('.menu-body');
+  if (n > 0) {
+    fab.classList.remove('hidden');
+    fab.style.display = 'flex';
+    $('cart-badge').textContent = n + ' · ' + t + ' грн';
+    if (infoBlock && infoBlock.style.display !== 'none') infoBlock.style.paddingBottom = '90px';
+    else if (menuBody) menuBody.style.paddingBottom = '90px';
+  } else {
+    fab.classList.add('hidden');
+    fab.style.display = 'none';
+    if (infoBlock && infoBlock.style.display !== 'none') infoBlock.style.paddingBottom = '1.5rem';
+    else if (menuBody) menuBody.style.paddingBottom = '0';
+  }
+}
+
+window.openCart = () => {
+  renderCart();
+  renderOrderTypeBtns();
+  applyUILang();
+  setTimeout(() => { const s = document.querySelector('#cart-ov .sheet'); if (s) s.scrollTop = 0; }, 10);
+  if (window.loadGoogleMaps) window.loadGoogleMaps();
+  setTimeout(() => {
+    const addrEl = $('cli-address');
+    if (addrEl && !addrEl._bound) {
+      addrEl._bound = true;
+      addrEl.addEventListener('input', e => window.onAddressInput(e.target.value));
+    }
+  }, 100);
+  const payOnline = orderingSettings.payOnline !== false;
+  const payCash   = orderingSettings.payCash !== false;
+  const elOnline = $('pay-opt-online');
+  const elCash   = $('pay-opt-cash');
+  if (elOnline) elOnline.style.display = payOnline ? '' : 'none';
+  if (elCash)   elCash.style.display   = payCash   ? '' : 'none';
+  if (payOnline && !payCash) selectPayment('online');
+  const askCutlery = orderingSettings.askCutlery !== false;
+  const elCutlery = $('form-cutlery');
+  if (elCutlery) elCutlery.style.display = askCutlery ? 'block' : 'none';
+  $('cart-ov').classList.add('open');
+};
+window.closeCart = () => $('cart-ov').classList.remove('open');
+
+function renderCart() {
+  $('cart-list').innerHTML = Object.entries(cart).filter(([, q]) => q > 0).map(([id, q]) => {
+    const it = allItems.find(x => x.id === id);
+    if (!it) return '';
+    const p = itemPrice(it);
+    const d = getDiscount(p);
+    const fp = Math.max(0, p - d);
+    return `<div class="cart-row">
+      ${it.photoUrl ? `<img class="c-img" src="${it.photoUrl}" alt="${itemName(it)}"/>` : '<div class="c-img-ph">🍽️</div>'}
+      <div class="c-info">
+        <div class="c-name">${itemName(it)}</div>
+        <div class="c-price">${d > 0 ? '<span style="color:var(--green,#059669)">' + fp + '</span> <span style="text-decoration:line-through;font-size:11px">' + p + '</span>' : p}×${q} = ${fp * q} грн</div>
+      </div>
+      <div class="c-qty">
+        <button class="cq-btn" onclick="cQty('${id}',-1)">−</button>
+        <div class="cq-val">${q}</div>
+        <button class="cq-btn" onclick="cQty('${id}',1)">+</button>
+      </div>
+    </div>`;
+  }).join('') || `<div style="color:var(--muted);text-align:center;padding:1rem;font-size:13px">${ui('emptyCart')}</div>`;
+
+  const _sub = total();
+  const _disc = getDiscount(_sub);
+  const _final = Math.max(0, _sub - _disc);
+  const _discNm = discountName();
+  if (_disc > 0) {
+    $('cart-total-val').innerHTML = `<span style="color:var(--green,#059669);font-weight:700">${_final} грн</span> <span style="text-decoration:line-through;color:var(--muted);font-size:13px">${_sub}</span>`;
+    let discEl = document.getElementById('cart-discount-row');
+    if (!discEl) {
+      discEl = document.createElement('div');
+      discEl.id = 'cart-discount-row';
+      discEl.style.cssText = 'font-size:13px;color:var(--green,#059669);margin:.25rem 0 .5rem;font-weight:500';
+      $('cart-total-val')?.closest('.cart-total')?.after(discEl);
+    }
+    discEl.textContent = '🏷️ ' + (_discNm || ui('discount')) + ': −' + mCur(_disc);
+  } else {
+    $('cart-total-val').textContent = mCur(_final);
+    document.getElementById('cart-discount-row')?.remove();
+  }
+}
+window.cQty = (id, d) => {
+  cart[id] = Math.max(0, (cart[id] || 0) + d);
+  if (!cart[id]) delete cart[id];
+  updateCart();
+  count() > 0 ? renderCart() : closeCart();
+};
+
+// ── ТИПИ ЗАМОВЛЕНЬ ────────────────────────────────────────
+function initOrderTypeBar() {
+  const bar = $('order-type-bar');
+  const dine = orderingSettings.dineIn;
+  const take = orderingSettings.takeaway;
+  const del  = orderingSettings.delivery;
+  const hasDine = !dine || dine.enabled !== false;
+  const hasTake = !take || take.enabled !== false;
+  const hasDel  = del?.enabled || false;
+  const elDine = $('ot-dine');
+  const elTake = $('ot-take');
+  const elDel  = $('ot-del');
+  if (elDine) elDine.disabled = !hasDine;
+  if (elTake) elTake.disabled = !hasTake;
+  if (elDel)  { elDel.disabled = !hasDel; elDel.style.display = hasDel ? '' : 'none'; }
+  const typeCount = [hasDine, hasTake, hasDel].filter(Boolean).length;
+  if (bar) bar.style.display = typeCount > 1 ? 'flex' : 'none';
+  if (hasDine) setOrderType('dine_in');
+  else if (hasTake) setOrderType('takeaway');
+  else if (hasDel) setOrderType('delivery');
+  applyUILang();
+}
+
+function renderOrderTypeBtns() {
+  const grid = $('order-type-opts-grid');
+  if (!grid) return;
+  const types = [
+    { key: 'dine_in',  label: ui('dineIn'),   disc: orderingSettings.discounts?.dineIn },
+    { key: 'takeaway', label: ui('takeaway'),  disc: orderingSettings.discounts?.takeaway },
+    { key: 'delivery', label: ui('delivery'),  disc: orderingSettings.discounts?.delivery },
+  ];
+  grid.innerHTML = types.map(t => {
+    const discText = t.disc?.pct ? `<div style="font-size:10px;color:var(--green,#059669);font-weight:700">−${t.disc.pct}%</div>`
+                   : t.disc?.fix ? `<div style="font-size:10px;color:var(--green,#059669);font-weight:700">−${t.disc.fix}₴</div>` : '';
+    return `<div class="pay-opt${orderType === t.key ? ' active' : ''}" id="ot-opt-${t.key.replace('_', '-')}"
+      onclick="setOrderType('${t.key}')" style="text-align:center;padding:10px 4px;font-size:13px">
+      ${t.label}${discText}
+    </div>`;
+  }).join('');
+}
+
+window.setOrderType = function(type) {
+  orderType = type;
+  ['dine_in', 'takeaway', 'delivery'].forEach(t => {
+    const map = { dine_in: 'ot-opt-dine', takeaway: 'ot-opt-take', delivery: 'ot-opt-del' };
+    document.getElementById(map[t])?.classList.toggle('active', t === type);
+  });
+  ['dine_in', 'takeaway', 'delivery'].forEach(t => {
+    const map2 = { dine_in: 'ot-dine', takeaway: 'ot-take', delivery: 'ot-del' };
+    document.getElementById(map2[t])?.classList.toggle('active', t === type);
+  });
+  const elTable   = $('form-table');
+  const elTime    = $('form-time');
+  const elAddress = $('form-address');
+  const elComment = $('form-comment');
+  const elLabel   = $('comment-label');
+  if (elTable) {
+    if (type === 'dine_in') {
+      // Якщо стіл відомий з QR — ховаємо поле вводу повністю
+      elTable.style.display = tableId ? 'none' : 'block';
+    } else {
+      elTable.style.display = 'none';
+    }
+  }
+  if (elTime)    elTime.style.display    = type === 'takeaway' ? 'block' : 'none';
+  if (elAddress) elAddress.style.display = type === 'delivery' ? 'block' : 'none';
+  if (elComment) elComment.style.display = type === 'delivery' ? 'none'  : 'block';
+  if (elLabel)   elLabel.textContent     = ui('comment');
+  if (type === 'takeaway') buildTimeSlots();
+  renderMenu();
+  updateCart();
+  if ($('cart-ov')?.classList.contains('open')) {
+    renderCart();
+    renderOrderTypeBtns();
+  }
+  // Телефон — тільки для доставки та самовиносу
+  const phoneBlock = $('form-phone-block');
+  const nameStar = $('name-required-star');
+  const cliName = $('cli-name');
+  if (phoneBlock) phoneBlock.style.display = type === 'dine_in' ? 'none' : 'block';
+  if (nameStar) nameStar.style.display = type === 'dine_in' ? 'none' : 'inline';
+  if (cliName) cliName.placeholder = type === 'dine_in' ? "Ваше ім'я (необов'язково)" : "Ваше ім'я";
+
+  if (type === 'delivery') {
+    if (window.loadGoogleMaps) window.loadGoogleMaps();
+    const del = orderingSettings.delivery;
+    const info_el = $('delivery-price-info');
+    if (del && info_el) {
+      let info = '';
+      if (del.price) info += `Доставка: ${mCur(del.price)}`;
+      if (del.freeFrom) info += ` · Безкоштовно від ${del.freeFrom} грн`;
+      if (del.minOrder) info += ` · Мін. замовлення: ${del.minOrder} грн`;
+      info_el.innerHTML = info;
+    }
+  }
+};
+
+// Google Maps
+let _addrTimer = null;
+window.onAddressInput = function(value) {
+  const suggestEl = $('address-suggestions');
+  if (!suggestEl) return;
+  if (!value || value.length < 2) { suggestEl.style.display = 'none'; return; }
+  clearTimeout(_addrTimer);
+  _addrTimer = setTimeout(() => {
+    if (!window.autocompleteService) {
+      if (window.google?.maps?.places) {
+        window.autocompleteService = new google.maps.places.AutocompleteService();
+      } else { return; }
+    }
+    const city = $('cli-city')?.value || window._venueCity || '';
+    const query = city ? `${value}, ${city}` : value;
+    window.autocompleteService.getPlacePredictions(
+      { input: query, language: 'uk', componentRestrictions: { country: 'ua' } },
+      (predictions, status) => {
+        if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions?.length) {
+          suggestEl.style.display = 'none'; return;
+        }
+        suggestEl.style.display = 'block';
+        suggestEl.innerHTML = '';
+        predictions.slice(0, 5).forEach(p => {
+          const parts = p.description.split(',');
+          const short = parts.slice(0, 2).join(',').trim();
+          const div = document.createElement('div');
+          div.textContent = '📍 ' + short;
+          div.style.cssText = 'padding:11px 14px;font-size:15px;cursor:pointer;border-bottom:1px solid var(--border);line-height:1.3';
+          div.onmouseover = () => div.style.background = 'var(--bg2)';
+          div.onmouseout  = () => div.style.background = '';
+          div.onclick     = () => selectAddress(short);
+          suggestEl.appendChild(div);
+        });
+      }
+    );
+  }, 400);
+};
+window.selectAddress = function(address) {
+  const input = $('cli-address');
+  const suggestEl = $('address-suggestions');
+  if (input) input.value = address;
+  if (suggestEl) suggestEl.style.display = 'none';
+};
+
+function buildTimeSlots() {
+  const now = new Date();
+  const min = orderingSettings.takeaway?.minMinutes || 40;
+  const step = orderingSettings.takeaway?.stepMinutes || 15;
+  const slots = [];
+  let t = new Date(now.getTime() + min * 60000);
+  const mins = t.getMinutes();
+  const rounded = Math.ceil(mins / step) * step;
+  t.setMinutes(rounded, 0, 0);
+  for (let i = 0; i < 12; i++) { slots.push(new Date(t)); t = new Date(t.getTime() + step * 60000); }
+  selectedTime = slots[0];
+  $('time-slots').innerHTML = slots.map((s, i) =>
+    `<button class="time-slot${i === 0 ? ' active' : ''}" onclick="selectTime(this,'${s.toISOString()}')">${s.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}</button>`
+  ).join('');
+}
+window.selectTime = function(btn, iso) {
+  document.querySelectorAll('.time-slot').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedTime = new Date(iso);
+};
+window.changeCutlery = function(d) {
+  cutleryNeeded = true;
+  cutleryCount = Math.max(1, cutleryCount + d);
+  $('cutlery-val').textContent = cutleryCount;
+  $('cutlery-none-btn').style.opacity = '1';
+};
+window.setCutleryNone = function() {
+  cutleryNeeded = false;
+  cutleryCount = 0;
+  $('cutlery-val').textContent = '0';
+  $('cutlery-none-btn').style.opacity = '.4';
+};
+window.selectPayment = function(type) {
+  selectedPayment = type;
+  $('pay-opt-cash')?.classList.toggle('active', type === 'cash');
+  $('pay-opt-online')?.classList.toggle('active', type === 'online');
+};
+
+window.placeOrder = async () => {
+  if (!count()) { toast(ui('emptyCart')); return; }
+  const btn = $('order-btn');
+  btn.textContent = '...';
+  btn.disabled = true;
+  const name = $('cli-name')?.value?.trim() || '';
+  const phone = $('cli-phone')?.value?.trim() || '';
+  // Для dine_in — ім'я та телефон необов'язкові
+  if (orderType !== 'dine_in' && !name) { toast(ui('enterName') || "Введіть ваше ім'я"); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
+  if (orderType !== 'dine_in' && !phone) { toast(ui('enterPhone') || 'Введіть номер телефону'); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
+  if (orderType === 'delivery' && !$('cli-address')?.value?.trim()) { toast('Введіть адресу доставки'); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
+  if (orderType === 'takeaway' && !selectedTime) { toast('Оберіть час самовиносу'); btn.textContent = ui('placeOrder'); btn.disabled = false; return; }
+  try {
+    const items = Object.entries(cart).map(([id, qty]) => {
+      const it = allItems.find(x => x.id === id);
+      return { id, itemId: id, name: it.name, price: it.price, qty };
+    });
+    const orderData = {
+      venueId, items,
+      total: totalWithDiscount(),
+      discount: getDiscount(total()),
+      discountName: discountName(),
+      orderType,
+      clientName: name,
+      clientPhone: phone,
+      comment: $('cli-comment')?.value || '',
+      tableId: orderType === 'dine_in' ? (tableId || $('cli-table')?.value || null) : null,
+      pickupTime: orderType === 'takeaway' ? selectedTime?.toISOString() : null,
+      deliveryAddress: orderType === 'delivery' ? [
+        $('cli-city')?.value || '',
+        $('cli-address')?.value || '',
+        $('cli-apt')?.value ? 'кв.' + $('cli-apt').value : '',
+        $('cli-entrance')?.value ? 'під.' + $('cli-entrance').value : '',
+        $('cli-floor')?.value ? 'пов.' + $('cli-floor').value : '',
+      ].filter(Boolean).join(', ') : null,
+      deliveryComment: orderType === 'delivery' ? $('cli-delivery-comment')?.value || '' : null,
+      cutlery: orderingSettings.askCutlery !== false ? { needed: cutleryNeeded, count: cutleryCount } : null,
+      paymentMethod: selectedPayment,
+      // Auth дані
+      uid: currentUser?.uid || null,
+      clientLang: currentLang,
+    };
+    const res = await fetch('https://us-central1-mageqrrest.cloudfunctions.net/createOrder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Помилка замовлення');
+    cart = {}; updateCart(); closeCart();
+    if (data.payUrl) {
+      localStorage.setItem('mq_pending_order', JSON.stringify({ orderId: data.orderId, orderNum: data.orderNum, venueId }));
+      window.location.href = data.payUrl;
+      return;
+    }
+    $('s-icon').textContent = '✅';
+    $('s-title').textContent = ui('orderDone');
+    $('s-sub').textContent = ui('waitConfirm');
+    $('back-btn').textContent = ui('backToMenu');
+    if (data.orderNum) { $('s-num').textContent = '#' + data.orderNum; $('s-num').style.display = ''; }
+    $('success').classList.add('open');
+  } catch(e) { toast('Помилка: ' + e.message); }
+  finally { btn.textContent = ui('placeOrder'); btn.disabled = false; }
+};
+window.resetSuccess = () => { $('success').classList.remove('open'); renderMenu(); };
+
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2500);
+}
+
+function applySettings(s) {
+  // Встановлюємо валюту закладу
+  const POSTFIX_SYMBOLS = ['грн','zł','Kč','lei','Ft','лв','KM','дін'];
+  const CURRENCY_MAP = {
+    UAH:'₴', EUR:'€', USD:'$', PLN:'zł', GBP:'£',
+    CZK:'Kč', RON:'lei', HUF:'Ft', BGN:'лв', BAM:'KM', RSD:'дін',
+  };
+  if (s.currency && CURRENCY_MAP[s.currency]) {
+    menuCurrencySymbol = CURRENCY_MAP[s.currency];
+    menuCurrencyPostfix = POSTFIX_SYMBOLS.includes(menuCurrencySymbol);
+  }
+  document.title = s.name || 'Меню';
+  $('venue-name').textContent = s.name || 'Меню закладу';
+  const line1 = [s.tagline, s.city].filter(Boolean).join(' · ');
+  const line2 = [s.phone, s.address].filter(Boolean).join(' · ');
+  const line3 = s.hours || '';
+  let tagHtml = '';
+  if (line1) tagHtml += `<div>${line1}</div>`;
+  if (line2) tagHtml += `<div style="margin-top:2px">${line2}</div>`;
+  if (line3) tagHtml += `<div style="margin-top:2px">🕐 ${line3}</div>`;
+  $('venue-tag').innerHTML = tagHtml;
+  if (s.city) { const cityEl = $('cli-city'); if (cityEl) cityEl.value = s.city; window._venueCity = s.city; }
+  // Заповнюємо блок інформації внизу меню
+  renderVenueInfo(s);
+  if (tableId) {
+    // Показуємо стіл в шапці
+    $('venue-tag').innerHTML += `<div style="margin-top:3px"><span style="background:var(--accent);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600">Стіл №${tableId}</span></div>`;
+    // Підставляємо стіл у форму автоматично
+    const cliTable = $('cli-table');
+    const autoDisplay = $('table-auto-display');
+    if (cliTable) { cliTable.value = tableId; cliTable.style.display = 'none'; }
+    if (autoDisplay) { autoDisplay.textContent = `🪑 Стіл №${tableId}`; autoDisplay.style.display = 'block'; }
+  }
+  if (s.logoUrl) { $('venue-logo').innerHTML = `<img src="${s.logoUrl}" alt="${s.name || ''}"/>`; }
+  else if (s.logoEmoji) { $('venue-logo').textContent = s.logoEmoji; }
+  if (s.bannerUrl) { const img = $('banner-img'); img.src = s.bannerUrl; img.style.display = 'block'; $('banner-placeholder').style.display = 'none'; }
+  else { $('banner-photo').style.display = 'none'; }
+}
+
+function applyDesign(d) {
+  const r = document.documentElement;
+  if (d.accent)     r.style.setProperty('--accent', d.accent);
+  if (d.bg)         r.style.setProperty('--bg', d.bg);
+  if (d.card)       r.style.setProperty('--card', d.card);
+  if (d.text)       r.style.setProperty('--text', d.text);
+  if (d.fontSize)   r.style.setProperty('--font-size', d.fontSize + 'px');
+  if (d.cardRadius) r.style.setProperty('--radius', d.cardRadius + 'px');
+  if (d.fontHead) {
+    r.style.setProperty('--font-head', `'${d.fontHead}',serif`);
+    $('font-link').href = `https://fonts.googleapis.com/css2?family=${d.fontHead.replace(/ /g, '+')}:wght@500;600&family=${(d.fontBody || 'DM Sans').replace(/ /g, '+')}:wght@300;400;500&display=swap`;
+  }
+}
+
+// ── VENUE INFO BLOCK ─────────────────────────────────────────────
+let _venueSettings = {};
+
+function renderVenueInfo(s) {
+  _venueSettings = s;
+  const block = $('venue-info-block');
+  if (!block) return;
+  let hasAny = false;
+
+  // Про заклад
+  if (s.about) {
+    const SHORT = 120;
+    const short = s.about.length > SHORT ? s.about.slice(0, SHORT) + '...' : s.about;
+    $('vi-about-short').textContent = short;
+    $('vi-about-full').textContent = s.about;
+    $('vi-about-btn').textContent = s.about.length > SHORT ? ui('viShowMore') : '';
+    $('vi-about-btn').style.display = s.about.length > SHORT ? 'inline' : 'none';
+    $('vi-about-wrap').style.display = 'block';
+    hasAny = true;
+  }
+
+  // Контакти
+  let hasContact = false;
+  if (s.wifi)    { $('vi-wifi-val').textContent = s.wifi;    $('vi-wifi-row').style.display = 'flex';  hasContact = true; }
+  if (s.address) { $('vi-addr-val').textContent = s.address; $('vi-addr-row').style.display = 'flex';  hasContact = true; }
+  if (s.phone)   { $('vi-phone-val').textContent = s.phone;  $('vi-phone-row').style.display = 'flex'; hasContact = true; }
+  if (s.hours)   { $('vi-hours-val').textContent = s.hours;  $('vi-hours-row').style.display = 'flex'; hasContact = true; }
+  if (hasContact) { $('vi-contacts-wrap').style.display = 'block'; hasAny = true; }
+
+  // Соцмережі
+  let hasSocial = false;
+  if (s.socialGoogle)    { const el = $('vi-social-google');    el.href = s.socialGoogle;    el.style.display = 'flex'; hasSocial = true; }
+  if (s.socialInstagram) { const el = $('vi-social-instagram'); el.href = s.socialInstagram; el.style.display = 'flex'; hasSocial = true; }
+  if (s.socialTiktok)    { const el = $('vi-social-tiktok');    el.href = s.socialTiktok;    el.style.display = 'flex'; hasSocial = true; }
+  if (hasSocial) { $('vi-social-wrap').style.display = 'block'; hasAny = true; }
+
+  // Карта
+  if (s.address) {
+    const q = encodeURIComponent(s.address);
+    $('vi-map-frame').innerHTML = `<iframe src="https://maps.google.com/maps?q=${q}&output=embed&z=15" allowfullscreen loading="lazy"></iframe>`;
+    $('vi-map-link').href = `https://maps.google.com/maps?q=${q}`;
+    $('vi-map-wrap').style.display = 'block';
+    hasAny = true;
+  }
+
+  // Правова інформація
+  let hasLegal = false;
+  const legalItems = [
+    ['company', s.legalCompany], ['cookie', s.legalCookie],
+    ['terms', s.legalTerms],     ['privacy', s.legalPrivacy],
+  ];
+  legalItems.forEach(([key, val]) => {
+    if (val) {
+      $('vi-legal-' + key + '-body').textContent = val;
+      $('vi-legal-' + key + '-wrap').style.display = 'block';
+      hasLegal = true;
+    }
+  });
+  if (hasLegal) { $('vi-legal-wrap').style.display = 'block'; hasAny = true; }
+
+  if (hasAny) {
+    block.style.display = 'block';
+    // Прибираємо padding-bottom з menu-body бо venue-info-block вже має його
+    const mb = document.querySelector('.menu-body');
+    if (mb) mb.style.paddingBottom = '0';
+  }
+  applyVenueInfoLang();
+}
+
+function applyVenueInfoLang() {
+  if ($('vi-lbl-wifi'))     $('vi-lbl-wifi').textContent     = ui('viWifi');
+  if ($('vi-lbl-addr'))     $('vi-lbl-addr').textContent     = ui('viAddress');
+  if ($('vi-lbl-phone'))    $('vi-lbl-phone').textContent    = ui('viPhone');
+  if ($('vi-lbl-hours'))    $('vi-lbl-hours').textContent    = ui('viHours');
+  if ($('vi-lbl-google'))   $('vi-lbl-google').textContent   = 'Google';
+  if ($('vi-lbl-instagram'))$('vi-lbl-instagram').textContent= 'Instagram';
+  if ($('vi-lbl-tiktok'))   $('vi-lbl-tiktok').textContent   = 'TikTok';
+  if ($('vi-lbl-getlocation')) $('vi-lbl-getlocation').textContent = ui('viGetLocation');
+  if ($('vi-lbl-company'))  $('vi-lbl-company').textContent  = ui('viCompany');
+  if ($('vi-lbl-cookie'))   $('vi-lbl-cookie').textContent   = ui('viCookie');
+  if ($('vi-lbl-terms'))    $('vi-lbl-terms').textContent    = ui('viTerms');
+  if ($('vi-lbl-privacy'))  $('vi-lbl-privacy').textContent  = ui('viPrivacy');
+  if ($('vi-about-btn') && $('vi-about-full')?.style.display === 'block')
+    $('vi-about-btn').textContent = ui('viShowLess');
+  else if ($('vi-about-btn') && _venueSettings?.about?.length > 120)
+    $('vi-about-btn').textContent = ui('viShowMore');
+}
+
+window.toggleAbout = function() {
+  const full = $('vi-about-full');
+  const btn  = $('vi-about-btn');
+  const short = $('vi-about-short');
+  if (full.style.display === 'block') {
+    full.style.display = 'none';
+    short.style.display = 'inline';
+    btn.textContent = ui('viShowMore');
+  } else {
+    full.style.display = 'block';
+    short.style.display = 'none';
+    btn.textContent = ui('viShowLess');
+  }
+};
+
+window.toggleLegal = function(key) {
+  const body  = $('vi-legal-' + key + '-body');
+  const arrow = $('vi-arr-' + key);
+  const isOpen = body.style.display === 'block';
+  body.style.display  = isOpen ? 'none' : 'block';
+  arrow.classList.toggle('open', !isOpen);
+};
+
+window.viCopy = function(elId) {
+  const val = $(elId)?.textContent || '';
+  navigator.clipboard?.writeText(val).then(() => {
+    toast(ui('viCopy'));
+  }).catch(() => {});
+};
+
 async function init() {
   try {
-    // Налаштування закладу
-    const [sSnap, staffSnap] = await Promise.all([
+    const [sSnap, dSnap, cSnap, iSnap] = await Promise.all([
       getDoc(doc(db, 'venues', venueId, 'settings', 'main')),
-      getDocs(collection(db, 'venues', venueId, 'staff')),
+      getDoc(doc(db, 'venues', venueId, 'design', 'main')),
+      getDocs(collection(db, 'venues', venueId, 'categories')),
+      getDocs(collection(db, 'venues', venueId, 'items')),
     ]);
+    try {
+      const ordSnap = await getDoc(doc(db, 'venues', venueId, 'settings', 'ordering'));
+      orderingSettings = ordSnap.exists() ? ordSnap.data() : {};
+    } catch(e) { orderingSettings = {}; }
 
-    if (sSnap.exists()) {
-      venueSettings = sSnap.data();
-      applyVenueSettings(venueSettings);
-    }
+    try { applySettings(sSnap.exists() ? sSnap.data() : {}); } catch(e) { console.warn('applySettings:', e.message); }
+    try { design = dSnap.exists() ? dSnap.data() : {}; applyDesign(design); } catch(e) { console.warn('applyDesign:', e.message); }
 
-    // Персонал для чайових
-    staff = staffSnap.docs.map(d => ({ id: d.id, ...d.data() }))
-      .filter(s => s.tipsEnabled !== false);
+    allCats  = cSnap.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (a.order || 0) - (b.order || 0));
+    allItems = iSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    activeCat = allCats[0]?.name || null;
 
-    // Посилання на меню
-    $('menu-link').href = `menu.html?v=${venueId}${tableNum ? '&t='+tableNum : ''}`;
-
-    // Підписка на рахунок столу в реальному часі
-    if (tableNum) {
-      subscribeToTableBill();
-    }
+    initLangBar();
+    initOrderTypeBar();
+    renderCats();
+    renderMenu();
+    // Прив'язуємо кліки на верхній бар через addEventListener
+    [['ot-dine','dine_in'],['ot-take','takeaway'],['ot-del','delivery']].forEach(([id,type])=>{
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('click', () => setOrderType(type));
+    });
   } catch(e) {
     console.error('init error:', e);
+    $('menu-body').innerHTML = `<div class="empty">
+      <div class="empty-icon">⚠️</div>
+      <div style="font-size:13px;margin-top:.5rem">Код помилки: <b>${e.code || 'unknown'}</b></div>
+      <div style="font-size:11px;color:#999;margin-top:.375rem;word-break:break-all">${e.message}</div>
+    </div>`;
   } finally {
-    // Ховаємо loader
-    const loader = $('loading');
-    loader.classList.add('hidden');
-    setTimeout(() => loader.style.display = 'none', 350);
+    $('loader').classList.add('gone');
   }
 }
 
-function applyVenueSettings(s) {
-  // Назва і лого
-  if (s.name)    $('venue-name').textContent = s.name;
-  if (s.logoUrl) $('venue-logo').innerHTML = `<img src="${s.logoUrl}" alt="${s.name}"/>`;
-  else if (s.logoEmoji) $('venue-logo').textContent = s.logoEmoji;
-  document.title = (s.name || 'Меню') + (tableNum ? ` — Стіл №${tableNum}` : '');
-
-  // Значок столу
-  if (tableNum) $('table-badge').textContent = `🪑 Стіл №${tableNum}`;
-
-  // Валюта
-  const CURR = {UAH:'₴',EUR:'€',USD:'$',PLN:'zł',GBP:'£',CZK:'Kč',RON:'lei',HUF:'Ft',BGN:'лв',BAM:'KM',RSD:'дін'};
-  const POST = ['₴','zł','Kč','lei','Ft','лв','KM','дін'];
-  if (s.currency && CURR[s.currency]) {
-    currSymbol  = CURR[s.currency];
-    currPostfix = POST.includes(currSymbol);
-  }
-}
-
-// ── ПІДПИСКА НА РАХУНОК СТОЛУ ───────────────────────────────────
-async function subscribeToTableBill() {
-  const tableNumInt = Number(tableNum);
-  if (!tableNum || isNaN(tableNumInt) || tableNumInt <= 0) {
-    console.warn('subscribeToTableBill: невалідний tableNum', tableNum);
-    return;
-  }
-
-  // Читаємо поточну сесію столу щоб не показувати старі рахунки
-  let currentSessionId = null;
-  try {
-    const tablesSnap = await getDocs(query(
-      collection(db, 'venues', venueId, 'tables'),
-      where('num', '==', tableNumInt)
-    ));
-    if (!tablesSnap.empty) {
-      currentSessionId = tablesSnap.docs[0].data().startTime || null;
+async function checkPaymentAfterRedirect() {
+  const urlParams = new URLSearchParams(location.search);
+  let orderId = urlParams.get('order');
+  let paid = urlParams.get('paid');
+  if (!orderId) {
+    const pending = localStorage.getItem('mq_pending_order');
+    if (pending) {
+      try {
+        const data = JSON.parse(pending);
+        if (data.venueId === venueId) { orderId = data.orderId; paid = '1'; }
+      } catch(e) {}
     }
-  } catch(e) { console.warn('read table session:', e.message); }
-
-  // Шукаємо відкритий рахунок для цього столу
-  const billsRef = collection(db, 'venues', venueId, 'bills');
-  const q = query(billsRef,
-    where('tableNum', '==', tableNumInt),
-    where('status', 'in', ['open', 'pending_payment'])
-  );
-
-  onSnapshot(q, snap => {
-    if (snap.empty) {
-      openBillData = null;
-      hideBillBanner();
-    } else {
-      const bills = snap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(b => {
-          // Якщо є sessionId — показуємо тільки bill поточної сесії
-          if (currentSessionId && b.sessionId && b.sessionId !== currentSessionId) return false;
-          return true;
-        })
-        .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-
-      if (!bills.length) {
-        openBillData = null;
-        hideBillBanner();
-        return;
-      }
-      openBillData = bills[0];
-      showBillBanner(openBillData);
-      const overlay = document.getElementById('bill-overlay');
-      if (overlay && overlay.classList.contains('open')) {
-        renderBillContent(document.getElementById('bill-content'), openBillData);
-      }
-    }
-  });
-}
-
-function showBillBanner(bill) {
-  const banner = $('bill-banner');
-  $('bb-amount').textContent = mCur(bill.total || 0);
-  $('bb-desc').textContent = `${bill.items?.length || 0} · ${ui('bbDesc')}`;
-  $('bill-action-desc').textContent = ui('billOpenDesc');
-  banner.style.display = 'block';
-}
-
-function hideBillBanner() {
-  $('bill-banner').style.display = 'none';
-  $('bill-action-desc').textContent = ui('billDesc');
-}
-
-// ── РАХУНОК ─────────────────────────────────────────────────────
-window.openBill = function() {
-  const content = $('bill-content');
-  if (!openBillData) {
-    content.innerHTML = `
-      <div class="no-bill">
-        <div class="nb-icon">🧾</div>
-        <div class="nb-text">${ui('noBill').replace('\n','<br/>')}</div>
-      </div>`;
-  } else {
-    renderBillContent(content, openBillData);
   }
-  openOverlay('bill-overlay');
-};
-
-async function loadTableOrders(content) {
-  content.innerHTML = `<div style="text-align:center;padding:1rem;color:var(--muted)">Завантаження...</div>`;
-
-  try {
-    const ordersRef = collection(db, 'venues', venueId, 'orders');
-    // Беремо тільки сьогоднішні активні замовлення (не виконані і не скасовані)
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-    const { Timestamp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-    const q = query(ordersRef,
-      where('tableId', '==', String(tableNum)),
-      where('status', 'in', ['new', 'preparing']),
-      where('createdAt', '>=', Timestamp.fromDate(todayStart)),
-      orderBy('createdAt', 'desc')
-    );
-    const snap = await getDocs(q);
-
-    if (snap.empty) {
-      content.innerHTML = `
-        <div class="no-bill">
-          <div class="nb-icon">🧾</div>
-          <div class="nb-text">${ui('noBill').replace('\n','<br/>')}</div>
-        </div>`;
-      return;
-    }
-
-    // Збираємо всі позиції
-    const allItems = [];
-    let total = 0;
-    snap.docs.forEach(d => {
-      const o = d.data();
-      (o.items || []).forEach(item => {
-        allItems.push({ name: item.name, qty: item.qty || 1, price: item.price || 0 });
-        total += (item.price || 0) * (item.qty || 1);
-      });
-    });
-
-    // Групуємо однакові позиції
-    const grouped = {};
-    allItems.forEach(item => {
-      const key = item.name;
-      if (grouped[key]) {
-        grouped[key].qty += item.qty;
-      } else {
-        grouped[key] = { ...item };
-      }
-    });
-
-    openBillData = { items: Object.values(grouped), total, status: 'open', fromOrders: true };
-    renderBillContent(content, openBillData);
-
-  } catch(e) {
-    content.innerHTML = `<div class="no-bill"><div class="nb-icon">⚠️</div><div class="nb-text">${ui('noBill').replace('\n','<br/>')}</div></div>`;
-    console.error('loadTableOrders:', e);
-  }
-}
-
-function renderBillContent(content, bill) {
-  const items = bill.items || [];
-  const total = bill.total || 0;
-
-  const itemsHtml = items.map(item => `
-    <div class="bill-item">
-      <span class="bi-name">${item.name}</span>
-      <span class="bi-qty">×${item.qty || 1}</span>
-      <span class="bi-price">${mCur((item.price || 0) * (item.qty || 1))}</span>
-    </div>`).join('');
-
-  content.innerHTML = `
-    ${itemsHtml}
-    <div class="bill-total">
-      <span class="bt-label">${ui('billTotal')}</span>
-      <span class="bt-amount">${mCur(total)}</span>
-    </div>
-    <div class="pay-methods">
-      <button class="pay-btn online" id="pay-online-btn" onclick="payOnline()">
-        <span class="btn-spinner"></span>
-        <span class="btn-text">${ui('payOnlineBtn')}</span>
-      </button>
-      <button class="pay-btn cash" onclick="payCash()">
-        ${ui('payCashBtn')}
-      </button>
-    </div>
-    <div class="pay-qr-wrap" id="pay-qr-wrap"></div>`;
-
-  // Обробники через event delegation (document.addEventListener вище)
-}
-
-window.payOnline = async function() {
-  console.log('[payOnline] called, openBillData=', openBillData);
-
-  if (!openBillData) {
-    alert('Помилка: немає даних рахунку');
-    return;
-  }
-
-  const btn = $('pay-online-btn');
-  console.log('[payOnline] btn=', btn);
-
-  if (!btn) {
-    alert('Помилка: кнопку не знайдено в DOM');
-    return;
-  }
-
-  btn.classList.add('paying');
-  btn.disabled = true;
-
-  try {
-    const payUrl = openBillData.payUrl;
-    console.log('[payOnline] payUrl=', payUrl);
-
-    if (!payUrl) {
-      btn.classList.remove('paying');
-      btn.disabled = false;
-      const qrWrap = $('pay-qr-wrap');
-      if (qrWrap) {
-        qrWrap.style.display = 'block';
-        qrWrap.innerHTML = `
-          <div style="text-align:center;padding:1rem">
-            <div style="font-size:2rem;margin-bottom:.5rem">📲</div>
-            <div style="font-size:14px;font-weight:600;margin-bottom:.375rem">Попросіть офіціанта</div>
-            <div style="font-size:12px;color:var(--muted)">Офіціант надішле вам QR-код або посилання для оплати</div>
-          </div>`;
-      }
-      return;
-    }
-
-    // Є payUrl — показуємо посилання + QR
-    const qrWrap = $('pay-qr-wrap');
-    console.log('[payOnline] qrWrap=', qrWrap);
-
-    if (!qrWrap) {
-      // qrWrap не знайдено — відкриваємо напряму
-      window.location.href = payUrl;
-      return;
-    }
-
-    qrWrap.innerHTML = `
-      <div style="font-size:12px;color:var(--muted);text-align:center;margin-bottom:.75rem">або відскануйте QR-код:</div>
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(payUrl)}"
-        style="width:180px;height:180px;display:block;margin:0 auto;border-radius:8px;background:#fff;padding:4px"/>
-      <button class="copy-btn" style="display:block;margin:.75rem auto 0"
-        onclick="navigator.clipboard?.writeText('${payUrl}').then(()=>this.textContent='✓ Скопійовано').catch(()=>{})">
-        🔗 Копіювати посилання
-      </button>`;
-    qrWrap.style.display = 'block';
-    // Відкриваємо оплату напряму — Safari блокує target=_blank в async
-    window.location.href = payUrl;
-
-  } catch(e) {
-    console.error('[payOnline] error:', e);
-    alert('Помилка: ' + e.message);
-  } finally {
-    btn.classList.remove('paying');
-    btn.disabled = false;
-  }
-};
-
-window.payCash = function() {
-  closeOverlay('bill-overlay');
-  // Показуємо підтвердження
-  setTimeout(() => alert(ui('payCashAlert')), 200);
-};
-
-window.copyPayUrl = function() {
-  const url = $('pay-qr-url')?.textContent || $('pay-qr-wrap')?._payUrl;
-  if (!url) return;
-  navigator.clipboard?.writeText(url).catch(() => {});
-};
-
-// ── ВІДГУК ──────────────────────────────────────────────────────
-window.openReview = function() { openOverlay('review-overlay'); };
-
-window.setStar = function(n) {
-  selectedStar = n;
-  document.querySelectorAll('.star').forEach((s, i) => {
-    s.classList.toggle('active', i < n);
-  });
-};
-
-window.submitReview = async function() {
-  if (!selectedStar) { alert(ui('reviewRatingAlert')); return; }
-  const btn = $('review-btn');
-  btn.classList.add('paying');
-  btn.disabled = true;
-
-  try {
-    await addDoc(collection(db, 'venues', venueId, 'reviews'), {
-      rating:    selectedStar,
-      text:      $('review-text').value.trim(),
-      name:      $('review-name').value.trim() || 'Гість',
-      tableNum:  tableNum ? Number(tableNum) : null,
-      createdAt: serverTimestamp(),
-    });
-
-    $('review-content').innerHTML = `
-      <div class="success-wrap">
-        <div class="success-icon">🙏</div>
-        <div class="success-title">${ui('reviewThanks')}</div>
-        <div class="success-desc">Ваша думка дуже важлива для нас. Раді бачити вас знову!</div>
-      </div>`;
-  } catch(e) {
-    alert('Помилка: ' + e.message);
-  } finally {
-    btn.classList.remove('paying');
-    btn.disabled = false;
-  }
-};
-
-// ── ЧАЙОВІ ──────────────────────────────────────────────────────
-window.openTips = function() {
-  renderStaffGrid();
-  renderTipAmounts();
-  $('tip-currency-sym').textContent = currSymbol;
-  openOverlay('tips-overlay');
-};
-
-function renderStaffGrid() {
-  const grid = $('staff-grid');
-  const label = $('tips-staff-label');
-  if (!staff.length) {
-    grid.innerHTML = '';
-    label.style.display = 'none';
-    return;
-  }
-  label.style.display = 'block';
-  grid.innerHTML = staff.map(s => `
-    <div class="staff-card" id="sc-${s.id}" onclick="selectStaff('${s.id}')">
-      <div class="sc-avatar">${s.avatar || '👤'}</div>
-      <div class="sc-name">${s.name || '—'}</div>
-      <div class="sc-role">${s.role || ''}</div>
-    </div>`).join('');
-}
-
-function renderTipAmounts() {
-  const amounts = [20, 50, 100, 200];
-  $('tip-amounts').innerHTML = amounts.map(a => `
-    <button class="tip-chip" id="tc-${a}" onclick="selectTip(${a}, null)">
-      ${mCur(a)}
-    </button>`).join('');
-}
-
-window.selectStaff = function(id) {
-  selectedStaff = id;
-  document.querySelectorAll('.staff-card').forEach(el => el.classList.remove('active'));
-  const card = $(`sc-${id}`);
-  if (card) card.classList.add('active');
-};
-
-window.selectTip = function(preset, custom) {
-  selectedTip = preset || Number(custom) || null;
-  document.querySelectorAll('.tip-chip').forEach(el => el.classList.remove('active'));
-  if (preset) {
-    const chip = $(`tc-${preset}`);
-    if (chip) chip.classList.add('active');
-    $('tip-custom').value = '';
-  }
-};
-
-window.payTips = async function() {
-  if (!selectedTip || selectedTip < 1) { alert(ui('tipsAmountAlert')); return; }
-  const btn = $('tips-btn');
-  btn.classList.add('paying');
-  btn.disabled = true;
-
-  try {
-    // Знаходимо вибраного співробітника
-    const staffMember = staff.find(s => s.id === selectedStaff);
-    const tipsEmployeeId = staffMember?.tipsEmployeeId || null;
-
-    // Якщо є monobank tipsEmployeeId — платимо через mono
-    if (tipsEmployeeId) {
-      const res = await fetch(`${CF}/createOrder`, {
+  if (!orderId) return;
+  window.history.replaceState({}, '', location.pathname + '?v=' + venueId + (urlParams.get('t') ? '&t=' + urlParams.get('t') : ''));
+  localStorage.removeItem('mq_pending_order');
+  const success = $('success');
+  const sIcon = $('s-icon');
+  const sTitle = $('s-title');
+  const sSub = $('s-sub');
+  if (sIcon)  sIcon.textContent  = '⏳';
+  if (sTitle) sTitle.textContent = 'Перевіряємо оплату...';
+  if (sSub)   sSub.textContent   = 'Зачекайте кілька секунд';
+  if (success) success.classList.add('open');
+  let attempts = 0;
+  const maxAttempts = 15;
+  const poll = async () => {
+    attempts++;
+    try {
+      const res = await fetch('https://us-central1-mageqrrest.cloudfunctions.net/checkPaymentStatus', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          venueId,
-          items: [{ name: 'Чайові', qty: 1, price: selectedTip }],
-          total: selectedTip,
-          tableId: tableNum,
-          orderType: 'tips',
-          paymentMethod: 'online',
-          tipsEmployeeId,
-          comment: `Чайові · Стіл №${tableNum}`,
-        }),
+        body: JSON.stringify({ venueId, orderId }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Помилка');
-      if (data.payUrl) {
-        window.location.href = data.payUrl;
+      if (data.status === 'paid' || data.status === 'success') {
+        if (sIcon)  sIcon.textContent  = '✅';
+        if (sTitle) sTitle.textContent = ui('orderDone');
+        if (sSub)   sSub.textContent   = ui('waitConfirm');
+        const numEl = $('s-num');
+        if (numEl && data.order?.num) { numEl.textContent = '#' + data.order.num; numEl.style.display = ''; }
+        $('back-btn').textContent = ui('backToMenu');
         return;
       }
+      if (data.status === 'failure' || data.status === 'expired') {
+        if (sIcon)  sIcon.textContent  = '❌';
+        if (sTitle) sTitle.textContent = 'Оплата не вдалась';
+        if (sSub)   sSub.textContent   = 'Спробуйте ще раз або оберіть інший спосіб оплати.';
+        return;
+      }
+      if (attempts < maxAttempts) {
+        setTimeout(poll, 2000);
+      } else {
+        if (sIcon)  sIcon.textContent  = '⏳';
+        if (sTitle) sTitle.textContent = 'Замовлення в обробці';
+        if (sSub)   sSub.textContent   = 'Оплата обробляється. Ви отримаєте підтвердження найближчим часом.';
+      }
+    } catch(e) {
+      if (attempts < maxAttempts) setTimeout(poll, 2000);
     }
+  };
+  setTimeout(poll, 1500);
+}
 
-    // Зберігаємо запис і показуємо подяку
-    await addDoc(collection(db, 'venues', venueId, 'tips'), {
-      amount:     selectedTip,
-      staffId:    selectedStaff,
-      staffName:  staff.find(s => s.id === selectedStaff)?.name || '—',
-      tableNum:   tableNum ? Number(tableNum) : null,
-      status:     'pending',
-      createdAt:  serverTimestamp(),
-    });
-
-    $('tips-content').innerHTML = `
-      <div class="success-wrap">
-        <div class="success-icon">💸</div>
-        <div class="success-title">Дякуємо!</div>
-        <div class="success-desc">Чайові ${mCur(selectedTip)} передано ${staff.find(s=>s.id===selectedStaff)?.name || 'персоналу'}.</div>
-      </div>`;
-  } catch(e) {
-    alert('Помилка: ' + e.message);
-  } finally {
-    btn.classList.remove('paying');
-    btn.disabled = false;
+init().then(() => checkPaymentAfterRedirect());
+</script>
+<script>
+window.initGoogleMapsCallback = function() {
+  if (window.google?.maps?.places) {
+    window.autocompleteService = new google.maps.places.AutocompleteService();
   }
 };
-
-// ── HELPERS ─────────────────────────────────────────────────────
-window.openOverlay  = id => { $(id)?.classList.add('open'); document.body.style.overflow = 'hidden'; };
-window.closeOverlay = id => { $(id)?.classList.remove('open'); document.body.style.overflow = ''; };
-
-// Закриття по swipe вниз
-document.querySelectorAll('.sheet').forEach(sheet => {
-  let startY = 0;
-  sheet.addEventListener('touchstart', e => startY = e.touches[0].clientY, { passive: true });
-  sheet.addEventListener('touchend', e => {
-    if (e.changedTouches[0].clientY - startY > 80) {
-      const overlay = sheet.closest('.overlay');
-      if (overlay) closeOverlay(overlay.id);
-    }
-  });
-});
-
-// ── ДЕЛЕГУВАННЯ ПОДІЙ (замість onclick в HTML) ──────────────────
-document.addEventListener('click', function(e) {
-  const action = e.target.closest('[data-action]')?.dataset?.action;
-  if (!action) return;
-  e.stopPropagation();
-  switch(action) {
-    case 'open-bill':   openBill();   break;
-    case 'open-tips':   openTips();   break;
-    case 'open-review': openReview(); break;
-    case 'pay-online':  payOnline();  break;
-    case 'pay-cash':       payCash();       break;
-    case 'submit-review':  submitReview();  break;
-    case 'pay-tips':       payTips();       break;
-  }
-});
-
-
-init().then(() => applyLang());
+window.loadGoogleMaps = function() {
+  if (window.google?.maps?.places) { window.initGoogleMapsCallback(); return; }
+  if (document.getElementById('gmaps-script')) return;
+  const s = document.createElement('script');
+  s.id = 'gmaps-script';
+  s.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDkkwnZmNC_1PdX_BJ1iaoJrDNoBCZ3RVA&libraries=places&callback=initGoogleMapsCallback&language=uk&v=weekly';
+  s.async = true;
+  document.head.appendChild(s);
+};
 </script>
 </body>
 </html>
