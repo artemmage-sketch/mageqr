@@ -6125,13 +6125,23 @@ async function loadTablesFromFirestore() {
       renderZoneTabs();
       renderTables();
 
-      // Якщо відкрита модалка столу і він щойно став 'paid' — закриваємо і повідомляємо
+      // Якщо відкрита модалка — оновлюємо статус в ній теж (renderTables її пропускає)
       if (selectedTable) {
         const updated = tables.find(t => t.id === selectedTable.id);
-        if (updated && updated.status === 'paid' && selectedTable.status !== 'paid') {
-          selectedTable.status = 'paid';
-          closeModal('modal-table-detail');
-          notify('✅ Клієнт оплатив рахунок онлайн!', 'ok');
+        if (updated && updated.status !== selectedTable.status) {
+          const prevStatus = selectedTable.status;
+          selectedTable.status = updated.status;
+          // Оновлюємо відображення статусу в модалці
+          const statusEl = document.getElementById('table-status-display');
+          if (statusEl) {
+            const statusLabels = {free:'🟢 Вільний', occupied:'🔴 Зайнятий', ordered:'🔵 Замовлено', paid:'✅ Оплачено'};
+            statusEl.textContent = statusLabels[updated.status] || updated.status;
+          }
+          // Якщо стіл оплачено — закриваємо модалку і повідомляємо
+          if (updated.status === 'paid' && prevStatus !== 'paid') {
+            closeModal('modal-table-detail');
+            notify('✅ Клієнт оплатив рахунок онлайн!', 'ok');
+          }
         }
       }
     }, e => console.warn('loadTablesFromFirestore:', e.message));
