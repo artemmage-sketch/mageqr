@@ -1910,8 +1910,19 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     </div>
     <div style="padding:1rem;display:flex;flex-direction:column;gap:.75rem">
       <div>
-        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem">Emoji / Фото</label>
-        <input id="sf-emoji" type="text" placeholder="👨‍🍳" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem">Emoji або фото</label>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <input id="sf-emoji" type="text" placeholder="👨‍🍳" style="width:80px;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+          <span style="color:var(--muted);font-size:12px">або</span>
+          <label style="flex:1;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:12px;color:var(--muted);text-align:center">
+            📷 Завантажити фото
+            <input type="file" id="sf-photo" accept="image/*" style="display:none" onchange="previewStaffPhoto(this)"/>
+          </label>
+        </div>
+        <div id="sf-photo-preview" style="margin-top:.5rem;display:none">
+          <img id="sf-photo-img" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--border)"/>
+          <button type="button" onclick="clearStaffPhoto()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;margin-left:.5rem">✕</button>
+        </div>
       </div>
       <div>
         <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem" data-i18n="staffName">Ім'я</label>
@@ -5421,6 +5432,10 @@ async function loadSettings(){
     if(d.bannerUrl){document.getElementById('set-banner-url').value=d.bannerUrl;window.previewBannerUrl(d.bannerUrl);}
     const qrUrl=`mageqrrest.com/menu.html?v=${venueId}`;
     document.getElementById('venue-qr-url')&&(document.getElementById('venue-qr-url').textContent=qrUrl);
+    // Завантажуємо налаштування чайових
+    if(d.tipsEnabled !== undefined) document.getElementById('tips-enabled').checked = d.tipsEnabled;
+    if(d.tipsChooseStaff !== undefined) document.getElementById('tips-choose-staff').checked = d.tipsChooseStaff;
+    if(d.tipsAutoAssign !== undefined) document.getElementById('tips-auto-assign').checked = d.tipsAutoAssign;
   }catch(e){console.error('loadSettings ERROR:',e.message,e.stack);notify('loadSettings: '+e.message,'err');}
 }
 
@@ -5451,7 +5466,11 @@ window.saveSettings=async function(){
       legalTerms:document.getElementById('set-legal-terms')?.value.trim()||'',
       legalPrivacy:document.getElementById('set-legal-privacy')?.value.trim()||'',
       logoUrl,logoEmoji:document.getElementById('set-logo-emoji').value.trim(),
-      bannerUrl,currency:currencyCode,updatedAt:new Date().toISOString()
+      bannerUrl,currency:currencyCode,
+      tipsEnabled: document.getElementById('tips-enabled')?.checked ?? true,
+      tipsChooseStaff: document.getElementById('tips-choose-staff')?.checked ?? true,
+      tipsAutoAssign: document.getElementById('tips-auto-assign')?.checked ?? false,
+      updatedAt:new Date().toISOString()
     };
     await setDoc(doc(db,'venues',venueId,'settings','main'),data);
     if(data.name)document.getElementById('sb-venue-name').textContent=data.name;
@@ -6643,9 +6662,12 @@ function openAddZone(){const z=prompt('Назва нового залу:');if(z&
 window.openAddTable=openAddTable;window.saveTable=saveTable;window.openAddZone=openAddZone;
 
 function renderStaff(){
+  const avatarHtml = s => s.avatar
+    ? `<img src="${s.avatar}" style="width:36px;height:36px;border-radius:50%;object-fit:cover"/>`
+    : `<span style="font-size:1.2rem">${s.emoji||'👤'}</span>`;
   document.getElementById('staff-list').innerHTML=staff.map(s=>`
     <div class="item-row" style="margin-bottom:.5rem">
-      <div class="item-em">${s.emoji||'👤'}</div>
+      <div class="item-em">${avatarHtml(s)}</div>
       <div class="item-body"><div class="item-name">${s.name}</div><div class="item-sub">${s.role} · Mono ID: ${s.monoId||'<span style="color:var(--amber)">не вказано</span>'}</div></div>
       <div style="font-size:12px;font-weight:600;color:var(--green);margin-right:.5rem">₴${s.tipsToday||0}</div>
       <div class="item-btns">
@@ -6655,7 +6677,7 @@ function renderStaff(){
     </div>`).join('')||`<div style="color:var(--muted);font-size:13px">${t('noStaff')||'Персонал не додано'}</div>`;
   document.getElementById('staff-tips-grid').innerHTML=staff.map(s=>`
     <div class="staff-card">
-      <div class="staff-avatar">${s.emoji||'👤'}</div>
+      <div class="staff-avatar">${s.avatar ? `<img src="${s.avatar}" style="width:40px;height:40px;border-radius:50%;object-fit:cover"/>` : (s.emoji||'👤')}</div>
       <div class="staff-name">${s.name}</div>
       <div class="staff-role">${s.role}</div>
       <div class="staff-tips-total">₴${s.tipsToday||0} ${t('tipsWord')}</div>
@@ -6681,20 +6703,48 @@ function openEditStaff(id){
   document.getElementById('sf-emoji').value=s.emoji||'';
   document.getElementById('sf-role').value=s.role;
   document.getElementById('sf-mono-id').value=s.monoId||'';
+  // Показуємо поточне фото якщо є
+  if (s.avatar) {
+    document.getElementById('sf-photo-img').src = s.avatar;
+    document.getElementById('sf-photo-preview').style.display = 'block';
+  } else {
+    clearStaffPhoto();
+  }
   openModal('modal-add-staff');
 }
 
 async function saveStaff(){
   const name=document.getElementById('sf-name').value.trim();
   if(!name){notify(t('staffNameRequired')||"Введіть ім'я",'err');return;}
+
+  // Завантажуємо фото якщо є
+  let avatarUrl = null;
+  const photoInput = document.getElementById('sf-photo');
+  const photoFile = photoInput && photoInput.files[0];
+  if (photoFile) {
+    try {
+      const {getStorage, ref, uploadBytes, getDownloadURL} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js');
+      const {getApp} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+      const storage = getStorage(getApp());
+      const storageRef = ref(storage, `venues/${venueId}/staff/${Date.now()}_${photoFile.name}`);
+      await uploadBytes(storageRef, photoFile);
+      avatarUrl = await getDownloadURL(storageRef);
+    } catch(e) { console.warn('photo upload:', e.message); }
+  }
+
+  const emojiVal = document.getElementById('sf-emoji').value;
   const data = {
     name,
-    emoji: document.getElementById('sf-emoji').value||'👤',
+    emoji: avatarUrl ? null : (emojiVal || '👤'),
+    avatar: avatarUrl || null,
     role:  document.getElementById('sf-role').value,
-    monoId:document.getElementById('sf-mono-id').value.trim(),
+    monoId: document.getElementById('sf-mono-id').value.trim(),
     tipsEmployeeId: document.getElementById('sf-mono-id').value.trim() || null,
-    tipsToday:0,
+    tipsToday: 0,
   };
+  if (!data.avatar) delete data.avatar;
+  if (!data.emoji && data.avatar) delete data.emoji;
+
   try {
     const {doc, setDoc, collection, addDoc, serverTimestamp} = window.__FS;
     if(editStaffId){
@@ -6705,6 +6755,7 @@ async function saveStaff(){
       data.id = ref.id;
       staff.push(data);
     }
+    if (window.clearStaffPhoto) clearStaffPhoto();
     closeModal('modal-add-staff');
     renderStaff();
     notify('✅ '+t('saved'),'ok');
@@ -6772,6 +6823,24 @@ function renderTableWaiterSelect(){
       ${current?`<div onclick="assignWaiterToTable('')" style="padding:.375rem .625rem;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:11px;color:var(--muted)">${t('noWaiter')||'Без офіціанта'}</div>`:''}
     </div>`;
 }
+
+window.previewStaffPhoto = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('sf-photo-img').src = e.target.result;
+    document.getElementById('sf-photo-preview').style.display = 'block';
+    document.getElementById('sf-emoji').value = ''; // очищаємо emoji
+  };
+  reader.readAsDataURL(file);
+};
+
+window.clearStaffPhoto = function() {
+  document.getElementById('sf-photo').value = '';
+  document.getElementById('sf-photo-preview').style.display = 'none';
+  document.getElementById('sf-photo-img').src = '';
+};
 
 window.openAddStaff=openAddStaff;window.openEditStaff=openEditStaff;window.saveStaff=saveStaff;window.deleteStaff=deleteStaff;
 
