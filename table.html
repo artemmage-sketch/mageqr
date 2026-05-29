@@ -1428,29 +1428,27 @@ window.selectTip = function(preset, custom) {
 window.payTips = async function() {
   if (!selectedTip || selectedTip < 1) { alert(ui('tipsAmountAlert')); return; }
   const btn = $('tips-btn');
-  btn.classList.add('paying');
+  const btnOrigText = btn.textContent;
+  // Не змінюємо розмір кнопки — просто міняємо текст
+  btn.textContent = '⏳';
   btn.disabled = true;
 
   try {
     const staffMember = staff.find(s => s.id === selectedStaff);
-    const tipsEmployeeId = staffMember?.monoId || staffMember?.tipsEmployeeId || null;
+    const staffName = staffMember?.name || '';
 
-    // Платимо через createOrder — бекенд обере активного провайдера
-    // Якщо є tipsEmployeeId — Monobank нарахує чайові офіціанту
-    // Якщо немає — просто онлайн оплата через будь-який підключений провайдер
     const res = await fetch(`${CF}/createOrder`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         venueId,
-        items: [{ name: ui('tipsTitle') || 'Чайові', qty: 1, price: selectedTip }],
+        items: [{ name: staffName ? `Чайові → ${staffName}` : 'Чайові', qty: 1, price: selectedTip }],
         total: selectedTip,
         tableId: tableNum,
         orderType: 'tips',
         paymentMethod: 'online',
-        tipsEmployeeId: tipsEmployeeId || undefined,
-        clientName: staffMember?.name ? `Чайові → ${staffMember.name}` : 'Чайові',
-        comment: `Чайові · Стіл №${tableNum}${staffMember?.name ? ' · ' + staffMember.name : ''}`,
+        clientName: staffName ? `Чайові → ${staffName}` : 'Чайові',
+        comment: `Чайові · Стіл №${tableNum}${staffName ? ' · ' + staffName : ''}`,
       }),
     });
     const data = await res.json();
@@ -1479,7 +1477,7 @@ window.payTips = async function() {
   } catch(e) {
     alert('Помилка: ' + e.message);
   } finally {
-    btn.classList.remove('paying');
+    btn.textContent = btnOrigText;
     btn.disabled = false;
   }
 };
