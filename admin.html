@@ -5851,17 +5851,7 @@ window.createBill = async function() {
     });
 
     if(payUrl) {
-      document.getElementById('bill-pay-link').textContent = payUrl;
-      document.getElementById('bill-pay-link-wrap').style.display = 'block';
-      const existingQr = document.getElementById('bill-pay-qr');
-      if(!existingQr) {
-        const qrImg = document.createElement('img');
-        qrImg.id = 'bill-pay-qr';
-        qrImg.style.cssText = 'display:block;margin:.5rem auto;border-radius:4px;background:#fff;padding:4px;width:180px;height:180px';
-        document.getElementById('bill-pay-link-wrap').insertBefore(qrImg, document.getElementById('bill-pay-link-wrap').firstChild);
-      }
-      document.getElementById('bill-pay-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(payUrl)}`;
-      notify(`✅ Рахунок ${cur(total)} — посилання готове!`, 'ok');
+      notify(`✅ Рахунок ${cur(total)} — QR код надіслано клієнту!`, 'ok');
     } else {
       notify(`✅ Рахунок на ${cur(total)} виставлено. Платіжний провайдер не налаштовано — клієнт побачить суму.`, 'ok');
     }
@@ -5948,19 +5938,6 @@ window.billOnline = async function(){
         });
       } catch(e){ console.warn('bills write:', e.message); }
 
-      document.getElementById('bill-pay-link').textContent = payUrl;
-      document.getElementById('bill-pay-link-wrap').style.display = 'block';
-      const qrWrap = document.getElementById('bill-pay-link-wrap');
-      const existingQr = document.getElementById('bill-pay-qr');
-      if(!existingQr) {
-        const qrImg = document.createElement('img');
-        qrImg.id = 'bill-pay-qr';
-        qrImg.width = 180; qrImg.height = 180;
-        qrImg.style.cssText = 'display:block;margin:.5rem auto;border-radius:4px;background:#fff;padding:4px';
-        qrWrap.insertBefore(qrImg, qrWrap.firstChild);
-      }
-      document.getElementById('bill-pay-qr').src =
-        `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(payUrl)}`;
       navigator.clipboard?.writeText(payUrl).catch(()=>{});
       notify(t('notifMonoOpened'),'ok');
     } else {
@@ -5975,13 +5952,7 @@ window.billOnline = async function(){
 };
 
 function copyBillLink(){
-  const url = document.getElementById('bill-pay-link').textContent;
-  if(!url) return;
-  navigator.clipboard.writeText(url).then(()=>notify(t('notifCopied'),'ok')).catch(()=>{
-    const inp=document.createElement('input');inp.value=url;
-    document.body.appendChild(inp);inp.select();document.execCommand('copy');
-    document.body.removeChild(inp);notify(t('notifCopied'),'ok');
-  });
+  notify(t('notifCopied'),'ok');
 }
 window.copyBillLink = copyBillLink;
 
