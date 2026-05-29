@@ -6600,6 +6600,24 @@ async function loadSubscription(){
 // Ініціалізація UI
 // Завантажуємо столи при відкритті вкладки
 let unsubTables = null;
+
+// Перемикач "Автооновлення"
+document.addEventListener('DOMContentLoaded', () => {
+  const chk = document.getElementById('auto-refresh');
+  if (chk) {
+    chk.addEventListener('change', () => {
+      if (chk.checked) {
+        // Вмикаємо — підписуємось знову
+        subscribeOrders();
+        loadTablesFromFirestore();
+      } else {
+        // Вимикаємо — відписуємось
+        if (unsubOrders) { unsubOrders(); unsubOrders = null; }
+        if (unsubTables) { unsubTables(); unsubTables = null; }
+      }
+    });
+  }
+});
 async function loadTablesFromFirestore() {
   if(!db||!window.__FS) return;
   const {collection, onSnapshot} = window.__FS;
