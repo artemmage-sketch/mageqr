@@ -986,42 +986,37 @@ async function init() {
 
     // Підписка на рахунок столу в реальному часі
     if (tableNum) {
-      // Закриваємо старі bills з минулих сесій (старіші за сьогодні)
-      try {
-        const todayStart = new Date(); todayStart.setHours(0,0,0,0);
-        const staleBills = await getDocs(query(
-          collection(db, 'venues', venueId, 'bills'),
-          where('tableNum', '==', Number(tableNum)),
-          where('status', 'in', ['open', 'pending_payment'])
-        ));
-        staleBills.forEach(d => {
-          const createdSec = d.data().createdAt?.seconds || 0;
-          if (createdSec * 1000 < todayStart.getTime()) {
-            updateDoc(doc(db, 'venues', venueId, 'bills', d.id), {
-              status: 'closed',
-              closedAt: new Date().toISOString(),
-            }).catch(() => {});
-          }
-        });
-      } catch(e) { console.warn('stale bills:', e.message); }
-
-      // Якщо клієнт повернувся після оплати — закриваємо bill одразу
       const urlParams = new URLSearchParams(location.search);
       if (urlParams.get('paid') === '1') {
         window.history.replaceState({}, '', `table.html?v=${venueId}&t=${tableNum}`);
         try {
+          // Закриваємо всі відкриті bills цього столу
           const billsSnap = await getDocs(query(
             collection(db, 'venues', venueId, 'bills'),
             where('tableNum', '==', Number(tableNum)),
-            where('status', 'in', ['open', 'pending_payment'])
+            where('status', 'in', ['open', 'pending_payment', 'pending'])
           ));
-          billsSnap.forEach(d => {
+          await Promise.all(billsSnap.docs.map(d =>
             updateDoc(doc(db, 'venues', venueId, 'bills', d.id), {
               status: 'paid',
               paidAt: new Date().toISOString(),
-            }).catch(e => console.warn('close bill:', e.message));
-          });
-        } catch(e) { console.warn('close bills after payment:', e.message); }
+            })
+          ));
+          // Фолбек: якщо webhook не спрацював — оновлюємо стіл напряму
+          const tablesSnap = await getDocs(query(
+            collection(db, 'venues', venueId, 'tables'),
+            where('num', '==', Number(tableNum))
+          ));
+          if (!tablesSnap.empty) {
+            const tbl = tablesSnap.docs[0];
+            if (tbl.data().status !== 'free') {
+              await updateDoc(doc(db, 'venues', venueId, 'tables', tbl.id), {
+                status: 'paid',
+                paidAt: new Date().toISOString(),
+              });
+            }
+          }
+        } catch(e) { console.warn('paid=1 cleanup:', e.message); }
       }
       subscribeToTableBill();
     }
@@ -1055,12 +1050,25 @@ function applyVenueSettings(s) {
 }
 
 // ── ПІДПИСКА НА РАХУНОК СТОЛУ ───────────────────────────────────
-function subscribeToTableBill() {
+async function subscribeToTableBill() {
   const tableNumInt = Number(tableNum);
   if (!tableNum || isNaN(tableNumInt) || tableNumInt <= 0) {
     console.warn('subscribeToTableBill: невалідний tableNum', tableNum);
     return;
   }
+
+  // Читаємо поточну сесію столу щоб не показувати старі рахунки
+  let currentSessionId = null;
+  try {
+    const tablesSnap = await getDocs(query(
+      collection(db, 'venues', venueId, 'tables'),
+      where('num', '==', tableNumInt)
+    ));
+    if (!tablesSnap.empty) {
+      currentSessionId = tablesSnap.docs[0].data().startTime || null;
+    }
+  } catch(e) { console.warn('read table session:', e.message); }
+
   // Шукаємо відкритий рахунок для цього столу
   const billsRef = collection(db, 'venues', venueId, 'bills');
   const q = query(billsRef,
@@ -1073,8 +1081,20 @@ function subscribeToTableBill() {
       openBillData = null;
       hideBillBanner();
     } else {
-      const bills = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      const bills = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(b => {
+          // Якщо є sessionId — показуємо тільки bill поточної сесії
+          if (currentSessionId && b.sessionId && b.sessionId !== currentSessionId) return false;
+          return true;
+        })
         .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+      if (!bills.length) {
+        openBillData = null;
+        hideBillBanner();
+        return;
+      }
       openBillData = bills[0];
       showBillBanner(openBillData);
       const overlay = document.getElementById('bill-overlay');
