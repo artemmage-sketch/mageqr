@@ -379,7 +379,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div class="topbar">
         <div><div class="page-title" data-i18n="orders">Замовлення</div><div class="page-sub" data-i18n="autoUpdate">Оновлюються автоматично</div></div>
         <div style="display:flex;gap:.5rem;align-items:center">
-          <button class="btn btn-accent btn-sm" onclick="openManualOrder()">＋ Нове замовлення</button>
+          <button class="btn btn-accent btn-sm" onclick="openManualOrder()" data-i18n="newOrderBtn">＋ Нове замовлення</button>
           <select id="order-filter" style="width:130px" onchange="renderOrders()">
             <option value="" data-i18n="filterAll">Всі</option>
             <option value="new" data-i18n="filterNew">Нові</option>
@@ -1629,7 +1629,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <input id="set-city" type="text" placeholder="Тернопіль" data-i18n-ph="phCity"/>
             </div>
             <div class="field-row">
-              <label class="field-label" data-i18n="venuePhone" data-i18n="phone">Телефон</label>
+              <label class="field-label" data-i18n="venuePhone" data-i18n="phone" data-i18n="manualOrderPhone">Телефон</label>
               <input id="set-phone" type="text" placeholder="+380 XX XXX XX XX"/>
             </div>
             <div class="field-row">
@@ -1903,12 +1903,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 <div class="overlay" id="modal-manual-order" onclick="if(event.target===this)closeModal('modal-manual-order')">
   <div class="sheet" style="max-width:500px;padding:1.25rem" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div style="font-weight:600;font-size:1rem">📋 Нове замовлення</div>
+      <div style="font-weight:600;font-size:1rem">📋 <span data-i18n="manualOrderTitle">Нове замовлення</span></div>
       <button class="modal-close" onclick="closeModal('modal-manual-order')">✕</button>
     </div>
     <!-- Тип замовлення -->
     <div style="margin-bottom:.875rem">
-      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Тип замовлення</label>
+      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderType">Тип замовлення</label>
       <select id="mo-type" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px" onchange="toggleMoTable()">
         <option value="dine_in">🪑 В закладі</option>
         <option value="takeaway">🥡 З собою</option>
@@ -1917,7 +1917,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     </div>
     <!-- Стіл (тільки для dine_in) -->
     <div id="mo-table-wrap" style="margin-bottom:.875rem">
-      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Номер столу</label>
+      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderTable">Номер столу</label>
       <select id="mo-table" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
         <option value="">— Оберіть стіл —</option>
       </select>
@@ -1925,7 +1925,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <!-- Клієнт -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:.875rem">
       <div>
-        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Ім'я клієнта</label>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderName">Ім'я клієнта</label>
         <input id="mo-name" type="text" placeholder="Необов'язково" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
       </div>
       <div>
@@ -1935,8 +1935,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     </div>
     <!-- Страви -->
     <div style="margin-bottom:.875rem">
-      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Страви</label>
-      <input id="mo-search" type="text" placeholder="Пошук страви..." style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;margin-bottom:.5rem" oninput="renderMoItems()"/>
+      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderDishes">Страви</label>
+      <input id="mo-search" type="text" data-i18n-ph="manualOrderSearch" placeholder="Пошук страви..." style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;margin-bottom:.5rem" oninput="renderMoItems()"/>
       <div id="mo-items-list" style="max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:.375rem"></div>
     </div>
     <!-- Кошик -->
@@ -1950,12 +1950,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     </div>
     <!-- Коментар -->
     <div style="margin-bottom:.875rem">
-      <input id="mo-comment" type="text" placeholder="Коментар до замовлення" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px"/>
+      <input id="mo-comment" type="text" placeholder="Коментар до замовлення" data-i18n-ph="manualOrderComment" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px"/>
     </div>
     <!-- Оплата -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:1rem">
       <div>
-        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Спосіб оплати</label>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderPayment">Спосіб оплати</label>
         <select id="mo-payment" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
           <option value="cash">💵 Готівка</option>
           <option value="card">💳 Картка</option>
@@ -1963,12 +1963,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         </select>
       </div>
       <div>
-        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Кількість осіб</label>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderPersons">Кількість осіб</label>
         <input id="mo-persons" type="number" min="1" value="1" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
       </div>
     </div>
     <button class="btn btn-accent" style="width:100%;padding:.75rem;font-size:15px" onclick="placeManualOrder()">
-      <span id="mo-btn-text">✓ Оформити замовлення</span>
+      <span id="mo-btn-text" data-i18n="manualOrderBtn">✓ Оформити замовлення</span>
     </button>
   </div>
 </div>
@@ -2477,7 +2477,21 @@ var I18N = {
     orderCartTitle:'🛒 Замовлення',
     orderCommentPh:"Коментар до замовлення (необов'язково)",
     tableOrderSearch:'Пошук страви...',
-    noActiveOrders:'Активних замовлень немає'},
+    noActiveOrders:'Активних замовлень немає',
+    manualOrderTitle:'📋 Нове замовлення',
+    manualOrderType:'Тип замовлення',
+    manualOrderTable:'Номер столу',
+    manualOrderName:"Ім'я клієнта",
+    manualOrderPhone:'Телефон',
+    manualOrderDishes:'Страви',
+    manualOrderSearch:'Пошук страви...',
+    manualOrderComment:'Коментар до замовлення',
+    manualOrderPayment:'Спосіб оплати',
+    manualOrderPersons:'Кількість осіб',
+    manualOrderBtn:'✓ Оформити замовлення',
+    manualOrderPOS:'(синхронізовано з POS)',
+    manualOrderEmpty:'Додайте хоча б одну страву',
+    newOrderBtn:'＋ Нове замовлення'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2838,7 +2852,21 @@ var I18N = {
     orderCartTitle:'🛒 Order',
     orderCommentPh:'Order comment (optional)',
     tableOrderSearch:'Search dish...',
-    noActiveOrders:'No active orders'},
+    noActiveOrders:'No active orders',
+    manualOrderTitle:'📋 New order',
+    manualOrderType:'Order type',
+    manualOrderTable:'Table number',
+    manualOrderName:'Client name',
+    manualOrderPhone:'Phone',
+    manualOrderDishes:'Dishes',
+    manualOrderSearch:'Search dish...',
+    manualOrderComment:'Order comment',
+    manualOrderPayment:'Payment method',
+    manualOrderPersons:'Number of persons',
+    manualOrderBtn:'✓ Place order',
+    manualOrderPOS:'(synced with POS)',
+    manualOrderEmpty:'Add at least one dish',
+    newOrderBtn:'＋ New order'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -3199,7 +3227,21 @@ var I18N = {
     orderCartTitle:'🛒 Zamówienie',
     orderCommentPh:'Komentarz do zamówienia (opcjonalnie)',
     tableOrderSearch:'Szukaj dania...',
-    noActiveOrders:'Brak aktywnych zamówień'},
+    noActiveOrders:'Brak aktywnych zamówień',
+    manualOrderTitle:'📋 Nowe zamówienie',
+    manualOrderType:'Typ zamówienia',
+    manualOrderTable:'Numer stolika',
+    manualOrderName:'Imię klienta',
+    manualOrderPhone:'Telefon',
+    manualOrderDishes:'Dania',
+    manualOrderSearch:'Szukaj dania...',
+    manualOrderComment:'Komentarz do zamówienia',
+    manualOrderPayment:'Metoda płatności',
+    manualOrderPersons:'Liczba osób',
+    manualOrderBtn:'✓ Złóż zamówienie',
+    manualOrderPOS:'(zsynchronizowano z POS)',
+    manualOrderEmpty:'Dodaj co najmniej jedno danie',
+    newOrderBtn:'＋ Nowe zamówienie'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -3560,7 +3602,21 @@ var I18N = {
     orderCartTitle:'🛒 Bestellung',
     orderCommentPh:'Bestellkommentar (optional)',
     tableOrderSearch:'Gericht suchen...',
-    noActiveOrders:'Keine aktiven Bestellungen'},
+    noActiveOrders:'Keine aktiven Bestellungen',
+    manualOrderTitle:'📋 Neue Bestellung',
+    manualOrderType:'Bestelltyp',
+    manualOrderTable:'Tischnummer',
+    manualOrderName:'Kundenname',
+    manualOrderPhone:'Telefon',
+    manualOrderDishes:'Gerichte',
+    manualOrderSearch:'Gericht suchen...',
+    manualOrderComment:'Bestellkommentar',
+    manualOrderPayment:'Zahlungsmethode',
+    manualOrderPersons:'Personenanzahl',
+    manualOrderBtn:'✓ Bestellung aufgeben',
+    manualOrderPOS:'(mit POS synchronisiert)',
+    manualOrderEmpty:'Mindestens ein Gericht hinzufügen',
+    newOrderBtn:'＋ Neue Bestellung'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -3921,7 +3977,21 @@ var I18N = {
     orderCartTitle:'🛒 Comandă',
     orderCommentPh:'Comentariu la comandă (opțional)',
     tableOrderSearch:'Caută preparat...',
-    noActiveOrders:'Fără comenzi active'},
+    noActiveOrders:'Fără comenzi active',
+    manualOrderTitle:'📋 Comandă nouă',
+    manualOrderType:'Tip comandă',
+    manualOrderTable:'Numărul mesei',
+    manualOrderName:'Numele clientului',
+    manualOrderPhone:'Telefon',
+    manualOrderDishes:'Preparate',
+    manualOrderSearch:'Caută preparat...',
+    manualOrderComment:'Comentariu la comandă',
+    manualOrderPayment:'Metodă de plată',
+    manualOrderPersons:'Număr de persoane',
+    manualOrderBtn:'✓ Plasează comanda',
+    manualOrderPOS:'(sincronizat cu POS)',
+    manualOrderEmpty:'Adaugă cel puțin un preparat',
+    newOrderBtn:'＋ Comandă nouă'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -4282,7 +4352,21 @@ var I18N = {
     orderCartTitle:'🛒 Pedido',
     orderCommentPh:'Comentario del pedido (opcional)',
     tableOrderSearch:'Buscar plato...',
-    noActiveOrders:'Sin pedidos activos'},
+    noActiveOrders:'Sin pedidos activos',
+    manualOrderTitle:'📋 Nuevo pedido',
+    manualOrderType:'Tipo de pedido',
+    manualOrderTable:'Número de mesa',
+    manualOrderName:'Nombre del cliente',
+    manualOrderPhone:'Teléfono',
+    manualOrderDishes:'Platos',
+    manualOrderSearch:'Buscar plato...',
+    manualOrderComment:'Comentario del pedido',
+    manualOrderPayment:'Método de pago',
+    manualOrderPersons:'Número de personas',
+    manualOrderBtn:'✓ Realizar pedido',
+    manualOrderPOS:'(sincronizado con POS)',
+    manualOrderEmpty:'Añade al menos un plato',
+    newOrderBtn:'＋ Nuevo pedido'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -4643,7 +4727,21 @@ var I18N = {
     orderCartTitle:'🛒 Narudžbina',
     orderCommentPh:'Komentar uz narudžbinu (opciono)',
     tableOrderSearch:'Traži jelo...',
-    noActiveOrders:'Nema aktivnih narudžbina'},
+    noActiveOrders:'Nema aktivnih narudžbina',
+    manualOrderTitle:'📋 Nova narudžbina',
+    manualOrderType:'Tip narudžbine',
+    manualOrderTable:'Broj stola',
+    manualOrderName:'Ime klijenta',
+    manualOrderPhone:'Telefon',
+    manualOrderDishes:'Jela',
+    manualOrderSearch:'Traži jelo...',
+    manualOrderComment:'Komentar narudžbine',
+    manualOrderPayment:'Način plaćanja',
+    manualOrderPersons:'Broj osoba',
+    manualOrderBtn:'✓ Naruči',
+    manualOrderPOS:'(sinhronizovano sa POS)',
+    manualOrderEmpty:'Dodajte bar jedno jelo',
+    newOrderBtn:'＋ Nova narudžbina'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -5781,7 +5879,7 @@ window.toggleMoTable = function() {
 window.renderMoItems = function() {
   const q = document.getElementById('mo-search').value.toLowerCase();
   const list = document.getElementById('mo-items-list');
-  const filtered = allItems.filter(i => !q || i.name.toLowerCase().includes(q)).slice(0, 20);
+  const filtered = items.filter(i => !q || i.name.toLowerCase().includes(q)).slice(0, 20);
   list.innerHTML = filtered.map(item => `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:.375rem .5rem;border-radius:8px;background:var(--bg2)">
       <span style="font-size:13px;flex:1">${item.name}</span>
@@ -5791,7 +5889,7 @@ window.renderMoItems = function() {
 };
 
 window.moAddItem = function(id) {
-  const item = allItems.find(i => i.id === id);
+  const item = items.find(i => i.id === id);
   if (!item) return;
   if (manualOrderCart[id]) manualOrderCart[id].qty++;
   else manualOrderCart[id] = { item, qty: 1 };
@@ -5826,7 +5924,7 @@ function renderMoCart() {
 
 window.placeManualOrder = async function() {
   const entries = Object.values(manualOrderCart);
-  if (!entries.length) { notify('Додайте хоча б одну страву', 'err'); return; }
+  if (!entries.length) { notify(t('manualOrderEmpty'), 'err'); return; }
 
   const orderType = document.getElementById('mo-type').value;
   const tableNum  = orderType === 'dine_in' ? document.getElementById('mo-table').value : null;
@@ -5914,7 +6012,7 @@ window.placeManualOrder = async function() {
 
     closeModal('modal-manual-order');
     manualOrderCart = {};
-    notify(`✅ Замовлення на ${cur(total)} оформлено!${hasPOS ? ' (синхронізовано з POS)' : ''}`, 'ok');
+    notify(`✅ Замовлення на ${cur(total)} оформлено!${hasPOS ? ' '+t('manualOrderPOS') : ''}`, 'ok');
   } catch(e) {
     notify(t('notifError') + ': ' + e.message, 'err');
   } finally {
