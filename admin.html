@@ -355,7 +355,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     </div>
     <div style="padding:.5rem 0;flex:1">
       <div class="nav-section" data-i18n="menuGroup">Меню</div>
-      <button class="nav-item active" onclick="nav(this,'t-orders')" data-i18n="orders">🧾 Замовлення<span id="new-badge" style="background:#EF4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;min-width:18px;height:18px;padding:0 4px;margin-left:6px;display:none;align-items:center;justify-content:center;line-height:18px"></span></button>
+      <button class="nav-item active" onclick="nav(this,'t-orders')" data-i18n="orders">🧾 Замовлення<span id="new-badge" style="background:#EF4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;min-width:18px;height:18px;padding:0 4px;margin-left:6px;display:none;align-items:center;justify-content:center;line-height:18px;vertical-align:middle"></span></button>
       <button class="nav-item" onclick="nav(this,'t-items')" data-i18n="dishes">🍽️ Страви</button>
       <button class="nav-item" onclick="nav(this,'t-cats')" data-i18n="categories">📂 Категорії</button>
       <div class="nav-section" data-i18n="venueGroup">Заклад</div>
@@ -4899,9 +4899,13 @@ function playNewOrderSound() {
   prevOrderCount = n;
 }
 function updateOrderBadge(){
-  const n=orders.filter(o=>o.status==='new'||o.status==='preparing').length;
-  const b=document.getElementById('new-badge');
-  if(b){b.textContent=n||'';b.style.display=n?'inline-flex':'none';}
+  const n = orders.filter(o => o.status==='new' || o.status==='preparing').length;
+  const b = document.getElementById('new-badge');
+  if(b) {
+    b.textContent = n || '';
+    b.style.display = n ? 'inline-flex' : 'none';
+    b.style.cssText = `background:#EF4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;min-width:18px;height:18px;line-height:18px;text-align:center;padding:0 3px;margin-left:6px;display:${n?'inline-flex':'none'};align-items:center;justify-content:center;vertical-align:middle;flex-shrink:0`;
+  }
 }
 
 window.setStatus = async function(id, status) {
@@ -7240,11 +7244,16 @@ function applyAdminLang(lang) {
   // 1. Nav-item через data-i18n
   document.querySelectorAll('.nav-item[data-i18n]').forEach(btn => {
     const key = btn.getAttribute('data-i18n');
-    const badge = btn.querySelector('#new-badge') || btn.querySelector('[id]');
-    btn.textContent = t(key);
-    if(badge) btn.appendChild(badge);
+    const badge = btn.querySelector('#new-badge');
+    // Змінюємо тільки текстовий вузол, не чіпаємо badge
+    const textNode = [...btn.childNodes].find(n => n.nodeType === 3);
+    if (textNode) {
+      textNode.textContent = t(key);
+    } else {
+      btn.textContent = t(key);
+      if (badge) btn.appendChild(badge);
+    }
   });
-  // Оновлюємо badge після відновлення
   updateOrderBadge();
 
   // 2. Всі data-i18n елементи
