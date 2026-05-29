@@ -991,14 +991,14 @@ async function init() {
         if (!tablesSnap.empty) {
           const tableData = tablesSnap.docs[0].data();
           if (tableData.staffId) {
-            // Переміщуємо призначеного офіціанта на початок
+            // Переміщуємо призначеного офіціанта на початок списку
             const idx = staff.findIndex(s => s.id === tableData.staffId);
             if (idx > 0) {
               const [assigned] = staff.splice(idx, 1);
               staff.unshift(assigned);
             }
-            // Автоматично вибираємо якщо є tipsEmployeeId
-            if (tableData.staffId) selectedStaff = tableData.staffId;
+            // Автоматично вибираємо цього офіціанта для чайових
+            selectedStaff = tableData.staffId;
           }
         }
       } catch(e) { console.warn('load table staff:', e.message); }
@@ -1383,16 +1383,21 @@ function renderStaffGrid() {
   const label = $('tips-staff-label');
   if (!staff.length) {
     grid.innerHTML = '';
-    label.style.display = 'none';
+    if(label) label.style.display = 'none';
     return;
   }
-  label.style.display = 'block';
-  grid.innerHTML = staff.map(s => `
-    <div class="staff-card" id="sc-${s.id}" onclick="selectStaff('${s.id}')">
-      <div class="sc-avatar">${s.avatar || '👤'}</div>
+  if(label) label.style.display = 'block';
+  grid.innerHTML = staff.map(s => {
+    const avatarHtml = s.avatar
+      ? `<img src="${s.avatar}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin:0 auto .375rem;display:block"/>`
+      : `<div class="sc-avatar">${s.emoji || '👤'}</div>`;
+    const isSelected = s.id === selectedStaff;
+    return `<div class="staff-card${isSelected?' active':''}" id="sc-${s.id}" onclick="selectStaff('${s.id}')">
+      ${avatarHtml}
       <div class="sc-name">${s.name || '—'}</div>
       <div class="sc-role">${s.role || ''}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function renderTipAmounts() {
