@@ -1923,7 +1923,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <option value="">— Оберіть стіл —</option>
       </select>
     </div>
-    <!-- Поля доставки (тільки для delivery) -->
+    <!-- Час самовивозу (тільки для takeaway) -->
+    <div id="mo-pickup-wrap" style="display:none;margin-bottom:.875rem">
+      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="pickupTime">Час самовивозу</label>
+      <select id="mo-pickup-time" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
+      </select>
+    </div>
     <div id="mo-delivery-wrap" style="display:none;margin-bottom:.875rem">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem">
         <div>
@@ -1999,24 +2004,27 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <span id="mo-total" style="color:var(--accent)">₴0</span>
       </div>
     </div>
-    <!-- Коментар -->
-    <div style="margin-bottom:.875rem">
+    <!-- Прибори -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <span style="font-size:13px">🍴 <span data-i18n="cutlery">Прибори</span></span>
+        <button type="button" onclick="moChangeCutlery(-1)" style="width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:none;cursor:pointer;font-size:1rem">−</button>
+        <span id="mo-cutlery-count" style="min-width:20px;text-align:center;font-weight:600">1</span>
+        <button type="button" onclick="moChangeCutlery(1)" style="width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:none;cursor:pointer;font-size:1rem">+</button>
+        <span style="font-size:12px;color:var(--muted)" data-i18n="persons">осіб</span>
+      </div>
+      <button type="button" id="mo-cutlery-none-btn" onclick="moToggleCutlery()" style="font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline" data-i18n="noCutlery">Не потрібні</button>
+    </div>
       <input id="mo-comment" type="text" placeholder="Коментар до замовлення" data-i18n-ph="manualOrderComment" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px"/>
     </div>
     <!-- Оплата -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:1rem">
-      <div>
-        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderPayment">Спосіб оплати</label>
-        <select id="mo-payment" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
-          <option value="cash">💵 Готівка</option>
-          <option value="card">💳 Картка</option>
-          <option value="online">📱 Онлайн</option>
-        </select>
-      </div>
-      <div>
-        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderPersons">Кількість осіб</label>
-        <input id="mo-persons" type="number" min="1" value="1" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
-      </div>
+    <div style="margin-bottom:1rem">
+      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderPayment">Спосіб оплати</label>
+      <select id="mo-payment" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
+        <option value="cash">💵 Готівка</option>
+        <option value="card">💳 Картка</option>
+        <option value="online">📱 Онлайн</option>
+      </select>
     </div>
     <button class="btn btn-accent" style="width:100%;padding:.75rem;font-size:15px" onclick="placeManualOrder()">
       <span id="mo-btn-text" data-i18n="manualOrderBtn">✓ Оформити замовлення</span>
@@ -2544,7 +2552,8 @@ var I18N = {
     manualOrderEmpty:'Додайте хоча б одну страву',
     newOrderBtn:'＋ Нове замовлення',
     city:'Місто', street:'Вулиця та будинок', apt:'Квартира',
-    entrance:"Під'їзд", floor:'Поверх', courierComment:"Коментар для кур'єра"},
+    entrance:"Під'їзд", floor:'Поверх', courierComment:"Коментар для кур'єра",
+    pickupTime:'Час самовивозу', cutlery:'🍴 Прибори', noCutlery:'Не потрібні', persons:'осіб'},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2921,7 +2930,8 @@ var I18N = {
     manualOrderEmpty:'Add at least one dish',
     newOrderBtn:'＋ New order',
     city:'City', street:'Street and building', apt:'Apartment',
-    entrance:'Entrance', floor:'Floor', courierComment:'Comment for courier'},
+    entrance:'Entrance', floor:'Floor', courierComment:'Comment for courier',
+    pickupTime:'Pickup time', cutlery:'🍴 Cutlery', noCutlery:'Not needed', persons:'persons'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -3298,7 +3308,8 @@ var I18N = {
     manualOrderEmpty:'Dodaj co najmniej jedno danie',
     newOrderBtn:'＋ Nowe zamówienie',
     city:'Miasto', street:'Ulica i numer', apt:'Mieszkanie',
-    entrance:'Klatka', floor:'Piętro', courierComment:'Komentarz dla kuriera'},
+    entrance:'Klatka', floor:'Piętro', courierComment:'Komentarz dla kuriera',
+    pickupTime:'Czas odbioru', cutlery:'🍴 Sztućce', noCutlery:'Nie potrzeba', persons:'osób'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -3675,7 +3686,8 @@ var I18N = {
     manualOrderEmpty:'Mindestens ein Gericht hinzufügen',
     newOrderBtn:'＋ Neue Bestellung',
     city:'Stadt', street:'Straße und Nummer', apt:'Wohnung',
-    entrance:'Eingang', floor:'Etage', courierComment:'Kommentar für Kurier'},
+    entrance:'Eingang', floor:'Etage', courierComment:'Kommentar für Kurier',
+    pickupTime:'Abholzeit', cutlery:'🍴 Besteck', noCutlery:'Nicht nötig', persons:'Personen'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -4052,7 +4064,8 @@ var I18N = {
     manualOrderEmpty:'Adaugă cel puțin un preparat',
     newOrderBtn:'＋ Comandă nouă',
     city:'Oraș', street:'Stradă și număr', apt:'Apartament',
-    entrance:'Intrare', floor:'Etaj', courierComment:'Comentariu pentru curier'},
+    entrance:'Intrare', floor:'Etaj', courierComment:'Comentariu pentru curier',
+    pickupTime:'Ora ridicării', cutlery:'🍴 Tacâmuri', noCutlery:'Nu e nevoie', persons:'persoane'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -4429,7 +4442,8 @@ var I18N = {
     manualOrderEmpty:'Añade al menos un plato',
     newOrderBtn:'＋ Nuevo pedido',
     city:'Ciudad', street:'Calle y número', apt:'Apartamento',
-    entrance:'Entrada', floor:'Piso', courierComment:'Comentario para repartidor'},
+    entrance:'Entrada', floor:'Piso', courierComment:'Comentario para repartidor',
+    pickupTime:'Hora de recogida', cutlery:'🍴 Cubiertos', noCutlery:'No necesario', persons:'personas'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -4806,7 +4820,8 @@ var I18N = {
     manualOrderEmpty:'Dodajte bar jedno jelo',
     newOrderBtn:'＋ Nova narudžbina',
     city:'Grad', street:'Ulica i broj', apt:'Stan',
-    entrance:'Ulaz', floor:'Sprat', courierComment:'Komentar za dostavljača'},
+    entrance:'Ulaz', floor:'Sprat', courierComment:'Komentar za dostavljača',
+    pickupTime:'Vrijeme preuzimanja', cutlery:'🍴 Pribor', noCutlery:'Nije potrebno', persons:'osoba'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -5926,6 +5941,12 @@ window.openManualOrder = function() {
   document.getElementById('mo-persons').value = '1';
   document.getElementById('mo-type').value = 'dine_in';
   document.getElementById('mo-payment').value = 'cash';
+  moCutleryNeeded = true;
+  moCutleryCount = 1;
+  const cutleryCount = document.getElementById('mo-cutlery-count');
+  if(cutleryCount) cutleryCount.textContent = '1';
+  const cutleryBtn = document.getElementById('mo-cutlery-none-btn');
+  if(cutleryBtn) { cutleryBtn.style.color = 'var(--muted)'; }
   // Автозаповнення міста з налаштувань закладу
   const cityInput = document.getElementById('mo-city');
   if(cityInput) {
@@ -5949,8 +5970,44 @@ window.openManualOrder = function() {
 
 window.toggleMoTable = function() {
   const type = document.getElementById('mo-type').value;
-  document.getElementById('mo-table-wrap').style.display = type === 'dine_in' ? 'block' : 'none';
+  document.getElementById('mo-table-wrap').style.display   = type === 'dine_in'  ? 'block' : 'none';
   document.getElementById('mo-delivery-wrap').style.display = type === 'delivery' ? 'block' : 'none';
+  document.getElementById('mo-pickup-wrap').style.display   = type === 'takeaway' ? 'block' : 'none';
+  // Генеруємо слоти часу для самовивозу
+  if (type === 'takeaway') {
+    const sel = document.getElementById('mo-pickup-time');
+    sel.innerHTML = '';
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 40); // мін. 40 хвилин
+    now.setMinutes(Math.ceil(now.getMinutes()/15)*15, 0, 0);
+    for (let i = 0; i < 12; i++) {
+      const t = new Date(now.getTime() + i*15*60000);
+      const label = t.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'});
+      sel.innerHTML += `<option value="${t.toISOString()}">${label}</option>`;
+    }
+  }
+};
+
+let moCutleryNeeded = true;
+let moCutleryCount = 1;
+
+window.moChangeCutlery = function(delta) {
+  if (!moCutleryNeeded) return;
+  moCutleryCount = Math.max(1, moCutleryCount + delta);
+  document.getElementById('mo-cutlery-count').textContent = moCutleryCount;
+};
+
+window.moToggleCutlery = function() {
+  moCutleryNeeded = !moCutleryNeeded;
+  const btn = document.getElementById('mo-cutlery-none-btn');
+  const count = document.getElementById('mo-cutlery-count');
+  if (!moCutleryNeeded) {
+    btn.style.color = 'var(--accent)';
+    count.style.opacity = '0.3';
+  } else {
+    btn.style.color = 'var(--muted)';
+    count.style.opacity = '1';
+  }
 };
 
 window.renderMoItems = function() {
@@ -6011,7 +6068,8 @@ window.placeManualOrder = async function() {
   const phone     = phoneNum ? (phoneNum.startsWith('+') ? phoneNum : phoneCode + phoneNum) : '';
   const comment   = document.getElementById('mo-comment').value.trim();
   const payment   = document.getElementById('mo-payment').value;
-  const persons   = parseInt(document.getElementById('mo-persons').value) || 1;
+  const pickupTime = orderType === 'takeaway' ? (document.getElementById('mo-pickup-time')?.value || null) : null;
+  const cutlery = { needed: moCutleryNeeded, count: moCutleryCount };
 
   // Адреса доставки
   let deliveryAddress = null;
@@ -6066,8 +6124,9 @@ window.placeManualOrder = async function() {
           comment,
           deliveryAddress,
           deliveryComment,
+          pickupTime,
           paymentMethod: payment,
-          cutlery: { needed: true, count: persons },
+          cutlery,
           source: 'admin',
         }),
       });
@@ -6086,8 +6145,9 @@ window.placeManualOrder = async function() {
         comment,
         deliveryAddress,
         deliveryComment,
+        pickupTime,
         paymentMethod: payment,
-        cutlery: { needed: true, count: persons },
+        cutlery,
         num: orderNum,
         status: 'new',
         source: 'admin',
