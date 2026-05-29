@@ -379,11 +379,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div class="topbar">
         <div><div class="page-title" data-i18n="orders">Замовлення</div><div class="page-sub" data-i18n="autoUpdate">Оновлюються автоматично</div></div>
         <div style="display:flex;gap:.5rem;align-items:center">
+          <button class="btn btn-accent btn-sm" onclick="openManualOrder()">＋ Нове замовлення</button>
           <select id="order-filter" style="width:130px" onchange="renderOrders()">
-            <option value="" data-i18n="filterAll" data-i18n="filterAll">Всі</option>
-            <option value="new" data-i18n="filterNew" data-i18n="filterNew">Нові</option>
-            <option value="done" data-i18n="filterDone" data-i18n="filterDone">Виконані</option>
-            <option value="cancel" data-i18n="filterCancelled" data-i18n="filterCancelled">Скасовані</option>
+            <option value="" data-i18n="filterAll">Всі</option>
+            <option value="new" data-i18n="filterNew">Нові</option>
+            <option value="done" data-i18n="filterDone">Виконані</option>
+            <option value="cancel" data-i18n="filterCancelled">Скасовані</option>
           </select>
           <button class="btn btn-outline btn-sm" onclick="renderOrders()">↺</button>
         </div>
@@ -1898,6 +1899,80 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 <!-- CAT MODAL -->
 
 <!-- TABLE DETAIL MODAL -->
+<!-- МОДАЛ: Ручне замовлення -->
+<div class="overlay" id="modal-manual-order" onclick="if(event.target===this)closeModal('modal-manual-order')">
+  <div class="sheet" style="max-width:500px;padding:1.25rem" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div style="font-weight:600;font-size:1rem">📋 Нове замовлення</div>
+      <button class="modal-close" onclick="closeModal('modal-manual-order')">✕</button>
+    </div>
+    <!-- Тип замовлення -->
+    <div style="margin-bottom:.875rem">
+      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Тип замовлення</label>
+      <select id="mo-type" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px" onchange="toggleMoTable()">
+        <option value="dine_in">🪑 В закладі</option>
+        <option value="takeaway">🥡 З собою</option>
+        <option value="delivery">🚗 Доставка</option>
+      </select>
+    </div>
+    <!-- Стіл (тільки для dine_in) -->
+    <div id="mo-table-wrap" style="margin-bottom:.875rem">
+      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Номер столу</label>
+      <select id="mo-table" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
+        <option value="">— Оберіть стіл —</option>
+      </select>
+    </div>
+    <!-- Клієнт -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:.875rem">
+      <div>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Ім'я клієнта</label>
+        <input id="mo-name" type="text" placeholder="Необов'язково" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Телефон</label>
+        <input id="mo-phone" type="tel" placeholder="+380..." style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+      </div>
+    </div>
+    <!-- Страви -->
+    <div style="margin-bottom:.875rem">
+      <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Страви</label>
+      <input id="mo-search" type="text" placeholder="Пошук страви..." style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;margin-bottom:.5rem" oninput="renderMoItems()"/>
+      <div id="mo-items-list" style="max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:.375rem"></div>
+    </div>
+    <!-- Кошик -->
+    <div id="mo-cart-wrap" style="margin-bottom:.875rem;display:none">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:.375rem">Замовлення</div>
+      <div id="mo-cart-list" style="display:flex;flex-direction:column;gap:.25rem;margin-bottom:.5rem"></div>
+      <div style="display:flex;justify-content:space-between;font-weight:600;font-size:15px">
+        <span>Разом:</span>
+        <span id="mo-total" style="color:var(--accent)">₴0</span>
+      </div>
+    </div>
+    <!-- Коментар -->
+    <div style="margin-bottom:.875rem">
+      <input id="mo-comment" type="text" placeholder="Коментар до замовлення" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px"/>
+    </div>
+    <!-- Оплата -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:1rem">
+      <div>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Спосіб оплати</label>
+        <select id="mo-payment" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
+          <option value="cash">💵 Готівка</option>
+          <option value="card">💳 Картка</option>
+          <option value="online">📱 Онлайн</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem">Кількість осіб</label>
+        <input id="mo-persons" type="number" min="1" value="1" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+      </div>
+    </div>
+    <button class="btn btn-accent" style="width:100%;padding:.75rem;font-size:15px" onclick="placeManualOrder()">
+      <span id="mo-btn-text">✓ Оформити замовлення</span>
+    </button>
+  </div>
+</div>
+
 <div class="overlay" id="modal-table-detail" onclick="if(event.target===this)closeModal('modal-table-detail')">
   <div class="modal" style="max-width:480px">
     <div class="modal-head">
@@ -4726,7 +4801,7 @@ function playNewOrderSound() {
   prevOrderCount = n;
 }
 function updateOrderBadge(){
-  const n=orders.filter(o=>o.status==='new'||!o.status).length;
+  const n=orders.filter(o=>o.status==='new'||o.status==='preparing').length;
   const b=document.getElementById('new-badge');
   if(b){b.textContent=n||'';b.style.display=n?'inline-block':'none';}
 }
@@ -5491,7 +5566,8 @@ let selectedTable=null;
 let editStaffId=null;
 
 function renderTables(){
-  if(document.getElementById('modal-table-order').classList.contains('open')) return;
+  if(document.getElementById('modal-table-detail').classList.contains('open') ||
+     document.getElementById('modal-table-order').classList.contains('open')) return;
   const filtered=activeZone?tables.filter(tbl=>tbl.zone===activeZone):tables;
   const stMap={free:'ts-free',occupied:'ts-occupied',ordered:'ts-ordered',paid:'ts-paid'};
   const stLabel={free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('activeOrders'),paid:t('paid')};
@@ -5672,6 +5748,177 @@ window.placeTableOrder = async function() {
   } finally {
     btn.textContent = t('placeOrderBtn');
     btn.disabled = false;
+  }
+};
+
+// ── РУЧНЕ ЗАМОВЛЕННЯ ────────────────────────────────────────────
+let manualOrderCart = {};
+
+window.openManualOrder = function() {
+  manualOrderCart = {};
+  document.getElementById('mo-search').value = '';
+  document.getElementById('mo-name').value = '';
+  document.getElementById('mo-phone').value = '';
+  document.getElementById('mo-comment').value = '';
+  document.getElementById('mo-persons').value = '1';
+  document.getElementById('mo-type').value = 'dine_in';
+  document.getElementById('mo-payment').value = 'cash';
+  // Заповнюємо список столів
+  const sel = document.getElementById('mo-table');
+  sel.innerHTML = '<option value="">— Оберіть стіл —</option>' +
+    tables.map(t => `<option value="${t.num}">Стіл №${t.num} (${t.zone}) — ${t.status === 'free' ? 'Вільний' : 'Зайнятий'}</option>`).join('');
+  toggleMoTable();
+  renderMoItems();
+  renderMoCart();
+  openModal('modal-manual-order');
+};
+
+window.toggleMoTable = function() {
+  const type = document.getElementById('mo-type').value;
+  document.getElementById('mo-table-wrap').style.display = type === 'dine_in' ? 'block' : 'none';
+};
+
+window.renderMoItems = function() {
+  const q = document.getElementById('mo-search').value.toLowerCase();
+  const list = document.getElementById('mo-items-list');
+  const filtered = allItems.filter(i => !q || i.name.toLowerCase().includes(q)).slice(0, 20);
+  list.innerHTML = filtered.map(item => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:.375rem .5rem;border-radius:8px;background:var(--bg2)">
+      <span style="font-size:13px;flex:1">${item.name}</span>
+      <span style="font-size:12px;color:var(--muted);margin:0 .75rem">${cur(item.price)}</span>
+      <button class="btn btn-outline btn-sm" style="padding:2px 10px;font-size:12px" onclick="moAddItem('${item.id}')">+</button>
+    </div>`).join('');
+};
+
+window.moAddItem = function(id) {
+  const item = allItems.find(i => i.id === id);
+  if (!item) return;
+  if (manualOrderCart[id]) manualOrderCart[id].qty++;
+  else manualOrderCart[id] = { item, qty: 1 };
+  renderMoCart();
+};
+
+window.moRemoveItem = function(id) {
+  if (!manualOrderCart[id]) return;
+  manualOrderCart[id].qty--;
+  if (manualOrderCart[id].qty <= 0) delete manualOrderCart[id];
+  renderMoCart();
+};
+
+function renderMoCart() {
+  const entries = Object.values(manualOrderCart);
+  const wrap = document.getElementById('mo-cart-wrap');
+  const list = document.getElementById('mo-cart-list');
+  const totalEl = document.getElementById('mo-total');
+  if (!entries.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  list.innerHTML = entries.map(({item, qty}) => `
+    <div style="display:flex;align-items:center;gap:.5rem;font-size:13px">
+      <span style="flex:1">${item.name}</span>
+      <button onclick="moRemoveItem('${item.id}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;padding:0 4px">−</button>
+      <span style="min-width:20px;text-align:center;font-weight:600">${qty}</span>
+      <button onclick="moAddItem('${item.id}')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:16px;padding:0 4px">+</button>
+      <span style="min-width:60px;text-align:right;color:var(--muted)">${cur(item.price * qty)}</span>
+    </div>`).join('');
+  const total = entries.reduce((s, {item, qty}) => s + item.price * qty, 0);
+  totalEl.textContent = cur(total);
+}
+
+window.placeManualOrder = async function() {
+  const entries = Object.values(manualOrderCart);
+  if (!entries.length) { notify('Додайте хоча б одну страву', 'err'); return; }
+
+  const orderType = document.getElementById('mo-type').value;
+  const tableNum  = orderType === 'dine_in' ? document.getElementById('mo-table').value : null;
+  const name      = document.getElementById('mo-name').value.trim() || (tableNum ? `Стіл №${tableNum}` : 'Гість');
+  const phone     = document.getElementById('mo-phone').value.trim();
+  const comment   = document.getElementById('mo-comment').value.trim();
+  const payment   = document.getElementById('mo-payment').value;
+  const persons   = parseInt(document.getElementById('mo-persons').value) || 1;
+
+  const items = entries.map(({item, qty}) => ({
+    id: item.id, itemId: item.id, name: item.name, price: item.price, qty,
+  }));
+  const total = entries.reduce((s, {item, qty}) => s + item.price * qty, 0);
+  const orderNum = Date.now().toString().slice(-4);
+
+  const btn = document.getElementById('mo-btn-text');
+  btn.textContent = '⏳ Оформляємо...';
+
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser.getIdToken();
+
+    // Перевіряємо чи підключена POS система
+    const posSnap = await (async () => {
+      try {
+        const {doc, getDoc} = window.__FS;
+        return await getDoc(doc(db, 'venues', venueId, 'pos_settings', 'main'));
+      } catch(e) { return null; }
+    })();
+    const posData = posSnap?.data() || {};
+    const posterEnabled = posData.poster?.enabled;
+    const syrveEnabled  = posData.syrve?.enabled;
+    const hasPOS = posterEnabled || syrveEnabled;
+
+    if (hasPOS) {
+      // Передаємо через бекенд який синхронізує з POS
+      const res = await fetch(`${window.__CF_URL}/createOrder`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body: JSON.stringify({
+          venueId, items, total,
+          tableId: tableNum || null,
+          tableNum: tableNum ? Number(tableNum) : null,
+          orderType,
+          clientName: name,
+          clientPhone: phone,
+          comment,
+          paymentMethod: payment,
+          cutlery: { needed: true, count: persons },
+          source: 'admin',
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Помилка');
+    } else {
+      // Без POS — зберігаємо напряму в Firestore
+      const {collection, addDoc, serverTimestamp} = window.__FS;
+      await addDoc(collection(db, 'venues', venueId, 'orders'), {
+        items, total,
+        tableId: tableNum ? String(tableNum) : null,
+        tableNum: tableNum ? Number(tableNum) : null,
+        orderType,
+        clientName: name,
+        clientPhone: phone,
+        comment,
+        paymentMethod: payment,
+        cutlery: { needed: true, count: persons },
+        num: orderNum,
+        status: 'new',
+        source: 'admin',
+        createdAt: serverTimestamp(),
+      });
+    }
+
+    // Оновлюємо статус столу якщо dine_in
+    if (orderType === 'dine_in' && tableNum) {
+      const tbl = tables.find(t => String(t.num) === String(tableNum));
+      if (tbl && tbl.status === 'free') {
+        await updateTableStatus(tbl.id, {
+          status: 'occupied',
+          startTime: new Date().toLocaleTimeString('uk-UA', {hour:'2-digit', minute:'2-digit'}),
+        });
+      }
+    }
+
+    closeModal('modal-manual-order');
+    manualOrderCart = {};
+    notify(`✅ Замовлення на ${cur(total)} оформлено!${hasPOS ? ' (синхронізовано з POS)' : ''}`, 'ok');
+  } catch(e) {
+    notify(t('notifError') + ': ' + e.message, 'err');
+  } finally {
+    btn.textContent = '✓ Оформити замовлення';
   }
 };
 
