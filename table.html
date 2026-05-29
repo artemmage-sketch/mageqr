@@ -1427,49 +1427,49 @@ window.payTips = async function() {
   btn.disabled = true;
 
   try {
-    // Знаходимо вибраного співробітника
     const staffMember = staff.find(s => s.id === selectedStaff);
-    const tipsEmployeeId = staffMember?.tipsEmployeeId || null;
+    const tipsEmployeeId = staffMember?.monoId || staffMember?.tipsEmployeeId || null;
 
-    // Якщо є monobank tipsEmployeeId — платимо через mono
-    if (tipsEmployeeId) {
-      const res = await fetch(`${CF}/createOrder`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          venueId,
-          items: [{ name: 'Чайові', qty: 1, price: selectedTip }],
-          total: selectedTip,
-          tableId: tableNum,
-          orderType: 'tips',
-          paymentMethod: 'online',
-          tipsEmployeeId,
-          comment: `Чайові · Стіл №${tableNum}`,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Помилка');
-      if (data.payUrl) {
-        window.location.href = data.payUrl;
-        return;
-      }
+    // Платимо через createOrder — бекенд обере активного провайдера
+    // Якщо є tipsEmployeeId — Monobank нарахує чайові офіціанту
+    // Якщо немає — просто онлайн оплата через будь-який підключений провайдер
+    const res = await fetch(`${CF}/createOrder`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        venueId,
+        items: [{ name: ui('tipsTitle') || 'Чайові', qty: 1, price: selectedTip }],
+        total: selectedTip,
+        tableId: tableNum,
+        orderType: 'tips',
+        paymentMethod: 'online',
+        tipsEmployeeId: tipsEmployeeId || undefined,
+        clientName: staffMember?.name ? `Чайові → ${staffMember.name}` : 'Чайові',
+        comment: `Чайові · Стіл №${tableNum}${staffMember?.name ? ' · ' + staffMember.name : ''}`,
+      }),
+    });
+    const data = await res.json();
+
+    if (res.ok && data.payUrl) {
+      window.location.href = data.payUrl;
+      return;
     }
 
-    // Зберігаємо запис і показуємо подяку
+    // Якщо провайдер не налаштований — зберігаємо як pending
     await addDoc(collection(db, 'venues', venueId, 'tips'), {
-      amount:     selectedTip,
-      staffId:    selectedStaff,
-      staffName:  staff.find(s => s.id === selectedStaff)?.name || '—',
-      tableNum:   tableNum ? Number(tableNum) : null,
-      status:     'pending',
-      createdAt:  serverTimestamp(),
+      amount:    selectedTip,
+      staffId:   selectedStaff,
+      staffName: staffMember?.name || '—',
+      tableNum:  tableNum ? Number(tableNum) : null,
+      status:    'pending',
+      createdAt: serverTimestamp(),
     });
 
     $('tips-content').innerHTML = `
       <div class="success-wrap">
         <div class="success-icon">💸</div>
-        <div class="success-title">Дякуємо!</div>
-        <div class="success-desc">Чайові ${mCur(selectedTip)} передано ${staff.find(s=>s.id===selectedStaff)?.name || 'персоналу'}.</div>
+        <div class="success-title">${ui('tipsThanks') || 'Дякуємо!'}</div>
+        <div class="success-desc">${mCur(selectedTip)} ${staffMember?.name ? '→ ' + staffMember.name : ''}</div>
       </div>`;
   } catch(e) {
     alert('Помилка: ' + e.message);
