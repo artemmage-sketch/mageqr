@@ -2111,7 +2111,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <div style="display:flex;flex-direction:column;gap:.375rem">
           <button class="btn btn-success btn-sm" onclick="setTableStatus('occupied')" data-i18n="tableOpen">🪑 Відкрити стіл</button>
-          <button class="btn btn-outline btn-sm" onclick="setTableStatus('free')" data-i18n="tableFreeBtn">✓ Звільнити стіл</button>
+          <button class="btn btn-outline btn-sm" onclick="setTableStatus('free');closeModal('modal-table-detail')" data-i18n="tableFreeBtn">✓ Звільнити стіл</button>
           <button class="btn btn-accent btn-sm" onclick="markPaid()" data-i18n="tablePaid" data-i18n="tablePaid">💳 Оплачено</button>
         </div>
       </div>
@@ -5828,11 +5828,7 @@ window.openModal=openModal;window.closeModal=closeModal;window.notify=notify;
 
 // ── TABLES & QR ──
 let tables = []; // завантажуються з Firestore
-let staff=[
-  {id:'s1',name:'Іван Петренко',role:'Офіціант',emoji:'👨‍🍳',monoId:'emp_001',tipsToday:320},
-  {id:'s2',name:'Марія Коваль',role:'Офіціант',emoji:'👩‍🍳',monoId:'emp_002',tipsToday:180},
-  {id:'s3',name:'Олег Бондар',role:'Бармен',emoji:'🧑‍🍳',monoId:'',tipsToday:0},
-];
+let staff=[];
 let zones = []; // завантажуються з Firestore
 let activeZone='';
 let selectedTable=null;
