@@ -1901,6 +1901,41 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
 <!-- TABLE DETAIL MODAL -->
 <!-- МОДАЛ: Ручне замовлення -->
+<!-- МОДАЛ: Додати/редагувати офіціанта -->
+<div class="overlay" id="modal-add-staff" onclick="if(event.target===this)closeModal('modal-add-staff')">
+  <div class="modal" style="max-width:420px" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-title" id="staff-modal-title">Новий офіціант</div>
+      <button class="modal-close" onclick="closeModal('modal-add-staff')">✕</button>
+    </div>
+    <div style="padding:1rem;display:flex;flex-direction:column;gap:.75rem">
+      <div>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem">Emoji / Фото</label>
+        <input id="sf-emoji" type="text" placeholder="👨‍🍳" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem" data-i18n="staffName">Ім'я</label>
+        <input id="sf-name" type="text" placeholder="Іван Петренко" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem" data-i18n="staffRole">Роль</label>
+        <select id="sf-role" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
+          <option value="Офіціант">Офіціант</option>
+          <option value="Бармен">Бармен</option>
+          <option value="Кухар">Кухар</option>
+          <option value="Адміністратор">Адміністратор</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.25rem">Monobank tipsEmployeeId</label>
+        <input id="sf-mono-id" type="text" placeholder="employee_001" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
+        <div style="font-size:11px;color:var(--muted);margin-top:.25rem">ID з кабінету Monobank acquiring для нарахування чайових</div>
+      </div>
+      <button class="btn btn-accent" style="width:100%;padding:.75rem" onclick="saveStaff()">💾 Зберегти</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="modal-manual-order" onclick="if(event.target===this)closeModal('modal-manual-order')">
   <div class="modal" style="max-width:500px;padding:1.25rem" onclick="event.stopPropagation()">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
@@ -2351,6 +2386,7 @@ var I18N = {
     assignWaiter:'Офіціант', noWaiter:'Без офіціанта',
     newWaiter:'Новий офіціант', editWaiter:'Редагувати',
     staffNameRequired:"Введіть ім'я", confirmDelete:'Видалити?',
+    staffName:"Ім'я", staffRole:'Роль',
     noMonoId:'⚠️ Без Mono ID',
     sortOrder:'Порядок',
     catNamePh:'Роли',
@@ -2732,6 +2768,7 @@ var I18N = {
     assignWaiter:'Waiter', noWaiter:'No waiter',
     newWaiter:'New waiter', editWaiter:'Edit',
     staffNameRequired:'Enter name', confirmDelete:'Delete?',
+    staffName:'Name', staffRole:'Role',
     noMonoId:'⚠️ No Mono ID',
     sortOrder:'Order',
     catNamePh:'Rolls',
@@ -3113,6 +3150,7 @@ var I18N = {
     assignWaiter:'Kelner', noWaiter:'Bez kelnera',
     newWaiter:'Nowy kelner', editWaiter:'Edytuj',
     staffNameRequired:'Podaj imię', confirmDelete:'Usunąć?',
+    staffName:'Imię', staffRole:'Rola',
     noMonoId:'⚠️ Brak Mono ID',
     sortOrder:'Kolejność',
     catNamePh:'Role',
@@ -3494,6 +3532,7 @@ var I18N = {
     assignWaiter:'Kellner', noWaiter:'Kein Kellner',
     newWaiter:'Neuer Kellner', editWaiter:'Bearbeiten',
     staffNameRequired:'Name eingeben', confirmDelete:'Löschen?',
+    staffName:'Name', staffRole:'Rolle',
     noMonoId:'⚠️ Keine Mono-ID',
     sortOrder:'Reihenfolge',
     catNamePh:'Rollen',
@@ -3875,6 +3914,7 @@ var I18N = {
     assignWaiter:'Chelner', noWaiter:'Fără chelner',
     newWaiter:'Chelner nou', editWaiter:'Editare',
     staffNameRequired:'Introduceți numele', confirmDelete:'Șterge?',
+    staffName:'Nume', staffRole:'Rol',
     noMonoId:'⚠️ Fără Mono ID',
     sortOrder:'Ordine',
     catNamePh:'Rulouri',
@@ -4256,6 +4296,7 @@ var I18N = {
     assignWaiter:'Camarero', noWaiter:'Sin camarero',
     newWaiter:'Nuevo camarero', editWaiter:'Editar',
     staffNameRequired:'Ingrese el nombre', confirmDelete:'¿Eliminar?',
+    staffName:'Nombre', staffRole:'Rol',
     noMonoId:'⚠️ Sin Mono ID',
     sortOrder:'Orden',
     catNamePh:'Rollos',
@@ -4637,6 +4678,7 @@ var I18N = {
     assignWaiter:'Konobar', noWaiter:'Bez konobara',
     newWaiter:'Novi konobar', editWaiter:'Uredi',
     staffNameRequired:'Unesite ime', confirmDelete:'Obrisati?',
+    staffName:'Ime', staffRole:'Uloga',
     noMonoId:'⚠️ Bez Mono ID',
     sortOrder:'Redoslijed',
     catNamePh:'Rolovi',
@@ -6645,11 +6687,12 @@ function openEditStaff(id){
 async function saveStaff(){
   const name=document.getElementById('sf-name').value.trim();
   if(!name){notify(t('staffNameRequired')||"Введіть ім'я",'err');return;}
-  const data={
+  const data = {
     name,
     emoji: document.getElementById('sf-emoji').value||'👤',
     role:  document.getElementById('sf-role').value,
     monoId:document.getElementById('sf-mono-id').value.trim(),
+    tipsEmployeeId: document.getElementById('sf-mono-id').value.trim() || null,
     tipsToday:0,
   };
   try {
