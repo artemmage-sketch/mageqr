@@ -1084,8 +1084,13 @@ async function subscribeToTableBill() {
       const bills = snap.docs
         .map(d => ({ id: d.id, ...d.data() }))
         .filter(b => {
-          // Якщо є sessionId — показуємо тільки bill поточної сесії
-          if (currentSessionId && b.sessionId && b.sessionId !== currentSessionId) return false;
+          // Якщо є поточна сесія столу
+          if (currentSessionId) {
+            // Bill без sessionId — старий, не показуємо
+            if (!b.sessionId) return false;
+            // Bill з іншою сесією — не показуємо
+            if (b.sessionId !== currentSessionId) return false;
+          }
           return true;
         })
         .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
