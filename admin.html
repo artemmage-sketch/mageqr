@@ -28,7 +28,8 @@ button{cursor:pointer}
 .sb-brand{padding:1.25rem 1rem;border-bottom:1px solid var(--border)}
 .sb-brand-name{font-family:var(--font-head);font-size:1rem;font-weight:700;color:var(--accent)}
 .sb-venue{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nav-item{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;margin:1px .5rem;border-radius:8px;font-size:13px;color:var(--muted);background:none;border:none;width:calc(100%-1rem);text-align:left;cursor:pointer;transition:all .15s;width:calc(100% - 1rem)}
+.nav-item{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;margin:1px .5rem;border-radius:8px;font-size:13px;color:var(--muted);background:none;border:none;width:calc(100%-1rem);text-align:left;cursor:pointer;transition:all .15s;width:calc(100% - 1rem);position:relative}
+#new-badge{background:#EF4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;min-width:18px;height:18px;display:none;align-items:center;justify-content:center;margin-left:auto;flex-shrink:0}
 .nav-item:hover{background:var(--bg2);color:var(--text)}
 .nav-item.active{background:var(--accent-soft);color:var(--accent);font-weight:500}
 .nav-section{padding:.75rem .75rem .2rem;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
@@ -355,7 +356,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     </div>
     <div style="padding:.5rem 0;flex:1">
       <div class="nav-section" data-i18n="menuGroup">Меню</div>
-      <button class="nav-item active" onclick="nav(this,'t-orders')" data-i18n="orders">🧾 Замовлення<span id="new-badge" style="margin-left:auto;background:#EF4444;color:#fff;font-size:10px;font-weight:700;border-radius:50%;min-width:18px;height:18px;display:none;align-items:center;justify-content:center;flex-shrink:0"></span></button>
+      <button class="nav-item active" onclick="nav(this,'t-orders')" data-i18n="orders">🧾 Замовлення<span id="new-badge"></span></button>
       <button class="nav-item" onclick="nav(this,'t-items')" data-i18n="dishes">🍽️ Страви</button>
       <button class="nav-item" onclick="nav(this,'t-cats')" data-i18n="categories">📂 Категорії</button>
       <div class="nav-section" data-i18n="venueGroup">Заклад</div>
@@ -1962,7 +1963,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div>
         <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderPhone">Телефон</label>
         <div style="display:flex;gap:.375rem">
-          <select id="mo-phone-code" style="width:100px;padding:.5rem .375rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px" onchange="document.getElementById('mo-phone').value=this.value">
+          <select id="mo-phone-code" style="width:110px;padding:.5rem .375rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13px" onchange="document.getElementById('mo-phone').value=this.value">
             <option value="+380">🇺🇦 +380</option>
             <option value="+1">🇺🇸 +1</option>
             <option value="+48">🇵🇱 +48</option>
@@ -1970,10 +1971,14 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <option value="+40">🇷🇴 +40</option>
             <option value="+34">🇪🇸 +34</option>
             <option value="+382">🇲🇪 +382</option>
-            <option value="+44">🇬🇧 +44</option>
+            <option value="+44">🏴󠁧󠁢󠁥󠁮󠁧󠁿 +44</option>
+            <option value="+44">🏴󠁧󠁢󠁳󠁣󠁴󠁿 +44</option>
+            <option value="+44">🏴󠁧󠁢󠁷󠁬󠁳󠁿 +44</option>
+            <option value="+44">🇮🇪 +353</option>
             <option value="+33">🇫🇷 +33</option>
             <option value="+39">🇮🇹 +39</option>
-            <option value="+7">🇷🇺 +7</option>
+            <option value="+420">🇨🇿 +420</option>
+            <option value="+36">🇭🇺 +36</option>
           </select>
           <input id="mo-phone" type="tel" placeholder="0938521479" style="flex:1;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px"/>
         </div>
@@ -2537,7 +2542,9 @@ var I18N = {
     manualOrderBtn:'✓ Оформити замовлення',
     manualOrderPOS:'(синхронізовано з POS)',
     manualOrderEmpty:'Додайте хоча б одну страву',
-    newOrderBtn:'＋ Нове замовлення'},
+    newOrderBtn:'＋ Нове замовлення',
+    city:'Місто', street:'Вулиця та будинок', apt:'Квартира',
+    entrance:"Під'їзд", floor:'Поверх', courierComment:"Коментар для кур'єра"},
   en: {
     orders:'🧾 Orders', dishes:'🍽️ Dishes', categories:'📂 Categories',
     tables:'🪑 Tables & QR', design:'🎨 Menu Design', payments:'💳 Payments',
@@ -2912,7 +2919,9 @@ var I18N = {
     manualOrderBtn:'✓ Place order',
     manualOrderPOS:'(synced with POS)',
     manualOrderEmpty:'Add at least one dish',
-    newOrderBtn:'＋ New order'},
+    newOrderBtn:'＋ New order',
+    city:'City', street:'Street and building', apt:'Apartment',
+    entrance:'Entrance', floor:'Floor', courierComment:'Comment for courier'},
   pl: {
     orders:'🧾 Zamówienia', dishes:'🍽️ Dania', categories:'📂 Kategorie',
     tables:'🪑 Stoły i QR', design:'🎨 Wygląd menu', payments:'💳 Płatności',
@@ -3287,7 +3296,9 @@ var I18N = {
     manualOrderBtn:'✓ Złóż zamówienie',
     manualOrderPOS:'(zsynchronizowano z POS)',
     manualOrderEmpty:'Dodaj co najmniej jedno danie',
-    newOrderBtn:'＋ Nowe zamówienie'},
+    newOrderBtn:'＋ Nowe zamówienie',
+    city:'Miasto', street:'Ulica i numer', apt:'Mieszkanie',
+    entrance:'Klatka', floor:'Piętro', courierComment:'Komentarz dla kuriera'},
   de: {
     orders:'🧾 Bestellungen', dishes:'🍽️ Gerichte', categories:'📂 Kategorien',
     tables:'🪑 Tische & QR', design:'🎨 Menüdesign', payments:'💳 Zahlungen',
@@ -3662,7 +3673,9 @@ var I18N = {
     manualOrderBtn:'✓ Bestellung aufgeben',
     manualOrderPOS:'(mit POS synchronisiert)',
     manualOrderEmpty:'Mindestens ein Gericht hinzufügen',
-    newOrderBtn:'＋ Neue Bestellung'},
+    newOrderBtn:'＋ Neue Bestellung',
+    city:'Stadt', street:'Straße und Nummer', apt:'Wohnung',
+    entrance:'Eingang', floor:'Etage', courierComment:'Kommentar für Kurier'},
   ro: {
     orders:'🧾 Comenzi', dishes:'🍽️ Mâncăruri', categories:'📂 Categorii',
     tables:'🪑 Mese & QR', design:'🎨 Design meniu', payments:'💳 Plăți',
@@ -4037,7 +4050,9 @@ var I18N = {
     manualOrderBtn:'✓ Plasează comanda',
     manualOrderPOS:'(sincronizat cu POS)',
     manualOrderEmpty:'Adaugă cel puțin un preparat',
-    newOrderBtn:'＋ Comandă nouă'},
+    newOrderBtn:'＋ Comandă nouă',
+    city:'Oraș', street:'Stradă și număr', apt:'Apartament',
+    entrance:'Intrare', floor:'Etaj', courierComment:'Comentariu pentru curier'},
   es: {
     orders:'🧾 Pedidos', dishes:'🍽️ Platos', categories:'📂 Categorías',
     tables:'🪑 Mesas & QR', design:'🎨 Diseño del menú', payments:'💳 Pagos',
@@ -4412,7 +4427,9 @@ var I18N = {
     manualOrderBtn:'✓ Realizar pedido',
     manualOrderPOS:'(sincronizado con POS)',
     manualOrderEmpty:'Añade al menos un plato',
-    newOrderBtn:'＋ Nuevo pedido'},
+    newOrderBtn:'＋ Nuevo pedido',
+    city:'Ciudad', street:'Calle y número', apt:'Apartamento',
+    entrance:'Entrada', floor:'Piso', courierComment:'Comentario para repartidor'},
   cnr: {
     orders:'🧾 Narudžbine', dishes:'🍽️ Jela', categories:'📂 Kategorije',
     tables:'🪑 Stolovi & QR', design:'🎨 Dizajn menija', payments:'💳 Plaćanja',
@@ -4787,7 +4804,9 @@ var I18N = {
     manualOrderBtn:'✓ Naruči',
     manualOrderPOS:'(sinhronizovano sa POS)',
     manualOrderEmpty:'Dodajte bar jedno jelo',
-    newOrderBtn:'＋ Nova narudžbina'},
+    newOrderBtn:'＋ Nova narudžbina',
+    city:'Grad', street:'Ulica i broj', apt:'Stan',
+    entrance:'Ulaz', floor:'Sprat', courierComment:'Komentar za dostavljača'},
 };
 
 var adminLang = localStorage.getItem('mq_admin_lang') || 'uk';
@@ -4947,10 +4966,7 @@ function playNewOrderSound() {
 function updateOrderBadge(){
   const n = orders.filter(o => o.status==='new' || o.status==='preparing').length;
   const b = document.getElementById('new-badge');
-  if(b){
-    b.textContent = n;
-    b.style.display = n ? 'inline-flex' : 'none';
-  }
+  if(b){ b.textContent = n; b.style.display = n ? 'inline-flex' : 'none'; }
 }
 
 window.setStatus = async function(id, status) {
@@ -5910,7 +5926,12 @@ window.openManualOrder = function() {
   document.getElementById('mo-persons').value = '1';
   document.getElementById('mo-type').value = 'dine_in';
   document.getElementById('mo-payment').value = 'cash';
-  // Автоматичний код країни по мові адміна
+  // Автозаповнення міста з налаштувань закладу
+  const cityInput = document.getElementById('mo-city');
+  if(cityInput) {
+    const venueCity = document.getElementById('set-city')?.value || '';
+    cityInput.value = venueCity;
+  }
   const phoneCodes = {uk:'+380',en:'+1',pl:'+48',de:'+49',ro:'+40',es:'+34',cnr:'+382'};
   const code = phoneCodes[adminLang] || '+380';
   const codeSelect = document.getElementById('mo-phone-code');
