@@ -1957,14 +1957,6 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <button class="btn btn-success btn-sm" onclick="billCash()" style="font-size:13px">
           💵 <span data-i18n="billCash">Готівка / термінал — оплачено</span>
         </button>
-        <button class="btn btn-accent btn-sm" id="bill-online-btn" onclick="billOnline()" style="font-size:13px">
-          📲 <span data-i18n="billOnline">Надіслати посилання на оплату</span>
-        </button>
-        <div id="bill-pay-link-wrap" style="display:none;background:var(--bg2);border-radius:8px;padding:.625rem;font-size:11px;word-break:break-all">
-          <div style="color:var(--muted);margin-bottom:.375rem" data-i18n="billLinkReady">Посилання для клієнта:</div>
-          <div id="bill-pay-link" style="font-family:monospace;color:var(--accent)"></div>
-          <button class="btn btn-outline btn-sm" style="margin-top:.375rem;width:100%" onclick="copyBillLink()" data-i18n="copyURL">🔗 Копіювати</button>
-        </div>
         <button class="btn btn-outline btn-sm" style="font-size:12px;color:var(--muted);margin-top:.375rem;border-color:var(--border)" onclick="setTableStatus('free');closeModal('modal-table-detail')">
           ✓ <span data-i18n="tableFreeBtn">Звільнити стіл</span>
         </button>
@@ -5904,7 +5896,10 @@ window.billCash = billCash;
 // Онлайн оплата через Monobank
 window.billOnline = async function(){
   if(!selectedTable) return;
-  const tableOrders = orders.filter(o=>String(o.tableId)===String(selectedTable.num)&&(['new','preparing','done'].includes(o.status)));
+  const tableOrders = orders.filter(o=>
+    String(o.tableId)===String(selectedTable.num) &&
+    ['new','preparing'].includes(o.status)
+  );
   // Ручна сума має пріоритет
   const manualAmt = parseInt(document.getElementById('manual-amount')?.value)||0;
   const total = manualAmt > 0 ? manualAmt : tableOrders.reduce((s,o)=>s+(o.total||0),0);
