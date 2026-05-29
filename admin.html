@@ -285,7 +285,24 @@ button{cursor:pointer}
 .staff-avatar{width:40px;height:40px;border-radius:50%;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin:0 auto .375rem}
 .staff-name{font-size:12px;font-weight:500}
 .staff-role{font-size:10px;color:var(--muted)}
-.staff-tips-total{font-size:11px;color:var(--green);margin-top:2px;font-weight:600}
+.tips-analytics-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;position:relative}
+.tips-analytics-card.has-pending{border-color:var(--amber)}
+.tips-analytics-card.all-paid{border-color:var(--green);opacity:.7}
+.tac-header{display:flex;align-items:center;gap:.625rem;margin-bottom:.75rem}
+.tac-avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.tac-avatar img{width:100%;height:100%;object-fit:cover}
+.tac-name{font-weight:600;font-size:13px}
+.tac-role{font-size:11px;color:var(--muted)}
+.tac-amounts{display:flex;flex-direction:column;gap:.25rem;margin-bottom:.75rem}
+.tac-row{display:flex;justify-content:space-between;font-size:12px}
+.tac-row .lbl{color:var(--muted)}
+.tac-row .val{font-weight:600}
+.tac-row .val.pending{color:var(--amber)}
+.tac-row .val.paid{color:var(--green)}
+.tac-btn{width:100%;padding:.5rem;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:var(--font-body)}
+.tac-btn.pay-btn{background:var(--accent);color:#fff}
+.tac-btn.pay-btn:hover{opacity:.88}
+.tac-btn.paid-btn{background:var(--bg2);color:var(--muted);cursor:default}
 
 /* QR PRINT */
 @media print{body *{visibility:hidden}.print-qr,.print-qr *{visibility:visible}.print-qr{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}}
@@ -463,9 +480,20 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- TIPS STATS -->
         <div class="settings-section">
-          <h3 data-i18n="tipsStaff">💸 Чайові — статистика по персоналу</h3>
-          <div style="font-size:12px;color:var(--muted);margin-bottom:1rem" data-i18n="tipsMonobankDesc">Чайові зараховуються на картку monobank співробітника одразу після оплати (комісія 4%)</div>
-          <div class="staff-grid" id="staff-tips-grid"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+            <h3 data-i18n="tipsStaff" style="margin:0">💸 Чайові — статистика по персоналу</h3>
+            <div style="display:flex;gap:.5rem;align-items:center">
+              <select id="tips-period" style="padding:.375rem .625rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:12px" onchange="loadTipsAnalytics()">
+                <option value="today" data-i18n="tipsPeriodToday">Сьогодні</option>
+                <option value="week" selected data-i18n="tipsPeriodWeek">Тиждень</option>
+                <option value="month" data-i18n="tipsPeriodMonth">Місяць</option>
+                <option value="all" data-i18n="tipsPeriodAll">Весь час</option>
+              </select>
+              <button class="btn btn-outline btn-sm" onclick="loadTipsAnalytics()">↺</button>
+            </div>
+          </div>
+          <div id="tips-analytics-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem"></div>
+          <div id="tips-analytics-empty" style="display:none;color:var(--muted);font-size:13px;text-align:center;padding:1rem">Чайових за цей період немає</div>
         </div>
 
         <!-- МОВА ІНТЕРФЕЙСУ -->
@@ -2396,6 +2424,12 @@ var I18N = {
     notSet:'не вказано',
     noStaff:'Персонал не додано',
     tipsWord:'чайових',
+    tipsEarned:'Всього зароблено', tipsPaid:'Виплачено', tipsPending:'До виплати',
+    tipsMarkPaid:'Відмітити як виплачено', tipsAllPaid:'Розраховано',
+    tipsPeriodToday:'Сьогодні', tipsPeriodWeek:'Тиждень',
+    tipsPeriodMonth:'Місяць', tipsPeriodAll:'Весь час',
+    tipsNoData:t('tipsNoData')||'Чайових за цей період немає',
+    tipsPayoutDone:'Виплату відмічено!', tipsPayoutConfirm:'Відмітити всі невиплачені чайові як виплачені?',
     assignWaiter:'Офіціант', noWaiter:'Без офіціанта',
     newWaiter:'Новий офіціант', editWaiter:'Редагувати',
     staffNameRequired:"Введіть ім'я", confirmDelete:'Видалити?',
@@ -2778,6 +2812,12 @@ var I18N = {
     notSet:'not set',
     noStaff:'No staff added',
     tipsWord:'in tips',
+    tipsEarned:'Total earned', tipsPaid:'Paid out', tipsPending:'To pay',
+    tipsMarkPaid:'Mark as paid', tipsAllPaid:'Settled',
+    tipsPeriodToday:'Today', tipsPeriodWeek:'Week',
+    tipsPeriodMonth:'Month', tipsPeriodAll:'All time',
+    tipsNoData:'No tips for this period',
+    tipsPayoutDone:'Payout marked!', tipsPayoutConfirm:'Mark all unpaid tips as paid?',
     assignWaiter:'Waiter', noWaiter:'No waiter',
     newWaiter:'New waiter', editWaiter:'Edit',
     staffNameRequired:'Enter name', confirmDelete:'Delete?',
@@ -3160,6 +3200,12 @@ var I18N = {
     notSet:'nie podano',
     noStaff:'Brak personelu',
     tipsWord:'napiwków',
+    tipsEarned:'Łącznie zarobiono', tipsPaid:'Wypłacono', tipsPending:'Do wypłaty',
+    tipsMarkPaid:'Oznacz jako wypłacone', tipsAllPaid:'Rozliczono',
+    tipsPeriodToday:'Dziś', tipsPeriodWeek:'Tydzień',
+    tipsPeriodMonth:'Miesiąc', tipsPeriodAll:'Cały czas',
+    tipsNoData:'Brak napiwków w tym okresie',
+    tipsPayoutDone:'Wypłata zaznaczona!', tipsPayoutConfirm:'Oznaczyć wszystkie niewypłacone napiwki jako wypłacone?',
     assignWaiter:'Kelner', noWaiter:'Bez kelnera',
     newWaiter:'Nowy kelner', editWaiter:'Edytuj',
     staffNameRequired:'Podaj imię', confirmDelete:'Usunąć?',
@@ -3542,6 +3588,12 @@ var I18N = {
     notSet:'nicht angegeben',
     noStaff:'Kein Personal hinzugefügt',
     tipsWord:'Trinkgeld',
+    tipsEarned:'Insgesamt verdient', tipsPaid:'Ausgezahlt', tipsPending:'Auszuzahlen',
+    tipsMarkPaid:'Als ausgezahlt markieren', tipsAllPaid:'Abgerechnet',
+    tipsPeriodToday:'Heute', tipsPeriodWeek:'Woche',
+    tipsPeriodMonth:'Monat', tipsPeriodAll:'Gesamte Zeit',
+    tipsNoData:'Keine Trinkgelder in diesem Zeitraum',
+    tipsPayoutDone:'Auszahlung markiert!', tipsPayoutConfirm:'Alle nicht ausgezahlten Trinkgelder als ausgezahlt markieren?',
     assignWaiter:'Kellner', noWaiter:'Kein Kellner',
     newWaiter:'Neuer Kellner', editWaiter:'Bearbeiten',
     staffNameRequired:'Name eingeben', confirmDelete:'Löschen?',
@@ -3924,6 +3976,12 @@ var I18N = {
     notSet:'nespecificat',
     noStaff:'Niciun personal adăugat',
     tipsWord:'bacșiș',
+    tipsEarned:'Total câștigat', tipsPaid:'Plătit', tipsPending:'De plătit',
+    tipsMarkPaid:'Marchează ca plătit', tipsAllPaid:'Achitat',
+    tipsPeriodToday:'Azi', tipsPeriodWeek:'Săptămână',
+    tipsPeriodMonth:'Lună', tipsPeriodAll:'Tot timpul',
+    tipsNoData:'Niciun bacșiș în această perioadă',
+    tipsPayoutDone:'Plata marcată!', tipsPayoutConfirm:'Marcați toate bacșișurile neplătite ca plătite?',
     assignWaiter:'Chelner', noWaiter:'Fără chelner',
     newWaiter:'Chelner nou', editWaiter:'Editare',
     staffNameRequired:'Introduceți numele', confirmDelete:'Șterge?',
@@ -4306,6 +4364,12 @@ var I18N = {
     notSet:'no especificado',
     noStaff:'Sin personal agregado',
     tipsWord:'en propinas',
+    tipsEarned:'Total ganado', tipsPaid:'Pagado', tipsPending:'Por pagar',
+    tipsMarkPaid:'Marcar como pagado', tipsAllPaid:'Liquidado',
+    tipsPeriodToday:'Hoy', tipsPeriodWeek:'Semana',
+    tipsPeriodMonth:'Mes', tipsPeriodAll:'Todo el tiempo',
+    tipsNoData:'Sin propinas en este período',
+    tipsPayoutDone:'¡Pago marcado!', tipsPayoutConfirm:'¿Marcar todas las propinas no pagadas como pagadas?',
     assignWaiter:'Camarero', noWaiter:'Sin camarero',
     newWaiter:'Nuevo camarero', editWaiter:'Editar',
     staffNameRequired:'Ingrese el nombre', confirmDelete:'¿Eliminar?',
@@ -4688,6 +4752,12 @@ var I18N = {
     notSet:'nije navedeno',
     noStaff:'Nije dodano osoblje',
     tipsWord:'napojnice',
+    tipsEarned:'Ukupno zarađeno', tipsPaid:'Isplaćeno', tipsPending:'Za isplatu',
+    tipsMarkPaid:'Označi kao isplaćeno', tipsAllPaid:'Izmireno',
+    tipsPeriodToday:'Danas', tipsPeriodWeek:'Sedmica',
+    tipsPeriodMonth:'Mjesec', tipsPeriodAll:'Cijelo vrijeme',
+    tipsNoData:'Nema napojnica u ovom periodu',
+    tipsPayoutDone:'Isplata označena!', tipsPayoutConfirm:'Označiti sve neisplaćene napojnice kao isplaćene?',
     assignWaiter:'Konobar', noWaiter:'Bez konobara',
     newWaiter:'Novi konobar', editWaiter:'Uredi',
     staffNameRequired:'Unesite ime', confirmDelete:'Obrisati?',
@@ -6666,21 +6736,12 @@ function renderStaff(){
   document.getElementById('staff-list').innerHTML=staff.map(s=>`
     <div class="item-row" style="margin-bottom:.5rem">
       <div class="item-em">${avatarHtml(s)}</div>
-      <div class="item-body"><div class="item-name">${s.name}</div><div class="item-sub">${s.role} · Mono ID: ${s.monoId||'<span style="color:var(--amber)">не вказано</span>'}</div></div>
-      <div style="font-size:12px;font-weight:600;color:var(--green);margin-right:.5rem">₴${s.tipsToday||0}</div>
+      <div class="item-body"><div class="item-name">${s.name}</div><div class="item-sub">${s.role}${s.monoId?' · Mono ID: '+s.monoId:''}</div></div>
       <div class="item-btns">
         <button class="icon-btn" onclick="openEditStaff('${s.id}')">✏️</button>
         <button class="icon-btn del" onclick="deleteStaff('${s.id}')">🗑️</button>
       </div>
     </div>`).join('')||`<div style="color:var(--muted);font-size:13px">${t('noStaff')||'Персонал не додано'}</div>`;
-  document.getElementById('staff-tips-grid').innerHTML=staff.map(s=>`
-    <div class="staff-card">
-      <div class="staff-avatar">${s.avatar ? `<img src="${s.avatar}" style="width:40px;height:40px;border-radius:50%;object-fit:cover"/>` : (s.emoji||'👤')}</div>
-      <div class="staff-name">${s.name}</div>
-      <div class="staff-role">${s.role}</div>
-      <div class="staff-tips-total">₴${s.tipsToday||0} ${t('tipsWord')}</div>
-      ${!s.monoId?'<div style="font-size:10px;color:var(--amber)">⚠️ Без Mono ID</div>':''}
-    </div>`).join('');
 }
 
 function openAddStaff(){
@@ -6774,6 +6835,179 @@ async function deleteStaff(id){
   }
 }
 
+// ── АНАЛІТИКА ЧАЙОВИХ ────────────────────────────────────────
+async function loadTipsAnalytics() {
+  if (!db || !window.__FS || !staff.length) return;
+  const {collection, getDocs, query, where, orderBy} = window.__FS;
+
+  const period = document.getElementById('tips-period')?.value || 'week';
+  const now = new Date();
+  let fromDate = new Date();
+  if (period === 'today') { fromDate.setHours(0,0,0,0); }
+  else if (period === 'week') { fromDate.setDate(now.getDate() - 7); fromDate.setHours(0,0,0,0); }
+  else if (period === 'month') { fromDate.setDate(now.getDate() - 30); fromDate.setHours(0,0,0,0); }
+  else { fromDate = new Date(0); }
+
+  try {
+    // Завантажуємо всі tips за період
+    const tipsSnap = await getDocs(query(
+      collection(db, 'venues', venueId, 'tips'),
+      where('createdAt', '>=', fromDate)
+    ));
+    const tips = tipsSnap.docs.map(d => ({id: d.id, ...d.data()}));
+
+    // Групуємо по staffId
+    const byStaff = {};
+    staff.forEach(s => { byStaff[s.id] = {earned: 0, paid: 0, pending: 0, tips: []}; });
+
+    tips.forEach(tip => {
+      const sid = tip.staffId;
+      if (!sid || !byStaff[sid]) return;
+      byStaff[sid].tips.push(tip);
+      byStaff[sid].earned += tip.amount || 0;
+      if (tip.paidOut) byStaff[sid].paid += tip.amount || 0;
+      else byStaff[sid].pending += tip.amount || 0;
+    });
+
+    renderTipsAnalytics(byStaff);
+  } catch(e) {
+    console.warn('loadTipsAnalytics:', e.message);
+    // Якщо немає індексу — завантажуємо без фільтра по даті
+    try {
+      const {collection, getDocs} = window.__FS;
+      const tipsSnap = await getDocs(collection(db, 'venues', venueId, 'tips'));
+      const tips = tipsSnap.docs.map(d => ({id: d.id, ...d.data()}))
+        .filter(t => {
+          const sec = t.createdAt?.seconds || 0;
+          return sec * 1000 >= fromDate.getTime();
+        });
+
+      const byStaff = {};
+      staff.forEach(s => { byStaff[s.id] = {earned: 0, paid: 0, pending: 0, tips: []}; });
+      tips.forEach(tip => {
+        const sid = tip.staffId;
+        if (!sid || !byStaff[sid]) return;
+        byStaff[sid].tips.push(tip);
+        byStaff[sid].earned += tip.amount || 0;
+        if (tip.paidOut) byStaff[sid].paid += tip.amount || 0;
+        else byStaff[sid].pending += tip.amount || 0;
+      });
+      renderTipsAnalytics(byStaff);
+    } catch(e2) { console.warn('loadTipsAnalytics fallback:', e2.message); }
+  }
+}
+
+function renderTipsAnalytics(byStaff) {
+  const grid = document.getElementById('tips-analytics-grid');
+  const empty = document.getElementById('tips-analytics-empty');
+  if (!grid) return;
+
+  const hasAny = staff.some(s => byStaff[s.id]?.earned > 0);
+
+  if (!hasAny) {
+    grid.innerHTML = '';
+    if(empty) empty.style.display = 'block';
+    return;
+  }
+  if(empty) empty.style.display = 'none';
+
+  grid.innerHTML = staff.map(s => {
+    const data = byStaff[s.id] || {earned:0, paid:0, pending:0};
+    const avatarHtml = s.avatar
+      ? `<img src="${s.avatar}"/>`
+      : (s.emoji || '👤');
+    const allPaid = data.pending === 0 && data.earned > 0;
+    const hasPending = data.pending > 0;
+
+    return `<div class="tips-analytics-card ${hasPending?'has-pending':''} ${allPaid?'all-paid':''}">
+      <div class="tac-header">
+        <div class="tac-avatar">${avatarHtml}</div>
+        <div>
+          <div class="tac-name">${s.name}</div>
+          <div class="tac-role">${s.role}</div>
+        </div>
+      </div>
+      <div class="tac-amounts">
+        <div class="tac-row">
+          <span class="lbl">${t('tipsEarned')||'Всього зароблено'}</span>
+          <span class="val">${cur(data.earned)}</span>
+        </div>
+        <div class="tac-row">
+          <span class="lbl">${t('tipsPaid')||'Виплачено'}</span>
+          <span class="val paid">${cur(data.paid)}</span>
+        </div>
+        <div class="tac-row">
+          <span class="lbl">${t('tipsPending')||'До виплати'}</span>
+          <span class="val pending">${cur(data.pending)}</span>
+        </div>
+      </div>
+      ${hasPending
+        ? `<button class="tac-btn pay-btn" onclick="markTipsPaid('${s.id}')">✅ ${t('tipsMarkPaid')||'Відмітити як виплачено'} (${cur(data.pending)})</button>`
+        : data.earned > 0
+          ? `<div class="tac-btn paid-btn">✓ ${t('tipsAllPaid')||'Розраховано'}</div>`
+          : ''
+      }
+    </div>`;
+  }).filter((_, i) => byStaff[staff[i]?.id]?.earned > 0 || true).join('');
+}
+
+window.markTipsPaid = async function(staffId) {
+  if (!confirm(t('tipsPayoutConfirm')||'Відмітити всі невиплачені чайові як виплачені?')) return;
+  const {collection, getDocs, query, where, doc, updateDoc, addDoc, serverTimestamp} = window.__FS;
+  try {
+    // Знаходимо всі невиплачені tips цього офіціанта
+    const snap = await getDocs(query(
+      collection(db, 'venues', venueId, 'tips'),
+      where('staffId', '==', staffId),
+      where('paidOut', '==', false)
+    ));
+
+    if (snap.empty) {
+      // Спробуємо без фільтра paidOut (для старих записів без цього поля)
+      const snap2 = await getDocs(query(
+        collection(db, 'venues', venueId, 'tips'),
+        where('staffId', '==', staffId)
+      ));
+      const unpaid = snap2.docs.filter(d => !d.data().paidOut);
+      let total = 0;
+      await Promise.all(unpaid.map(d => {
+        total += d.data().amount || 0;
+        return updateDoc(doc(db, 'venues', venueId, 'tips', d.id), {
+          paidOut: true,
+          paidOutAt: new Date().toISOString(),
+        });
+      }));
+      // Записуємо виплату
+      if (total > 0) {
+        await addDoc(collection(db, 'venues', venueId, 'tips_payouts'), {
+          staffId, staffName: staff.find(s=>s.id===staffId)?.name || '—',
+          amount: total, paidAt: serverTimestamp(),
+        });
+      }
+    } else {
+      let total = 0;
+      await Promise.all(snap.docs.map(d => {
+        total += d.data().amount || 0;
+        return updateDoc(doc(db, 'venues', venueId, 'tips', d.id), {
+          paidOut: true,
+          paidOutAt: new Date().toISOString(),
+        });
+      }));
+      if (total > 0) {
+        await addDoc(collection(db, 'venues', venueId, 'tips_payouts'), {
+          staffId, staffName: staff.find(s=>s.id===staffId)?.name || '—',
+          amount: total, paidAt: serverTimestamp(),
+        });
+      }
+    }
+
+    notify('✅ '+(t('tipsPayoutDone')||'Виплату відмічено!'), 'ok');
+    loadTipsAnalytics();
+  } catch(e) {
+    notify(t('notifError') + ': ' + e.message, 'err');
+  }
+};
+
 async function loadStaffFromFirestore(){
   if(!db||!window.__FS) return;
   try {
@@ -6783,6 +7017,7 @@ async function loadStaffFromFirestore(){
       staff = snap.docs.map(d=>({id:d.id, ...d.data()}));
     }
     renderStaff();
+    loadTipsAnalytics(); // завантажуємо аналітику після staff
   } catch(e){ console.warn('loadStaff:', e.message); }
 }
 
