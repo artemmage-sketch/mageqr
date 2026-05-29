@@ -5720,8 +5720,10 @@ window.openTableDetail = function(id) {
   document.getElementById('table-status-display').textContent = statusLabels[t.status] || t.status;
 
   // Скидаємо стан онлайн-оплати
-  document.getElementById('bill-pay-link-wrap').style.display='none';
-  document.getElementById('bill-pay-link').textContent='';
+  const billPayWrap = document.getElementById('bill-pay-link-wrap');
+  if(billPayWrap) billPayWrap.style.display='none';
+  const billPayLink = document.getElementById('bill-pay-link');
+  if(billPayLink) billPayLink.textContent='';
   const onlineBtn=document.getElementById('bill-online-btn');
   if(onlineBtn){onlineBtn.disabled=false;onlineBtn.innerHTML='📲 <span data-i18n="billOnline">Надіслати посилання на оплату</span>';}
   // Оновлюємо символ валюти
