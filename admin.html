@@ -5491,8 +5491,7 @@ let selectedTable=null;
 let editStaffId=null;
 
 function renderTables(){
-  if(document.getElementById('modal-table-detail').classList.contains('open') ||
-     document.getElementById('modal-table-order').classList.contains('open')) return;
+  if(document.getElementById('modal-table-order').classList.contains('open')) return;
   const filtered=activeZone?tables.filter(tbl=>tbl.zone===activeZone):tables;
   const stMap={free:'ts-free',occupied:'ts-occupied',ordered:'ts-ordered',paid:'ts-paid'};
   const stLabel={free:t('tableFree'),occupied:t('tableOccupied'),ordered:t('activeOrders'),paid:t('paid')};
