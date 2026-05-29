@@ -981,6 +981,29 @@ async function init() {
     staff = staffSnap.docs.map(d => ({ id: d.id, ...d.data() }))
       .filter(s => s.tipsEnabled !== false);
 
+    // Якщо стіл має призначеного офіціанта — ставимо його першим
+    if (tableNum && staff.length) {
+      try {
+        const tablesSnap = await getDocs(query(
+          collection(db, 'venues', venueId, 'tables'),
+          where('num', '==', Number(tableNum))
+        ));
+        if (!tablesSnap.empty) {
+          const tableData = tablesSnap.docs[0].data();
+          if (tableData.staffId) {
+            // Переміщуємо призначеного офіціанта на початок
+            const idx = staff.findIndex(s => s.id === tableData.staffId);
+            if (idx > 0) {
+              const [assigned] = staff.splice(idx, 1);
+              staff.unshift(assigned);
+            }
+            // Автоматично вибираємо якщо є tipsEmployeeId
+            if (tableData.staffId) selectedStaff = tableData.staffId;
+          }
+        }
+      } catch(e) { console.warn('load table staff:', e.message); }
+    }
+
     // Посилання на меню
     $('menu-link').href = `menu.html?v=${venueId}${tableNum ? '&t='+tableNum : ''}`;
 
