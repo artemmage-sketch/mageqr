@@ -6140,7 +6140,12 @@ async function loadTablesFromFirestore() {
           // Якщо стіл оплачено — закриваємо модалку і повідомляємо
           if (updated.status === 'paid' && prevStatus !== 'paid') {
             closeModal('modal-table-detail');
+            setTimeout(() => renderTables(), 50);
             notify('✅ Клієнт оплатив рахунок онлайн!', 'ok');
+          }
+          if (updated.status === 'free' && prevStatus !== 'free') {
+            closeModal('modal-table-detail');
+            setTimeout(() => renderTables(), 50);
           }
         }
       }
