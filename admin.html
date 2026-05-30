@@ -5623,14 +5623,35 @@ async function loadDesignSettings(){
     const snap=await getDoc(doc(db,'venues',venueId,'design','main'));
     if(!snap.exists())return;
     const d=snap.data();
+    // Кольори
     if(d.accent){document.getElementById('c-accent').value=d.accent;document.getElementById('c-accent-hex').value=d.accent;}
     if(d.bg){document.getElementById('c-bg').value=d.bg;document.getElementById('c-bg-hex').value=d.bg;}
     if(d.card){document.getElementById('c-card').value=d.card;document.getElementById('c-card-hex').value=d.card;}
     if(d.text){document.getElementById('c-text').value=d.text;document.getElementById('c-text-hex').value=d.text;}
-    if(d.fontHead)document.getElementById('font-head').value=d.fontHead;
-    if(d.bannerUrl)document.getElementById('banner-url').value=d.bannerUrl;
-    if(d.logoEmoji)document.getElementById('logo-emoji').value=d.logoEmoji;
-    if(d.cardRadius)document.getElementById('card-radius').value=d.cardRadius;
+    // Шрифти
+    if(d.fontHead) document.getElementById('font-head').value=d.fontHead;
+    if(d.fontBody) document.getElementById('font-body').value=d.fontBody;
+    if(d.fontSize){
+      document.getElementById('font-size').value=d.fontSize;
+      document.getElementById('font-size-val').textContent=d.fontSize+'px';
+    }
+    // Логотип і банер
+    if(d.logoEmoji) document.getElementById('logo-emoji').value=d.logoEmoji;
+    if(d.logoUrl)   document.getElementById('logo-url').value=d.logoUrl;
+    if(d.bannerUrl) document.getElementById('banner-url').value=d.bannerUrl;
+    if(d.bannerH){
+      document.getElementById('banner-h').value=d.bannerH;
+      document.getElementById('banner-h-val').textContent=d.bannerH+'px';
+    }
+    // Заокруглення
+    if(d.cardRadius!==undefined){
+      document.getElementById('card-radius').value=d.cardRadius;
+      document.getElementById('radius-val').textContent=d.cardRadius+'px';
+    }
+    // Перемикачі відображення
+    if(d.showPrices!==undefined) document.getElementById('toggle-prices').classList.toggle('on', d.showPrices);
+    if(d.showDesc!==undefined)   document.getElementById('toggle-desc').classList.toggle('on', d.showDesc);
+    if(d.showWeight!==undefined) document.getElementById('toggle-weight').classList.toggle('on', d.showWeight);
     livePreview();
   }catch(e){console.warn('loadDesignSettings:',e.message);}
 }
@@ -5638,7 +5659,24 @@ async function loadDesignSettings(){
 window.saveDesign=async function(){
   if(!db||!window.__FS){notify(t('notifFirebaseNotReady'),'err');return;}
   const {doc,setDoc}=window.__FS;
-  const data={accent:document.getElementById('c-accent').value,bg:document.getElementById('c-bg').value,card:document.getElementById('c-card').value,text:document.getElementById('c-text').value,fontHead:document.getElementById('font-head').value,fontBody:document.getElementById('font-body').value,bannerUrl:document.getElementById('banner-url').value,logoEmoji:document.getElementById('logo-emoji').value,logoUrl:document.getElementById('logo-url').value,cardRadius:document.getElementById('card-radius').value,fontSize:document.getElementById('font-size').value,showPrices:document.getElementById('toggle-prices').classList.contains('on'),showDesc:document.getElementById('toggle-desc').classList.contains('on'),showWeight:document.getElementById('toggle-weight').classList.contains('on'),updatedAt:new Date().toISOString()};
+  const data={
+    accent:document.getElementById('c-accent').value,
+    bg:document.getElementById('c-bg').value,
+    card:document.getElementById('c-card').value,
+    text:document.getElementById('c-text').value,
+    fontHead:document.getElementById('font-head').value,
+    fontBody:document.getElementById('font-body').value,
+    fontSize:document.getElementById('font-size').value,
+    bannerUrl:document.getElementById('banner-url').value,
+    bannerH:document.getElementById('banner-h').value,
+    logoEmoji:document.getElementById('logo-emoji').value,
+    logoUrl:document.getElementById('logo-url').value,
+    cardRadius:document.getElementById('card-radius').value,
+    showPrices:document.getElementById('toggle-prices').classList.contains('on'),
+    showDesc:document.getElementById('toggle-desc').classList.contains('on'),
+    showWeight:document.getElementById('toggle-weight').classList.contains('on'),
+    updatedAt:new Date().toISOString()
+  };
   try{await setDoc(doc(db,'venues',venueId,'design','main'),data);notify(t('notifDesignSaved'),'ok');}
   catch(e){notify(t('notifError')+': '+e.message,'err');}
 };
