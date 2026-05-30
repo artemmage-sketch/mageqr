@@ -6837,63 +6837,55 @@ async function deleteStaff(id){
 
 // ── АНАЛІТИКА ЧАЙОВИХ ────────────────────────────────────────
 async function loadTipsAnalytics() {
-  if (!db || !window.__FS || !staff.length) return;
-  const {collection, getDocs, query, where, orderBy} = window.__FS;
+  if (!db || !window.__FS) return;
+  if (!staff.length) {
+    const grid = document.getElementById('tips-analytics-grid');
+    const empty = document.getElementById('tips-analytics-empty');
+    if(grid) grid.innerHTML = '';
+    if(empty) { empty.textContent = t('noStaff')||'Персонал не додано'; empty.style.display = 'block'; }
+    return;
+  }
+  const {collection, getDocs} = window.__FS;
 
   const period = document.getElementById('tips-period')?.value || 'week';
   const now = new Date();
-  let fromDate = new Date();
-  if (period === 'today') { fromDate.setHours(0,0,0,0); }
-  else if (period === 'week') { fromDate.setDate(now.getDate() - 7); fromDate.setHours(0,0,0,0); }
-  else if (period === 'month') { fromDate.setDate(now.getDate() - 30); fromDate.setHours(0,0,0,0); }
-  else { fromDate = new Date(0); }
+  let fromMs = 0;
+  if (period === 'today') { const d = new Date(); d.setHours(0,0,0,0); fromMs = d.getTime(); }
+  else if (period === 'week')  { fromMs = now.getTime() - 7*24*60*60*1000; }
+  else if (period === 'month') { fromMs = now.getTime() - 30*24*60*60*1000; }
 
   try {
-    // Завантажуємо всі tips за період
-    const tipsSnap = await getDocs(query(
-      collection(db, 'venues', venueId, 'tips'),
-      where('createdAt', '>=', fromDate)
-    ));
-    const tips = tipsSnap.docs.map(d => ({id: d.id, ...d.data()}));
+    // Завантажуємо всі tips без складних індексів — фільтруємо на клієнті
+    const snap = await getDocs(collection(db, 'venues', venueId, 'tips'));
+    const tips = snap.docs.map(d => ({id: d.id, ...d.data()}))
+      .filter(t => {
+        if (!fromMs) return true;
+        // Підтримуємо обидва формати: Timestamp і ISO рядок
+        const ms = t.createdAt?.seconds
+          ? t.createdAt.seconds * 1000
+          : t.createdAt ? new Date(t.createdAt).getTime() : 0;
+        return ms >= fromMs;
+      });
+
+    console.log('tips loaded:', tips.length, 'for period:', period);
 
     // Групуємо по staffId
     const byStaff = {};
-    staff.forEach(s => { byStaff[s.id] = {earned: 0, paid: 0, pending: 0, tips: []}; });
+    staff.forEach(s => { byStaff[s.id] = {earned:0, paid:0, pending:0}; });
 
     tips.forEach(tip => {
       const sid = tip.staffId;
       if (!sid || !byStaff[sid]) return;
-      byStaff[sid].tips.push(tip);
-      byStaff[sid].earned += tip.amount || 0;
-      if (tip.paidOut) byStaff[sid].paid += tip.amount || 0;
-      else byStaff[sid].pending += tip.amount || 0;
+      const amt = Number(tip.amount) || 0;
+      byStaff[sid].earned += amt;
+      if (tip.paidOut) byStaff[sid].paid += amt;
+      else byStaff[sid].pending += amt;
     });
 
     renderTipsAnalytics(byStaff);
   } catch(e) {
-    console.warn('loadTipsAnalytics:', e.message);
-    // Якщо немає індексу — завантажуємо без фільтра по даті
-    try {
-      const {collection, getDocs} = window.__FS;
-      const tipsSnap = await getDocs(collection(db, 'venues', venueId, 'tips'));
-      const tips = tipsSnap.docs.map(d => ({id: d.id, ...d.data()}))
-        .filter(t => {
-          const sec = t.createdAt?.seconds || 0;
-          return sec * 1000 >= fromDate.getTime();
-        });
-
-      const byStaff = {};
-      staff.forEach(s => { byStaff[s.id] = {earned: 0, paid: 0, pending: 0, tips: []}; });
-      tips.forEach(tip => {
-        const sid = tip.staffId;
-        if (!sid || !byStaff[sid]) return;
-        byStaff[sid].tips.push(tip);
-        byStaff[sid].earned += tip.amount || 0;
-        if (tip.paidOut) byStaff[sid].paid += tip.amount || 0;
-        else byStaff[sid].pending += tip.amount || 0;
-      });
-      renderTipsAnalytics(byStaff);
-    } catch(e2) { console.warn('loadTipsAnalytics fallback:', e2.message); }
+    console.error('loadTipsAnalytics error:', e.message);
+    notify(t('notifError')+': '+e.message, 'err');
   }
 }
 
@@ -6902,11 +6894,9 @@ function renderTipsAnalytics(byStaff) {
   const empty = document.getElementById('tips-analytics-empty');
   if (!grid) return;
 
-  const hasAny = staff.some(s => byStaff[s.id]?.earned > 0);
-
-  if (!hasAny) {
+  if (!staff.length) {
     grid.innerHTML = '';
-    if(empty) empty.style.display = 'block';
+    if(empty) { empty.style.display = 'block'; empty.textContent = t('noStaff')||'Персонал не додано'; }
     return;
   }
   if(empty) empty.style.display = 'none';
@@ -6916,8 +6906,8 @@ function renderTipsAnalytics(byStaff) {
     const avatarHtml = s.avatar
       ? `<img src="${s.avatar}"/>`
       : (s.emoji || '👤');
-    const allPaid = data.pending === 0 && data.earned > 0;
     const hasPending = data.pending > 0;
+    const allPaid = data.pending === 0 && data.earned > 0;
 
     return `<div class="tips-analytics-card ${hasPending?'has-pending':''} ${allPaid?'all-paid':''}">
       <div class="tac-header">
@@ -6945,10 +6935,10 @@ function renderTipsAnalytics(byStaff) {
         ? `<button class="tac-btn pay-btn" onclick="markTipsPaid('${s.id}')">✅ ${t('tipsMarkPaid')||'Відмітити як виплачено'} (${cur(data.pending)})</button>`
         : data.earned > 0
           ? `<div class="tac-btn paid-btn">✓ ${t('tipsAllPaid')||'Розраховано'}</div>`
-          : ''
+          : `<div class="tac-btn paid-btn" style="color:var(--muted)">—</div>`
       }
     </div>`;
-  }).filter((_, i) => byStaff[staff[i]?.id]?.earned > 0 || true).join('');
+  }).join('');
 }
 
 window.markTipsPaid = async function(staffId) {
