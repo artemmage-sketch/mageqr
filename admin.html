@@ -160,7 +160,7 @@ button{cursor:pointer}
 .pay-toggle-wrap{margin-left:auto}
 .pay-fields{display:flex;flex-direction:column;gap:.625rem}
 .pay-field-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;display:block}
-.pay-enabled-badge{position:absolute;top:.75rem;right:.75rem;background:#D1FAE5;color:#065F46;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;display:none}
+.pay-enabled-badge{background:#D1FAE5;color:#065F46;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;display:none;margin-top:2px}
 .pay-card.enabled .pay-enabled-badge{display:inline-block}
 .pay-mode-wrap{background:var(--bg2);border-radius:8px;padding:1rem;margin-bottom:1rem}
 .pay-mode-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:.625rem}
@@ -780,18 +780,15 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div class="topbar">
         <div><div class="page-title" data-i18n="payments">💳 Платежі</div><div class="page-sub" data-i18n="paymentsDesc">Налаштуйте способи оплати для клієнтів</div></div>
         <div style="display:flex;gap:.5rem">
-          <button class="btn btn-outline btn-sm" onclick="notify('Тест-замовлення відправлено!','ok')" data-i18n="testPayment">🧪 Тест оплати</button>
-          <button class="btn btn-accent btn-sm" onclick="savePayments()" data-i18n="save" data-i18n="save">💾 Зберегти</button>
+          <button class="btn btn-accent btn-sm" onclick="savePayments()" data-i18n="save">💾 Зберегти</button>
         </div>
       </div>
       <div class="content">
 
-        <div class="test-badge" data-i18n="testModeActive">🔶 Тестовий режим активний — реальні платежі не проводяться</div>
-
         <div class="pay-stats">
-          <div class="pay-stat"><div class="pay-stat-val">₴48 290</div><div class="pay-stat-lbl" data-i18n="paidOnlineMonth">Оплачено онлайн (місяць)</div></div>
-          <div class="pay-stat"><div class="pay-stat-val">342</div><div class="pay-stat-lbl" data-i18n="transactions">Транзакцій</div></div>
-          <div class="pay-stat"><div class="pay-stat-val">96.4%</div><div class="pay-stat-lbl" data-i18n="successPayments">Успішних платежів</div></div>
+          <div class="pay-stat"><div class="pay-stat-val" id="pay-stat-revenue">—</div><div class="pay-stat-lbl" data-i18n="paidOnlineMonth">Оплачено онлайн (місяць)</div></div>
+          <div class="pay-stat"><div class="pay-stat-val" id="pay-stat-count">—</div><div class="pay-stat-lbl" data-i18n="transactions">Транзакцій</div></div>
+          <div class="pay-stat"><div class="pay-stat-val" id="pay-stat-success">—</div><div class="pay-stat-lbl" data-i18n="successPayments">Успішних платежів</div></div>
         </div>
 
         <!-- PAYMENT MODE -->
@@ -837,12 +834,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
             <!-- LIQPAY -->
             <div class="pay-card" id="card-liqpay">
-              <div class="pay-enabled-badge">✓ Активний</div>
               <div class="pay-card-top">
                 <div class="pay-logo" style="background:#1CB253;color:#fff;font-size:1rem;font-weight:700;font-family:var(--font-head)">LP</div>
                 <div>
                   <div class="pay-name">LiqPay</div>
                   <div class="pay-fee" data-i18n="privat24Fee">ПриватБанк · Комісія 2.75%</div>
+                  <div class="pay-enabled-badge" data-i18n="activeLabel">✓ Активний</div>
                 </div>
                 <div class="pay-toggle-wrap">
                   <label class="sw"><input type="checkbox" id="tog-liqpay" onchange="toggleProvider('liqpay',this.checked)"/><span class="sw-slider"></span></label>
@@ -880,12 +877,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
             <!-- MONOBANK -->
             <div class="pay-card" id="card-mono">
-              <div class="pay-enabled-badge">✓ Активний</div>
               <div class="pay-card-top">
                 <div class="pay-logo" style="background:#1A1A1A;color:#fff;font-size:1.3rem">⬛</div>
                 <div>
                   <div class="pay-name">Monobank</div>
                   <div class="pay-fee" data-i18n="monoFee">Acquiring API · від 1.5%</div>
+                  <div class="pay-enabled-badge" data-i18n="activeLabel">✓ Активний</div>
                 </div>
                 <div class="pay-toggle-wrap">
                   <label class="sw"><input type="checkbox" id="tog-mono" onchange="toggleProvider('mono',this.checked)"/><span class="sw-slider"></span></label>
@@ -916,14 +913,45 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               </div>
             </div>
 
+            <!-- MAGE PAY -->
+            <div class="pay-card" id="card-magepay">
+              <div class="pay-card-top">
+                <div class="pay-logo" style="background:linear-gradient(135deg,#C1440E,#8B2500);color:#fff;font-size:.75rem;font-weight:700;font-family:var(--font-head);letter-spacing:-.5px">MAGE</div>
+                <div>
+                  <div class="pay-name">Mage Pay</div>
+                  <div class="pay-fee" data-i18n="magepayFee">Acquiring · від 1.5%</div>
+                  <div class="pay-enabled-badge" data-i18n="activeLabel">✓ Активний</div>
+                </div>
+                <div class="pay-toggle-wrap">
+                  <label class="sw"><input type="checkbox" id="tog-magepay" onchange="toggleProvider('magepay',this.checked)" disabled title="Налаштовується суперадміном"/><span class="sw-slider"></span></label>
+                </div>
+              </div>
+              <div class="pay-fields" id="fields-magepay" style="display:none">
+                <!-- Токен прихований від адміна — показуємо тільки статус -->
+                <div style="background:var(--bg2);border-radius:8px;padding:.75rem;font-size:12px;color:var(--muted);text-align:center" data-i18n="magepayAdminNote">
+                  Налаштовується адміністратором платформи. Зверніться до підтримки для підключення.
+                </div>
+                <div>
+                  <label class="pay-field-label">Webhook URL</label>
+                  <div class="webhook-box" id="webhook-url-magepay">https://us-central1-mageqrrest.cloudfunctions.net/orderPaymentWebhook?provider=magepay&venue=VENUE_ID</div>
+                  <button class="copy-btn" onclick="copyWebhook('magepay')" data-i18n="copyLink">📋 Копіювати</button>
+                </div>
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.25rem">
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Visa/MC</span>
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Apple Pay</span>
+                  <span style="font-size:11px;background:#EDE9FE;color:#5B21B6;padding:2px 8px;border-radius:6px">Google Pay</span>
+                </div>
+              </div>
+            </div>
+
             <!-- WAYFORPAY -->
             <div class="pay-card" id="card-wfp">
-              <div class="pay-enabled-badge">✓ Активний</div>
               <div class="pay-card-top">
                 <div class="pay-logo" style="background:#005BAC;color:#fff;font-size:.8rem;font-weight:700;font-family:var(--font-head);letter-spacing:-.5px">WFP</div>
                 <div>
                   <div class="pay-name">WayForPay</div>
                   <div class="pay-fee" data-i18n="wfpFee">Merchant API · від 1.5%</div>
+                  <div class="pay-enabled-badge" data-i18n="activeLabel">✓ Активний</div>
                 </div>
                 <div class="pay-toggle-wrap">
                   <label class="sw"><input type="checkbox" id="tog-wfp" onchange="toggleProvider('wfp',this.checked)"/><span class="sw-slider"></span></label>
@@ -961,12 +989,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
             <!-- A-BANK -->
             <div class="pay-card" id="card-abank">
-              <div class="pay-enabled-badge">✓ Активний</div>
               <div class="pay-card-top">
                 <div class="pay-logo" style="background:#FF6B00;color:#fff;font-size:.85rem;font-weight:700;font-family:var(--font-head)">А</div>
                 <div>
                   <div class="pay-name">А-Банк</div>
                   <div class="pay-fee" data-i18n="abankFee">Acquiring · інд. комісія</div>
+                  <div class="pay-enabled-badge" data-i18n="activeLabel">✓ Активний</div>
                 </div>
                 <div class="pay-toggle-wrap">
                   <label class="sw"><input type="checkbox" id="tog-abank" onchange="toggleProvider('abank',this.checked)"/><span class="sw-slider"></span></label>
@@ -2294,7 +2322,7 @@ var I18N = {
     // Замовлення кнопки
     markPreparing:'👨‍🍳 Готується', markDone:'✅ Виконано', markCancel:'✕ Скасувати',
     markBack:'↺ Назад', markReturn:'↺ Повернути', markOpen:'↺ Відкрити',
-    syncPOS:'🔄 Синх. POS', paying:'Оплата:', cash:'Готівка', card:'Картка', online:'Онлайн', payCash:'💵 Готівка', payCard:'💳 Картка', payOnline:'📱 Онлайн',
+    syncPOS:'🔄 Синх. POS', paying:'Оплата:', cash:'Готівка', card:'Картка', online:'Онлайн', payCash:'💵 Готівка', payCard:'💳 Картка', payOnline:'📱 Онлайн', activeLabel:'✓ Активний', magepayFee:'Acquiring · від 1.5%', magepayAdminNote:'Налаштовується адміністратором платформи. Зверніться до підтримки для підключення.',
     table:'Стіл', comment:'Коментар', address:'Адреса', dineIn:'В закладі', takeaway:'З собою', delivery:'Доставка',
     noOrders:t('noOrders'), total:'Разом',
     // Страви
@@ -2692,7 +2720,7 @@ var I18N = {
     translateAll:'🌐 Translate entire menu', translating:'⏳ Translating...', translateDone:'✅ Menu translated!',
     markPreparing:'👨‍🍳 Preparing', markDone:'✅ Done', markCancel:'✕ Cancel',
     markBack:'↺ Back', markReturn:'↺ Return', markOpen:'↺ Reopen',
-    syncPOS:'🔄 Sync POS', paying:'Payment:', cash:'Cash', card:'Card', online:'Online', payCash:'💵 Cash', payCard:'💳 Card', payOnline:'📱 Online',
+    syncPOS:'🔄 Sync POS', paying:'Payment:', cash:'Cash', card:'Card', online:'Online', payCash:'💵 Cash', payCard:'💳 Card', payOnline:'📱 Online', activeLabel:'✓ Active', magepayFee:'Acquiring · from 1.5%', magepayAdminNote:'Configured by platform administrator. Contact support to connect.',
     table:'Table', comment:'Comment', address:'Address', dineIn:'Dine in', takeaway:'Takeaway', delivery:'Delivery',
     noOrders:'No orders', total:'Total',
     name:'Name', description:'Description', price:'Price (UAH)', category:'Category',
@@ -3080,7 +3108,7 @@ var I18N = {
     translateAll:'🌐 Przetłumacz całe menu', translating:'⏳ Tłumaczenie...', translateDone:'✅ Menu przetłumaczone!',
     markPreparing:'👨‍🍳 W przygotowaniu', markDone:'✅ Gotowe', markCancel:'✕ Anuluj',
     markBack:'↺ Cofnij', markReturn:'↺ Przywróć', markOpen:'↺ Otwórz',
-    syncPOS:'🔄 Sync POS', paying:'Płatność:', cash:'Gotówka', card:'Karta', online:'Online', payCash:'💵 Gotówka', payCard:'💳 Karta', payOnline:'📱 Online',
+    syncPOS:'🔄 Sync POS', paying:'Płatność:', cash:'Gotówka', card:'Karta', online:'Online', payCash:'💵 Gotówka', payCard:'💳 Karta', payOnline:'📱 Online', activeLabel:'✓ Aktywny', magepayFee:'Acquiring · od 1.5%', magepayAdminNote:'Konfigurowane przez administratora platformy. Skontaktuj się z pomocą techniczną.',
     table:'Stolik', comment:'Komentarz', address:'Adres', dineIn:'Na miejscu', takeaway:'Na wynos', delivery:'Dostawa',
     noOrders:'Brak zamówień', total:'Razem',
     name:'Nazwa', description:'Opis', price:'Cena (UAH)', category:'Kategoria',
@@ -3468,7 +3496,7 @@ var I18N = {
     translateAll:'🌐 Gesamtes Menü übersetzen', translating:'⏳ Übersetze...', translateDone:'✅ Menü übersetzt!',
     markPreparing:'👨‍🍳 In Zubereitung', markDone:'✅ Erledigt', markCancel:'✕ Stornieren',
     markBack:'↺ Zurück', markReturn:'↺ Zurücksetzen', markOpen:'↺ Wiedereröffnen',
-    syncPOS:'🔄 POS Sync', paying:'Zahlung:', cash:'Bar', card:'Karte', online:'Online', payCash:'💵 Bar', payCard:'💳 Karte', payOnline:'📱 Online',
+    syncPOS:'🔄 POS Sync', paying:'Zahlung:', cash:'Bar', card:'Karte', online:'Online', payCash:'💵 Bar', payCard:'💳 Karte', payOnline:'📱 Online', activeLabel:'✓ Aktiv', magepayFee:'Acquiring · ab 1.5%', magepayAdminNote:'Wird vom Plattformadministrator konfiguriert. Kontaktieren Sie den Support.',
     table:'Tisch', comment:'Kommentar', address:'Adresse', dineIn:'Im Lokal', takeaway:'Zum Mitnehmen', delivery:'Lieferung',
     noOrders:'Keine Bestellungen', total:'Gesamt',
     name:'Name', description:'Beschreibung', price:'Preis (UAH)', category:'Kategorie',
@@ -3856,7 +3884,7 @@ var I18N = {
     translateAll:'🌐 Traduce tot meniul', translating:'⏳ Se traduce...', translateDone:'✅ Meniu tradus!',
     markPreparing:'👨‍🍳 Se prepară', markDone:'✅ Finalizat', markCancel:'✕ Anulează',
     markBack:'↺ Înapoi', markReturn:'↺ Restabilește', markOpen:'↺ Redeschide',
-    syncPOS:'🔄 Sync POS', paying:'Plată:', cash:'Numerar', card:'Card', online:'Online', payCash:'💵 Numerar', payCard:'💳 Card', payOnline:'📱 Online',
+    syncPOS:'🔄 Sync POS', paying:'Plată:', cash:'Numerar', card:'Card', online:'Online', payCash:'💵 Numerar', payCard:'💳 Card', payOnline:'📱 Online', activeLabel:'✓ Activ', magepayFee:'Acquiring · de la 1.5%', magepayAdminNote:'Configurat de administratorul platformei. Contactați suportul.',
     table:'Masă', comment:'Comentariu', address:'Adresă', dineIn:'La local', takeaway:'De luat', delivery:'Livrare',
     noOrders:'Fără comenzi', total:'Total',
     name:'Nume', description:'Descriere', price:'Preț (UAH)', category:'Categorie',
@@ -4244,7 +4272,7 @@ var I18N = {
     translateAll:'🌐 Traducir todo el menú', translating:'⏳ Traduciendo...', translateDone:'✅ ¡Menú traducido!',
     markPreparing:'👨‍🍳 Preparando', markDone:'✅ Listo', markCancel:'✕ Cancelar',
     markBack:'↺ Atrás', markReturn:'↺ Restaurar', markOpen:'↺ Reabrir',
-    syncPOS:'🔄 Sync POS', paying:'Pago:', cash:'Efectivo', card:'Tarjeta', online:'Online', payCash:'💵 Efectivo', payCard:'💳 Tarjeta', payOnline:'📱 Online',
+    syncPOS:'🔄 Sync POS', paying:'Pago:', cash:'Efectivo', card:'Tarjeta', online:'Online', payCash:'💵 Efectivo', payCard:'💳 Tarjeta', payOnline:'📱 Online', activeLabel:'✓ Activo', magepayFee:'Acquiring · desde 1.5%', magepayAdminNote:'Configurado por el administrador de la plataforma. Contacte al soporte.',
     table:'Mesa', comment:'Comentario', address:'Dirección', dineIn:'En el local', takeaway:'Para llevar', delivery:'Entrega',
     noOrders:'Sin pedidos', total:'Total',
     name:'Nombre', description:'Descripción', price:'Precio (UAH)', category:'Categoría',
@@ -4632,7 +4660,7 @@ var I18N = {
     translateAll:'🌐 Prevedi cijeli meni', translating:'⏳ Prevođenje...', translateDone:'✅ Meni preveden!',
     markPreparing:'👨‍🍳 U pripremi', markDone:'✅ Završeno', markCancel:'✕ Otkaži',
     markBack:'↺ Nazad', markReturn:'↺ Vrati', markOpen:'↺ Ponovo otvori',
-    syncPOS:'🔄 Sync POS', paying:'Plaćanje:', cash:'Gotovina', card:'Kartica', online:'Online', payCash:'💵 Gotovina', payCard:'💳 Kartica', payOnline:'📱 Online',
+    syncPOS:'🔄 Sync POS', paying:'Plaćanje:', cash:'Gotovina', card:'Kartica', online:'Online', payCash:'💵 Gotovina', payCard:'💳 Kartica', payOnline:'📱 Online', activeLabel:'✓ Aktivan', magepayFee:'Acquiring · od 1.5%', magepayAdminNote:'Konfiguriše administrator platforme. Kontaktirajte podršku.',
     table:'Sto', comment:'Komentar', address:'Adresa', dineIn:'U lokalu', takeaway:'Za ponijeti', delivery:'Dostava',
     noOrders:'Nema narudžbina', total:'Ukupno',
     name:'Naziv', description:'Opis', price:'Cijena (UAH)', category:'Kategorija',
@@ -5952,7 +5980,7 @@ window.nav = function(btn,tab){
   const main=document.querySelector('.main');
   if(main) main.scrollTop=0;
   if(tab==='t-billing')   loadBilling();
-  if(tab==='t-payments')  { loadPaymentSettings(); loadFiscalSettings(); }
+  if(tab==='t-payments')  { loadPaymentSettings(); loadFiscalSettings(); loadPaymentStats(); }
   if(tab==='t-pos')       { loadPOSSettings(); loadExistingMapping().then(()=>{ if(Object.keys(currentMapping).length>0) loadPOSProductsForMapping('poster').catch(()=>{}); renderMappingRows(); }); }
   if(tab==='t-ordering')  loadOrderingSettings();
   if(tab==='t-customers') loadCustomers();
@@ -7253,6 +7281,31 @@ renderStaff();
 
 
 // ── ПЛАТЕЖІ ──────────────────────────────────────────────
+async function loadPaymentStats() {
+  if(!db||!window.__FS) return;
+  const {collection, getDocs} = window.__FS;
+  try {
+    const monthAgo = new Date();
+    monthAgo.setDate(monthAgo.getDate() - 30);
+    const snap = await getDocs(collection(db,'venues',venueId,'orders'));
+    const orders = snap.docs.map(d=>d.data())
+      .filter(o => {
+        const ms = o.createdAt?.seconds ? o.createdAt.seconds*1000 : 0;
+        return ms >= monthAgo.getTime() && (o.paymentStatus==='success' || o.paymentMethod==='online');
+      });
+    const total = orders.reduce((s,o)=>s+(o.total||0),0);
+    const success = snap.docs.map(d=>d.data())
+      .filter(o=>{ const ms=o.createdAt?.seconds?o.createdAt.seconds*1000:0; return ms>=monthAgo.getTime()&&o.paymentMethod==='online'; });
+    const successRate = success.length ? Math.round((orders.length/success.length)*100) : 0;
+    const rv = document.getElementById('pay-stat-revenue');
+    const ct = document.getElementById('pay-stat-count');
+    const sr = document.getElementById('pay-stat-success');
+    if(rv) rv.textContent = cur(total);
+    if(ct) ct.textContent = orders.length;
+    if(sr) sr.textContent = success.length ? successRate+'%' : '—';
+  } catch(e) { console.warn('loadPaymentStats:', e.message); }
+}
+
 async function loadPaymentSettings() {
   if(!db||!window.__FS) return;
   updateWebhookUrls(); // оновлюємо URLs з реальним venueId
@@ -7261,10 +7314,15 @@ async function loadPaymentSettings() {
     const snap=await getDoc(doc(db,'venues',venueId,'settings','payments'));
     if(!snap.exists()) return;
     const d=snap.data(),providers=d.providers||{};
-    ['liqpay','mono','wfp','abank'].forEach(p=>{
+    ['liqpay','mono','wfp','abank','magepay'].forEach(p=>{
       const cfg=providers[p];if(!cfg)return;
       const tog=document.getElementById('tog-'+p);
-      if(tog){tog.checked=cfg.enabled;toggleProvider(p,cfg.enabled);}
+      if(tog){
+        tog.checked=cfg.enabled;
+        // magepay — перемикач тільки для читання адміном
+        if(p==='magepay') tog.disabled=true;
+        toggleProvider(p,cfg.enabled);
+      }
     });
     if(providers.liqpay)document.getElementById('liqpay-pub')&&(document.getElementById('liqpay-pub').value=providers.liqpay.publicKey||'');
     if(providers.mono)document.getElementById('mono-token')&&(document.getElementById('mono-token').value=providers.mono.token||'');
@@ -7283,6 +7341,7 @@ window.savePayments=async function(){
       mono:{enabled:document.getElementById('tog-mono')?.checked||false,token:document.getElementById('mono-token')?.value||''},
       wfp:{enabled:document.getElementById('tog-wfp')?.checked||false,merchantAccount:document.getElementById('wfp-account')?.value||'',merchantSecret:document.getElementById('wfp-secret')?.value||'',domain:document.getElementById('wfp-domain')?.value||''},
       abank:{enabled:document.getElementById('tog-abank')?.checked||false,merchantId:document.getElementById('abank-mid')?.value||'',secretKey:document.getElementById('abank-secret')?.value||'',apiUrl:document.getElementById('abank-url')?.value||''},
+      // magepay — адмін не може змінювати токен, тільки суперадмін
     };
     const mode=document.querySelector('.mode-option.selected')?.id?.replace('mode-','')||'both';
     const res=await fetch(`${window.__CF_URL}/savePaymentSettings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,providers,paymentMode:mode})});
