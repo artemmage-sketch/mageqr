@@ -518,21 +518,21 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div style="font-size:13px;font-weight:500" data-i18n="offerTips">Пропонувати чайові клієнтам</div>
               <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="tipsOfferDesc">Після успішної оплати клієнт побачить пропозицію залишити чайові</div>
             </div>
-            <label class="sw"><input type="checkbox" id="tips-enabled" checked/><span class="sw-slider"></span></label>
+            <label class="sw"><input type="checkbox" id="tips-enabled" checked onchange="saveTipsToggle()"/><span class="sw-slider"></span></label>
           </div>
           <div class="toggle-row" style="margin-bottom:.875rem">
             <div>
               <div style="font-size:13px;font-weight:500" data-i18n="clientChoosesWaiter">Клієнт обирає офіціанта</div>
               <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="tipsChooseWaiterDesc">Показувати список персоналу з фото для вибору отримувача чайових</div>
             </div>
-            <label class="sw"><input type="checkbox" id="tips-choose-staff" checked/><span class="sw-slider"></span></label>
+            <label class="sw"><input type="checkbox" id="tips-choose-staff" checked onchange="saveTipsToggle()"/><span class="sw-slider"></span></label>
           </div>
           <div class="toggle-row" style="margin-bottom:.875rem">
             <div>
               <div style="font-size:13px;font-weight:500" data-i18n="autoAssignTable">Автоматично призначати по столу</div>
               <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="tipsAutoAssignDesc">Якщо за столом закріплений офіціант — чайові йдуть автоматично йому</div>
             </div>
-            <label class="sw"><input type="checkbox" id="tips-auto-assign"/><span class="sw-slider"></span></label>
+            <label class="sw"><input type="checkbox" id="tips-auto-assign" onchange="saveTipsToggle()"/><span class="sw-slider"></span></label>
           </div>
           <div class="field-row">
             <label class="field-label" data-i18n="tipSizes">Розміри чайових за замовчуванням (%)</label>
@@ -544,15 +544,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             </div>
             <div style="font-size:11px;color:var(--muted);margin-top:.25rem" data-i18n="tipVariants">Клієнт бачить ці варіанти плюс поле "Довільна сума"</div>
           </div>
-          <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:.75rem;font-size:12px;color:#92400E;margin-top:.75rem">
-            ⚠️ <strong data-i18n="tipsMonobank">Чайові через Monobank:</strong> <span data-i18n="tipsMonobankInstr">Додайте співробітників у кабінеті monobank acquiring → зверніться у підтримку mono → після підтвердження вкажіть <code>tipsEmployeeId</code> кожного офіціанта нижче. Мінімальна сума замовлення для показу чайових — 100 грн.
-          </div>
         </div>
 
         <!-- STAFF MANAGEMENT -->
         <div class="settings-section" style="margin-top:1rem">
-          <h3 data-i18n="staffMonoID">👨‍🍳 Персонал та Monobank ID</h3>
-          <div style="font-size:12px;color:var(--muted);margin-bottom:1rem" data-i18n="tipsStaffDesc">Додайте офіціантів та вкажіть їх tipsEmployeeId з кабінету monobank для нарахування чайових</div>
+          <h3 data-i18n="staffMonoID">👨‍🍳 Додавання персоналу для чайових</h3>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:1rem" data-i18n="tipsStaffDesc">Додайте офіціантів для нарахування чайових</div>
           <div id="staff-list"></div>
           <button class="btn btn-outline btn-sm" style="margin-top:.75rem" onclick="openAddStaff()" data-i18n="addStaff">+ Додати офіціанта</button>
         </div>
@@ -2418,9 +2415,9 @@ var I18N = {
     tipsChooseWaiterDesc:'Показувати список персоналу з фото для вибору отримувача чайових',
     tipsAutoAssignDesc:'Якщо за столом закріплений офіціант — чайові йдуть автоматично йому',
     tipsOfferDesc:'Після успішної оплати клієнт побачить пропозицію залишити чайові',
-    tipsStaffDesc:'Додайте офіціантів та вкажіть їх tipsEmployeeId з кабінету monobank для нарахування чайових',
+    tipsStaffDesc:'Додайте офіціантів для нарахування чайових',
     addStaff:'+ Додати офіціанта',
-    staffMonoID:'👨‍🍳 Персонал та Monobank ID',
+    staffMonoID:'👨‍🍳 Додавання персоналу для чайових',
     notSet:'не вказано',
     noStaff:'Персонал не додано',
     tipsWord:'чайових',
@@ -2806,9 +2803,9 @@ var I18N = {
     tipsChooseWaiterDesc:'Show staff list with photos for tip recipient selection',
     tipsAutoAssignDesc:'If a waiter is assigned to the table — tips go to them automatically',
     tipsOfferDesc:'After successful payment the client will see an offer to leave a tip',
-    tipsStaffDesc:'Add waiters and specify their tipsEmployeeId from monobank cabinet for tip processing',
+    tipsStaffDesc:'Add waiters for tip processing',
     addStaff:'+ Add waiter',
-    staffMonoID:'👨‍🍳 Staff and Monobank ID',
+    staffMonoID:'👨‍🍳 Staff for tips',
     notSet:'not set',
     noStaff:'No staff added',
     tipsWord:'in tips',
@@ -3194,9 +3191,9 @@ var I18N = {
     tipsChooseWaiterDesc:'Pokaż listę personelu ze zdjęciami do wyboru odbiorcy napiwku',
     tipsAutoAssignDesc:'Jeśli do stolika przypisany jest kelner — napiwki trafiają do niego automatycznie',
     tipsOfferDesc:'Po udanej płatności klient zobaczy ofertę pozostawienia napiwku',
-    tipsStaffDesc:'Dodaj kelnerów i podaj ich tipsEmployeeId z panelu monobank do naliczania napiwków',
+    tipsStaffDesc:'Dodaj kelnerów do naliczania napiwków',
     addStaff:'+ Dodaj kelnera',
-    staffMonoID:'👨‍🍳 Personel i Monobank ID',
+    staffMonoID:'👨‍🍳 Personel do napiwków',
     notSet:'nie podano',
     noStaff:'Brak personelu',
     tipsWord:'napiwków',
@@ -3582,9 +3579,9 @@ var I18N = {
     tipsChooseWaiterDesc:'Mitarbeiterliste mit Fotos für die Trinkgeldempfänger-Auswahl anzeigen',
     tipsAutoAssignDesc:'Wenn dem Tisch ein Kellner zugewiesen ist — geht das Trinkgeld automatisch an ihn',
     tipsOfferDesc:'Nach erfolgreicher Zahlung sieht der Kunde ein Angebot, Trinkgeld zu hinterlassen',
-    tipsStaffDesc:'Fügen Sie Kellner hinzu und geben Sie ihre tipsEmployeeId aus dem Monobank-Konto für die Trinkgeldabrechnung an',
+    tipsStaffDesc:'Kellner für Trinkgeldabrechnung hinzufügen',
     addStaff:'+ Kellner hinzufügen',
-    staffMonoID:'👨‍🍳 Personal und Monobank-ID',
+    staffMonoID:'👨‍🍳 Personal für Trinkgelder',
     notSet:'nicht angegeben',
     noStaff:'Kein Personal hinzugefügt',
     tipsWord:'Trinkgeld',
@@ -3970,9 +3967,9 @@ var I18N = {
     tipsChooseWaiterDesc:'Afișați lista personalului cu fotografii pentru selectarea beneficiarului bacșișului',
     tipsAutoAssignDesc:'Dacă chelnerul este atribuit la masă — bacșișul merge automat la el',
     tipsOfferDesc:'După plata reușită clientul va vedea oferta de a lăsa bacșiș',
-    tipsStaffDesc:'Adăugați chelneri și specificați tipsEmployeeId din cabinetul monobank pentru procesarea bacșișului',
+    tipsStaffDesc:'Adăugați chelneri pentru procesarea bacșișurilor',
     addStaff:'+ Adaugă chelner',
-    staffMonoID:'👨‍🍳 Personal și Monobank ID',
+    staffMonoID:'👨‍🍳 Personal pentru bacșiș',
     notSet:'nespecificat',
     noStaff:'Niciun personal adăugat',
     tipsWord:'bacșiș',
@@ -4358,9 +4355,9 @@ var I18N = {
     tipsChooseWaiterDesc:'Mostrar lista de personal con fotos para selección del destinatario de propina',
     tipsAutoAssignDesc:'Si un camarero está asignado a la mesa — las propinas van a él automáticamente',
     tipsOfferDesc:'Tras el pago exitoso el cliente verá una oferta para dejar propina',
-    tipsStaffDesc:'Agregue camareros y especifique su tipsEmployeeId del gabinete monobank para el procesamiento de propinas',
+    tipsStaffDesc:'Agregue camareros para el procesamiento de propinas',
     addStaff:'+ Agregar camarero',
-    staffMonoID:'👨‍🍳 Personal y Monobank ID',
+    staffMonoID:'👨‍🍳 Personal para propinas',
     notSet:'no especificado',
     noStaff:'Sin personal agregado',
     tipsWord:'en propinas',
@@ -4746,9 +4743,9 @@ var I18N = {
     tipsChooseWaiterDesc:'Prikaži listu osoblja sa slikama za izbor primaoca napojnice',
     tipsAutoAssignDesc:'Ako je konobar dodijeljen stolu — napojnica automatski ide njemu',
     tipsOfferDesc:'Nakon uspješnog plaćanja klijent će vidjeti ponudu za ostavljanje napojnice',
-    tipsStaffDesc:'Dodajte konobare i navedite njihov tipsEmployeeId iz monobank kabineta za obradu napojnice',
+    tipsStaffDesc:'Dodajte konobare za obradu napojnice',
     addStaff:'+ Dodaj konobara',
-    staffMonoID:'👨‍🍳 Osoblje i Monobank ID',
+    staffMonoID:'👨‍🍳 Osoblje za napojnice',
     notSet:'nije navedeno',
     noStaff:'Nije dodano osoblje',
     tipsWord:'napojnice',
@@ -7035,6 +7032,19 @@ window.clearStaffPhoto = function() {
   document.getElementById('sf-photo').value = '';
   document.getElementById('sf-photo-preview').style.display = 'none';
   document.getElementById('sf-photo-img').src = '';
+};
+
+window.saveTipsToggle = async function() {
+  if (!db || !window.__FS) return;
+  try {
+    const {doc, setDoc} = window.__FS;
+    await setDoc(doc(db, 'venues', venueId, 'settings', 'main'), {
+      tipsEnabled:     document.getElementById('tips-enabled')?.checked ?? true,
+      tipsChooseStaff: document.getElementById('tips-choose-staff')?.checked ?? true,
+      tipsAutoAssign:  document.getElementById('tips-auto-assign')?.checked ?? false,
+    }, {merge: true});
+    notify('✅ ' + t('saved'), 'ok');
+  } catch(e) { notify(t('notifError') + ': ' + e.message, 'err'); }
 };
 
 window.openAddStaff=openAddStaff;window.openEditStaff=openEditStaff;window.saveStaff=saveStaff;window.deleteStaff=deleteStaff;
