@@ -5136,7 +5136,7 @@ function playNewOrderSound() {
   prevOrderCount = n;
 }
 function updateOrderBadge(){
-  const n = orders.filter(o => o.status==='new' || o.status==='preparing').length;
+  const n = orders.filter(o => (o.status==='new' || o.status==='preparing') && o.orderType !== 'tips').length;
   const b = document.getElementById('new-badge');
   if(b){ b.textContent = n; b.style.display = n ? 'inline-flex' : 'none'; }
 }
@@ -5157,13 +5157,13 @@ window.setStatus = async function(id, status) {
 
 function renderOrders(){
   const f=document.getElementById('order-filter').value;
-  // pending_payment — не показуємо поки не оплачено
-  const visibleOrders = orders.filter(o => o.status !== 'pending_payment');
+  // Не показуємо: pending_payment і чайові (tips)
+  const visibleOrders = orders.filter(o => o.status !== 'pending_payment' && o.orderType !== 'tips');
   const list = f ? visibleOrders.filter(o=>o.status===f) : visibleOrders;
-  const newO=orders.filter(o=>o.status==='new'||!o.status);
-  const doneO=orders.filter(o=>o.status==='done');
+  const newO=visibleOrders.filter(o=>o.status==='new'||!o.status);
+  const doneO=visibleOrders.filter(o=>o.status==='done');
   const todayStart=new Date();todayStart.setHours(0,0,0,0);
-  const todayOrders=orders.filter(o=>o.dateMs>=todayStart.getTime());
+  const todayOrders=visibleOrders.filter(o=>o.dateMs>=todayStart.getTime());
   const rev=todayOrders.filter(o=>o.status!=='cancel').reduce((s,o)=>s+(o.total||0),0);
   document.getElementById('st-new-ord').textContent=newO.length;
   document.getElementById('st-done-ord').textContent=doneO.length;
