@@ -2101,9 +2101,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     <div style="margin-bottom:1rem">
       <label style="font-size:12px;color:var(--muted);display:block;margin-bottom:.375rem" data-i18n="manualOrderPayment">Спосіб оплати</label>
       <select id="mo-payment" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px">
-        <option value="cash">💵 Готівка</option>
-        <option value="card">💳 Картка</option>
-        <option value="online">📱 Онлайн</option>
+        <option value="cash" data-i18n="payCash">💵 Готівка</option>
+        <option value="card" data-i18n="payCard">💳 Картка</option>
+        <option value="online" data-i18n="payOnline">📱 Онлайн</option>
       </select>
     </div>
     <button class="btn btn-accent" style="width:100%;padding:.75rem;font-size:15px" onclick="placeManualOrder()">
@@ -2261,7 +2261,7 @@ var I18N = {
     // Замовлення кнопки
     markPreparing:'👨‍🍳 Готується', markDone:'✅ Виконано', markCancel:'✕ Скасувати',
     markBack:'↺ Назад', markReturn:'↺ Повернути', markOpen:'↺ Відкрити',
-    syncPOS:'🔄 Синх. POS', paying:'Оплата:', cash:'Готівка', card:'Картка', online:'Онлайн',
+    syncPOS:'🔄 Синх. POS', paying:'Оплата:', cash:'Готівка', card:'Картка', online:'Онлайн', payCash:'💵 Готівка', payCard:'💳 Картка', payOnline:'📱 Онлайн',
     table:'Стіл', comment:'Коментар', address:'Адреса', dineIn:'В закладі', takeaway:'З собою', delivery:'Доставка',
     noOrders:t('noOrders'), total:'Разом',
     // Страви
@@ -2659,7 +2659,7 @@ var I18N = {
     translateAll:'🌐 Translate entire menu', translating:'⏳ Translating...', translateDone:'✅ Menu translated!',
     markPreparing:'👨‍🍳 Preparing', markDone:'✅ Done', markCancel:'✕ Cancel',
     markBack:'↺ Back', markReturn:'↺ Return', markOpen:'↺ Reopen',
-    syncPOS:'🔄 Sync POS', paying:'Payment:', cash:'Cash', card:'Card', online:'Online',
+    syncPOS:'🔄 Sync POS', paying:'Payment:', cash:'Cash', card:'Card', online:'Online', payCash:'💵 Cash', payCard:'💳 Card', payOnline:'📱 Online',
     table:'Table', comment:'Comment', address:'Address', dineIn:'Dine in', takeaway:'Takeaway', delivery:'Delivery',
     noOrders:'No orders', total:'Total',
     name:'Name', description:'Description', price:'Price (UAH)', category:'Category',
@@ -3047,7 +3047,7 @@ var I18N = {
     translateAll:'🌐 Przetłumacz całe menu', translating:'⏳ Tłumaczenie...', translateDone:'✅ Menu przetłumaczone!',
     markPreparing:'👨‍🍳 W przygotowaniu', markDone:'✅ Gotowe', markCancel:'✕ Anuluj',
     markBack:'↺ Cofnij', markReturn:'↺ Przywróć', markOpen:'↺ Otwórz',
-    syncPOS:'🔄 Sync POS', paying:'Płatność:', cash:'Gotówka', card:'Karta', online:'Online',
+    syncPOS:'🔄 Sync POS', paying:'Płatność:', cash:'Gotówka', card:'Karta', online:'Online', payCash:'💵 Gotówka', payCard:'💳 Karta', payOnline:'📱 Online',
     table:'Stolik', comment:'Komentarz', address:'Adres', dineIn:'Na miejscu', takeaway:'Na wynos', delivery:'Dostawa',
     noOrders:'Brak zamówień', total:'Razem',
     name:'Nazwa', description:'Opis', price:'Cena (UAH)', category:'Kategoria',
@@ -3435,7 +3435,7 @@ var I18N = {
     translateAll:'🌐 Gesamtes Menü übersetzen', translating:'⏳ Übersetze...', translateDone:'✅ Menü übersetzt!',
     markPreparing:'👨‍🍳 In Zubereitung', markDone:'✅ Erledigt', markCancel:'✕ Stornieren',
     markBack:'↺ Zurück', markReturn:'↺ Zurücksetzen', markOpen:'↺ Wiedereröffnen',
-    syncPOS:'🔄 POS Sync', paying:'Zahlung:', cash:'Bar', card:'Karte', online:'Online',
+    syncPOS:'🔄 POS Sync', paying:'Zahlung:', cash:'Bar', card:'Karte', online:'Online', payCash:'💵 Bar', payCard:'💳 Karte', payOnline:'📱 Online',
     table:'Tisch', comment:'Kommentar', address:'Adresse', dineIn:'Im Lokal', takeaway:'Zum Mitnehmen', delivery:'Lieferung',
     noOrders:'Keine Bestellungen', total:'Gesamt',
     name:'Name', description:'Beschreibung', price:'Preis (UAH)', category:'Kategorie',
@@ -3823,7 +3823,7 @@ var I18N = {
     translateAll:'🌐 Traduce tot meniul', translating:'⏳ Se traduce...', translateDone:'✅ Meniu tradus!',
     markPreparing:'👨‍🍳 Se prepară', markDone:'✅ Finalizat', markCancel:'✕ Anulează',
     markBack:'↺ Înapoi', markReturn:'↺ Restabilește', markOpen:'↺ Redeschide',
-    syncPOS:'🔄 Sync POS', paying:'Plată:', cash:'Numerar', card:'Card', online:'Online',
+    syncPOS:'🔄 Sync POS', paying:'Plată:', cash:'Numerar', card:'Card', online:'Online', payCash:'💵 Numerar', payCard:'💳 Card', payOnline:'📱 Online',
     table:'Masă', comment:'Comentariu', address:'Adresă', dineIn:'La local', takeaway:'De luat', delivery:'Livrare',
     noOrders:'Fără comenzi', total:'Total',
     name:'Nume', description:'Descriere', price:'Preț (UAH)', category:'Categorie',
@@ -4211,7 +4211,7 @@ var I18N = {
     translateAll:'🌐 Traducir todo el menú', translating:'⏳ Traduciendo...', translateDone:'✅ ¡Menú traducido!',
     markPreparing:'👨‍🍳 Preparando', markDone:'✅ Listo', markCancel:'✕ Cancelar',
     markBack:'↺ Atrás', markReturn:'↺ Restaurar', markOpen:'↺ Reabrir',
-    syncPOS:'🔄 Sync POS', paying:'Pago:', cash:'Efectivo', card:'Tarjeta', online:'Online',
+    syncPOS:'🔄 Sync POS', paying:'Pago:', cash:'Efectivo', card:'Tarjeta', online:'Online', payCash:'💵 Efectivo', payCard:'💳 Tarjeta', payOnline:'📱 Online',
     table:'Mesa', comment:'Comentario', address:'Dirección', dineIn:'En el local', takeaway:'Para llevar', delivery:'Entrega',
     noOrders:'Sin pedidos', total:'Total',
     name:'Nombre', description:'Descripción', price:'Precio (UAH)', category:'Categoría',
@@ -4599,7 +4599,7 @@ var I18N = {
     translateAll:'🌐 Prevedi cijeli meni', translating:'⏳ Prevođenje...', translateDone:'✅ Meni preveden!',
     markPreparing:'👨‍🍳 U pripremi', markDone:'✅ Završeno', markCancel:'✕ Otkaži',
     markBack:'↺ Nazad', markReturn:'↺ Vrati', markOpen:'↺ Ponovo otvori',
-    syncPOS:'🔄 Sync POS', paying:'Plaćanje:', cash:'Gotovina', card:'Kartica', online:'Online',
+    syncPOS:'🔄 Sync POS', paying:'Plaćanje:', cash:'Gotovina', card:'Kartica', online:'Online', payCash:'💵 Gotovina', payCard:'💳 Kartica', payOnline:'📱 Online',
     table:'Sto', comment:'Komentar', address:'Adresa', dineIn:'U lokalu', takeaway:'Za ponijeti', delivery:'Dostava',
     noOrders:'Nema narudžbina', total:'Ukupno',
     name:'Naziv', description:'Opis', price:'Cijena (UAH)', category:'Kategorija',
