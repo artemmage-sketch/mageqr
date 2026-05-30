@@ -505,6 +505,19 @@ tr:hover td{background:rgba(255,255,255,.02)}
         </select>
       </div>
     </div>
+    <!-- MAGE PAY — тільки суперадмін -->
+    <div style="background:var(--bg2);border-radius:10px;padding:.875rem;margin-bottom:.875rem">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.625rem">🔐 Mage Pay</div>
+      <div class="field-group" style="margin-bottom:.5rem">
+        <label class="field-label">Merchant Token (Monobank acquiring)</label>
+        <input id="vf-magepay-token" type="password" placeholder="••••••••••••••••" style="font-family:monospace"/>
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        <label style="font-size:12px;color:var(--muted)">Активний для закладу:</label>
+        <label class="sw" style="transform:scale(.85)"><input type="checkbox" id="vf-magepay-enabled"/><span class="sw-slider"></span></label>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:.375rem">Токен прихований від адміна закладу. Тільки суперадмін може змінювати.</div>
+    </div>
     <button class="btn btn-accent" style="width:100%" onclick="saveVenue()">Зберегти заклад</button>
   </div>
 </div>
@@ -739,6 +752,18 @@ window.saveVenue = async function() {
       name, city, phone: '', address: '',
     }, { merge: true });
 
+    // Зберігаємо Mage Pay токен (тільки суперадмін)
+    const magepayToken = document.getElementById('vf-magepay-token').value.trim();
+    const magepayEnabled = document.getElementById('vf-magepay-enabled').checked;
+    await setDoc(doc(db,'venues',venueId,'settings','payments'), {
+      providers: {
+        magepay: {
+          token: magepayToken,
+          enabled: magepayEnabled,
+        }
+      }
+    }, { merge: true });
+
     closeModal('modal-venue');
     await loadVenues();
     notify('✅ Заклад збережено!', 'success');
@@ -887,10 +912,12 @@ window.openAddVenue = function() {
   ['vf-name','vf-slug','vf-city','vf-email'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('vf-plan').value='free';
   document.getElementById('vf-status').value='active';
+  document.getElementById('vf-magepay-token').value='';
+  document.getElementById('vf-magepay-enabled').checked=false;
   openModal('modal-venue');
 };
 
-window.openEditVenue = function(id) {
+window.openEditVenue = async function(id) {
   editVenueId=id;
   const v=allVenues.find(x=>x.id===id);
   document.getElementById('venue-modal-title').textContent='Редагувати заклад';
@@ -900,6 +927,20 @@ window.openEditVenue = function(id) {
   document.getElementById('vf-email').value = v.adminEmail||'';
   document.getElementById('vf-plan').value  = v.plan||'free';
   document.getElementById('vf-status').value= v.status||'active';
+  // Завантажуємо Mage Pay налаштування
+  document.getElementById('vf-magepay-token').value='';
+  document.getElementById('vf-magepay-enabled').checked=false;
+  try {
+    if(db && window.__FS) {
+      const {doc, getDoc} = window.__FS;
+      const snap = await getDoc(doc(db,'venues',id,'settings','payments'));
+      if(snap.exists()) {
+        const magepay = snap.data()?.providers?.magepay || {};
+        document.getElementById('vf-magepay-token').value = magepay.token||'';
+        document.getElementById('vf-magepay-enabled').checked = magepay.enabled||false;
+      }
+    }
+  } catch(e) { console.warn('load magepay:', e.message); }
   openModal('modal-venue');
 };
 
