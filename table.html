@@ -1449,6 +1449,8 @@ window.payTips = async function() {
         paymentMethod: 'online',
         clientName: staffName ? `Чайові → ${staffName}` : 'Чайові',
         comment: `Чайові · Стіл №${tableNum}${staffName ? ' · ' + staffName : ''}`,
+        staffId: selectedStaff || null,
+        staffName: staffName || null,
       }),
     });
     const data = await res.json();
