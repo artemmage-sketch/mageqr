@@ -5888,7 +5888,7 @@ window.nav = function(btn,tab){
   if(tab==='t-pos')       { loadPOSSettings(); loadExistingMapping().then(()=>{ if(Object.keys(currentMapping).length>0) loadPOSProductsForMapping('poster').catch(()=>{}); renderMappingRows(); }); }
   if(tab==='t-ordering')  loadOrderingSettings();
   if(tab==='t-customers') loadCustomers();
-  if(tab==='t-tables')    loadTablesFromFirestore();
+  if(tab==='t-tables') { loadTablesFromFirestore(); loadStaffFromFirestore(); }
 };
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
@@ -6837,14 +6837,8 @@ async function deleteStaff(id){
 
 // ── АНАЛІТИКА ЧАЙОВИХ ────────────────────────────────────────
 async function loadTipsAnalytics() {
-  if (!db || !window.__FS) return;
-  if (!staff.length) {
-    const grid = document.getElementById('tips-analytics-grid');
-    const empty = document.getElementById('tips-analytics-empty');
-    if(grid) grid.innerHTML = '';
-    if(empty) { empty.textContent = t('noStaff')||'Персонал не додано'; empty.style.display = 'block'; }
-    return;
-  }
+  if (!db || !window.__FS) { console.warn('loadTipsAnalytics: db not ready'); return; }
+  if (!venueId) { console.warn('loadTipsAnalytics: no venueId'); return; }
   const {collection, getDocs} = window.__FS;
 
   const period = document.getElementById('tips-period')?.value || 'week';
@@ -6942,54 +6936,32 @@ function renderTipsAnalytics(byStaff) {
 }
 
 window.markTipsPaid = async function(staffId) {
+  const sName = staff.find(s=>s.id===staffId)?.name || staffId;
   if (!confirm(t('tipsPayoutConfirm')||'Відмітити всі невиплачені чайові як виплачені?')) return;
   const {collection, getDocs, query, where, doc, updateDoc, addDoc, serverTimestamp} = window.__FS;
   try {
-    // Знаходимо всі невиплачені tips цього офіціанта
+    // Завантажуємо всі tips цього офіціанта — фільтруємо на клієнті (уникаємо складних індексів)
     const snap = await getDocs(query(
       collection(db, 'venues', venueId, 'tips'),
-      where('staffId', '==', staffId),
-      where('paidOut', '==', false)
+      where('staffId', '==', staffId)
     ));
+    const unpaid = snap.docs.filter(d => !d.data().paidOut);
+    if (!unpaid.length) { notify('Немає невиплачених чайових', 'ok'); return; }
 
-    if (snap.empty) {
-      // Спробуємо без фільтра paidOut (для старих записів без цього поля)
-      const snap2 = await getDocs(query(
-        collection(db, 'venues', venueId, 'tips'),
-        where('staffId', '==', staffId)
-      ));
-      const unpaid = snap2.docs.filter(d => !d.data().paidOut);
-      let total = 0;
-      await Promise.all(unpaid.map(d => {
-        total += d.data().amount || 0;
-        return updateDoc(doc(db, 'venues', venueId, 'tips', d.id), {
-          paidOut: true,
-          paidOutAt: new Date().toISOString(),
-        });
-      }));
-      // Записуємо виплату
-      if (total > 0) {
-        await addDoc(collection(db, 'venues', venueId, 'tips_payouts'), {
-          staffId, staffName: staff.find(s=>s.id===staffId)?.name || '—',
-          amount: total, paidAt: serverTimestamp(),
-        });
-      }
-    } else {
-      let total = 0;
-      await Promise.all(snap.docs.map(d => {
-        total += d.data().amount || 0;
-        return updateDoc(doc(db, 'venues', venueId, 'tips', d.id), {
-          paidOut: true,
-          paidOutAt: new Date().toISOString(),
-        });
-      }));
-      if (total > 0) {
-        await addDoc(collection(db, 'venues', venueId, 'tips_payouts'), {
-          staffId, staffName: staff.find(s=>s.id===staffId)?.name || '—',
-          amount: total, paidAt: serverTimestamp(),
-        });
-      }
-    }
+    let total = 0;
+    await Promise.all(unpaid.map(d => {
+      total += d.data().amount || 0;
+      return updateDoc(doc(db, 'venues', venueId, 'tips', d.id), {
+        paidOut: true,
+        paidOutAt: new Date().toISOString(),
+      });
+    }));
+
+    await addDoc(collection(db, 'venues', venueId, 'tips_payouts'), {
+      staffId, staffName: sName,
+      amount: total, count: unpaid.length,
+      paidAt: serverTimestamp(),
+    });
 
     notify('✅ '+(t('tipsPayoutDone')||'Виплату відмічено!'), 'ok');
     loadTipsAnalytics();
