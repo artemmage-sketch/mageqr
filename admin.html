@@ -919,7 +919,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <div class="pay-logo" style="background:linear-gradient(135deg,#C1440E,#8B2500);color:#fff;font-size:.75rem;font-weight:700;font-family:var(--font-head);letter-spacing:-.5px">MAGE</div>
                 <div>
                   <div class="pay-name">Mage Pay</div>
-                  <div class="pay-fee" data-i18n="magepayFee">Acquiring · від 1.5%</div>
+                  <div class="pay-fee" data-i18n="magepayFee">🇺🇦 4% · 🌍 5% за транзакцію</div>
                   <div class="pay-enabled-badge" data-i18n="activeLabel">✓ Активний</div>
                 </div>
                 <div class="pay-toggle-wrap">
@@ -1122,9 +1122,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <div class="content">
 
         <div class="pay-stats">
-          <div class="pay-stat"><div class="pay-stat-val">1 243</div><div class="pay-stat-lbl" data-i18n="sentToPOSMonth">Передано в POS (місяць)</div></div>
-          <div class="pay-stat"><div class="pay-stat-val">99.2%</div><div class="pay-stat-lbl" data-i18n="successTransfers">Успішних передач</div></div>
-          <div class="pay-stat"><div class="pay-stat-val">&lt;1s</div><div class="pay-stat-lbl" data-i18n="avgTransferTime">Середній час передачі</div></div>
+          <div class="pay-stat"><div class="pay-stat-val" id="pos-stat-sent">—</div><div class="pay-stat-lbl" data-i18n="sentToPOSMonth">Передано в POS (місяць)</div></div>
+          <div class="pay-stat"><div class="pay-stat-val" id="pos-stat-success">—</div><div class="pay-stat-lbl" data-i18n="successTransfers">Успішних передач</div></div>
+          <div class="pay-stat"><div class="pay-stat-val" id="pos-stat-system">—</div><div class="pay-stat-lbl" data-i18n="activePOSSystem">Активна POS система</div></div>
         </div>
 
         <div class="settings-section" style="margin-bottom:1rem">
@@ -1189,9 +1189,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             </div>
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
               <button class="btn btn-outline btn-sm" onclick="testPOS('poster')">🧪 Тест</button>
-              <button class="btn btn-accent btn-sm" onclick="connectPOS('poster')" data-i18n="connected">Підключити</button>
+              <button class="btn btn-accent btn-sm" onclick="connectPOS('poster')" data-i18n="connectBtn" id="btn-connect-poster">Підключити</button>
+              <button class="btn btn-outline btn-sm" onclick="disconnectPOS('poster')" data-i18n="disconnectBtn" id="btn-disconnect-poster" style="display:none;color:var(--red)">✕ Деактивувати</button>
               <button class="btn btn-outline btn-sm" onclick="showPosterWebhook()">🔗 Webhook</button>
-              <button class="btn btn-outline btn-sm" onclick="syncTablesFromPoster()" data-i18n="syncTables" data-i18n="syncTables">🪑 Синх. столи</button>
+              <button class="btn btn-outline btn-sm" onclick="syncTablesFromPoster()" data-i18n="syncTables">🪑 Синх. столи</button>
             </div>
             <div style="margin-top:.875rem">
               <div class="pay-field-label" data-i18n="syncLog" data-i18n="syncLog">Журнал синхронізації</div>
@@ -1238,13 +1239,63 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             </div>
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
               <button class="btn btn-outline btn-sm" onclick="testPOS('syrve')">🧪 Тест</button>
-              <button class="btn btn-accent btn-sm" onclick="connectPOS('syrve')" data-i18n="connected">Підключити</button>
-              <button class="btn btn-outline btn-sm" onclick="syncSyrveTables()" data-i18n="syncTables" data-i18n="syncTables">🪑 Синх. столи</button>
-              <button class="btn btn-outline btn-sm" onclick="syncSyrveMenu()" data-i18n="syncMenu" data-i18n="syncMenu">🍽️ Синх. меню</button>
+              <button class="btn btn-accent btn-sm" onclick="connectPOS('syrve')" data-i18n="connectBtn" id="btn-connect-syrve">Підключити</button>
+              <button class="btn btn-outline btn-sm" onclick="disconnectPOS('syrve')" data-i18n="disconnectBtn" id="btn-disconnect-syrve" style="display:none;color:var(--red)">✕ Деактивувати</button>
+              <button class="btn btn-outline btn-sm" onclick="syncSyrveTables()" data-i18n="syncTables">🪑 Синх. столи</button>
+              <button class="btn btn-outline btn-sm" onclick="syncSyrveMenu()" data-i18n="syncMenu">🍽️ Синх. меню</button>
             </div>
             <div style="margin-top:.875rem">
               <div class="pay-field-label" data-i18n="syncLog" data-i18n="syncLog">Журнал синхронізації</div>
               <div class="pos-sync-log" id="log-syrve">
+                <div class="log-info" data-i18n="waitingConnect">── Очікування підключення ──</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        </div>
+
+        <!-- iiko CARD -->
+        <div class="pos-grid" style="margin-top:.75rem">
+          <div class="pos-card" id="pos-card-iiko">
+            <div class="pos-logo-row">
+              <div class="pos-logo" style="background:#FFF3E0">🍽️</div>
+              <div>
+                <div class="pos-name">iiko (iikoServer)</div>
+                <div class="pos-ver">iiko.services · REST API v1</div>
+              </div>
+              <span class="pos-status off" id="iiko-status" data-i18n="notConnected">Не підключено</span>
+            </div>
+            <div class="pos-fields">
+              <div>
+                <label class="pay-field-label">iiko Server URL</label>
+                <input type="text" placeholder="https://api-eu.iiko.services" id="iiko-url"/>
+              </div>
+              <div>
+                <label class="pay-field-label" data-i18n="apiLogin">API логін</label>
+                <input type="text" placeholder="api_user" id="iiko-login"/>
+              </div>
+              <div>
+                <label class="pay-field-label" data-i18n="organizationId">Organization ID</label>
+                <input type="text" placeholder="UUID організації" id="iiko-org"/>
+              </div>
+              <div>
+                <label class="pay-field-label" data-i18n="terminalGroupId">Terminal Group ID</label>
+                <input type="text" placeholder="UUID терміналу" id="iiko-term"/>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:.75rem;background:var(--bg2);padding:.625rem;border-radius:6px;line-height:1.6">
+              <strong data-i18n="howToConnect">Як підключити:</strong> iiko Office → Адміністрування → Користувачі API → Створити → Скопіювати логін. Organization і Terminal ID — в iiko Office → Ресторани.
+            </div>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <button class="btn btn-outline btn-sm" onclick="testPOS('iiko')">🧪 Тест</button>
+              <button class="btn btn-accent btn-sm" onclick="connectPOS('iiko')" data-i18n="connectBtn" id="btn-connect-iiko">Підключити</button>
+              <button class="btn btn-outline btn-sm" onclick="disconnectPOS('iiko')" data-i18n="disconnectBtn" id="btn-disconnect-iiko" style="display:none;color:var(--red)">✕ Деактивувати</button>
+              <button class="btn btn-outline btn-sm" onclick="syncIikoMenu()" data-i18n="syncMenu">🍽️ Синх. меню</button>
+            </div>
+            <div style="margin-top:.875rem">
+              <div class="pay-field-label" data-i18n="syncLog">Журнал синхронізації</div>
+              <div class="pos-sync-log" id="log-iiko">
                 <div class="log-info" data-i18n="waitingConnect">── Очікування підключення ──</div>
               </div>
             </div>
@@ -2322,7 +2373,7 @@ var I18N = {
     // Замовлення кнопки
     markPreparing:'👨‍🍳 Готується', markDone:'✅ Виконано', markCancel:'✕ Скасувати',
     markBack:'↺ Назад', markReturn:'↺ Повернути', markOpen:'↺ Відкрити',
-    syncPOS:'🔄 Синх. POS', paying:'Оплата:', cash:'Готівка', card:'Картка', online:'Онлайн', payCash:'💵 Готівка', payCard:'💳 Картка', payOnline:'📱 Онлайн', activeLabel:'✓ Активний', magepayFee:'Acquiring · від 1.5%', magepayAdminNote:'Налаштовується адміністратором платформи. Зверніться до підтримки для підключення.',
+    syncPOS:'🔄 Синх. POS', paying:'Оплата:', cash:'Готівка', card:'Картка', online:'Онлайн', payCash:'💵 Готівка', payCard:'💳 Картка', payOnline:'📱 Онлайн', activeLabel:'✓ Активний', magepayFee:'🇺🇦 4% за транзакцію в Україні · 🌍 5% для інших країн', magepayAdminNote:'Налаштовується адміністратором платформи. Зверніться до підтримки для підключення.',
     table:'Стіл', comment:'Коментар', address:'Адреса', dineIn:'В закладі', takeaway:'З собою', delivery:'Доставка',
     noOrders:t('noOrders'), total:'Разом',
     // Страви
@@ -2359,7 +2410,7 @@ var I18N = {
     // POS
     posterPOS:'Poster POS', accessToken:'Токен доступу',
     testOrder:'🧪 Тест-замовлення', syncTables:'🪑 Синх. столи', syncMenu:'🍽️ Синх. меню',
-    syncLog:'Журнал синхронізації', connected:'Підключено', notConnected:'Не підключено',
+    syncLog:'Журнал синхронізації', connected:'Підключено', connectBtn:'Підключити', disconnectBtn:'✕ Деактивувати', confirmDisconnectPOS:'Деактивувати POS систему?', apiLogin:'API логін', notConnected:'Не підключено',
     // Клієнти
     totalClients:'Всього клієнтів', newThisMonth:'Нових за місяць',
     returnClients:'Повторних', avgCheck:'Сер. чек',
@@ -2429,7 +2480,7 @@ var I18N = {
     cashierId:'Каса ID (cashier_id)',
     vchasnoFiscal:'Фіскалізація через сервіс Vchasno.ua',
     rroId:'Касовий апарат ID',
-    sentToPOSMonth:'Передано в POS (місяць)',
+    sentToPOSMonth:'Передано в POS (місяць)', activePOSSystem:'Активна POS система',
     successTransfers:'Успішних передач',
     avgTransferTime:'Середній час передачі',
     sendOnlyPaid:'Передавати тільки оплачені замовлення',
@@ -2720,7 +2771,7 @@ var I18N = {
     translateAll:'🌐 Translate entire menu', translating:'⏳ Translating...', translateDone:'✅ Menu translated!',
     markPreparing:'👨‍🍳 Preparing', markDone:'✅ Done', markCancel:'✕ Cancel',
     markBack:'↺ Back', markReturn:'↺ Return', markOpen:'↺ Reopen',
-    syncPOS:'🔄 Sync POS', paying:'Payment:', cash:'Cash', card:'Card', online:'Online', payCash:'💵 Cash', payCard:'💳 Card', payOnline:'📱 Online', activeLabel:'✓ Active', magepayFee:'Acquiring · from 1.5%', magepayAdminNote:'Configured by platform administrator. Contact support to connect.',
+    syncPOS:'🔄 Sync POS', paying:'Payment:', cash:'Cash', card:'Card', online:'Online', payCash:'💵 Cash', payCard:'💳 Card', payOnline:'📱 Online', activeLabel:'✓ Active', magepayFee:'🇺🇦 4% per transaction in Ukraine · 🌍 5% for other countries', magepayAdminNote:'Configured by platform administrator. Contact support to connect.',
     table:'Table', comment:'Comment', address:'Address', dineIn:'Dine in', takeaway:'Takeaway', delivery:'Delivery',
     noOrders:'No orders', total:'Total',
     name:'Name', description:'Description', price:'Price (UAH)', category:'Category',
@@ -2751,7 +2802,7 @@ var I18N = {
     webhookUrl:'Your Webhook URL',
     posterPOS:'Poster POS', accessToken:'Access token',
     testOrder:'🧪 Test order', syncTables:'🪑 Sync tables', syncMenu:'🍽️ Sync menu',
-    syncLog:'Sync log', connected:'Connected', notConnected:'Not connected',
+    syncLog:'Sync log', connected:'Connected', connectBtn:'Connect', disconnectBtn:'✕ Disconnect', confirmDisconnectPOS:'Deactivate POS system?', apiLogin:'API login', notConnected:'Not connected',
     totalClients:'Total clients', newThisMonth:'New this month',
     returnClients:'Returning', avgCheck:'Avg. check',
     firstOrder:'First order', lastOrder:'Last order',
@@ -2817,7 +2868,7 @@ var I18N = {
     cashierId:'Cashier ID',
     vchasnoFiscal:'Fiscalization via Vchasno.ua',
     rroId:'RRO ID',
-    sentToPOSMonth:'Sent to POS (month)',
+    sentToPOSMonth:'Sent to POS (month)', activePOSSystem:'Active POS system',
     successTransfers:'Successful transfers',
     avgTransferTime:'Avg. transfer time',
     sendOnlyPaid:'Send only paid orders',
@@ -3108,7 +3159,7 @@ var I18N = {
     translateAll:'🌐 Przetłumacz całe menu', translating:'⏳ Tłumaczenie...', translateDone:'✅ Menu przetłumaczone!',
     markPreparing:'👨‍🍳 W przygotowaniu', markDone:'✅ Gotowe', markCancel:'✕ Anuluj',
     markBack:'↺ Cofnij', markReturn:'↺ Przywróć', markOpen:'↺ Otwórz',
-    syncPOS:'🔄 Sync POS', paying:'Płatność:', cash:'Gotówka', card:'Karta', online:'Online', payCash:'💵 Gotówka', payCard:'💳 Karta', payOnline:'📱 Online', activeLabel:'✓ Aktywny', magepayFee:'Acquiring · od 1.5%', magepayAdminNote:'Konfigurowane przez administratora platformy. Skontaktuj się z pomocą techniczną.',
+    syncPOS:'🔄 Sync POS', paying:'Płatność:', cash:'Gotówka', card:'Karta', online:'Online', payCash:'💵 Gotówka', payCard:'💳 Karta', payOnline:'📱 Online', activeLabel:'✓ Aktywny', magepayFee:'🇺🇦 4% transakcja Ukraina · 🌍 5% inne kraje', magepayAdminNote:'Konfigurowane przez administratora platformy. Skontaktuj się z pomocą techniczną.',
     table:'Stolik', comment:'Komentarz', address:'Adres', dineIn:'Na miejscu', takeaway:'Na wynos', delivery:'Dostawa',
     noOrders:'Brak zamówień', total:'Razem',
     name:'Nazwa', description:'Opis', price:'Cena (UAH)', category:'Kategoria',
@@ -3139,7 +3190,7 @@ var I18N = {
     webhookUrl:'Twój Webhook URL',
     posterPOS:'Poster POS', accessToken:'Token dostępu',
     testOrder:'🧪 Testowe zamówienie', syncTables:'🪑 Sync stoły', syncMenu:'🍽️ Sync menu',
-    syncLog:'Dziennik synchronizacji', connected:'Połączono', notConnected:'Nie połączono',
+    syncLog:'Dziennik synchronizacji', connected:'Połączono', connectBtn:'Połącz', disconnectBtn:'✕ Dezaktywuj', confirmDisconnectPOS:'Dezaktywować system POS?', apiLogin:'Login API', notConnected:'Nie połączono',
     totalClients:'Wszyscy klienci', newThisMonth:'Nowych w miesiącu',
     returnClients:'Powracających', avgCheck:'Śr. rachunek',
     firstOrder:'Pierwsze zamówienie', lastOrder:'Ostatnie zamówienie',
@@ -3205,7 +3256,7 @@ var I18N = {
     cashierId:'ID kasy',
     vchasnoFiscal:'Fiskalizacja przez Vchasno.ua',
     rroId:'ID kasy fiskalnej',
-    sentToPOSMonth:'Wysłano do POS (miesiąc)',
+    sentToPOSMonth:'Wysłano do POS (miesiąc)', activePOSSystem:'Aktywny system POS',
     successTransfers:'Udanych transferów',
     avgTransferTime:'Śr. czas transferu',
     sendOnlyPaid:'Wysyłaj tylko opłacone',
@@ -3496,7 +3547,7 @@ var I18N = {
     translateAll:'🌐 Gesamtes Menü übersetzen', translating:'⏳ Übersetze...', translateDone:'✅ Menü übersetzt!',
     markPreparing:'👨‍🍳 In Zubereitung', markDone:'✅ Erledigt', markCancel:'✕ Stornieren',
     markBack:'↺ Zurück', markReturn:'↺ Zurücksetzen', markOpen:'↺ Wiedereröffnen',
-    syncPOS:'🔄 POS Sync', paying:'Zahlung:', cash:'Bar', card:'Karte', online:'Online', payCash:'💵 Bar', payCard:'💳 Karte', payOnline:'📱 Online', activeLabel:'✓ Aktiv', magepayFee:'Acquiring · ab 1.5%', magepayAdminNote:'Wird vom Plattformadministrator konfiguriert. Kontaktieren Sie den Support.',
+    syncPOS:'🔄 POS Sync', paying:'Zahlung:', cash:'Bar', card:'Karte', online:'Online', payCash:'💵 Bar', payCard:'💳 Karte', payOnline:'📱 Online', activeLabel:'✓ Aktiv', magepayFee:'🇺🇦 4% per transaction in Ukraine · 🌍 5% for other countries', magepayAdminNote:'Wird vom Plattformadministrator konfiguriert. Kontaktieren Sie den Support.',
     table:'Tisch', comment:'Kommentar', address:'Adresse', dineIn:'Im Lokal', takeaway:'Zum Mitnehmen', delivery:'Lieferung',
     noOrders:'Keine Bestellungen', total:'Gesamt',
     name:'Name', description:'Beschreibung', price:'Preis (UAH)', category:'Kategorie',
@@ -3527,7 +3578,7 @@ var I18N = {
     webhookUrl:'Ihr Webhook URL',
     posterPOS:'Poster POS', accessToken:'Zugriffstoken',
     testOrder:'🧪 Testbestellung', syncTables:'🪑 Tische sync', syncMenu:'🍽️ Menü sync',
-    syncLog:'Synchronisationsprotokoll', connected:'Verbunden', notConnected:'Nicht verbunden',
+    syncLog:'Synchronisationsprotokoll', connected:'Verbunden', connectBtn:'Verbinden', disconnectBtn:'✕ Deaktivieren', confirmDisconnectPOS:'POS-System deaktivieren?', apiLogin:'API-Login', notConnected:'Nicht verbunden',
     totalClients:'Kunden gesamt', newThisMonth:'Neu diesen Monat',
     returnClients:'Stammkunden', avgCheck:'Ø Rechnung',
     firstOrder:'Erste Bestellung', lastOrder:'Letzte Bestellung',
@@ -3593,7 +3644,7 @@ var I18N = {
     cashierId:'Kassen-ID',
     vchasnoFiscal:'Fiskalisierung über Vchasno.ua',
     rroId:'Kassengerät-ID',
-    sentToPOSMonth:'An POS gesendet (Monat)',
+    sentToPOSMonth:'An POS gesendet (Monat)', activePOSSystem:'Aktives POS-System',
     successTransfers:'Erfolgreiche Übertragungen',
     avgTransferTime:'Ø Übertragungszeit',
     sendOnlyPaid:'Nur bezahlte senden',
@@ -3884,7 +3935,7 @@ var I18N = {
     translateAll:'🌐 Traduce tot meniul', translating:'⏳ Se traduce...', translateDone:'✅ Meniu tradus!',
     markPreparing:'👨‍🍳 Se prepară', markDone:'✅ Finalizat', markCancel:'✕ Anulează',
     markBack:'↺ Înapoi', markReturn:'↺ Restabilește', markOpen:'↺ Redeschide',
-    syncPOS:'🔄 Sync POS', paying:'Plată:', cash:'Numerar', card:'Card', online:'Online', payCash:'💵 Numerar', payCard:'💳 Card', payOnline:'📱 Online', activeLabel:'✓ Activ', magepayFee:'Acquiring · de la 1.5%', magepayAdminNote:'Configurat de administratorul platformei. Contactați suportul.',
+    syncPOS:'🔄 Sync POS', paying:'Plată:', cash:'Numerar', card:'Card', online:'Online', payCash:'💵 Numerar', payCard:'💳 Card', payOnline:'📱 Online', activeLabel:'✓ Activ', magepayFee:'🇺🇦 4% tranzacție Ucraina · 🌍 5% alte țări', magepayAdminNote:'Configurat de administratorul platformei. Contactați suportul.',
     table:'Masă', comment:'Comentariu', address:'Adresă', dineIn:'La local', takeaway:'De luat', delivery:'Livrare',
     noOrders:'Fără comenzi', total:'Total',
     name:'Nume', description:'Descriere', price:'Preț (UAH)', category:'Categorie',
@@ -3915,7 +3966,7 @@ var I18N = {
     webhookUrl:'URL-ul Webhook',
     posterPOS:'Poster POS', accessToken:'Token acces',
     testOrder:'🧪 Comandă test', syncTables:'🪑 Sync mese', syncMenu:'🍽️ Sync meniu',
-    syncLog:'Jurnal sincronizare', connected:'Conectat', notConnected:'Neconectat',
+    syncLog:'Jurnal sincronizare', connected:'Conectat', connectBtn:'Conectează', disconnectBtn:'✕ Dezactivează', confirmDisconnectPOS:'Dezactivați sistemul POS?', apiLogin:'Login API', notConnected:'Neconectat',
     totalClients:'Total clienți', newThisMonth:'Noi luna aceasta',
     returnClients:'Revenitori', avgCheck:'Bon mediu',
     firstOrder:'Prima comandă', lastOrder:'Ultima comandă',
@@ -3981,7 +4032,7 @@ var I18N = {
     cashierId:'ID casă de marcat',
     vchasnoFiscal:'Fiscalizare prin Vchasno.ua',
     rroId:'ID aparat fiscal',
-    sentToPOSMonth:'Trimis la POS (lună)',
+    sentToPOSMonth:'Trimis la POS (lună)', activePOSSystem:'Sistem POS activ',
     successTransfers:'Transferuri reușite',
     avgTransferTime:'Timp mediu transfer',
     sendOnlyPaid:'Trimite doar plătite',
@@ -4272,7 +4323,7 @@ var I18N = {
     translateAll:'🌐 Traducir todo el menú', translating:'⏳ Traduciendo...', translateDone:'✅ ¡Menú traducido!',
     markPreparing:'👨‍🍳 Preparando', markDone:'✅ Listo', markCancel:'✕ Cancelar',
     markBack:'↺ Atrás', markReturn:'↺ Restaurar', markOpen:'↺ Reabrir',
-    syncPOS:'🔄 Sync POS', paying:'Pago:', cash:'Efectivo', card:'Tarjeta', online:'Online', payCash:'💵 Efectivo', payCard:'💳 Tarjeta', payOnline:'📱 Online', activeLabel:'✓ Activo', magepayFee:'Acquiring · desde 1.5%', magepayAdminNote:'Configurado por el administrador de la plataforma. Contacte al soporte.',
+    syncPOS:'🔄 Sync POS', paying:'Pago:', cash:'Efectivo', card:'Tarjeta', online:'Online', payCash:'💵 Efectivo', payCard:'💳 Tarjeta', payOnline:'📱 Online', activeLabel:'✓ Activo', magepayFee:'🇺🇦 4% transacción Ucrania · 🌍 5% otros países', magepayAdminNote:'Configurado por el administrador de la plataforma. Contacte al soporte.',
     table:'Mesa', comment:'Comentario', address:'Dirección', dineIn:'En el local', takeaway:'Para llevar', delivery:'Entrega',
     noOrders:'Sin pedidos', total:'Total',
     name:'Nombre', description:'Descripción', price:'Precio (UAH)', category:'Categoría',
@@ -4303,7 +4354,7 @@ var I18N = {
     webhookUrl:'Su URL Webhook',
     posterPOS:'Poster POS', accessToken:'Token de acceso',
     testOrder:'🧪 Pedido de prueba', syncTables:'🪑 Sync mesas', syncMenu:'🍽️ Sync menú',
-    syncLog:'Registro de sincronización', connected:'Conectado', notConnected:'No conectado',
+    syncLog:'Registro de sincronización', connected:'Conectado', connectBtn:'Conectar', disconnectBtn:'✕ Desactivar', confirmDisconnectPOS:'¿Desactivar sistema POS?', apiLogin:'Login API', notConnected:'No conectado',
     totalClients:'Total clientes', newThisMonth:'Nuevos este mes',
     returnClients:'Recurrentes', avgCheck:'Ticket medio',
     firstOrder:'Primer pedido', lastOrder:'Último pedido',
@@ -4369,7 +4420,7 @@ var I18N = {
     cashierId:'ID de caja',
     vchasnoFiscal:'Fiscalización via Vchasno.ua',
     rroId:'ID caja registradora',
-    sentToPOSMonth:'Enviado a POS (mes)',
+    sentToPOSMonth:'Enviado a POS (mes)', activePOSSystem:'Sistema POS activo',
     successTransfers:'Transferencias exitosas',
     avgTransferTime:'Tiempo medio de transferencia',
     sendOnlyPaid:'Enviar solo pedidos pagados',
@@ -4660,7 +4711,7 @@ var I18N = {
     translateAll:'🌐 Prevedi cijeli meni', translating:'⏳ Prevođenje...', translateDone:'✅ Meni preveden!',
     markPreparing:'👨‍🍳 U pripremi', markDone:'✅ Završeno', markCancel:'✕ Otkaži',
     markBack:'↺ Nazad', markReturn:'↺ Vrati', markOpen:'↺ Ponovo otvori',
-    syncPOS:'🔄 Sync POS', paying:'Plaćanje:', cash:'Gotovina', card:'Kartica', online:'Online', payCash:'💵 Gotovina', payCard:'💳 Kartica', payOnline:'📱 Online', activeLabel:'✓ Aktivan', magepayFee:'Acquiring · od 1.5%', magepayAdminNote:'Konfiguriše administrator platforme. Kontaktirajte podršku.',
+    syncPOS:'🔄 Sync POS', paying:'Plaćanje:', cash:'Gotovina', card:'Kartica', online:'Online', payCash:'💵 Gotovina', payCard:'💳 Kartica', payOnline:'📱 Online', activeLabel:'✓ Aktivan', magepayFee:'🇺🇦 4% transakcja Ukraina · 🌍 5% inne kraje', magepayAdminNote:'Konfiguriše administrator platforme. Kontaktirajte podršku.',
     table:'Sto', comment:'Komentar', address:'Adresa', dineIn:'U lokalu', takeaway:'Za ponijeti', delivery:'Dostava',
     noOrders:'Nema narudžbina', total:'Ukupno',
     name:'Naziv', description:'Opis', price:'Cijena (UAH)', category:'Kategorija',
@@ -4691,7 +4742,7 @@ var I18N = {
     webhookUrl:'Vaš Webhook URL',
     posterPOS:'Poster POS', accessToken:'Token pristupa',
     testOrder:'🧪 Testna narudžbina', syncTables:'🪑 Sync stolovi', syncMenu:'🍽️ Sync meni',
-    syncLog:'Dnevnik sinhronizacije', connected:'Povezano', notConnected:'Nije povezano',
+    syncLog:'Dnevnik sinhronizacije', connected:'Povezano', connectBtn:'Poveži', disconnectBtn:'✕ Deaktiviraj', confirmDisconnectPOS:'Deaktivirati POS sistem?', apiLogin:'API login', notConnected:'Nije povezano',
     totalClients:'Ukupno klijenata', newThisMonth:'Novih ovog mjeseca',
     returnClients:'Povratnih', avgCheck:'Prosj. račun',
     firstOrder:'Prva narudžbina', lastOrder:'Posljednja narudžbina',
@@ -4757,7 +4808,7 @@ var I18N = {
     cashierId:'ID kase',
     vchasnoFiscal:'Fiskalizacija putem Vchasno.ua',
     rroId:'ID fiskalnog uređaja',
-    sentToPOSMonth:'Poslano u POS (mjesec)',
+    sentToPOSMonth:'Poslano u POS (mjesec)', activePOSSystem:'Aktivni POS sistem',
     successTransfers:'Uspješnih prijenosa',
     avgTransferTime:'Prosj. vrijeme prijenosa',
     sendOnlyPaid:'Slati samo plaćene narudžbine',
@@ -5908,6 +5959,9 @@ function renderMappingRows() {
   }).join('');
 }
 
+window.loadPOSProductsForMapping = loadPOSProductsForMapping;
+window.loadExistingMapping = loadExistingMapping;
+
 window.autoMapProducts = async function() {
   if(!posProducts.poster.length && !posProducts.syrve.length) {
     notify(t('notifLoadPOSFirst'),'err');
@@ -5981,7 +6035,7 @@ window.nav = function(btn,tab){
   if(main) main.scrollTop=0;
   if(tab==='t-billing')   loadBilling();
   if(tab==='t-payments')  { loadPaymentSettings(); loadFiscalSettings(); loadPaymentStats(); }
-  if(tab==='t-pos')       { loadPOSSettings(); loadExistingMapping().then(()=>{ if(Object.keys(currentMapping).length>0) loadPOSProductsForMapping('poster').catch(()=>{}); renderMappingRows(); }); }
+  if(tab==='t-pos')       { loadPOSSettings(); loadPOSStats(); loadExistingMapping().then(()=>{ if(Object.keys(currentMapping).length>0) loadPOSProductsForMapping('poster').catch(()=>{}); renderMappingRows(); }); }
   if(tab==='t-ordering')  loadOrderingSettings();
   if(tab==='t-customers') loadCustomers();
   if(tab==='t-tables') { loadTablesFromFirestore(); loadStaffFromFirestore(); }
@@ -7352,6 +7406,42 @@ window.savePayments=async function(){
 };
 
 // ── POS ──────────────────────────────────────────────────
+async function loadPOSStats() {
+  if(!db||!window.__FS) return;
+  const {collection, getDocs, query, where} = window.__FS;
+  try {
+    const monthAgo = new Date();
+    monthAgo.setDate(monthAgo.getDate() - 30);
+    const snap = await getDocs(collection(db, 'platform_logs'));
+    const logs = snap.docs.map(d=>d.data())
+      .filter(l => {
+        const ms = l.timestamp?.seconds ? l.timestamp.seconds*1000 : 0;
+        return ms >= monthAgo.getTime() && l.venueId === venueId;
+      });
+    const total = logs.length;
+    const success = logs.filter(l => l.poster === 'success' || l.syrve === 'success').length;
+    const rate = total ? Math.round(success/total*100) : 0;
+    // Активна система
+    const posSnap = await getDocs(collection(db,'venues',venueId,'settings'));
+    let activeSys = '—';
+    try {
+      const {doc, getDoc} = window.__FS;
+      const posDoc = await getDoc(doc(db,'venues',venueId,'settings','pos'));
+      if(posDoc.exists()) {
+        const d = posDoc.data();
+        if(d.poster?.enabled) activeSys = 'Poster';
+        else if(d.syrve?.enabled) activeSys = 'Syrve';
+      }
+    } catch(e) {}
+    const sentEl = document.getElementById('pos-stat-sent');
+    const succEl = document.getElementById('pos-stat-success');
+    const sysEl  = document.getElementById('pos-stat-system');
+    if(sentEl) sentEl.textContent = total || '0';
+    if(succEl) succEl.textContent = total ? rate+'%' : '—';
+    if(sysEl)  sysEl.textContent  = activeSys;
+  } catch(e) { console.warn('loadPOSStats:', e.message); }
+}
+
 async function loadPOSSettings(){
   if(!db||!window.__FS)return;
   const {doc,getDoc}=window.__FS;
@@ -7372,25 +7462,79 @@ async function loadPOSSettings(){
       document.getElementById('poster-account')&&(document.getElementById('poster-account').value=d.poster.account||'');
       document.getElementById('poster-token')&&(document.getElementById('poster-token').value=d.poster.token||'');
       document.getElementById('poster-spot')&&(document.getElementById('poster-spot').value=d.poster.spotId||'');
-      if(d.poster.enabled){document.getElementById('poster-status').textContent=t('connected');document.getElementById('poster-status').className='pos-status ok';document.getElementById('pos-card-poster').classList.add('connected');}
+      document.getElementById('poster-table')&&(document.getElementById('poster-table').value=d.poster.tableServiceId||'');
+      if(d.poster.enabled){
+        document.getElementById('poster-status').textContent=t('connected');
+        document.getElementById('poster-status').className='pos-status ok';
+        document.getElementById('pos-card-poster').classList.add('connected');
+        document.getElementById('btn-connect-poster')&&(document.getElementById('btn-connect-poster').style.display='none');
+        document.getElementById('btn-disconnect-poster')&&(document.getElementById('btn-disconnect-poster').style.display='');
+      }
     }
     if(d.syrve){
       document.getElementById('syrve-url')&&(document.getElementById('syrve-url').value=d.syrve.serverUrl||'');
       document.getElementById('syrve-login')&&(document.getElementById('syrve-login').value=d.syrve.login||'');
       document.getElementById('syrve-org')&&(document.getElementById('syrve-org').value=d.syrve.organizationId||'');
       document.getElementById('syrve-term')&&(document.getElementById('syrve-term').value=d.syrve.terminalGroupId||'');
-      if(d.syrve.enabled){document.getElementById('syrve-status').textContent=t('connected');document.getElementById('syrve-status').className='pos-status ok';document.getElementById('pos-card-syrve').classList.add('connected');}
+      if(d.syrve.enabled){
+        document.getElementById('syrve-status').textContent=t('connected');
+        document.getElementById('syrve-status').className='pos-status ok';
+        document.getElementById('pos-card-syrve').classList.add('connected');
+        document.getElementById('btn-connect-syrve')&&(document.getElementById('btn-connect-syrve').style.display='none');
+        document.getElementById('btn-disconnect-syrve')&&(document.getElementById('btn-disconnect-syrve').style.display='');
+      }
+    }
+    if(d.iiko){
+      document.getElementById('iiko-url')&&(document.getElementById('iiko-url').value=d.iiko.serverUrl||'');
+      document.getElementById('iiko-login')&&(document.getElementById('iiko-login').value=d.iiko.login||'');
+      document.getElementById('iiko-org')&&(document.getElementById('iiko-org').value=d.iiko.organizationId||'');
+      document.getElementById('iiko-term')&&(document.getElementById('iiko-term').value=d.iiko.terminalGroupId||'');
+      if(d.iiko.enabled){
+        document.getElementById('iiko-status').textContent=t('connected');
+        document.getElementById('iiko-status').className='pos-status ok';
+        document.getElementById('pos-card-iiko').classList.add('connected');
+        document.getElementById('btn-connect-iiko')&&(document.getElementById('btn-connect-iiko').style.display='none');
+        document.getElementById('btn-disconnect-iiko')&&(document.getElementById('btn-disconnect-iiko').style.display='');
+      }
     }
   }catch(e){console.warn('loadPOSSettings:',e.message);}
 }
 async function savePOSData(){
   const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
   const token=await getAuth().currentUser?.getIdToken();
-  const poster={enabled:document.getElementById('pos-card-poster')?.classList.contains('connected'),account:document.getElementById('poster-account')?.value||'',token:document.getElementById('poster-token')?.value||'',spotId:parseInt(document.getElementById('poster-spot')?.value)||1};
+  const poster={enabled:document.getElementById('pos-card-poster')?.classList.contains('connected'),account:document.getElementById('poster-account')?.value||'',token:document.getElementById('poster-token')?.value||'',spotId:parseInt(document.getElementById('poster-spot')?.value)||1,tableServiceId:parseInt(document.getElementById('poster-table')?.value)||0};
   const syrve={enabled:document.getElementById('pos-card-syrve')?.classList.contains('connected'),serverUrl:document.getElementById('syrve-url')?.value||'',login:document.getElementById('syrve-login')?.value||'',password:document.getElementById('syrve-pass')?.value||'',organizationId:document.getElementById('syrve-org')?.value||'',terminalGroupId:document.getElementById('syrve-term')?.value||''};
-  await fetch(`${window.__CF_URL}/savePOSSettings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,poster,syrve,syncEnabled:document.getElementById('pos-sync')?.checked!==false,syncWhen:document.getElementById('pos-when')?.value||'placed'})});
+  const iiko={enabled:document.getElementById('pos-card-iiko')?.classList.contains('connected'),serverUrl:document.getElementById('iiko-url')?.value||'https://api-eu.iiko.services',login:document.getElementById('iiko-login')?.value||'',organizationId:document.getElementById('iiko-org')?.value||'',terminalGroupId:document.getElementById('iiko-term')?.value||''};
+  await fetch(`${window.__CF_URL}/savePOSSettings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,poster,syrve,iiko,syncEnabled:document.getElementById('pos-sync')?.checked!==false,syncWhen:document.getElementById('pos-when')?.value||'placed'})});
 }
 window.savePOS=async function(){try{await savePOSData();notify('POS-налаштування збережено!','ok');}catch(e){notify(t('notifError')+': '+e.message,'err');}};
+window.disconnectPOS = async function(sys) {
+  if(!confirm(t('confirmDisconnectPOS')||`Деактивувати ${sys}?`)) return;
+  try {
+    document.getElementById(sys+'-status').textContent = t('notConnected')||'Не підключено';
+    document.getElementById(sys+'-status').className = 'pos-status off';
+    document.getElementById('pos-card-'+sys).classList.remove('connected');
+    document.getElementById('btn-connect-'+sys).style.display = '';
+    document.getElementById('btn-disconnect-'+sys).style.display = 'none';
+    // Зберігаємо enabled:false
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const body = { venueId };
+    body[sys] = { enabled: false };
+    await fetch(`${window.__CF_URL}/savePOSSettings`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body: JSON.stringify(body),
+    });
+    notify(`${sys} деактивовано`, 'ok');
+  } catch(e) { notify(t('notifError')+': '+e.message, 'err'); }
+};
+
+window.syncIikoMenu = async function() {
+  notify('Синхронізація меню з iiko...', 'ok');
+  // TODO: реалізувати через бекенд endpoint
+};
+
 window.connectPOS=async function(sys){
   const logEl=document.getElementById('log-'+sys),now=new Date().toLocaleTimeString('uk-UA');
   logEl.innerHTML=`<div class="log-info">[${now}] Підключення...</div>`;
@@ -7404,10 +7548,14 @@ window.connectPOS=async function(sys){
     document.getElementById(sys+'-status').textContent=t('connected');
     document.getElementById(sys+'-status').className='pos-status ok';
     document.getElementById('pos-card-'+sys).classList.add('connected');
+    // Показуємо кнопку деактивації
+    const btnConnect = document.getElementById('btn-connect-'+sys);
+    const btnDisconnect = document.getElementById('btn-disconnect-'+sys);
+    if(btnConnect) btnConnect.style.display = 'none';
+    if(btnDisconnect) btnDisconnect.style.display = '';
     logEl.innerHTML+=`<div class="log-ok">[${now}] Підключено: ${data.name||sys}</div>`;
-    // Зберігаємо enabled:true
     await savePOSData();
-    notify((sys==='poster'?'Poster':'Syrve')+' підключено!','ok');
+    notify((sys==='poster'?'Poster':sys==='syrve'?'Syrve':'iiko')+' підключено!','ok');
   }catch(e){logEl.innerHTML+=`<div class="log-err">[${now}] ${e.message}</div>`;notify(t('notifError')+': '+e.message,'err');}
 };
 window.testPOS=async function(sys){
