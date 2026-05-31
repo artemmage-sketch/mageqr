@@ -537,6 +537,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="field-group"><label class="field-label">Макс. страв</label><input id="pf-items" type="number" placeholder="∞ = порожньо"/></div>
       <div class="field-group"><label class="field-label">Макс. категорій</label><input id="pf-cats" type="number"/></div>
       <div class="field-group"><label class="field-label">Макс. замовлень/міс</label><input id="pf-orders" type="number"/></div>
+      <div class="field-group"><label class="field-label">✨ AI покращень/міс</label><input id="pf-ai" type="number" min="0" placeholder="0 = недоступно, -1 = безліміт"/></div>
+      <div class="field-group"><label class="field-label" style="font-size:11px;color:var(--muted)">-1 = безліміт, 0 = вимкнено</label><div style="font-size:11px;color:var(--muted);padding:.5rem 0">Кількість AI покращень фото страв на місяць</div></div>
     </div>
     <div class="field-group"><label class="field-label">Кастомний дизайн</label>
       <select id="pf-design"><option value="0">Не доступно</option><option value="1">Кольори + шрифт</option><option value="2">Повна кастомізація</option></select>
@@ -966,10 +968,10 @@ window.exportVenues=window.exportVenues;
 
 // ── PLANS ──────────────────────────────────────────────────
 const PLANS_DATA={
-  free:      {name:'Free',      desc:'Для знайомства з платформою', price:0,  amountCents:0,    items:20,  cats:5,  orders:100,   design:0, color:'#8888AA', features:['20 страв','5 категорій','100 замовлень/міс','Базовий дизайн']},
-  starter:   {name:'Starter',   desc:'Ідеально для малого бізнесу', price:9,  amountCents:900,  items:80,  cats:15, orders:500,   design:1, color:'#F59E0B', features:['80 страв','15 категорій','500 замовлень/міс','Кольори+шрифт']},
-  pro:       {name:'Pro',       desc:'Для зростаючого ресторану',    price:19, amountCents:1900, items:500, cats:50, orders:5000,  design:2, color:'#6C63FF', features:['500 страв','50 категорій','5000 замовлень/міс','Повний дизайн','Фото+банер']},
-  enterprise:{name:'Enterprise',desc:'Мережі та великі заклади',     price:49, amountCents:4900, items:999999,cats:999,orders:999999,design:2,color:'#10B981', features:['Необмежено страв','Необмежено замовлень','POS інтеграція','Власний домен']},
+  free:      {name:'Free',      desc:'Для знайомства з платформою', price:0,  amountCents:0,    items:20,  cats:5,  orders:100,   design:0, aiEnhancements:0,  color:'#8888AA', features:['20 страв','5 категорій','100 замовлень/міс','Базовий дизайн']},
+  starter:   {name:'Starter',   desc:'Ідеально для малого бізнесу', price:9,  amountCents:900,  items:80,  cats:15, orders:500,   design:1, aiEnhancements:10, color:'#F59E0B', features:['80 страв','15 категорій','500 замовлень/міс','Кольори+шрифт','10 AI покращень/міс']},
+  pro:       {name:'Pro',       desc:'Для зростаючого ресторану',    price:19, amountCents:1900, items:500, cats:50, orders:5000,  design:2, aiEnhancements:50, color:'#6C63FF', features:['500 страв','50 категорій','5000 замовлень/міс','Повний дизайн','Фото+банер','50 AI покращень/міс']},
+  enterprise:{name:'Enterprise',desc:'Мережі та великі заклади',     price:49, amountCents:4900, items:999999,cats:999,orders:999999,design:2,aiEnhancements:-1, color:'#10B981', features:['Необмежено страв','Необмежено замовлень','POS інтеграція','Власний домен','∞ AI покращень']},
 };
 
 // Завантажуємо тарифи з Firestore (якщо є кастомні)
@@ -1017,6 +1019,7 @@ window.openPlanModal = function(key){
   document.getElementById('pf-cats').value=p.cats===999?'':p.cats;
   document.getElementById('pf-orders').value=p.orders===999999?'':p.orders;
   document.getElementById('pf-design').value=p.design;
+  document.getElementById('pf-ai').value=p.aiEnhancements??0;
   document.getElementById('pf-save-status').textContent='';
   openModal('modal-plan');
 };
@@ -1034,10 +1037,11 @@ window.savePlan = async function(){
     features,
     price,
     amountCents: price * 100,
-    items:       parseInt(document.getElementById('pf-items').value)||999999,
-    cats:        parseInt(document.getElementById('pf-cats').value)||999,
-    orders:      parseInt(document.getElementById('pf-orders').value)||999999,
-    design:      parseInt(document.getElementById('pf-design').value),
+    items:          parseInt(document.getElementById('pf-items').value)||999999,
+    cats:           parseInt(document.getElementById('pf-cats').value)||999,
+    orders:         parseInt(document.getElementById('pf-orders').value)||999999,
+    design:         parseInt(document.getElementById('pf-design').value),
+    aiEnhancements: parseInt(document.getElementById('pf-ai').value) || 0,
   };
 
   // Зберігаємо в Firestore config/plans
