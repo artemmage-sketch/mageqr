@@ -1918,10 +1918,12 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         </div>
         <input type="file" id="if-photo" accept="image/*" style="display:none" onchange="handlePhotoSelect(this)"/>
         <input type="hidden" id="if-photo-url" value=""/>
-        <div style="display:flex;gap:.375rem;margin-top:.375rem">
+        <div style="display:flex;gap:.375rem;margin-top:.375rem;flex-wrap:wrap">
           <button class="btn btn-outline btn-sm" type="button" onclick="document.getElementById('if-photo').click()" data-i18n="chooseFile">📁 Вибрати файл</button>
           <button class="btn btn-outline btn-sm" type="button" id="photo-clear-btn" onclick="clearPhoto()" style="display:none" data-i18n="deletePhoto">✕ Видалити фото</button>
+          <button class="btn btn-outline btn-sm" type="button" id="ai-enhance-btn" onclick="enhancePhotoWithAI()" style="display:none" data-i18n="aiEnhanceBtn">✨ Покращити якість з ШІ</button>
         </div>
+        <div id="ai-enhance-status" style="font-size:11px;margin-top:.375rem;display:none"></div>
         <div style="font-size:11px;color:var(--muted);margin-top:.375rem" data-i18n="orPasteURL">або вставте URL зображення:</div>
         <input id="if-photo-url-input" type="text" placeholder="https://..." style="margin-top:.25rem;font-size:12px" oninput="setPhotoFromUrl(this.value)"/>
       </div>
@@ -2595,7 +2597,7 @@ var I18N = {
     hrn:'грн',
     translationsLbl:'🌐 Переклади',
     translateAuto:'✨ Перекласти автоматично',
-    deletePhoto:'✕ Видалити фото',
+    deletePhoto:'✕ Видалити фото', aiEnhanceBtn:'✨ Покращити якість з ШІ', aiEnhanceNoPhoto:'Спочатку завантажте фото', aiEnhanceProcessing:'Покращуємо фото... (~30 сек)', aiEnhanceDone:'Фото покращено!', aiEnhanceLimitReached:'Ліміт AI покращень вичерпано', aiEnhanceRemaining:'Залишилось',
     payModeConfirm:'Клієнт замовляє → заклад підтверджує → клієнт отримує посилання на оплату. Підходить для залів.',
     payModeBoth:'Обидва варіанти доступні. Клієнт бачить кнопки "Оплатити онлайн" та "Оплатити при отриманні".',
     payModeOptional:'Клієнт може обрати "Оплата при отриманні" замість онлайн-оплати',
@@ -2983,7 +2985,7 @@ var I18N = {
     hrn:'UAH',
     translationsLbl:'🌐 Translations',
     translateAuto:'✨ Translate automatically',
-    deletePhoto:'✕ Delete photo',
+    deletePhoto:'✕ Delete photo', aiEnhanceBtn:'✨ Enhance with AI', aiEnhanceNoPhoto:'Upload a photo first', aiEnhanceProcessing:'Enhancing photo... (~30 sec)', aiEnhanceDone:'Photo enhanced!', aiEnhanceLimitReached:'AI enhancement limit reached', aiEnhanceRemaining:'Remaining',
     payModeConfirm:'Client orders → venue confirms → client gets payment link. Suitable for dine-in.',
     payModeBoth:'Both options available. Client sees "Pay online" and "Pay on delivery" buttons.',
     payModeOptional:'Client can choose "Pay on delivery" instead of online payment',
@@ -3371,7 +3373,7 @@ var I18N = {
     hrn:'UAH',
     translationsLbl:'🌐 Tłumaczenia',
     translateAuto:'✨ Przetłumacz automatycznie',
-    deletePhoto:'✕ Usuń zdjęcie',
+    deletePhoto:'✕ Usuń zdjęcie', aiEnhanceBtn:'✨ Ulepsz z AI', aiEnhanceNoPhoto:'Najpierw prześlij zdjęcie', aiEnhanceProcessing:'Ulepszamy zdjęcie... (~30 sek)', aiEnhanceDone:'Zdjęcie ulepszone!', aiEnhanceLimitReached:'Limit ulepszeń AI wyczerpany', aiEnhanceRemaining:'Pozostało',
     payModeConfirm:'Klient zamawia → lokal potwierdza → klient otrzymuje link do płatności. Dla sali.',
     payModeBoth:'Obydwie opcje dostępne. Klient widzi "Zapłać online" i "Zapłać przy odbiorze".',
     payModeOptional:'Klient może wybrać "Płatność przy odbiorze" zamiast płatności online',
@@ -3759,7 +3761,7 @@ var I18N = {
     hrn:'UAH',
     translationsLbl:'🌐 Übersetzungen',
     translateAuto:'✨ Automatisch übersetzen',
-    deletePhoto:'✕ Foto löschen',
+    deletePhoto:'✕ Foto löschen', aiEnhanceBtn:'✨ Mit KI verbessern', aiEnhanceNoPhoto:'Zuerst Foto hochladen', aiEnhanceProcessing:'Foto wird verbessert... (~30 Sek)', aiEnhanceDone:'Foto verbessert!', aiEnhanceLimitReached:'KI-Verbesserungslimit erreicht', aiEnhanceRemaining:'Verbleibend',
     payModeConfirm:'Kunde bestellt → Lokal bestätigt → Kunde erhält Zahlungslink. Für den Saal.',
     payModeBoth:'Beide Optionen verfügbar. Kunde sieht "Online bezahlen" und "Bei Lieferung bezahlen".',
     payModeOptional:'Kunde kann "Zahlung bei Lieferung" statt Online-Zahlung wählen',
@@ -4147,7 +4149,7 @@ var I18N = {
     hrn:'UAH',
     translationsLbl:'🌐 Traduceri',
     translateAuto:'✨ Traduce automat',
-    deletePhoto:'✕ Șterge foto',
+    deletePhoto:'✕ Șterge foto', aiEnhanceBtn:'✨ Îmbunătățire cu AI', aiEnhanceNoPhoto:'Încărcați mai întâi o fotografie', aiEnhanceProcessing:'Îmbunătățim fotografia... (~30 sec)', aiEnhanceDone:'Fotografie îmbunătățită!', aiEnhanceLimitReached:'Limita îmbunătățirilor AI atinsă', aiEnhanceRemaining:'Rămase',
     payModeConfirm:'Clientul comandă → localul confirmă → clientul primește link de plată. Pentru sală.',
     payModeBoth:'Ambele opțiuni disponibile. Clientul vede "Plătește online" și "Plătește la primire".',
     payModeOptional:'Clientul poate alege "Plată la primire" în loc de plată online',
@@ -4535,7 +4537,7 @@ var I18N = {
     hrn:'UAH',
     translationsLbl:'🌐 Traducciones',
     translateAuto:'✨ Traducir automáticamente',
-    deletePhoto:'✕ Eliminar foto',
+    deletePhoto:'✕ Eliminar foto', aiEnhanceBtn:'✨ Mejorar con IA', aiEnhanceNoPhoto:'Primero sube una foto', aiEnhanceProcessing:'Mejorando foto... (~30 seg)', aiEnhanceDone:'¡Foto mejorada!', aiEnhanceLimitReached:'Límite de mejoras AI alcanzado', aiEnhanceRemaining:'Restante',
     payModeConfirm:'Cliente pide → local confirma → cliente recibe enlace de pago. Para el salón.',
     payModeBoth:'Ambas opciones disponibles. El cliente ve "Pagar online" y "Pagar al recibir".',
     payModeOptional:'El cliente puede elegir "Pago al recibir" en lugar de pago online',
@@ -4923,7 +4925,7 @@ var I18N = {
     hrn:'UAH',
     translationsLbl:'🌐 Prijevodi',
     translateAuto:'✨ Prevedi automatski',
-    deletePhoto:'✕ Izbriši sliku',
+    deletePhoto:'✕ Izbriši sliku', aiEnhanceBtn:'✨ Poboljšaj s AI', aiEnhanceNoPhoto:'Prvo učitajte fotografiju', aiEnhanceProcessing:'Poboljšavamo fotografiju... (~30 sek)', aiEnhanceDone:'Fotografija poboljšana!', aiEnhanceLimitReached:'Limit AI poboljšanja dostignut', aiEnhanceRemaining:'Preostalo',
     payModeConfirm:'Klijent naručuje → lokal potvrđuje → klijent dobija link za plaćanje. Za salu.',
     payModeBoth:'Obje opcije dostupne. Klijent vidi "Plati online" i "Plati pri preuzimanju".',
     payModeOptional:'Klijent može odabrati "Plaćanje pri preuzimanju" umjesto online plaćanja',
@@ -5377,6 +5379,9 @@ function showPhotoPreview(src){
   document.getElementById('photo-progress').style.display='none';
   document.getElementById('photo-wrap').classList.add('has-photo');
   document.getElementById('photo-clear-btn').style.display='inline-flex';
+  // Показуємо кнопку AI якщо є ліміт
+  const aiBtn = document.getElementById('ai-enhance-btn');
+  if(aiBtn) aiBtn.style.display='inline-flex';
 }
 function clearPhoto(){
   currentPhotoFile=null;
@@ -5388,6 +5393,10 @@ function clearPhoto(){
   document.getElementById('photo-wrap').classList.remove('has-photo');
   document.getElementById('photo-clear-btn').style.display='none';
   document.getElementById('if-photo').value='';
+  const aiBtn = document.getElementById('ai-enhance-btn');
+  if(aiBtn) aiBtn.style.display='none';
+  const aiStatus = document.getElementById('ai-enhance-status');
+  if(aiStatus) aiStatus.style.display='none';
 }
 function setPhotoFromUrl(url){
   if(!url)return;
@@ -5418,6 +5427,68 @@ async function uploadPhotoAndGetUrl(){
   }catch(e){notify(t('notifPhotoError')+': '+e.message,'err');return '';}
 }
 window.handlePhotoSelect=handlePhotoSelect;window.clearPhoto=clearPhoto;window.setPhotoFromUrl=setPhotoFromUrl;
+
+// ── AI ПОКРАЩЕННЯ ФОТО ────────────────────────────────────
+window.enhancePhotoWithAI = async function() {
+  const photoUrl = document.getElementById('if-photo-url').value;
+  const statusEl = document.getElementById('ai-enhance-status');
+  const btn = document.getElementById('ai-enhance-btn');
+
+  if(!photoUrl) { notify(t('aiEnhanceNoPhoto')||'Спочатку завантажте фото','err'); return; }
+
+  statusEl.style.display='block';
+  statusEl.style.color='var(--muted)';
+  statusEl.textContent='⏳ '+(t('aiEnhanceProcessing')||'Покращуємо фото... (~30 сек)');
+  btn.disabled=true;
+
+  try {
+    const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token=await getAuth().currentUser?.getIdToken();
+
+    // Завантажуємо фото → base64
+    const imgRes=await fetch(photoUrl);
+    const blob=await imgRes.blob();
+    const mimeType=blob.type||'image/jpeg';
+    const base64=await new Promise((res,rej)=>{
+      const r=new FileReader();
+      r.onload=()=>res(r.result.split(',')[1]);
+      r.onerror=rej;
+      r.readAsDataURL(blob);
+    });
+
+    const resp=await fetch(`${window.__CF_URL}/enhanceFoodPhoto`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({venueId,imageBase64:base64,mimeType}),
+    });
+    const data=await resp.json();
+
+    if(!resp.ok){
+      if(resp.status===429){
+        statusEl.style.color='var(--amber)';
+        statusEl.textContent='⚠️ '+(t('aiEnhanceLimitReached')||'Ліміт AI покращень вичерпано')+` (${data.used}/${data.limit})`;
+      } else {
+        throw new Error(data.error||'Помилка');
+      }
+      return;
+    }
+
+    // Застосовуємо результат
+    document.getElementById('if-photo-url').value=data.imageUrl;
+    document.getElementById('if-photo-url-input').value=data.imageUrl;
+    showPhotoPreview(data.imageUrl);
+    currentPhotoFile=null;
+
+    const remaining=data.limit===-1?'∞':(data.limit-data.used);
+    statusEl.style.color='var(--green)';
+    statusEl.textContent=`✅ ${t('aiEnhanceDone')||'Фото покращено!'} · ${t('aiEnhanceRemaining')||'Залишилось'}: ${remaining}`;
+  } catch(e){
+    statusEl.style.color='var(--red)';
+    statusEl.textContent='❌ '+e.message;
+  } finally {
+    btn.disabled=false;
+  }
+};
 
 // ── АЛЕРГЕНИ ──
 const ALLERGENS_LIST=[
