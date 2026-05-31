@@ -1313,6 +1313,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <button class="btn btn-outline btn-sm" onclick="loadPOSProductsForMapping('syrve')" data-i18n="loadFromSyrve">
               🖥️ Завантажити з Syrve
             </button>
+            <button class="btn btn-outline btn-sm" onclick="loadPOSProductsForMapping('iiko')">
+              🖥️ Завантажити з iiko
+            </button>
             <button class="btn btn-outline btn-sm" onclick="autoMapProducts()" data-i18n="autoMapping">
               ⚡ Авто-зіставлення за назвою
             </button>
@@ -1322,10 +1325,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           </div>
           <div id="mapping-status" style="font-size:12px;color:var(--muted);margin-bottom:.75rem"></div>
           <div id="mapping-table">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem;padding:0 .5rem">
+            <div class="grid-header" style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:.375rem;margin-bottom:.5rem;padding:0 .75rem">
               <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em" data-i18n="dishInMenu">Страва в меню</div>
-              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em" data-i18n="posterSelect">Poster (оберіть)</div>
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Poster</div>
               <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Syrve UUID</div>
+              <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">iiko UUID</div>
             </div>
             <div id="mapping-rows"></div>
           </div>
@@ -5891,12 +5895,13 @@ window.removeCard=async function(){
 
 // ── POS ──
 // Продукти з POS для маппінгу
-let posProducts = { poster: [], syrve: [] };
-let currentMapping = {}; // { itemId: { posterId, syrveId } }
+let posProducts = { poster: [], syrve: [], iiko: [] };
+let currentMapping = {}; // { itemId: { posterId, syrveId, iikoId } }
 
 async function loadPOSProductsForMapping(posSystem) {
   const statusEl = document.getElementById('mapping-status');
-  statusEl.textContent = `Завантажуємо продукти з ${posSystem === 'poster' ? 'Poster' : 'Syrve'}...`;
+  const posName = posSystem === 'poster' ? 'Poster' : posSystem === 'syrve' ? 'Syrve' : 'iiko';
+  statusEl.textContent = `Завантажуємо продукти з ${posName}...`;
   try {
     const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     const token = await getAuth().currentUser?.getIdToken();
@@ -5908,7 +5913,8 @@ async function loadPOSProductsForMapping(posSystem) {
     const data = await res.json();
     if(!res.ok) throw new Error(data.error);
     posProducts[posSystem] = data.products || [];
-    statusEl.textContent = t('loadedProducts').replace('{n}', posProducts[posSystem].length).replace('{pos}', posSystem === 'poster' ? 'Poster' : 'Syrve');
+    const loaded = t('loadedProducts') || 'Завантажено {n} з {pos}';
+    statusEl.textContent = loaded.replace('{n}', posProducts[posSystem].length).replace('{pos}', posName);
     renderMappingRows();
   } catch(e) {
     statusEl.textContent = 'Помилка: ' + e.message;
@@ -5927,32 +5933,45 @@ async function loadExistingMapping() {
 
 function renderMappingRows() {
   if(!items.length) {
-    document.getElementById('mapping-rows').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:.5rem" data-i18n="spochatku">Спочатку додайте страви в меню</div>';
+    document.getElementById('mapping-rows').innerHTML = '<div style="color:var(--muted);font-size:13px;padding:.5rem">Спочатку додайте страви в меню</div>';
     return;
   }
 
-  const posterOptions = posProducts.poster.length
-    ? '<option value="">— не вибрано —</option>' + posProducts.poster.map(p =>
-        `<option value="${p.id}">${p.name} (${p.category})</option>`).join('')
-    : '<option value="" data-i18n="syncMenu">Завантажте продукти з Poster</option>';
+  // Оновлюємо заголовки таблиці
+  const headerRow = document.querySelector('#mapping-table .grid-header');
+  if(headerRow) {
+    headerRow.style.gridTemplateColumns = '1.5fr 1fr 1fr 1fr';
+    const cols = headerRow.querySelectorAll('div');
+    if(cols[1]) cols[1].textContent = 'Poster';
+    if(cols[2]) cols[2].textContent = 'Syrve UUID';
+    if(cols[3]) cols[3].textContent = 'iiko UUID';
+  }
 
   document.getElementById('mapping-rows').innerHTML = items.map(item => {
     const existing = currentMapping[item.id] || {};
+    const posterSelect = posProducts.poster.length
+      ? '<option value="">— не вибрано —</option>' + posProducts.poster.map(p =>
+          `<option value="${p.id}"${existing.posterId === p.id ? ' selected' : ''}>${p.name}</option>`).join('')
+      : `<option value="${existing.posterId||''}">Poster ID: ${existing.posterId||'не вказано'}</option>`;
+
     return `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.625rem .75rem">
+    <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:.375rem;margin-bottom:.375rem;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.5rem .75rem">
       <div>
         <div style="font-size:13px;font-weight:500">🍽️ ${item.name}</div>
-        <div style="font-size:11px;color:var(--muted)">${item.category||''} · ${cur(item.price)}</div>
+        <div style="font-size:11px;color:var(--muted)">${cur(item.price)}</div>
       </div>
-      <select data-item="${item.id}" data-type="posterId" style="font-size:12px;padding:5px 8px" onchange="currentMapping['${item.id}'] = {...(currentMapping['${item.id}']||{}), posterId: this.value}">
-        ${posProducts.poster.length
-          ? '<option value="">— не вибрано —</option>' + posProducts.poster.map(p =>
-              `<option value="${p.id}"${existing.posterId === p.id ? ' selected' : ''}>${p.name} (${p.category})</option>`).join('')
-          : '<option value="">Завантажте продукти з Poster ↑</option>'}
+      <select data-item="${item.id}" data-type="posterId" style="font-size:11px;padding:4px 6px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text)"
+        onchange="currentMapping['${item.id}'] = {...(currentMapping['${item.id}']||{}), posterId: this.value}">
+        ${posterSelect}
       </select>
       <input type="text" data-item="${item.id}" data-type="syrveId"
-        placeholder="Syrve UUID" style="padding:5px 8px;font-size:12px"
-        value="${existing.syrveId||''}"/>
+        placeholder="Syrve UUID" style="padding:4px 6px;font-size:11px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);width:100%"
+        value="${existing.syrveId||''}"
+        onchange="currentMapping['${item.id}'] = {...(currentMapping['${item.id}']||{}), syrveId: this.value}"/>
+      <input type="text" data-item="${item.id}" data-type="iikoId"
+        placeholder="iiko UUID" style="padding:4px 6px;font-size:11px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);width:100%"
+        value="${existing.iikoId||''}"
+        onchange="currentMapping['${item.id}'] = {...(currentMapping['${item.id}']||{}), iikoId: this.value}"/>
     </div>`;
   }).join('');
 }
@@ -5961,28 +5980,45 @@ window.loadPOSProductsForMapping = loadPOSProductsForMapping;
 window.loadExistingMapping = loadExistingMapping;
 
 window.autoMapProducts = async function() {
-  if(!posProducts.poster.length && !posProducts.syrve.length) {
-    notify(t('notifLoadPOSFirst'),'err');
+  if(!posProducts.poster.length && !posProducts.syrve.length && !posProducts.iiko.length) {
+    notify(t('notifLoadPOSFirst')||'Спочатку завантажте продукти з POS','err');
     return;
   }
   let matched = 0;
-  const normalize = s => s.toLowerCase()
-    .replace(/[''`]/g,'')
-    .replace(/\s+/g,' ')
-    .trim();
+  const normalize = s => s.toLowerCase().replace(/[''`]/g,'').replace(/\s+/g,' ').trim();
 
   items.forEach(item => {
     const name = normalize(item.name);
-    if(posProducts.poster.length) {
-      // Точний збіг
-      let found = posProducts.poster.find(p => normalize(p.name) === name);
-      // Частковий збіг
-      if(!found) found = posProducts.poster.find(p => {
-        const pName = normalize(p.name);
-        return pName.includes(name) || name.includes(pName);
+    const exactOrPartial = (list) => {
+      let found = list.find(p => normalize(p.name) === name);
+      if(!found) found = list.find(p => {
+        const pn = normalize(p.name);
+        return pn.includes(name) || name.includes(pn);
       });
+      return found;
+    };
+
+    // Poster
+    if(posProducts.poster.length) {
+      const found = exactOrPartial(posProducts.poster);
       if(found) {
         currentMapping[item.id] = { ...(currentMapping[item.id]||{}), posterId: found.id };
+        matched++;
+      }
+    }
+    // Syrve
+    if(posProducts.syrve.length) {
+      const found = exactOrPartial(posProducts.syrve);
+      if(found) {
+        currentMapping[item.id] = { ...(currentMapping[item.id]||{}), syrveId: found.id };
+        matched++;
+      }
+    }
+    // iiko
+    if(posProducts.iiko.length) {
+      const found = exactOrPartial(posProducts.iiko);
+      if(found) {
+        currentMapping[item.id] = { ...(currentMapping[item.id]||{}), iikoId: found.id };
         matched++;
       }
     }
