@@ -5445,21 +5445,10 @@ window.enhancePhotoWithAI = async function() {
     const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     const token=await getAuth().currentUser?.getIdToken();
 
-    // Завантажуємо фото → base64
-    const imgRes=await fetch(photoUrl);
-    const blob=await imgRes.blob();
-    const mimeType=blob.type||'image/jpeg';
-    const base64=await new Promise((res,rej)=>{
-      const r=new FileReader();
-      r.onload=()=>res(r.result.split(',')[1]);
-      r.onerror=rej;
-      r.readAsDataURL(blob);
-    });
-
     const resp=await fetch(`${window.__CF_URL}/enhanceFoodPhoto`,{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-      body:JSON.stringify({venueId,imageBase64:base64,mimeType}),
+      body:JSON.stringify({venueId, photoUrl, mimeType: 'image/jpeg'}),
     });
     const data=await resp.json();
 
