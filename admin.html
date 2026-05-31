@@ -2646,7 +2646,7 @@ var I18N = {
     popular:'ПОПУЛЯРНИЙ',
     choosePlanBtn:'Обрати',
     currentPlanLbl:'Поточний тариф',
-    feat20Dishes:'20 страв',
+    feat20Dishes:'20 страв', paid:'Оплачено', pending:'Очікує', failed:'Помилка',
     feat100Orders:'100 замовлень/міс',
     featBasicDesign:'Базовий дизайн',
     feat80Dishes:'80 страв',
@@ -3034,7 +3034,7 @@ var I18N = {
     popular:'POPULAR',
     choosePlanBtn:'Choose',
     currentPlanLbl:'Current plan',
-    feat20Dishes:'20 dishes',
+    feat20Dishes:'20 dishes', paid:'Paid', pending:'Pending', failed:'Failed',
     feat100Orders:'100 orders/mo',
     featBasicDesign:'Basic design',
     feat80Dishes:'80 dishes',
@@ -3422,7 +3422,7 @@ var I18N = {
     popular:'POPULARNY',
     choosePlanBtn:'Wybierz',
     currentPlanLbl:'Aktualny plan',
-    feat20Dishes:'20 dań',
+    feat20Dishes:'20 dań', paid:'Opłacono', pending:'Oczekuje', failed:'Błąd',
     feat100Orders:'100 zamówień/mies',
     featBasicDesign:'Podstawowy wygląd',
     feat80Dishes:'80 dań',
@@ -3810,7 +3810,7 @@ var I18N = {
     popular:'BELIEBT',
     choosePlanBtn:'Wählen',
     currentPlanLbl:'Aktueller Tarif',
-    feat20Dishes:'20 Gerichte',
+    feat20Dishes:'20 Gerichte', paid:'Bezahlt', pending:'Ausstehend', failed:'Fehler',
     feat100Orders:'100 Bestellungen/Mo',
     featBasicDesign:'Basisdesign',
     feat80Dishes:'80 Gerichte',
@@ -4198,7 +4198,7 @@ var I18N = {
     popular:'POPULAR',
     choosePlanBtn:'Alegeți',
     currentPlanLbl:'Plan curent',
-    feat20Dishes:'20 preparate',
+    feat20Dishes:'20 preparate', paid:'Plătit', pending:'În așteptare', failed:'Eroare',
     feat100Orders:'100 comenzi/lună',
     featBasicDesign:'Design de bază',
     feat80Dishes:'80 preparate',
@@ -4586,7 +4586,7 @@ var I18N = {
     popular:'POPULAR',
     choosePlanBtn:'Elegir',
     currentPlanLbl:'Plan actual',
-    feat20Dishes:'20 platos',
+    feat20Dishes:'20 platos', paid:'Pagado', pending:'Pendiente', failed:'Error',
     feat100Orders:'100 pedidos/mes',
     featBasicDesign:'Diseño básico',
     feat80Dishes:'80 platos',
@@ -4974,7 +4974,7 @@ var I18N = {
     popular:'POPULARNO',
     choosePlanBtn:'Odaberi',
     currentPlanLbl:'Trenutni plan',
-    feat20Dishes:'20 jela',
+    feat20Dishes:'20 jela', paid:'Plaćeno', pending:'Na čekanju', failed:'Greška',
     feat100Orders:'100 narudžbina/mj',
     featBasicDesign:'Osnovni dizajn',
     feat80Dishes:'80 jela',
@@ -5901,13 +5901,34 @@ async function loadBilling(){
     }
     const itemsSnap=await getDocs(collection(db,'venues',venueId,'items'));
     const ordSnap=await getDocs(collection(db,'venues',venueId,'orders'));
-    const limits={free:{items:20,orders:100},trial:{items:500,orders:5000},starter:{items:80,orders:500},pro:{items:500,orders:5000},enterprise:{items:99999,orders:99999}};
+    const monthKey=new Date().toISOString().slice(0,7);
+    const aiSnap=await getDocs(collection(db,'venues',venueId,'ai_usage'));
+    const aiDoc=aiSnap.docs.find(d=>d.id===monthKey);
+    const aiUsed=aiDoc?.data()?.enhanceCount||0;
+    const limits={free:{items:20,orders:100,ai:0},trial:{items:500,orders:5000,ai:10},starter:{items:80,orders:500,ai:10},pro:{items:500,orders:5000,ai:50},enterprise:{items:99999,orders:99999,ai:-1}};
     const lim=limits[plan]||limits.free;
-    document.getElementById('usage-info').innerHTML=`${t('dishesCount')}: <b>${itemsSnap.size}/${lim.items}</b><br/>${t('ordersCount')}: <b>${ordSnap.size}/${lim.orders}</b>`;
+    const aiStr=lim.ai===-1?'∞':lim.ai;
+    document.getElementById('usage-info').innerHTML=
+      `${t('dishesCount')}: <b>${itemsSnap.size}/${lim.items}</b><br/>` +
+      `${t('ordersCount')}: <b>${ordSnap.filter?ordSnap.size:0}/${lim.orders}</b><br/>` +
+      `✨ AI: <b>${aiUsed}/${aiStr}</b>`;
     renderBillingPlanCards(plan);
     const paymSnap=await getDocs(collection(db,'payments'));
     const payments=paymSnap.docs.map(d=>({id:d.id,...d.data()})).filter(p=>p.venueId===venueId).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-    if(payments.length){document.getElementById('billing-history-wrap').innerHTML=payments.map(p=>`<div class="bh-row"><div class="bh-status ${p.status==='success'?'bh-paid':p.status==='pending'?'bh-pending':'bh-failed'}"></div><div style="flex:1"><div style="font-weight:500">${PLANS_BILLING[p.plan]?.name||p.plan} тариф</div><div style="font-size:11px;color:var(--muted)">${p.createdAt?new Date(p.createdAt.seconds*1000).toLocaleDateString('uk-UA'):''}</div></div><div style="font-weight:600">€${(p.amount/100)||0}</div><div style="font-size:11px;margin-left:.5rem;color:${p.status==='success'?'var(--green)':p.status==='pending'?'var(--amber)':'var(--red)'}">${p.status==='success'?'Оплачено':p.status==='pending'?'Очікує':'Помилка'}</div></div>`).join('');}
+    if(payments.length){
+      document.getElementById('billing-history-wrap').innerHTML=payments.map(p=>{
+        const statusLabel = p.status==='success' ? t('paid')||'Оплачено' : p.status==='pending' ? t('pending')||'Очікує' : t('failed')||'Помилка';
+        const statusColor = p.status==='success'?'var(--green)':p.status==='pending'?'var(--amber)':'var(--red)';
+        const planName = PLANS_BILLING[p.plan]?.name||p.plan;
+        const date = p.createdAt ? new Date(p.createdAt.seconds*1000).toLocaleDateString(adminLang==='uk'?'uk-UA':'en-GB') : '';
+        return `<div class="bh-row">
+          <div class="bh-status ${p.status==='success'?'bh-paid':p.status==='pending'?'bh-pending':'bh-failed'}"></div>
+          <div style="flex:1"><div style="font-weight:500">${planName}</div><div style="font-size:11px;color:var(--muted)">${date}</div></div>
+          <div style="font-weight:600">€${(p.amount/100)||0}</div>
+          <div style="font-size:11px;margin-left:.5rem;color:${statusColor}">${statusLabel}</div>
+        </div>`;
+      }).join('');
+    }
   }catch(e){console.warn('loadBilling:',e.message);}
 }
 
