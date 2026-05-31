@@ -7812,28 +7812,59 @@ let allCustomers = [];
 
 async function loadCustomers() {
   if(!db||!window.__FS) return;
-  const {collection, getDocs, query, orderBy} = window.__FS;
+  const {collection, getDocs} = window.__FS;
+  document.getElementById('customers-sub').textContent = t('loading')||'Завантаження...';
   try {
-    const snap = await getDocs(query(
-      collection(db,'venues',venueId,'customers'),
-      orderBy('lastOrderAt','desc')
-    ));
-    allCustomers = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    // Будуємо список клієнтів з замовлень
+    const snap = await getDocs(collection(db,'venues',venueId,'orders'));
+    const orders = snap.docs.map(d => d.data())
+      .filter(o => o.orderType !== 'tips' && o.clientPhone);
+
+    // Групуємо по телефону
+    const byPhone = {};
+    orders.forEach(o => {
+      const phone = o.clientPhone || '';
+      if(!phone) return;
+      if(!byPhone[phone]) {
+        byPhone[phone] = {
+          phone,
+          name: o.clientName || 'Гість',
+          ordersCount: 0,
+          totalSpent: 0,
+          firstOrderAt: null,
+          lastOrderAt: null,
+        };
+      }
+      const c = byPhone[phone];
+      if(o.clientName && o.clientName !== 'Гість') c.name = o.clientName;
+      c.ordersCount++;
+      c.totalSpent += o.total || 0;
+      const ts = o.createdAt?.seconds || 0;
+      if(!c.firstOrderAt || ts < c.firstOrderAt.seconds) c.firstOrderAt = o.createdAt;
+      if(!c.lastOrderAt  || ts > c.lastOrderAt.seconds)  c.lastOrderAt  = o.createdAt;
+    });
+
+    allCustomers = Object.values(byPhone)
+      .sort((a,b) => (b.lastOrderAt?.seconds||0) - (a.lastOrderAt?.seconds||0));
+
     renderCustomers(allCustomers);
 
     // Статистика
     document.getElementById('cst-total').textContent = allCustomers.length;
     const monthAgo = new Date(); monthAgo.setMonth(monthAgo.getMonth()-1);
-    const newCount = allCustomers.filter(c => c.firstOrderAt?.seconds*1000 > monthAgo.getTime()).length;
+    const newCount    = allCustomers.filter(c => (c.firstOrderAt?.seconds||0)*1000 > monthAgo.getTime()).length;
     const repeatCount = allCustomers.filter(c => c.ordersCount > 1).length;
-    const avgSpend = allCustomers.length
-      ? Math.round(allCustomers.reduce((s,c) => s + (c.totalSpent||0)/( c.ordersCount||1), 0) / allCustomers.length)
+    const avgSpend    = allCustomers.length
+      ? Math.round(allCustomers.reduce((s,c) => s + (c.totalSpent||0)/(c.ordersCount||1), 0) / allCustomers.length)
       : 0;
-    document.getElementById('cst-new').textContent = newCount;
+    document.getElementById('cst-new').textContent    = newCount;
     document.getElementById('cst-repeat').textContent = repeatCount;
-    document.getElementById('cst-avg').textContent = avgSpend + ' ₴';
-    document.getElementById('customers-sub').textContent = allCustomers.length + ' '+(t('clientsCount')||t('povtornykh'));
-  } catch(e) { console.warn('loadCustomers:', e.message); }
+    document.getElementById('cst-avg').textContent    = avgSpend + ' ₴';
+    document.getElementById('customers-sub').textContent = allCustomers.length + ' ' + (t('clientsCount')||'клієнтів');
+  } catch(e) {
+    console.warn('loadCustomers:', e.message);
+    document.getElementById('customers-sub').textContent = 'Помилка: ' + e.message;
+  }
 }
 
 function renderCustomers(list) {
