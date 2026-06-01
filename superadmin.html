@@ -742,12 +742,11 @@ window.saveVenue = async function() {
   try {
     const venueId = editVenueId || slug;
 
+    const venueData = { plan, status, adminEmail: email };
+    if (!editVenueId) venueData.createdAt = serverTimestamp();
+
     // Зберігаємо метадані закладу
-    await setDoc(doc(db,'venues',venueId), {
-      plan, status,
-      adminEmail: email,
-      createdAt: editVenueId ? undefined : serverTimestamp(),
-    }, { merge: true });
+    await setDoc(doc(db,'venues',venueId), venueData, { merge: true });
 
     // Зберігаємо налаштування закладу
     await setDoc(doc(db,'venues',venueId,'settings','main'), {
