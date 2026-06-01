@@ -385,6 +385,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <button class="nav-item" onclick="nav(this,'t-billing')" data-i18n="subscription">💳 Підписка</button>
       <button class="nav-item" onclick="nav(this,'t-ordering')" data-i18n="ordering">📋 Налаш. замовлень</button>
       <button class="nav-item" onclick="nav(this,'t-settings')" data-i18n="settings">⚙️ Налаштування</button>
+      <button class="nav-item" onclick="nav(this,'t-delivery')" data-i18n="deliveryIntegrations">🚚 Інтеграції доставок</button>
     </div>
     <div class="sb-bottom">
       <button class="btn btn-outline btn-sm" style="flex:1" data-i18n="viewMenuBtn" onclick="window.open('menu.html?v=temari','_blank')">👁 Переглянути</button>
@@ -823,7 +824,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <div style="font-size:13px;font-weight:500" data-i18n="allowCash" data-i18n="allowCash">Дозволити оплату готівкою / при отриманні</div>
               <div style="font-size:11px;color:var(--muted);margin-top:2px" data-i18n="payModeOptional">Клієнт може обрати "Оплата при отриманні" замість онлайн-оплати</div>
             </div>
-            <label class="sw"><input type="checkbox" id="allow-cash" checked/><span class="sw-slider"></span></label>
+            <label class="sw"><input type="checkbox" id="allow-cash" checked onchange="savePayments()"/><span class="sw-slider"></span></label>
           </div>
         </div>
 
@@ -1892,6 +1893,163 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
   </div>
 </div>
 
+<!-- DELIVERY INTEGRATIONS TAB -->
+<div id="t-delivery" class="tab-section">
+  <div class="topbar">
+    <div>
+      <div class="page-title" data-i18n="deliveryIntegrations">🚚 Інтеграції доставок</div>
+      <div class="page-sub" data-i18n="deliveryIntegrationsDesc">Підключення служб доставки та маркетплейсів їжі</div>
+    </div>
+    <button class="btn btn-accent btn-sm" onclick="saveDeliveryIntegrations()" data-i18n="save">💾 Зберегти</button>
+  </div>
+  <div class="content">
+
+    <!-- INFO -->
+    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:.875rem;margin-bottom:1.25rem;font-size:12px;color:#1D4ED8">
+      <b>ℹ️</b> <span data-i18n="deliveryWebhookInfo">Для кожної служби доставки скопіюйте Webhook URL нижче і вставте його в налаштуваннях партнерського кабінету служби. Замовлення автоматично з'являться в розділі "Замовлення".</span>
+    </div>
+
+    <!-- WEBHOOK URL -->
+    <div class="settings-section" style="margin-bottom:1rem">
+      <h3 data-i18n="yourWebhookUrl">🔗 Ваш Webhook URL</h3>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <div style="flex:1;background:var(--bg2);border-radius:8px;padding:.625rem .875rem;font-size:12px;font-family:monospace;word-break:break-all" id="delivery-webhook-url"></div>
+        <button class="btn btn-outline btn-sm" onclick="copyDeliveryWebhook()" data-i18n="copyLink">📋</button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:.375rem" data-i18n="deliveryWebhookNote">Вставте цей URL в Glovo Partner Portal, Bolt Food Partner Hub тощо як Webhook для нових замовлень</div>
+    </div>
+
+    <!-- GLOVO -->
+    <div class="settings-section" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <div style="width:40px;height:40px;background:#FFC244;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem">🟡</div>
+          <div>
+            <div style="font-weight:600">Glovo</div>
+            <div class="pos-status off" id="glovo-status" data-i18n="notConnected">Не підключено</div>
+          </div>
+        </div>
+        <label class="sw"><input type="checkbox" id="glovo-enabled" onchange="toggleDelivery('glovo',this.checked)"/><span class="sw-slider"></span></label>
+      </div>
+      <div id="glovo-fields" style="display:none;flex-direction:column;gap:.625rem">
+        <div>
+          <label class="pay-field-label">Store ID</label>
+          <input type="text" id="glovo-store-id" placeholder="YOUR-STORE-ID"/>
+        </div>
+        <div>
+          <label class="pay-field-label">API Token (з Glovo Partner Portal)</label>
+          <input type="text" id="glovo-token" placeholder="Bearer token"/>
+        </div>
+        <div style="background:var(--bg2);border-radius:8px;padding:.625rem;font-size:11px;color:var(--muted)">
+          📋 <span data-i18n="glovoSetupNote">Зареєструйте Webhook URL вище в <a href="https://qcommerce-integrations.glovoapp.com" target="_blank" style="color:var(--accent)">Glovo Partner Portal</a> → Integrations → Webhook</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOLT FOOD -->
+    <div class="settings-section" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <div style="width:40px;height:40px;background:#34D186;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem">⚡</div>
+          <div>
+            <div style="font-weight:600">Bolt Food</div>
+            <div class="pos-status off" id="bolt-status" data-i18n="notConnected">Не підключено</div>
+          </div>
+        </div>
+        <label class="sw"><input type="checkbox" id="bolt-enabled" onchange="toggleDelivery('bolt',this.checked)"/><span class="sw-slider"></span></label>
+      </div>
+      <div id="bolt-fields" style="display:none;flex-direction:column;gap:.625rem">
+        <div>
+          <label class="pay-field-label">Restaurant ID</label>
+          <input type="text" id="bolt-restaurant-id" placeholder="restaurant_id"/>
+        </div>
+        <div>
+          <label class="pay-field-label">API Key (з Bolt Food Partner Hub)</label>
+          <input type="text" id="bolt-api-key" placeholder="API key"/>
+        </div>
+        <div style="background:var(--bg2);border-radius:8px;padding:.625rem;font-size:11px;color:var(--muted)">
+          📋 <span data-i18n="boltSetupNote">Зареєструйте Webhook URL в <a href="https://partners.food.bolt.eu" target="_blank" style="color:var(--accent)">Bolt Food Partner Hub</a> → Settings → Integrations</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOKO -->
+    <div class="settings-section" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <div style="width:40px;height:40px;background:#FF6B35;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem">🚲</div>
+          <div>
+            <div style="font-weight:600">Loko</div>
+            <div class="pos-status off" id="loko-status" data-i18n="notConnected">Не підключено</div>
+          </div>
+        </div>
+        <label class="sw"><input type="checkbox" id="loko-enabled" onchange="toggleDelivery('loko',this.checked)"/><span class="sw-slider"></span></label>
+      </div>
+      <div id="loko-fields" style="display:none;flex-direction:column;gap:.625rem">
+        <div>
+          <label class="pay-field-label">API Key (з Loko кабінету)</label>
+          <input type="text" id="loko-api-key" placeholder="API key"/>
+        </div>
+        <div>
+          <label class="pay-field-label">Store ID</label>
+          <input type="text" id="loko-store-id" placeholder="store_id"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAGE FOOD -->
+    <div class="settings-section" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <div style="width:40px;height:40px;background:linear-gradient(135deg,#C1440E,#8B2500);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;font-family:var(--font-head)">MAGE</div>
+          <div>
+            <div style="font-weight:600">Mage Food</div>
+            <div class="pos-status off" id="magefood-status" data-i18n="notConnected">Не підключено</div>
+          </div>
+        </div>
+        <label class="sw"><input type="checkbox" id="magefood-enabled" onchange="toggleDelivery('magefood',this.checked)"/><span class="sw-slider"></span></label>
+      </div>
+      <div id="magefood-fields" style="display:none;flex-direction:column;gap:.625rem">
+        <div>
+          <label class="pay-field-label" data-i18n="webhookUrl">Webhook URL для отримання замовлень</label>
+          <input type="text" id="magefood-webhook-url" placeholder="https://api.magefood.com/webhook/orders"/>
+        </div>
+        <div>
+          <label class="pay-field-label">API Key</label>
+          <input type="text" id="magefood-api-key" placeholder="API key від Mage Food"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- ВЛАСНА ДОСТАВКА -->
+    <div class="settings-section" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
+        <div style="display:flex;align-items:center;gap:.75rem">
+          <div style="width:40px;height:40px;background:#6C63FF;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem">🏍️</div>
+          <div>
+            <div style="font-weight:600" data-i18n="ownDelivery">Власна доставка</div>
+            <div class="pos-status off" id="own-delivery-status" data-i18n="notConnected">Не підключено</div>
+          </div>
+        </div>
+        <label class="sw"><input type="checkbox" id="own-delivery-enabled" onchange="toggleDelivery('own',this.checked)"/><span class="sw-slider"></span></label>
+      </div>
+      <div id="own-delivery-fields" style="display:none;flex-direction:column;gap:.625rem">
+        <div>
+          <label class="pay-field-label" data-i18n="deliveryOutboundWebhook">URL для відправки даних замовлень (outbound webhook)</label>
+          <input type="url" id="own-delivery-webhook" placeholder="https://your-delivery-system.com/orders"/>
+          <div style="font-size:11px;color:var(--muted);margin-top:.25rem" data-i18n="ownDeliveryNote">На цей URL будуть надсилатись всі нові замовлення з доставкою у форматі JSON</div>
+        </div>
+        <div>
+          <label class="pay-field-label" data-i18n="webhookSecret">Secret key (необов'язково)</label>
+          <input type="text" id="own-delivery-secret" placeholder="для підпису запитів"/>
+        </div>
+        <button class="btn btn-outline btn-sm" style="width:fit-content" onclick="testOwnDeliveryWebhook()" data-i18n="testWebhook">🧪 Тест webhook</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- ITEM MODAL -->
 <div class="overlay" id="modal-item" onclick="closeModal('modal-item')">
   <div class="modal" onclick="event.stopPropagation()">
@@ -2425,7 +2583,7 @@ var I18N = {
     venueName:'Назва закладу', venueCity:'Місто', venuePhone:'Телефон',
     venueAddress:'Адреса', venueHours:'Години роботи', venueTagline:'Слоган / кухня',
     venueLanguage:'Мова інтерфейсу адмін панелі', logoLbl:'Логотип', bannerLbl:'Банер',
-    settingsVenue:'⚙️ Налаштування закладу', wifiPassword:'📶 WiFi пароль', aboutVenue:'📝 Про заклад', socialLinks:'🔗 Соцмережі', googleMaps:'🌐 Google Maps', legalInfo:'📄 Правова інформація', companyInfo:'ℹ️ Інформація про компанію', cookiePolicy:'🍪 Політика cookie', termsOfUse:'📋 Умови користування', privacyPolicy:'🔒 Конфіденційність',
+    settingsVenue:'⚙️ Налаштування закладу', deliveryIntegrations:'🚚 Інтеграції доставок', deliveryIntegrationsDesc:'Підключення служб доставки та маркетплейсів їжі', deliveryWebhookInfo:'Скопіюйте Webhook URL і вставте в кабінет служби доставки', yourWebhookUrl:'🔗 Ваш Webhook URL', deliveryWebhookNote:'Вставте цей URL в Glovo Partner Portal, Bolt Food Partner Hub тощо', glovoSetupNote:'Зареєструйте Webhook URL в Glovo Partner Portal', boltSetupNote:'Зареєструйте Webhook URL в Bolt Food Partner Hub', ownDelivery:'Власна доставка', ownDeliveryNote:'На цей URL надсилатимуться всі нові замовлення', deliveryOutboundWebhook:'URL для відправки замовлень', webhookSecret:'Secret key', webhookUrl:'Webhook URL', testWebhook:'🧪 Тест webhook', wifiPassword:'📶 WiFi пароль', aboutVenue:'📝 Про заклад', socialLinks:'🔗 Соцмережі', googleMaps:'🌐 Google Maps', legalInfo:'📄 Правова інформація', companyInfo:'ℹ️ Інформація про компанію', cookiePolicy:'🍪 Політика cookie', termsOfUse:'📋 Умови користування', privacyPolicy:'🔒 Конфіденційність',
     // Налаштування замовлень
     orderTypes:'Типи замовлень', discounts:'Знижки',
     minOrder:'Мінімальне замовлення', deliveryCost:'Вартість доставки', freeFrom:'Безкоштовно від', freeTo:'До', deliveryZonesExample:'Приклад: Центр — 30 грн, Передмістя — 80 грн',
@@ -2815,7 +2973,7 @@ var I18N = {
     venueName:'Venue name', venueCity:'City', venuePhone:'Phone',
     venueAddress:'Address', venueHours:'Working hours', venueTagline:'Tagline / cuisine',
     venueLanguage:'Admin panel language', logoLbl:'Logo', bannerLbl:'Banner',
-    settingsVenue:'⚙️ Venue settings', wifiPassword:'📶 WiFi password', aboutVenue:'📝 About venue', socialLinks:'🔗 Social links', googleMaps:'🌐 Google Maps', legalInfo:'📄 Legal info', companyInfo:'ℹ️ Company info', cookiePolicy:'🍪 Cookie policy', termsOfUse:'📋 Terms of use', privacyPolicy:'🔒 Privacy policy',
+    settingsVenue:'⚙️ Venue settings', deliveryIntegrations:'🚚 Delivery Integrations', deliveryIntegrationsDesc:'Connect delivery services and food marketplaces', deliveryWebhookInfo:'Copy the Webhook URL and paste it into your delivery service cabinet', yourWebhookUrl:'🔗 Your Webhook URL', deliveryWebhookNote:'Paste this URL into Glovo Partner Portal, Bolt Food Partner Hub etc.', glovoSetupNote:'Register Webhook URL in Glovo Partner Portal', boltSetupNote:'Register Webhook URL in Bolt Food Partner Hub', ownDelivery:'Own Delivery', ownDeliveryNote:'All new orders will be sent to this URL', deliveryOutboundWebhook:'URL for sending orders', webhookSecret:'Secret key', webhookUrl:'Webhook URL', testWebhook:'🧪 Test webhook', wifiPassword:'📶 WiFi password', aboutVenue:'📝 About venue', socialLinks:'🔗 Social links', googleMaps:'🌐 Google Maps', legalInfo:'📄 Legal info', companyInfo:'ℹ️ Company info', cookiePolicy:'🍪 Cookie policy', termsOfUse:'📋 Terms of use', privacyPolicy:'🔒 Privacy policy',
     orderTypes:'Order types', discounts:'Discounts',
     minOrder:'Min. order', deliveryCost:'Delivery cost', freeFrom:'Free from', freeTo:'To', deliveryZonesExample:'Example: Downtown — 30 UAH, Suburbs — 80 UAH',
     minTime:'Min. time', deliveryZones:'Delivery zones',
@@ -3203,7 +3361,7 @@ var I18N = {
     venueName:'Nazwa lokalu', venueCity:'Miasto', venuePhone:'Telefon',
     venueAddress:'Adres', venueHours:'Godziny pracy', venueTagline:'Slogan / kuchnia',
     venueLanguage:'Język panelu administracyjnego', logoLbl:'Logo', bannerLbl:'Baner',
-    settingsVenue:'⚙️ Ustawienia lokalu', wifiPassword:'📶 Hasło WiFi', aboutVenue:'📝 O lokalu', socialLinks:'🔗 Media społecznościowe', googleMaps:'🌐 Google Maps', legalInfo:'📄 Informacje prawne', companyInfo:'ℹ️ Informacje o firmie', cookiePolicy:'🍪 Polityka cookies', termsOfUse:'📋 Warunki użytkowania', privacyPolicy:'🔒 Prywatność',
+    settingsVenue:'⚙️ Ustawienia lokalu', deliveryIntegrations:'🚚 Integracje dostaw', deliveryIntegrationsDesc:'Połącz usługi dostawcze i markety żywności', deliveryWebhookInfo:'Skopiuj URL webhooka i wklej w panelu usługi dostawczej', yourWebhookUrl:'🔗 Twój Webhook URL', deliveryWebhookNote:'Wklej ten URL w Glovo Partner Portal, Bolt Food Partner Hub itp.', glovoSetupNote:'Zarejestruj URL webhooka w Glovo Partner Portal', boltSetupNote:'Zarejestruj URL webhooka w Bolt Food Partner Hub', ownDelivery:'Własna dostawa', ownDeliveryNote:'Wszystkie nowe zamówienia będą wysyłane na ten URL', deliveryOutboundWebhook:'URL do wysyłania zamówień', webhookSecret:'Klucz tajny', webhookUrl:'Webhook URL', testWebhook:'🧪 Test webhooka', wifiPassword:'📶 Hasło WiFi', aboutVenue:'📝 O lokalu', socialLinks:'🔗 Media społecznościowe', googleMaps:'🌐 Google Maps', legalInfo:'📄 Informacje prawne', companyInfo:'ℹ️ Informacje o firmie', cookiePolicy:'🍪 Polityka cookies', termsOfUse:'📋 Warunki użytkowania', privacyPolicy:'🔒 Prywatność',
     orderTypes:'Typy zamówień', discounts:'Rabaty',
     minOrder:'Min. zamówienie', deliveryCost:'Koszt dostawy', freeFrom:'Bezpłatnie od', freeTo:'Do', deliveryZonesExample:'Przykład: Centrum — 30 UAH, Przedmieście — 80 UAH',
     minTime:'Min. czas', deliveryZones:'Strefy dostawy',
@@ -3591,7 +3749,7 @@ var I18N = {
     venueName:'Name des Lokals', venueCity:'Stadt', venuePhone:'Telefon',
     venueAddress:'Adresse', venueHours:'Öffnungszeiten', venueTagline:'Slogan / Küche',
     venueLanguage:'Sprache des Admin-Panels', logoLbl:'Logo', bannerLbl:'Banner',
-    settingsVenue:'⚙️ Lokalkeinstellungen', wifiPassword:'📶 WLAN-Passwort', aboutVenue:'📝 Über das Lokal', socialLinks:'🔗 Soziale Medien', googleMaps:'🌐 Google Maps', legalInfo:'📄 Rechtliche Infos', companyInfo:'ℹ️ Firmeninfo', cookiePolicy:'🍪 Cookie-Richtlinie', termsOfUse:'📋 Nutzungsbedingungen', privacyPolicy:'🔒 Datenschutz',
+    settingsVenue:'⚙️ Lokalkeinstellungen', deliveryIntegrations:'🚚 Lieferintegrationen', deliveryIntegrationsDesc:'Lieferdienste und Food-Marktplätze verbinden', deliveryWebhookInfo:'Kopieren Sie die Webhook-URL und fügen Sie sie im Dienstpanel ein', yourWebhookUrl:'🔗 Ihre Webhook-URL', deliveryWebhookNote:'URL in Glovo Partner Portal, Bolt Food Partner Hub einfügen', glovoSetupNote:'Webhook-URL im Glovo Partner Portal registrieren', boltSetupNote:'Webhook-URL im Bolt Food Partner Hub registrieren', ownDelivery:'Eigene Lieferung', ownDeliveryNote:'Alle neuen Bestellungen werden an diese URL gesendet', deliveryOutboundWebhook:'URL zum Senden von Bestellungen', webhookSecret:'Geheimer Schlüssel', webhookUrl:'Webhook URL', testWebhook:'🧪 Webhook testen', wifiPassword:'📶 WLAN-Passwort', aboutVenue:'📝 Über das Lokal', socialLinks:'🔗 Soziale Medien', googleMaps:'🌐 Google Maps', legalInfo:'📄 Rechtliche Infos', companyInfo:'ℹ️ Firmeninfo', cookiePolicy:'🍪 Cookie-Richtlinie', termsOfUse:'📋 Nutzungsbedingungen', privacyPolicy:'🔒 Datenschutz',
     orderTypes:'Bestellarten', discounts:'Rabatte',
     minOrder:'Mindestbestellung', deliveryCost:'Lieferkosten', freeFrom:'Kostenlos ab', freeTo:'Bis', deliveryZonesExample:'Beispiel: Zentrum — 30 UAH, Vorort — 80 UAH',
     minTime:'Mindestzeit', deliveryZones:'Lieferzonen',
@@ -3979,7 +4137,7 @@ var I18N = {
     venueName:'Numele localului', venueCity:'Oraș', venuePhone:'Telefon',
     venueAddress:'Adresă', venueHours:'Program de lucru', venueTagline:'Slogan / bucătărie',
     venueLanguage:'Limba panoului de administrare', logoLbl:'Logo', bannerLbl:'Banner',
-    settingsVenue:'⚙️ Setări local', wifiPassword:'📶 Parolă WiFi', aboutVenue:'📝 Despre local', socialLinks:'🔗 Rețele sociale', googleMaps:'🌐 Google Maps', legalInfo:'📄 Info legale', companyInfo:'ℹ️ Info companie', cookiePolicy:'🍪 Politică cookie', termsOfUse:'📋 Termeni utilizare', privacyPolicy:'🔒 Confidențialitate',
+    settingsVenue:'⚙️ Setări local', deliveryIntegrations:'🚚 Integrări livrare', deliveryIntegrationsDesc:'Conectați servicii de livrare și marketplace-uri', deliveryWebhookInfo:'Copiați URL-ul webhook și inserați în panoul serviciului', yourWebhookUrl:'🔗 URL-ul dvs. Webhook', deliveryWebhookNote:'Inserați acest URL în Glovo Partner Portal, Bolt Food Partner Hub etc.', glovoSetupNote:'Înregistrați URL-ul webhook în Glovo Partner Portal', boltSetupNote:'Înregistrați URL-ul webhook în Bolt Food Partner Hub', ownDelivery:'Livrare proprie', ownDeliveryNote:'Toate comenzile noi vor fi trimise la acest URL', deliveryOutboundWebhook:'URL pentru trimiterea comenzilor', webhookSecret:'Cheie secretă', webhookUrl:'URL Webhook', testWebhook:'🧪 Testați webhook-ul', wifiPassword:'📶 Parolă WiFi', aboutVenue:'📝 Despre local', socialLinks:'🔗 Rețele sociale', googleMaps:'🌐 Google Maps', legalInfo:'📄 Info legale', companyInfo:'ℹ️ Info companie', cookiePolicy:'🍪 Politică cookie', termsOfUse:'📋 Termeni utilizare', privacyPolicy:'🔒 Confidențialitate',
     orderTypes:'Tipuri de comenzi', discounts:'Reduceri',
     minOrder:'Comandă minimă', deliveryCost:'Cost livrare', freeFrom:'Gratuit de la', freeTo:'Până la', deliveryZonesExample:'Exemplu: Centru — 30 UAH, Suburbii — 80 UAH',
     minTime:'Timp minim', deliveryZones:'Zone de livrare',
@@ -4367,7 +4525,7 @@ var I18N = {
     venueName:'Nombre del local', venueCity:'Ciudad', venuePhone:'Teléfono',
     venueAddress:'Dirección', venueHours:'Horario de trabajo', venueTagline:'Eslogan / cocina',
     venueLanguage:'Idioma del panel de administración', logoLbl:'Logo', bannerLbl:'Banner',
-    settingsVenue:'⚙️ Ajustes del local', wifiPassword:'📶 Contraseña WiFi', aboutVenue:'📝 Sobre el local', socialLinks:'🔗 Redes sociales', googleMaps:'🌐 Google Maps', legalInfo:'📄 Info legal', companyInfo:'ℹ️ Info empresa', cookiePolicy:'🍪 Política cookies', termsOfUse:'📋 Términos de uso', privacyPolicy:'🔒 Privacidad',
+    settingsVenue:'⚙️ Ajustes del local', deliveryIntegrations:'🚚 Integraciones de entrega', deliveryIntegrationsDesc:'Conectar servicios de entrega y marketplaces', deliveryWebhookInfo:'Copie la URL del webhook y péguela en el panel del servicio', yourWebhookUrl:'🔗 Su URL de Webhook', deliveryWebhookNote:'Pegue esta URL en Glovo Partner Portal, Bolt Food Partner Hub etc.', glovoSetupNote:'Registre la URL del webhook en Glovo Partner Portal', boltSetupNote:'Registre la URL del webhook en Bolt Food Partner Hub', ownDelivery:'Entrega propia', ownDeliveryNote:'Todos los pedidos nuevos se enviarán a esta URL', deliveryOutboundWebhook:'URL para enviar pedidos', webhookSecret:'Clave secreta', webhookUrl:'URL Webhook', testWebhook:'🧪 Probar webhook', wifiPassword:'📶 Contraseña WiFi', aboutVenue:'📝 Sobre el local', socialLinks:'🔗 Redes sociales', googleMaps:'🌐 Google Maps', legalInfo:'📄 Info legal', companyInfo:'ℹ️ Info empresa', cookiePolicy:'🍪 Política cookies', termsOfUse:'📋 Términos de uso', privacyPolicy:'🔒 Privacidad',
     orderTypes:'Tipos de pedido', discounts:'Descuentos',
     minOrder:'Pedido mínimo', deliveryCost:'Costo de entrega', freeFrom:'Gratis desde', freeTo:'Hasta', deliveryZonesExample:'Ejemplo: Centro — 30 UAH, Suburbios — 80 UAH',
     minTime:'Tiempo mínimo', deliveryZones:'Zonas de entrega',
@@ -4755,7 +4913,7 @@ var I18N = {
     venueName:'Naziv lokala', venueCity:'Grad', venuePhone:'Telefon',
     venueAddress:'Adresa', venueHours:'Radno vrijeme', venueTagline:'Slogan / kuhinja',
     venueLanguage:'Jezik admin panela', logoLbl:'Logo', bannerLbl:'Baner',
-    settingsVenue:'⚙️ Podešavanja lokala', wifiPassword:'📶 WiFi lozinka', aboutVenue:'📝 O lokalu', socialLinks:'🔗 Društvene mreže', googleMaps:'🌐 Google Maps', legalInfo:'📄 Pravne info', companyInfo:'ℹ️ Info kompanija', cookiePolicy:'🍪 Politika kolačića', termsOfUse:'📋 Uvjeti korištenja', privacyPolicy:'🔒 Privatnost',
+    settingsVenue:'⚙️ Podešavanja lokala', deliveryIntegrations:'🚚 Integracije dostave', deliveryIntegrationsDesc:'Povežite dostavne službe i tržišta hrane', deliveryWebhookInfo:'Kopirajte Webhook URL i zalijepite ga u panel dostave', yourWebhookUrl:'🔗 Vaš Webhook URL', deliveryWebhookNote:'Zalijepite ovaj URL u Glovo Partner Portal, Bolt Food Partner Hub itd.', glovoSetupNote:'Registrirajte Webhook URL u Glovo Partner Portal', boltSetupNote:'Registrirajte Webhook URL u Bolt Food Partner Hub', ownDelivery:'Vlastita dostava', ownDeliveryNote:'Sve nove narudžbe bit će poslane na ovaj URL', deliveryOutboundWebhook:'URL za slanje narudžbi', webhookSecret:'Tajni ključ', webhookUrl:'Webhook URL', testWebhook:'🧪 Test webhook', wifiPassword:'📶 WiFi lozinka', aboutVenue:'📝 O lokalu', socialLinks:'🔗 Društvene mreže', googleMaps:'🌐 Google Maps', legalInfo:'📄 Pravne info', companyInfo:'ℹ️ Info kompanija', cookiePolicy:'🍪 Politika kolačića', termsOfUse:'📋 Uvjeti korištenja', privacyPolicy:'🔒 Privatnost',
     orderTypes:'Tipovi narudžbina', discounts:'Popusti',
     minOrder:'Minimalna narudžbina', deliveryCost:'Cijena dostave', freeFrom:'Besplatno od', freeTo:'Do', deliveryZonesExample:'Primjer: Centar — 30 UAH, Predgrađe — 80 UAH',
     minTime:'Minimalno vrijeme', deliveryZones:'Zone dostave',
@@ -6173,6 +6331,7 @@ window.savePOSMapping = async function() {
 // autoMapProducts визначено вище
 function selectMode(m){['instant','after','both'].forEach(id=>{document.getElementById('mode-'+id).classList.toggle('selected',id===m);const r=document.getElementById('radio-'+id);r.classList.toggle('on',id===m);});}
 function toggleProvider(id,on){document.getElementById('card-'+id).classList.toggle('enabled',on);document.getElementById('fields-'+id).style.display=on?'flex':'none';}
+window.toggleProvider=toggleProvider;
 window.selectMode=selectMode;window.toggleProvider=toggleProvider;
 // fiscal listener — handled by toggleFiscalMethod
 
@@ -6191,6 +6350,7 @@ window.nav = function(btn,tab){
   if(tab==='t-ordering')  loadOrderingSettings();
   if(tab==='t-customers') loadCustomers();
   if(tab==='t-tables') { loadTablesFromFirestore(); loadStaffFromFirestore(); }
+  if(tab==='t-delivery')  loadDeliveryIntegrations();
 };
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
@@ -7077,6 +7237,141 @@ async function openAddZone(){
 }
 window.openAddTable=openAddTable;window.saveTable=saveTable;window.openAddZone=openAddZone;
 
+// ══════════════════════════════════════════════════════════════
+// ІНТЕГРАЦІЇ ДОСТАВОК
+// ══════════════════════════════════════════════════════════════
+
+const DELIVERY_PROVIDERS = ['glovo','bolt','loko','magefood','own'];
+
+// Перемикач видимості полів
+window.toggleDelivery = function(provider, on) {
+  const fieldsId = provider === 'own' ? 'own-delivery-fields' : `${provider}-fields`;
+  const fields = document.getElementById(fieldsId);
+  const status = document.getElementById(provider === 'own' ? 'own-delivery-status' : `${provider}-status`);
+  if (fields) fields.style.display = on ? 'flex' : 'none';
+  if (status) {
+    status.textContent = on ? t('connected')||'Підключено' : t('notConnected')||'Не підключено';
+    status.className = 'pos-status ' + (on ? 'ok' : 'off');
+  }
+};
+
+// Завантаження налаштувань
+async function loadDeliveryIntegrations() {
+  if (!db || !window.__FS) return;
+  const { doc, getDoc } = window.__FS;
+
+  // Встановлюємо webhook URL
+  const webhookUrl = `${window.__CF_URL}/deliveryWebhook?venue=${venueId}`;
+  const urlEl = document.getElementById('delivery-webhook-url');
+  if (urlEl) urlEl.textContent = webhookUrl;
+
+  try {
+    const snap = await getDoc(doc(db, 'venues', venueId, 'settings', 'delivery'));
+    if (!snap.exists()) return;
+    const d = snap.data();
+
+    // Glovo
+    if (d.glovo) {
+      document.getElementById('glovo-enabled').checked = d.glovo.enabled || false;
+      if (d.glovo.storeId) document.getElementById('glovo-store-id').value = d.glovo.storeId;
+      if (d.glovo.token)   document.getElementById('glovo-token').value   = d.glovo.token;
+      toggleDelivery('glovo', d.glovo.enabled);
+    }
+    // Bolt Food
+    if (d.bolt) {
+      document.getElementById('bolt-enabled').checked = d.bolt.enabled || false;
+      if (d.bolt.restaurantId) document.getElementById('bolt-restaurant-id').value = d.bolt.restaurantId;
+      if (d.bolt.apiKey)       document.getElementById('bolt-api-key').value        = d.bolt.apiKey;
+      toggleDelivery('bolt', d.bolt.enabled);
+    }
+    // Loko
+    if (d.loko) {
+      document.getElementById('loko-enabled').checked = d.loko.enabled || false;
+      if (d.loko.apiKey)   document.getElementById('loko-api-key').value   = d.loko.apiKey;
+      if (d.loko.storeId)  document.getElementById('loko-store-id').value  = d.loko.storeId;
+      toggleDelivery('loko', d.loko.enabled);
+    }
+    // Mage Food
+    if (d.magefood) {
+      document.getElementById('magefood-enabled').checked = d.magefood.enabled || false;
+      if (d.magefood.webhookUrl) document.getElementById('magefood-webhook-url').value = d.magefood.webhookUrl;
+      if (d.magefood.apiKey)     document.getElementById('magefood-api-key').value     = d.magefood.apiKey;
+      toggleDelivery('magefood', d.magefood.enabled);
+    }
+    // Власна доставка
+    if (d.own) {
+      document.getElementById('own-delivery-enabled').checked = d.own.enabled || false;
+      if (d.own.webhookUrl) document.getElementById('own-delivery-webhook').value = d.own.webhookUrl;
+      if (d.own.secret)     document.getElementById('own-delivery-secret').value  = d.own.secret;
+      toggleDelivery('own', d.own.enabled);
+    }
+  } catch(e) { console.warn('loadDeliveryIntegrations:', e.message); }
+}
+
+// Збереження налаштувань
+window.saveDeliveryIntegrations = async function() {
+  if (!db || !window.__FS) return;
+  const { doc, setDoc } = window.__FS;
+  try {
+    const data = {
+      glovo: {
+        enabled:  document.getElementById('glovo-enabled')?.checked    || false,
+        storeId:  document.getElementById('glovo-store-id')?.value     || '',
+        token:    document.getElementById('glovo-token')?.value        || '',
+      },
+      bolt: {
+        enabled:      document.getElementById('bolt-enabled')?.checked       || false,
+        restaurantId: document.getElementById('bolt-restaurant-id')?.value   || '',
+        apiKey:       document.getElementById('bolt-api-key')?.value         || '',
+      },
+      loko: {
+        enabled: document.getElementById('loko-enabled')?.checked  || false,
+        apiKey:  document.getElementById('loko-api-key')?.value    || '',
+        storeId: document.getElementById('loko-store-id')?.value   || '',
+      },
+      magefood: {
+        enabled:    document.getElementById('magefood-enabled')?.checked      || false,
+        webhookUrl: document.getElementById('magefood-webhook-url')?.value    || '',
+        apiKey:     document.getElementById('magefood-api-key')?.value        || '',
+      },
+      own: {
+        enabled:    document.getElementById('own-delivery-enabled')?.checked  || false,
+        webhookUrl: document.getElementById('own-delivery-webhook')?.value    || '',
+        secret:     document.getElementById('own-delivery-secret')?.value     || '',
+      },
+      updatedAt: new Date().toISOString(),
+    };
+    await setDoc(doc(db, 'venues', venueId, 'settings', 'delivery'), data);
+    notify('✅ ' + (t('saved')||'Збережено'), 'ok');
+  } catch(e) { notify(t('notifError')+': '+e.message, 'err'); }
+};
+
+// Копіювання webhook URL
+window.copyDeliveryWebhook = function() {
+  const url = document.getElementById('delivery-webhook-url')?.textContent;
+  if (!url) return;
+  navigator.clipboard.writeText(url).then(() => notify('✅ URL скопійовано', 'ok'));
+};
+
+// Тест власного webhook
+window.testOwnDeliveryWebhook = async function() {
+  const url = document.getElementById('own-delivery-webhook')?.value;
+  if (!url) { notify(t('notifError')+': Вкажіть URL', 'err'); return; }
+  const secret = document.getElementById('own-delivery-secret')?.value || '';
+  try {
+    const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const res = await fetch(`${window.__CF_URL}/testDeliveryWebhook`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ venueId, webhookUrl: url, secret }),
+    });
+    const data = await res.json();
+    if (res.ok) notify('✅ Webhook спрацював! Статус: ' + (data.status || 'ok'), 'ok');
+    else notify('❌ ' + (data.error || 'Помилка'), 'err');
+  } catch(e) { notify('❌ ' + e.message, 'err'); }
+};
+
 function renderStaff(){
   const avatarHtml = s => s.avatar
     ? `<img src="${s.avatar}" style="width:36px;height:36px;border-radius:50%;object-fit:cover"/>`
@@ -7567,6 +7862,10 @@ async function loadPaymentSettings() {
     if(providers.mono)document.getElementById('mono-token')&&(document.getElementById('mono-token').value=providers.mono.token||'');
     if(providers.wfp){document.getElementById('wfp-account')&&(document.getElementById('wfp-account').value=providers.wfp.merchantAccount||'');document.getElementById('wfp-domain')&&(document.getElementById('wfp-domain').value=providers.wfp.domain||'');}
     if(d.paymentMode)selectMode(d.paymentMode);
+    if(d.allowCash !== undefined && document.getElementById('allow-cash'))
+      document.getElementById('allow-cash').checked = d.allowCash;
+    if(d.allowOnline !== undefined && document.getElementById('allow-online'))
+      document.getElementById('allow-online').checked = d.allowOnline;
   }catch(e){console.warn('loadPaymentSettings:',e.message);}
 }
 window.savePayments=async function(){
@@ -7583,7 +7882,9 @@ window.savePayments=async function(){
       // magepay — адмін не може змінювати токен, тільки суперадмін
     };
     const mode=document.querySelector('.mode-option.selected')?.id?.replace('mode-','')||'both';
-    const res=await fetch(`${window.__CF_URL}/savePaymentSettings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,providers,paymentMode:mode})});
+    const allowCash = document.getElementById('allow-cash')?.checked ?? true;
+    const allowOnline = document.getElementById('allow-online')?.checked ?? true;
+    const res=await fetch(`${window.__CF_URL}/savePaymentSettings`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({venueId,providers,paymentMode:mode,allowCash,allowOnline})});
     const data=await res.json();
     if(!res.ok){notify('Помилка: '+(data.error||''),'err');return;}
     notify('Налаштування платежів збережено!','ok');
