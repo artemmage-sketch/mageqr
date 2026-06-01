@@ -5186,13 +5186,15 @@ function deriveVenueFromEmail(email) {
 async function findVenueByUid(uid) {
   const {collection,getDocs,query,where} = window.__FS;
   try {
+    // Шукаємо по adminUid
     const snap = await getDocs(query(collection(db,'venues'),where('adminUid','==',uid)));
     if (!snap.empty) return snap.docs[0].id;
-    const all = await getDocs(collection(db,'venues'));
-    for (const vDoc of all.docs) {
-      const {getDoc,doc} = window.__FS;
-      const a = await getDoc(doc(db,'venues',vDoc.id,'admins',uid));
-      if (a.exists()) return vDoc.id;
+    // Шукаємо по adminEmail
+    const auth = (await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js')).getAuth();
+    const email = auth.currentUser?.email;
+    if (email) {
+      const snap2 = await getDocs(query(collection(db,'venues'),where('adminEmail','==',email)));
+      if (!snap2.empty) return snap2.docs[0].id;
     }
     return null;
   } catch(e) { console.warn('findVenueByUid:',e.message); return null; }
