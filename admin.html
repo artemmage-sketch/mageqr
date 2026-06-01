@@ -5167,6 +5167,15 @@ async function initFirebase() {
     venueId = await findVenueByUid(user.uid) || deriveVenueFromEmail(user.email);
     sessionStorage.setItem('__mq_venue', venueId);
     document.getElementById('sb-venue-name').textContent = venueId;
+
+    // Записуємо adminUid і adminEmail в документ venue для rules
+    try {
+      const {doc, setDoc} = window.__FS;
+      await setDoc(doc(db, 'venues', venueId), {
+        adminUid:   user.uid,
+        adminEmail: user.email,
+      }, { merge: true });
+    } catch(e) { console.warn('set adminUid:', e.message); }
     await Promise.all([loadSettings(), loadCats(), loadItems(), loadPlanPrices()]);
     subscribeOrders();
     renderMappingRows();
