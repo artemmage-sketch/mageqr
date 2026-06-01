@@ -1533,7 +1533,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                   <input type="number" id="ord-takeaway-min" value="40" placeholder="40"/>
                 </div>
                 <div class="field-row">
-                  <label class="field-label" data-i18n="minPrepTime">Крок вибору часу (хв)</label>
+                  <label class="field-label" data-i18n="stepTime">Крок вибору часу (хв)</label>
                   <input type="number" id="ord-takeaway-step" value="15" placeholder="15"/>
                 </div>
               </div>
@@ -1548,7 +1548,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                     <input type="time" id="ord-takeaway-from" value="10:00"/>
                   </div>
                   <div class="field-row">
-                    <label class="field-label">До</label>
+                    <label class="field-label" data-i18n="freeTo">До</label>
                     <input type="time" id="ord-takeaway-to" value="21:30"/>
                   </div>
                 </div>
@@ -1601,7 +1601,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                     <input type="time" id="ord-delivery-from" value="10:00"/>
                   </div>
                   <div class="field-row">
-                    <label class="field-label">До</label>
+                    <label class="field-label" data-i18n="freeTo">До</label>
                     <input type="time" id="ord-delivery-to" value="21:00"/>
                   </div>
                 </div>
@@ -1611,7 +1611,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
                 <label class="field-label" data-i18n="deliveryZones" data-i18n="deliveryZones">Зони доставки</label>
                 <div id="delivery-zones-list" style="margin-bottom:.5rem"></div>
                 <button class="btn btn-outline btn-sm" onclick="addDeliveryZone()" data-i18n="addZone">+ Додати зону</button>
-                <div style="font-size:11px;color:var(--muted);margin-top:.375rem">
+                <div style="font-size:11px;color:var(--muted);margin-top:.375rem" data-i18n="deliveryZonesExample">
                   Приклад: Центр — 30 грн, Передмістя — 80 грн
                 </div>
               </div>
@@ -2428,7 +2428,7 @@ var I18N = {
     settingsVenue:'⚙️ Налаштування закладу',
     // Налаштування замовлень
     orderTypes:'Типи замовлень', discounts:'Знижки',
-    minOrder:'Мінімальне замовлення', deliveryCost:'Вартість доставки', freeFrom:'Безкоштовно від',
+    minOrder:'Мінімальне замовлення', deliveryCost:'Вартість доставки', freeFrom:'Безкоштовно від', freeTo:'До', deliveryZonesExample:'Приклад: Центр — 30 грн, Передмістя — 80 грн',
     minTime:'Мінімальний час', deliveryZones:'Зони доставки',
     allowCash:'Дозволити готівку', allowOnline:'Дозволити онлайн оплату', askCutlery:'Запитувати прибори',
     // Загальне
@@ -2444,7 +2444,7 @@ var I18N = {
     discountPct:'Знижка (%)',
     freeDeliveryFrom:'Безкоштовна доставка від суми',
     minOrderUAH:'Мінімальна сума замовлення (грн)',
-    minPrepTime:'Мін. час готовності (хв)',
+    minPrepTime:'Мін. час готовності (хв)', stepTime:'Крок вибору часу (хв)',
     noActiveOrders:'Активних замовлень немає',
     orderingDesc:'Типи замовлень, доставка, години роботи',
     payAfterConfirm:'Після підтвердження закладом',
@@ -2817,7 +2817,7 @@ var I18N = {
     venueLanguage:'Admin panel language', logoLbl:'Logo', bannerLbl:'Banner',
     settingsVenue:'⚙️ Venue settings',
     orderTypes:'Order types', discounts:'Discounts',
-    minOrder:'Min. order', deliveryCost:'Delivery cost', freeFrom:'Free from',
+    minOrder:'Min. order', deliveryCost:'Delivery cost', freeFrom:'Free from', freeTo:'To', deliveryZonesExample:'Example: Downtown — 30 UAH, Suburbs — 80 UAH',
     minTime:'Min. time', deliveryZones:'Delivery zones',
     allowCash:'Allow cash payment', allowOnline:'Allow online payment', askCutlery:'Ask for cutlery',
     loading:'Loading...', language:'Interface language',
@@ -2832,7 +2832,7 @@ var I18N = {
     discountPct:'Discount (%)',
     freeDeliveryFrom:'Free delivery from amount',
     minOrderUAH:'Min. order amount (UAH)',
-    minPrepTime:'Min. prep time (min)',
+    minPrepTime:'Min. prep time (min)', stepTime:'Time step (min)',
     noActiveOrders:'No active orders',
     orderingDesc:'Order types, delivery, working hours',
     payAfterConfirm:'After venue confirmation',
@@ -3205,7 +3205,7 @@ var I18N = {
     venueLanguage:'Język panelu administracyjnego', logoLbl:'Logo', bannerLbl:'Baner',
     settingsVenue:'⚙️ Ustawienia lokalu',
     orderTypes:'Typy zamówień', discounts:'Rabaty',
-    minOrder:'Min. zamówienie', deliveryCost:'Koszt dostawy', freeFrom:'Bezpłatnie od',
+    minOrder:'Min. zamówienie', deliveryCost:'Koszt dostawy', freeFrom:'Bezpłatnie od', freeTo:'Do', deliveryZonesExample:'Przykład: Centrum — 30 UAH, Przedmieście — 80 UAH',
     minTime:'Min. czas', deliveryZones:'Strefy dostawy',
     allowCash:'Zezwól na gotówkę', allowOnline:'Zezwól na płatność online', askCutlery:'Pytaj o sztućce',
     loading:'Ładowanie...', language:'Język interfejsu',
@@ -3220,7 +3220,7 @@ var I18N = {
     discountPct:'Rabat (%)',
     freeDeliveryFrom:'Darmowa dostawa od kwoty',
     minOrderUAH:'Min. kwota zamówienia (UAH)',
-    minPrepTime:'Min. czas przygotowania (min)',
+    minPrepTime:'Min. czas przygotowania (min)', stepTime:'Krok czasu (min)',
     noActiveOrders:'Brak aktywnych zamówień',
     orderingDesc:'Typy zamówień, dostawa, godziny',
     payAfterConfirm:'Po potwierdzeniu lokalu',
@@ -3593,7 +3593,7 @@ var I18N = {
     venueLanguage:'Sprache des Admin-Panels', logoLbl:'Logo', bannerLbl:'Banner',
     settingsVenue:'⚙️ Lokalkeinstellungen',
     orderTypes:'Bestellarten', discounts:'Rabatte',
-    minOrder:'Mindestbestellung', deliveryCost:'Lieferkosten', freeFrom:'Kostenlos ab',
+    minOrder:'Mindestbestellung', deliveryCost:'Lieferkosten', freeFrom:'Kostenlos ab', freeTo:'Bis', deliveryZonesExample:'Beispiel: Zentrum — 30 UAH, Vorort — 80 UAH',
     minTime:'Mindestzeit', deliveryZones:'Lieferzonen',
     allowCash:'Barzahlung erlauben', allowOnline:'Online-Zahlung erlauben', askCutlery:'Besteck anfragen',
     loading:'Laden...', language:'Oberflächensprache',
@@ -3608,7 +3608,7 @@ var I18N = {
     discountPct:'Rabatt (%)',
     freeDeliveryFrom:'Kostenlose Lieferung ab Betrag',
     minOrderUAH:'Mindestbestellbetrag (UAH)',
-    minPrepTime:'Mind. Zubereitungszeit (Min)',
+    minPrepTime:'Mind. Zubereitungszeit (Min)', stepTime:'Zeitschritt (Min)',
     noActiveOrders:'Keine aktiven Bestellungen',
     orderingDesc:'Bestellarten, Lieferung, Öffnungszeiten',
     payAfterConfirm:'Nach Bestätigung',
@@ -3981,7 +3981,7 @@ var I18N = {
     venueLanguage:'Limba panoului de administrare', logoLbl:'Logo', bannerLbl:'Banner',
     settingsVenue:'⚙️ Setări local',
     orderTypes:'Tipuri de comenzi', discounts:'Reduceri',
-    minOrder:'Comandă minimă', deliveryCost:'Cost livrare', freeFrom:'Gratuit de la',
+    minOrder:'Comandă minimă', deliveryCost:'Cost livrare', freeFrom:'Gratuit de la', freeTo:'Până la', deliveryZonesExample:'Exemplu: Centru — 30 UAH, Suburbii — 80 UAH',
     minTime:'Timp minim', deliveryZones:'Zone de livrare',
     allowCash:'Permite numerar', allowOnline:'Permite plată online', askCutlery:'Întrebați despre tacâmuri',
     loading:'Se încarcă...', language:'Limba interfeței',
@@ -3996,7 +3996,7 @@ var I18N = {
     discountPct:'Reducere (%)',
     freeDeliveryFrom:'Livrare gratuită de la suma',
     minOrderUAH:'Sumă minimă (UAH)',
-    minPrepTime:'Timp min. preparare (min)',
+    minPrepTime:'Timp min. preparare (min)', stepTime:'Pas de timp (min)',
     noActiveOrders:'Nicio comandă activă',
     orderingDesc:'Tipuri comenzi, livrare, program',
     payAfterConfirm:'După confirmare',
@@ -4369,7 +4369,7 @@ var I18N = {
     venueLanguage:'Idioma del panel de administración', logoLbl:'Logo', bannerLbl:'Banner',
     settingsVenue:'⚙️ Ajustes del local',
     orderTypes:'Tipos de pedido', discounts:'Descuentos',
-    minOrder:'Pedido mínimo', deliveryCost:'Costo de entrega', freeFrom:'Gratis desde',
+    minOrder:'Pedido mínimo', deliveryCost:'Costo de entrega', freeFrom:'Gratis desde', freeTo:'Hasta', deliveryZonesExample:'Ejemplo: Centro — 30 UAH, Suburbios — 80 UAH',
     minTime:'Tiempo mínimo', deliveryZones:'Zonas de entrega',
     allowCash:'Permitir efectivo', allowOnline:'Permitir pago online', askCutlery:'Preguntar por cubiertos',
     loading:'Cargando...', language:'Idioma de la interfaz',
@@ -4384,7 +4384,7 @@ var I18N = {
     discountPct:'Descuento (%)',
     freeDeliveryFrom:'Entrega gratuita desde monto',
     minOrderUAH:'Monto mínimo (UAH)',
-    minPrepTime:'Tiempo mín. preparación (min)',
+    minPrepTime:'Tiempo mín. preparación (min)', stepTime:'Paso de tiempo (min)',
     noActiveOrders:'Sin pedidos activos',
     orderingDesc:'Tipos de pedido, entrega, horario',
     payAfterConfirm:'Tras confirmación',
@@ -4757,7 +4757,7 @@ var I18N = {
     venueLanguage:'Jezik admin panela', logoLbl:'Logo', bannerLbl:'Baner',
     settingsVenue:'⚙️ Podešavanja lokala',
     orderTypes:'Tipovi narudžbina', discounts:'Popusti',
-    minOrder:'Minimalna narudžbina', deliveryCost:'Cijena dostave', freeFrom:'Besplatno od',
+    minOrder:'Minimalna narudžbina', deliveryCost:'Cijena dostave', freeFrom:'Besplatno od', freeTo:'Do', deliveryZonesExample:'Primjer: Centar — 30 UAH, Predgrađe — 80 UAH',
     minTime:'Minimalno vrijeme', deliveryZones:'Zone dostave',
     allowCash:'Dozvoli gotovinu', allowOnline:'Dozvoli online plaćanje', askCutlery:'Pitaj za pribor',
     loading:'Učitavanje...', language:'Jezik interfejsa',
@@ -4772,7 +4772,7 @@ var I18N = {
     discountPct:'Popust (%)',
     freeDeliveryFrom:'Besplatna dostava od iznosa',
     minOrderUAH:'Minimalni iznos (UAH)',
-    minPrepTime:'Min. vrijeme pripreme (min)',
+    minPrepTime:'Min. vrijeme pripreme (min)', stepTime:'Korak vremena (min)',
     noActiveOrders:'Nema aktivnih narudžbina',
     orderingDesc:'Tipovi narudžbina, dostava, radno vrijeme',
     payAfterConfirm:'Nakon potvrde',
