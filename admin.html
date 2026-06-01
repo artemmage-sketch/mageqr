@@ -1748,11 +1748,11 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <input id="set-hours" type="text" placeholder="Пн-Нд: 10:00 — 22:00" data-i18n-ph="phHours"/>
             </div>
             <div class="field-row">
-              <label class="field-label">📶 WiFi пароль</label>
+              <label class="field-label" data-i18n="wifiPassword">📶 WiFi пароль</label>
               <input id="set-wifi" type="text" placeholder="mypassword123"/>
             </div>
             <div class="field-row span2">
-              <label class="field-label">📝 Про заклад (короткий опис)</label>
+              <label class="field-label" data-i18n="aboutVenue">📝 Про заклад</label>
               <textarea id="set-about" rows="3" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:var(--font);resize:vertical;outline:none" placeholder="Розкажіть про ваш заклад..."></textarea>
             </div>
           </div>
@@ -1760,10 +1760,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- СОЦМЕРЕЖІ -->
         <div class="settings-section">
-          <h3>🔗 Соцмережі та посилання</h3>
+          <h3 data-i18n="socialLinks">🔗 Соцмережі та посилання</h3>
           <div class="grid-2">
             <div class="field-row">
-              <label class="field-label">🌐 Google Maps / Google Business</label>
+              <label class="field-label" data-i18n="googleMaps">🌐 Google Maps / Google Business</label>
               <input id="set-social-google" type="text" placeholder="https://maps.google.com/..."/>
             </div>
             <div class="field-row">
@@ -1779,22 +1779,22 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
 
         <!-- ПРАВОВА ІНФОРМАЦІЯ -->
         <div class="settings-section">
-          <h3>📄 Правова інформація</h3>
+          <h3 data-i18n="legalInfo">📄 Правова інформація</h3>
           <div style="display:flex;flex-direction:column;gap:1rem">
             <div class="field-row">
-              <label class="field-label">ℹ️ Інформація про компанію</label>
+              <label class="field-label" data-i18n="companyInfo">ℹ️ Інформація про компанію</label>
               <textarea id="set-legal-company" rows="4" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:var(--font);resize:vertical;outline:none" placeholder="Юридична назва, реєстраційні дані..."></textarea>
             </div>
             <div class="field-row">
-              <label class="field-label">🍪 Політика використання файлів cookie</label>
+              <label class="field-label" data-i18n="cookiePolicy">🍪 Політика cookie</label>
               <textarea id="set-legal-cookie" rows="4" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:var(--font);resize:vertical;outline:none" placeholder="Ми використовуємо файли cookie..."></textarea>
             </div>
             <div class="field-row">
-              <label class="field-label">📋 Умови користування</label>
+              <label class="field-label" data-i18n="termsOfUse">📋 Умови користування</label>
               <textarea id="set-legal-terms" rows="4" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:var(--font);resize:vertical;outline:none" placeholder="Умови використання сервісу..."></textarea>
             </div>
             <div class="field-row">
-              <label class="field-label">🔒 Політика конфіденційності</label>
+              <label class="field-label" data-i18n="privacyPolicy">🔒 Політика конфіденційності</label>
               <textarea id="set-legal-privacy" rows="4" style="width:100%;padding:.5rem .75rem;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:14px;font-family:var(--font);resize:vertical;outline:none" placeholder="Ми захищаємо ваші персональні дані..."></textarea>
             </div>
           </div>
@@ -2425,7 +2425,7 @@ var I18N = {
     venueName:'Назва закладу', venueCity:'Місто', venuePhone:'Телефон',
     venueAddress:'Адреса', venueHours:'Години роботи', venueTagline:'Слоган / кухня',
     venueLanguage:'Мова інтерфейсу адмін панелі', logoLbl:'Логотип', bannerLbl:'Банер',
-    settingsVenue:'⚙️ Налаштування закладу',
+    settingsVenue:'⚙️ Налаштування закладу', wifiPassword:'📶 WiFi пароль', aboutVenue:'📝 Про заклад', socialLinks:'🔗 Соцмережі', googleMaps:'🌐 Google Maps', legalInfo:'📄 Правова інформація', companyInfo:'ℹ️ Інформація про компанію', cookiePolicy:'🍪 Політика cookie', termsOfUse:'📋 Умови користування', privacyPolicy:'🔒 Конфіденційність',
     // Налаштування замовлень
     orderTypes:'Типи замовлень', discounts:'Знижки',
     minOrder:'Мінімальне замовлення', deliveryCost:'Вартість доставки', freeFrom:'Безкоштовно від', freeTo:'До', deliveryZonesExample:'Приклад: Центр — 30 грн, Передмістя — 80 грн',
@@ -2815,7 +2815,7 @@ var I18N = {
     venueName:'Venue name', venueCity:'City', venuePhone:'Phone',
     venueAddress:'Address', venueHours:'Working hours', venueTagline:'Tagline / cuisine',
     venueLanguage:'Admin panel language', logoLbl:'Logo', bannerLbl:'Banner',
-    settingsVenue:'⚙️ Venue settings',
+    settingsVenue:'⚙️ Venue settings', wifiPassword:'📶 WiFi password', aboutVenue:'📝 About venue', socialLinks:'🔗 Social links', googleMaps:'🌐 Google Maps', legalInfo:'📄 Legal info', companyInfo:'ℹ️ Company info', cookiePolicy:'🍪 Cookie policy', termsOfUse:'📋 Terms of use', privacyPolicy:'🔒 Privacy policy',
     orderTypes:'Order types', discounts:'Discounts',
     minOrder:'Min. order', deliveryCost:'Delivery cost', freeFrom:'Free from', freeTo:'To', deliveryZonesExample:'Example: Downtown — 30 UAH, Suburbs — 80 UAH',
     minTime:'Min. time', deliveryZones:'Delivery zones',
@@ -3203,7 +3203,7 @@ var I18N = {
     venueName:'Nazwa lokalu', venueCity:'Miasto', venuePhone:'Telefon',
     venueAddress:'Adres', venueHours:'Godziny pracy', venueTagline:'Slogan / kuchnia',
     venueLanguage:'Język panelu administracyjnego', logoLbl:'Logo', bannerLbl:'Baner',
-    settingsVenue:'⚙️ Ustawienia lokalu',
+    settingsVenue:'⚙️ Ustawienia lokalu', wifiPassword:'📶 Hasło WiFi', aboutVenue:'📝 O lokalu', socialLinks:'🔗 Media społecznościowe', googleMaps:'🌐 Google Maps', legalInfo:'📄 Informacje prawne', companyInfo:'ℹ️ Informacje o firmie', cookiePolicy:'🍪 Polityka cookies', termsOfUse:'📋 Warunki użytkowania', privacyPolicy:'🔒 Prywatność',
     orderTypes:'Typy zamówień', discounts:'Rabaty',
     minOrder:'Min. zamówienie', deliveryCost:'Koszt dostawy', freeFrom:'Bezpłatnie od', freeTo:'Do', deliveryZonesExample:'Przykład: Centrum — 30 UAH, Przedmieście — 80 UAH',
     minTime:'Min. czas', deliveryZones:'Strefy dostawy',
@@ -3591,7 +3591,7 @@ var I18N = {
     venueName:'Name des Lokals', venueCity:'Stadt', venuePhone:'Telefon',
     venueAddress:'Adresse', venueHours:'Öffnungszeiten', venueTagline:'Slogan / Küche',
     venueLanguage:'Sprache des Admin-Panels', logoLbl:'Logo', bannerLbl:'Banner',
-    settingsVenue:'⚙️ Lokalkeinstellungen',
+    settingsVenue:'⚙️ Lokalkeinstellungen', wifiPassword:'📶 WLAN-Passwort', aboutVenue:'📝 Über das Lokal', socialLinks:'🔗 Soziale Medien', googleMaps:'🌐 Google Maps', legalInfo:'📄 Rechtliche Infos', companyInfo:'ℹ️ Firmeninfo', cookiePolicy:'🍪 Cookie-Richtlinie', termsOfUse:'📋 Nutzungsbedingungen', privacyPolicy:'🔒 Datenschutz',
     orderTypes:'Bestellarten', discounts:'Rabatte',
     minOrder:'Mindestbestellung', deliveryCost:'Lieferkosten', freeFrom:'Kostenlos ab', freeTo:'Bis', deliveryZonesExample:'Beispiel: Zentrum — 30 UAH, Vorort — 80 UAH',
     minTime:'Mindestzeit', deliveryZones:'Lieferzonen',
@@ -3979,7 +3979,7 @@ var I18N = {
     venueName:'Numele localului', venueCity:'Oraș', venuePhone:'Telefon',
     venueAddress:'Adresă', venueHours:'Program de lucru', venueTagline:'Slogan / bucătărie',
     venueLanguage:'Limba panoului de administrare', logoLbl:'Logo', bannerLbl:'Banner',
-    settingsVenue:'⚙️ Setări local',
+    settingsVenue:'⚙️ Setări local', wifiPassword:'📶 Parolă WiFi', aboutVenue:'📝 Despre local', socialLinks:'🔗 Rețele sociale', googleMaps:'🌐 Google Maps', legalInfo:'📄 Info legale', companyInfo:'ℹ️ Info companie', cookiePolicy:'🍪 Politică cookie', termsOfUse:'📋 Termeni utilizare', privacyPolicy:'🔒 Confidențialitate',
     orderTypes:'Tipuri de comenzi', discounts:'Reduceri',
     minOrder:'Comandă minimă', deliveryCost:'Cost livrare', freeFrom:'Gratuit de la', freeTo:'Până la', deliveryZonesExample:'Exemplu: Centru — 30 UAH, Suburbii — 80 UAH',
     minTime:'Timp minim', deliveryZones:'Zone de livrare',
@@ -4367,7 +4367,7 @@ var I18N = {
     venueName:'Nombre del local', venueCity:'Ciudad', venuePhone:'Teléfono',
     venueAddress:'Dirección', venueHours:'Horario de trabajo', venueTagline:'Eslogan / cocina',
     venueLanguage:'Idioma del panel de administración', logoLbl:'Logo', bannerLbl:'Banner',
-    settingsVenue:'⚙️ Ajustes del local',
+    settingsVenue:'⚙️ Ajustes del local', wifiPassword:'📶 Contraseña WiFi', aboutVenue:'📝 Sobre el local', socialLinks:'🔗 Redes sociales', googleMaps:'🌐 Google Maps', legalInfo:'📄 Info legal', companyInfo:'ℹ️ Info empresa', cookiePolicy:'🍪 Política cookies', termsOfUse:'📋 Términos de uso', privacyPolicy:'🔒 Privacidad',
     orderTypes:'Tipos de pedido', discounts:'Descuentos',
     minOrder:'Pedido mínimo', deliveryCost:'Costo de entrega', freeFrom:'Gratis desde', freeTo:'Hasta', deliveryZonesExample:'Ejemplo: Centro — 30 UAH, Suburbios — 80 UAH',
     minTime:'Tiempo mínimo', deliveryZones:'Zonas de entrega',
@@ -4755,7 +4755,7 @@ var I18N = {
     venueName:'Naziv lokala', venueCity:'Grad', venuePhone:'Telefon',
     venueAddress:'Adresa', venueHours:'Radno vrijeme', venueTagline:'Slogan / kuhinja',
     venueLanguage:'Jezik admin panela', logoLbl:'Logo', bannerLbl:'Baner',
-    settingsVenue:'⚙️ Podešavanja lokala',
+    settingsVenue:'⚙️ Podešavanja lokala', wifiPassword:'📶 WiFi lozinka', aboutVenue:'📝 O lokalu', socialLinks:'🔗 Društvene mreže', googleMaps:'🌐 Google Maps', legalInfo:'📄 Pravne info', companyInfo:'ℹ️ Info kompanija', cookiePolicy:'🍪 Politika kolačića', termsOfUse:'📋 Uvjeti korištenja', privacyPolicy:'🔒 Privatnost',
     orderTypes:'Tipovi narudžbina', discounts:'Popusti',
     minOrder:'Minimalna narudžbina', deliveryCost:'Cijena dostave', freeFrom:'Besplatno od', freeTo:'Do', deliveryZonesExample:'Primjer: Centar — 30 UAH, Predgrađe — 80 UAH',
     minTime:'Minimalno vrijeme', deliveryZones:'Zone dostave',
