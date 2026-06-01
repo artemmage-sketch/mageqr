@@ -5860,16 +5860,20 @@ async function loadBilling(){
     document.getElementById('cur-plan-name').textContent=planData.name;
     document.getElementById('cur-plan-name').style.color=planData.color;
     document.getElementById('cur-plan-desc').textContent=plan==='trial'?t('trialPeriod'):plan==='free'?t('free'):`€${planData.price}/${t('perMonth')}`;
-    // Статус підписки
-    if(vd.status === 'expired' || vd.status === 'payment_failed') {
+
+    // Статус підписки — попередження
+    const billingContent = document.querySelector('#t-billing .content');
+    if(billingContent && (vd.status === 'expired' || vd.status === 'payment_failed')) {
       const warn = document.createElement('div');
+      warn.id = 'billing-warn';
       warn.style.cssText = 'background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:.875rem;margin-bottom:1rem;font-size:13px;color:#DC2626';
       warn.innerHTML = vd.status === 'payment_failed'
-        ? `⚠️ ${t('paymentFailed')} — <a href="#" onclick="document.querySelector('[onclick*=t-billing]')?.click()" style="color:var(--accent)">${t('updateCard')}</a>`
-        : `⏰ ${t('subscriptionExpired')} — <a href="#" onclick="bindCard()" style="color:var(--accent)">${t('renewPlan')}</a>`;
-      document.getElementById('billing-wrap')?.prepend(warn);
+        ? `⚠️ ${t('paymentFailed')||'Помилка оплати'} — <a href="#" onclick="bindCard()" style="color:var(--accent)">${t('updateCard')||'Оновити картку'}</a>`
+        : `⏰ ${t('subscriptionExpired')||'Підписка закінчилась'} — <a href="#" onclick="bindCard()" style="color:var(--accent)">${t('renewPlan')||'Поновити'}</a>`;
+      if(!document.getElementById('billing-warn')) billingContent.prepend(warn);
     }
 
+    // Trial таймер
     if(plan==='trial'&&vd.trialEndsAt){
       const trialEnd=vd.trialEndsAt.seconds*1000;
       const daysLeft=Math.max(0,Math.ceil((trialEnd-Date.now())/86400000));
@@ -5881,24 +5885,32 @@ async function loadBilling(){
       const endDate=new Date(trialEnd);
       document.getElementById('trial-end-date').textContent=`${t('trialEndsOn')}: ${endDate.toLocaleDateString(adminLang==='uk'?'uk-UA':'en-GB',{day:'numeric',month:'long'})}`;
       document.getElementById('trial-block').style.display='block';
-    }else{document.getElementById('trial-block').style.display='none';}
+    }else{
+      document.getElementById('trial-block').style.display='none';
+    }
+
+    // Картка
     if(vd.recToken){
       document.getElementById('no-card-block').style.display='none';
       document.getElementById('has-card-block').style.display='block';
       document.getElementById('card-num-display').textContent=vd.cardMask||'**** **** **** ????';
       document.getElementById('card-exp-display').textContent=vd.cardExpiry||'';
     }
+
+    // Наступне списання
     if(vd.planEndsAt&&plan!=='trial'&&plan!=='free'){
       const nextDate=new Date(vd.planEndsAt.seconds*1000);
       document.getElementById('next-charge-date').textContent=nextDate.toLocaleDateString(adminLang==='uk'?'uk-UA':'en-GB',{day:'numeric',month:'long',year:'numeric'});
-      document.getElementById('next-charge-amount').textContent=`${t('willCharge')} €${planData.price}`;
+      document.getElementById('next-charge-amount').textContent=`${t('willCharge')||'Буде списано'} €${planData.price}`;
     }else if(plan==='trial'){
       document.getElementById('next-charge-date').textContent='—';
-      document.getElementById('next-charge-amount').textContent=t('afterTrialFree');
+      document.getElementById('next-charge-amount').textContent=t('afterTrialFree')||'Після trial — безкоштовно';
     }else{
       document.getElementById('next-charge-date').textContent='—';
-      document.getElementById('next-charge-amount').textContent=t('onlyAfterPlan');
+      document.getElementById('next-charge-amount').textContent=t('onlyAfterPlan')||'Після вибору тарифу';
     }
+
+    // Використання
     const itemsSnap=await getDocs(collection(db,'venues',venueId,'items'));
     const ordSnap=await getDocs(collection(db,'venues',venueId,'orders'));
     const monthKey=new Date().toISOString().slice(0,7);
@@ -5909,25 +5921,32 @@ async function loadBilling(){
     const lim=limits[plan]||limits.free;
     const aiStr=lim.ai===-1?'∞':lim.ai;
     document.getElementById('usage-info').innerHTML=
-      `${t('dishesCount')}: <b>${itemsSnap.size}/${lim.items}</b><br/>` +
-      `${t('ordersCount')}: <b>${ordSnap.filter?ordSnap.size:0}/${lim.orders}</b><br/>` +
+      `${t('dishesCount')||'Страв'}: <b>${itemsSnap.size}/${lim.items}</b><br/>` +
+      `${t('ordersCount')||'Замовлень'}: <b>${ordSnap.size}/${lim.orders}</b><br/>` +
       `✨ AI: <b>${aiUsed}/${aiStr}</b>`;
+
     renderBillingPlanCards(plan);
-    const paymSnap=await getDocs(collection(db,'payments'));
-    const payments=paymSnap.docs.map(d=>({id:d.id,...d.data()})).filter(p=>p.venueId===venueId).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+
+    // Історія платежів — з колекції venues/{venueId}/payments
+    const paymSnap=await getDocs(collection(db,'venues',venueId,'payments'));
+    const payments=paymSnap.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
     if(payments.length){
       document.getElementById('billing-history-wrap').innerHTML=payments.map(p=>{
-        const statusLabel = p.status==='success' ? t('paid')||'Оплачено' : p.status==='pending' ? t('pending')||'Очікує' : t('failed')||'Помилка';
-        const statusColor = p.status==='success'?'var(--green)':p.status==='pending'?'var(--amber)':'var(--red)';
-        const planName = PLANS_BILLING[p.plan]?.name||p.plan;
-        const date = p.createdAt ? new Date(p.createdAt.seconds*1000).toLocaleDateString(adminLang==='uk'?'uk-UA':'en-GB') : '';
+        const statusLabel=p.status==='success'?t('paid')||'Оплачено':p.status==='pending'?t('pending')||'Очікує':t('failed')||'Помилка';
+        const statusColor=p.status==='success'?'var(--green)':p.status==='pending'?'var(--amber)':'var(--red)';
+        const planName=PLANS_BILLING[p.plan]?.name||p.plan||'—';
+        const date=p.createdAt?new Date(p.createdAt.seconds*1000).toLocaleDateString(adminLang==='uk'?'uk-UA':'en-GB'):'';
         return `<div class="bh-row">
           <div class="bh-status ${p.status==='success'?'bh-paid':p.status==='pending'?'bh-pending':'bh-failed'}"></div>
           <div style="flex:1"><div style="font-weight:500">${planName}</div><div style="font-size:11px;color:var(--muted)">${date}</div></div>
-          <div style="font-weight:600">€${(p.amount/100)||0}</div>
+          <div style="font-weight:600">€${p.amount?p.amount/100:0}</div>
           <div style="font-size:11px;margin-left:.5rem;color:${statusColor}">${statusLabel}</div>
         </div>`;
       }).join('');
+    } else {
+      document.getElementById('billing-history-wrap').innerHTML=
+        `<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:13px">${t('noPayments')||'Платежів ще немає'}</div>`;
     }
   }catch(e){console.warn('loadBilling:',e.message);}
 }
