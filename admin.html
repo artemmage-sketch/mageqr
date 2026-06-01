@@ -453,7 +453,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
         <div><div class="page-title" data-i18n="tables">🪑 Столи та QR-оплата</div><div class="page-sub" data-i18n="tablesDesc">Управління залом, QR-коди, чайові</div></div>
         <div style="display:flex;gap:.5rem">
           <button class="btn btn-outline btn-sm" onclick="printAllQR()" data-i18n="printAllQR">🖨️ Друк всіх QR</button>
-          <button class="btn btn-accent btn-sm" onclick="openAddTable()" data-i18n="addTable">+ Додати стіл</button>
+          <button class="btn btn-accent btn-sm" id="btn-add-table" onclick="openAddTable()" data-i18n="addTable">+ Додати стіл</button>
         </div>
       </div>
       <div class="content">
@@ -469,7 +469,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div class="zone-tabs" id="zone-tabs">
             <button class="zone-tab active" onclick="filterZone(this,'')" data-i18n="allZones" data-i18n="allZones">Всі зали</button>
           </div>
-          <button class="btn btn-outline btn-sm" onclick="openAddZone()">+ Зал</button>
+          <button class="btn btn-outline btn-sm" id="btn-add-zone" onclick="openAddZone()">+ Зал</button>
           <div style="margin-left:auto;display:flex;gap:.5rem;align-items:center">
             <span style="font-size:12px;color:var(--muted)" data-i18n="autoUpdateLbl">Автооновлення:</span>
             <label class="sw"><input type="checkbox" id="auto-refresh" checked/><span class="sw-slider"></span></label>
@@ -2467,7 +2467,7 @@ var I18N = {
     tipVariants:'Клієнт бачить ці варіанти плюс поле "Довільна сума"',
     tipsMonobank:'Чайові через Monobank:',
     printAllQR:'Друк всіх QR',
-    addTable:'Додати стіл', tableName:'Назва', tableNum:'Номер столу', tableSeats:'Місць', tableZone:'Зал', tableAdded:'Стіл додано!', tableExists:'Стіл з таким номером вже існує', enterNum:'Введіть номер',
+    addTable:'Додати стіл', tableName:'Назва', tableNum:'Номер столу', tableSeats:'Місць', tableZone:'Зал', tableAdded:'Стіл додано!', tableExists:'Стіл з таким номером вже існує', enterNum:'Введіть номер', newHallName:'Назва нового залу:', hallAdded:'Зал додано',
     tipsStaff:'Чайові — статистика по персоналу',
     bannerHeight:'Висота банера',
     bgImage:'Фонове зображення',
@@ -2855,7 +2855,7 @@ var I18N = {
     tipVariants:'Client sees these options plus custom amount',
     tipsMonobank:'Tips via Monobank:',
     printAllQR:'Print all QR',
-    addTable:'Add table', tableName:'Name', tableNum:'Table number', tableSeats:'Seats', tableZone:'Hall', tableAdded:'Table added!', tableExists:'Table with this number already exists', enterNum:'Enter number',
+    addTable:'Add table', tableName:'Name', tableNum:'Table number', tableSeats:'Seats', tableZone:'Hall', tableAdded:'Table added!', tableExists:'Table with this number already exists', enterNum:'Enter number', newHallName:'New hall name:', hallAdded:'Hall added',
     tipsStaff:'Tips — staff statistics',
     bannerHeight:'Banner height',
     bgImage:'Background image',
@@ -3243,7 +3243,7 @@ var I18N = {
     tipVariants:'Klient widzi te opcje plus dowolna kwota',
     tipsMonobank:'Napiwki przez Monobank:',
     printAllQR:'Drukuj wszystkie QR',
-    addTable:'Dodaj stolik', tableName:'Nazwa', tableNum:'Numer stolika', tableSeats:'Miejsca', tableZone:'Sala', tableAdded:'Stolik dodany!', tableExists:'Stolik o tym numerze już istnieje', enterNum:'Podaj numer',
+    addTable:'Dodaj stolik', tableName:'Nazwa', tableNum:'Numer stolika', tableSeats:'Miejsca', tableZone:'Sala', tableAdded:'Stolik dodany!', tableExists:'Stolik o tym numerze już istnieje', enterNum:'Podaj numer', newHallName:'Nazwa nowej sali:', hallAdded:'Sala dodana',
     tipsStaff:'Napiwki — statystyki personelu',
     bannerHeight:'Wysokość baneru',
     bgImage:'Obraz tła',
@@ -3631,7 +3631,7 @@ var I18N = {
     tipVariants:'Kunde sieht diese Optionen plus beliebiger Betrag',
     tipsMonobank:'Trinkgeld über Monobank:',
     printAllQR:'Alle QR drucken',
-    addTable:'Tisch hinzufügen', tableName:'Name', tableNum:'Tischnummer', tableSeats:'Plätze', tableZone:'Saal', tableAdded:'Tisch hinzugefügt!', tableExists:'Tisch mit dieser Nummer existiert bereits', enterNum:'Nummer eingeben',
+    addTable:'Tisch hinzufügen', tableName:'Name', tableNum:'Tischnummer', tableSeats:'Plätze', tableZone:'Saal', tableAdded:'Tisch hinzugefügt!', tableExists:'Tisch mit dieser Nummer existiert bereits', enterNum:'Nummer eingeben', newHallName:'Name des neuen Saals:', hallAdded:'Saal hinzugefügt',
     tipsStaff:'Trinkgeld — Personalstatistik',
     bannerHeight:'Bannerhöhe',
     bgImage:'Hintergrundbild',
@@ -4019,7 +4019,7 @@ var I18N = {
     tipVariants:'Clientul vede aceste opțiuni plus sumă personalizată',
     tipsMonobank:'Bacșiș via Monobank:',
     printAllQR:'Tipărește toate QR',
-    addTable:'Adaugă masă', tableName:'Nume', tableNum:'Numărul mesei', tableSeats:'Locuri', tableZone:'Sală', tableAdded:'Masă adăugată!', tableExists:'Masa cu acest număr există deja', enterNum:'Introduceți numărul',
+    addTable:'Adaugă masă', tableName:'Nume', tableNum:'Numărul mesei', tableSeats:'Locuri', tableZone:'Sală', tableAdded:'Masă adăugată!', tableExists:'Masa cu acest număr există deja', enterNum:'Introduceți numărul', newHallName:'Numele noii săli:', hallAdded:'Sală adăugată',
     tipsStaff:'Bacșiș — statistici personal',
     bannerHeight:'Înălțime banner',
     bgImage:'Imagine fundal',
@@ -4407,7 +4407,7 @@ var I18N = {
     tipVariants:'El cliente ve estas opciones más monto personalizado',
     tipsMonobank:'Propinas via Monobank:',
     printAllQR:'Imprimir todos los QR',
-    addTable:'Agregar mesa', tableName:'Nombre', tableNum:'Número de mesa', tableSeats:'Asientos', tableZone:'Sala', tableAdded:'¡Mesa agregada!', tableExists:'Ya existe una mesa con este número', enterNum:'Ingrese el número',
+    addTable:'Agregar mesa', tableName:'Nombre', tableNum:'Número de mesa', tableSeats:'Asientos', tableZone:'Sala', tableAdded:'¡Mesa agregada!', tableExists:'Ya existe una mesa con este número', enterNum:'Ingrese el número', newHallName:'Nombre de la nueva sala:', hallAdded:'Sala añadida',
     tipsStaff:'Propinas — estadísticas del personal',
     bannerHeight:'Altura del banner',
     bgImage:'Imagen de fondo',
@@ -4795,7 +4795,7 @@ var I18N = {
     tipVariants:'Klijent vidi ove opcije plus proizvoljni iznos',
     tipsMonobank:'Napojnica putem Monobanka:',
     printAllQR:'Štampaj sve QR',
-    addTable:'Dodaj sto', tableName:'Naziv', tableNum:'Broj stola', tableSeats:'Mjesta', tableZone:'Sala', tableAdded:'Sto dodan!', tableExists:'Sto s ovim brojem već postoji', enterNum:'Unesite broj',
+    addTable:'Dodaj sto', tableName:'Naziv', tableNum:'Broj stola', tableSeats:'Mjesta', tableZone:'Sala', tableAdded:'Sto dodan!', tableExists:'Sto s ovim brojem već postoji', enterNum:'Unesite broj', newHallName:'Naziv nove sale:', hallAdded:'Sala dodana',
     tipsStaff:'Napojnica — statistika osoblja',
     bannerHeight:'Visina banera',
     bgImage:'Pozadinska slika',
@@ -5185,6 +5185,7 @@ async function initFirebase() {
     loadStaffFromFirestore();
     applyAdminLang(adminLang);
     setTimeout(() => loadBilling(), 500);
+    initAutoRefreshToggle();
   });
 }
 
@@ -7057,7 +7058,23 @@ async function saveTable(){
     notify(t('notifError')+': '+e.message, 'err');
   }
 }
-function openAddZone(){const z=prompt('Назва нового залу:');if(z&&!zones.includes(z)){zones.push(z);renderZoneTabs();notify('Зал додано','ok');}}
+async function openAddZone(){
+  const z = prompt(t('newHallName')||'Назва нового залу:');
+  if(!z || zones.includes(z)) return;
+  try {
+    const {doc, setDoc} = window.__FS;
+    zones.push(z);
+    // Зберігаємо список залів в Firestore
+    await setDoc(doc(db,'venues',venueId,'settings','zones'), {
+      list: zones,
+    }, { merge: true });
+    renderZoneTabs();
+    notify(t('hallAdded')||'Зал додано', 'ok');
+  } catch(e) {
+    zones.pop(); // відкочуємо якщо помилка
+    notify(t('notifError')+': '+e.message, 'err');
+  }
+}
 window.openAddTable=openAddTable;window.saveTable=saveTable;window.openAddZone=openAddZone;
 
 function renderStaff(){
@@ -7395,28 +7412,42 @@ async function loadSubscription(){
 // Завантажуємо столи при відкритті вкладки
 let unsubTables = null;
 
-// Перемикач "Автооновлення"
-document.addEventListener('DOMContentLoaded', () => {
+// Перемикач "Автооновлення" — підключаємо після ініціалізації
+function initAutoRefreshToggle() {
   const chk = document.getElementById('auto-refresh');
-  if (chk) {
-    chk.addEventListener('change', () => {
-      if (chk.checked) {
-        // Вмикаємо — підписуємось знову
-        subscribeOrders();
-        loadTablesFromFirestore();
-      } else {
-        // Вимикаємо — відписуємось
-        if (unsubOrders) { unsubOrders(); unsubOrders = null; }
-        if (unsubTables) { unsubTables(); unsubTables = null; }
-      }
-    });
-  }
-});
+  if (!chk) return;
+  chk.addEventListener('change', () => {
+    if (chk.checked) {
+      subscribeOrders();
+      loadTablesFromFirestore();
+    } else {
+      if (unsubOrders) { unsubOrders(); unsubOrders = null; }
+      if (unsubTables) { unsubTables(); unsubTables = null; }
+    }
+  });
+}
 async function loadTablesFromFirestore() {
   if(!db||!window.__FS) return;
-  const {collection, onSnapshot} = window.__FS;
+  const {collection, onSnapshot, doc, getDoc} = window.__FS;
   if(unsubTables) { unsubTables(); unsubTables = null; }
   try {
+  // Якщо POS підключено — ховаємо кнопку ручного додавання
+  try {
+    const {doc, getDoc} = window.__FS;
+    const posSnap = await getDoc(doc(db,'venues',venueId,'settings','pos'));
+    const posData = posSnap.exists() ? posSnap.data() : {};
+    const posEnabled = posData.poster?.enabled || posData.syrve?.enabled || posData.iiko?.enabled;
+    const addBtn = document.getElementById('btn-add-table');
+    const addZoneBtn = document.getElementById('btn-add-zone');
+    if(addBtn) addBtn.style.display = posEnabled ? 'none' : '';
+    if(addZoneBtn) addZoneBtn.style.display = posEnabled ? 'none' : '';
+  } catch(e) { console.warn('check POS:', e.message); }
+      const zonesSnap = await getDoc(doc(db,'venues',venueId,'settings','zones'));
+      if(zonesSnap.exists() && Array.isArray(zonesSnap.data().list)) {
+        zones = zonesSnap.data().list;
+        renderZoneTabs();
+      }
+    } catch(e) { console.warn('load zones:', e.message); }
     unsubTables = onSnapshot(collection(db,'venues',venueId,'tables'), snap => {
       if(snap.empty) {
         document.getElementById('tables-grid').innerHTML =
