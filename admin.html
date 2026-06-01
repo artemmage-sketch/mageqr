@@ -7431,23 +7431,26 @@ async function loadTablesFromFirestore() {
   const {collection, onSnapshot, doc, getDoc} = window.__FS;
   if(unsubTables) { unsubTables(); unsubTables = null; }
   try {
-  // Якщо POS підключено — ховаємо кнопку ручного додавання
-  try {
-    const {doc, getDoc} = window.__FS;
-    const posSnap = await getDoc(doc(db,'venues',venueId,'settings','pos'));
-    const posData = posSnap.exists() ? posSnap.data() : {};
-    const posEnabled = posData.poster?.enabled || posData.syrve?.enabled || posData.iiko?.enabled;
-    const addBtn = document.getElementById('btn-add-table');
-    const addZoneBtn = document.getElementById('btn-add-zone');
-    if(addBtn) addBtn.style.display = posEnabled ? 'none' : '';
-    if(addZoneBtn) addZoneBtn.style.display = posEnabled ? 'none' : '';
-  } catch(e) { console.warn('check POS:', e.message); }
+    // Якщо POS підключено — ховаємо кнопку ручного додавання
+    try {
+      const posSnap = await getDoc(doc(db,'venues',venueId,'settings','pos'));
+      const posData = posSnap.exists() ? posSnap.data() : {};
+      const posEnabled = posData.poster?.enabled || posData.syrve?.enabled || posData.iiko?.enabled;
+      const addBtn = document.getElementById('btn-add-table');
+      const addZoneBtn = document.getElementById('btn-add-zone');
+      if(addBtn) addBtn.style.display = posEnabled ? 'none' : '';
+      if(addZoneBtn) addZoneBtn.style.display = posEnabled ? 'none' : '';
+    } catch(e) { console.warn('check POS:', e.message); }
+
+    // Завантажуємо збережені зали
+    try {
       const zonesSnap = await getDoc(doc(db,'venues',venueId,'settings','zones'));
       if(zonesSnap.exists() && Array.isArray(zonesSnap.data().list)) {
         zones = zonesSnap.data().list;
         renderZoneTabs();
       }
     } catch(e) { console.warn('load zones:', e.message); }
+
     unsubTables = onSnapshot(collection(db,'venues',venueId,'tables'), snap => {
       if(snap.empty) {
         document.getElementById('tables-grid').innerHTML =
