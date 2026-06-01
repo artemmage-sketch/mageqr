@@ -5679,7 +5679,7 @@ async function loadSettings(){
     if(d.tipsEnabled !== undefined) document.getElementById('tips-enabled').checked = d.tipsEnabled;
     if(d.tipsChooseStaff !== undefined) document.getElementById('tips-choose-staff').checked = d.tipsChooseStaff;
     if(d.tipsAutoAssign !== undefined) document.getElementById('tips-auto-assign').checked = d.tipsAutoAssign;
-  }catch(e){console.error('loadSettings ERROR:',e.message,e.stack);notify('loadSettings: '+e.message,'err');}
+  }catch(e){console.error('loadSettings ERROR:',e.message);}
 }
 
 window.saveSettings=async function(){
