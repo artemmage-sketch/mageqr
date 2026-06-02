@@ -363,6 +363,16 @@
   }
   .review-textarea:focus { border-color: var(--accent); }
 
+  .review-reasons { display:none; flex-wrap:wrap; gap:.5rem; margin-bottom:.875rem; }
+  .review-reasons.show { display:flex; }
+  .chip {
+    padding:.5rem .75rem; border-radius:999px;
+    border:1.5px solid var(--border); background:var(--bg);
+    color:var(--text); font-size:.82rem; cursor:pointer;
+    transition:all .12s; user-select:none;
+  }
+  .chip.active { border-color:var(--accent); background:var(--accent); color:#fff; }
+
   /* ── TIPS SHEET ── */
   .tip-amounts { display: flex; gap: .5rem; flex-wrap: wrap; margin: .75rem 0; }
   .tip-chip {
@@ -585,6 +595,15 @@
         <span class="star" onclick="setStar(3)">★</span>
         <span class="star" onclick="setStar(4)">★</span>
         <span class="star" onclick="setStar(5)">★</span>
+      </div>
+      <div class="review-reasons" id="review-reasons">
+        <span class="chip" data-reason="slow" onclick="toggleReason(this)">Довго чекали</span>
+        <span class="chip" data-reason="cold_food" onclick="toggleReason(this)">Холодна їжа</span>
+        <span class="chip" data-reason="wrong_order" onclick="toggleReason(this)">Помилка в замовленні</span>
+        <span class="chip" data-reason="service" onclick="toggleReason(this)">Сервіс</span>
+        <span class="chip" data-reason="cleanliness" onclick="toggleReason(this)">Чистота</span>
+        <span class="chip" data-reason="portion" onclick="toggleReason(this)">Порція</span>
+        <span class="chip" data-reason="price" onclick="toggleReason(this)">Ціна</span>
       </div>
       <textarea class="review-textarea" id="review-text" rows="3"
         placeholder="Напишіть що сподобалось або що варто покращити..."></textarea>
@@ -954,6 +973,7 @@ let venueSettings = {};
 let openBillData  = null;   // поточний відкритий рахунок
 let staff         = [];
 let selectedStar  = 0;
+let selectedReasons = new Set();
 let selectedStaff = null;
 let selectedTip   = null;
 let currSymbol    = '₴';
@@ -1339,6 +1359,23 @@ window.setStar = function(n) {
   document.querySelectorAll('.star').forEach((s, i) => {
     s.classList.toggle('active', i < n);
   });
+  // Причини показуємо лише при низькій оцінці (≤3★)
+  const reasons = $('review-reasons');
+  if (reasons) {
+    if (n > 0 && n <= 3) {
+      reasons.classList.add('show');
+    } else {
+      reasons.classList.remove('show');
+      selectedReasons.clear();
+      reasons.querySelectorAll('.chip.active').forEach(c => c.classList.remove('active'));
+    }
+  }
+};
+
+window.toggleReason = function(el) {
+  const reason = el.getAttribute('data-reason');
+  if (selectedReasons.has(reason)) { selectedReasons.delete(reason); el.classList.remove('active'); }
+  else { selectedReasons.add(reason); el.classList.add('active'); }
 };
 
 window.submitReview = async function() {
@@ -1348,13 +1385,23 @@ window.submitReview = async function() {
   btn.disabled = true;
 
   try {
-    await addDoc(collection(db, 'venues', venueId, 'reviews'), {
-      rating:    selectedStar,
-      text:      $('review-text').value.trim(),
-      name:      $('review-name').value.trim() || 'Гість',
-      tableNum:  tableNum ? Number(tableNum) : null,
-      createdAt: serverTimestamp(),
+    const res = await fetch(`${window.__CF_URL}/submitReview`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        venueId,
+        rating:    selectedStar,
+        text:      $('review-text').value.trim(),
+        name:      $('review-name').value.trim() || 'Гість',
+        tags:      [...selectedReasons],
+        tableNum:  tableNum ? Number(tableNum) : null,
+        orderType: 'dine_in',
+        source:    'qr_table',
+        lang:      currentLang,
+      }),
     });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Помилка');
 
     $('review-content').innerHTML = `
       <div class="success-wrap">
