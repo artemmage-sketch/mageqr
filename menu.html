@@ -183,6 +183,25 @@ html,body{height:100%;font-family:var(--font-body);background:var(--bg);color:va
 .s-num{font-family:var(--font-head);font-size:2rem;color:var(--accent);background:var(--bg2);border-radius:10px;padding:.5rem 1.5rem;margin:1rem 0}
 .s-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:1.5rem}
 .back-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px 28px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-body)}
+.order-review{width:100%;max-width:380px;background:var(--bg2);border-radius:14px;padding:1.25rem;margin-bottom:1.25rem;text-align:center;max-height:55vh;overflow-y:auto}
+.or-title{font-family:var(--font-head);font-size:1.05rem;margin-bottom:.75rem}
+.or-stars{display:flex;gap:.4rem;justify-content:center;margin-bottom:.875rem}
+.or-star{font-size:1.9rem;cursor:pointer;transition:transform .1s;filter:grayscale(1) opacity(.4)}
+.or-star.active{filter:none;transform:scale(1.12)}
+.or-reasons{display:none;flex-wrap:wrap;gap:.45rem;justify-content:center;margin-bottom:.875rem}
+.or-reasons.show{display:flex}
+.or-chip{padding:.45rem .7rem;border-radius:999px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font-size:.78rem;cursor:pointer;transition:all .12s;user-select:none}
+.or-chip.active{border-color:var(--accent);background:var(--accent);color:#fff}
+.or-dishes{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.875rem}
+.or-dish{display:flex;align-items:center;justify-content:space-between;gap:.5rem;font-size:.82rem;text-align:left}
+.or-dish-name{flex:1;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.or-dish-stars{display:flex;gap:.15rem;flex-shrink:0}
+.or-dish-stars .ds{font-size:1.05rem;cursor:pointer;filter:grayscale(1) opacity(.4)}
+.or-dish-stars .ds.active{filter:none}
+.or-text{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--font-body);font-size:.85rem;padding:.7rem;resize:none;outline:none;margin-bottom:.75rem;box-sizing:border-box}
+.or-submit{width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-body)}
+.or-submit:disabled{opacity:.5;cursor:not-allowed}
+.or-thanks{font-size:.95rem;color:var(--text);padding:.5rem}
 .empty{text-align:center;padding:3rem 1rem;color:var(--muted)}
 .empty-icon{font-size:2.5rem;margin-bottom:.625rem;opacity:.4}
 .toast{position:fixed;bottom:6rem;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:300;white-space:nowrap}
@@ -729,6 +748,30 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
   <div class="s-title" id="s-title">Замовлення прийнято!</div>
   <div class="s-num" id="s-num" style="display:none"></div>
   <div class="s-sub" id="s-sub">Очікуйте підтвердження від закладу.<br/>Орієнтовний час — 20–35 хвилин.</div>
+
+  <div class="order-review" id="order-review" style="display:none">
+    <div class="or-title" id="or-title">Оцініть замовлення</div>
+    <div class="or-stars" id="or-stars">
+      <span class="or-star" onclick="setOrderStar(1)">★</span>
+      <span class="or-star" onclick="setOrderStar(2)">★</span>
+      <span class="or-star" onclick="setOrderStar(3)">★</span>
+      <span class="or-star" onclick="setOrderStar(4)">★</span>
+      <span class="or-star" onclick="setOrderStar(5)">★</span>
+    </div>
+    <div class="or-reasons" id="or-reasons">
+      <span class="or-chip" data-reason="slow" onclick="toggleOrderReason(this)">Довго чекали</span>
+      <span class="or-chip" data-reason="cold_food" onclick="toggleOrderReason(this)">Холодна їжа</span>
+      <span class="or-chip" data-reason="wrong_order" onclick="toggleOrderReason(this)">Помилка в замовленні</span>
+      <span class="or-chip" data-reason="service" onclick="toggleOrderReason(this)">Сервіс</span>
+      <span class="or-chip" data-reason="delivery" onclick="toggleOrderReason(this)">Доставка</span>
+      <span class="or-chip" data-reason="portion" onclick="toggleOrderReason(this)">Порція</span>
+      <span class="or-chip" data-reason="price" onclick="toggleOrderReason(this)">Ціна</span>
+    </div>
+    <div class="or-dishes" id="or-dishes"></div>
+    <textarea class="or-text" id="or-text" rows="2" placeholder="Коментар (необов'язково)"></textarea>
+    <button class="or-submit" id="or-submit" onclick="submitOrderReview()">✓ Надіслати відгук</button>
+    <div class="or-thanks" id="or-thanks" style="display:none">🙏 Дякуємо за відгук!</div>
+  </div>
   <button class="back-btn" id="back-btn" onclick="resetSuccess()">← Назад до меню</button>
 </div>
 
@@ -1234,6 +1277,7 @@ const UI_STRINGS = {
     courierComment:"Коментар для кур'єра", courierPh:'Код домофону, орієнтир...',
     orderDone:'Замовлення прийнято!', waitConfirm:'Очікуйте підтвердження від закладу.',
     backToMenu:'← Назад до меню', noDishes:'У цій категорії немає страв',
+    rateOrder:'Оцініть замовлення', reviewCommentPh:'Коментар (необов\u2019язково)', sendReview:'✓ Надіслати відгук', reviewThanksMenu:'🙏 Дякуємо за відгук!', reviewRatingAlert:'Будь ласка, поставте оцінку',
     emptyCart:'Кошик порожній', add:'Додати', discount:'Знижка', namePh:"Ваше ім'я",
     // AUTH
     signIn:'Вхід', signUp:'Реєстрація',
@@ -1295,6 +1339,7 @@ const UI_STRINGS = {
     courierComment:'Comment for courier', courierPh:'Intercom code, landmark...',
     orderDone:'Order accepted!', waitConfirm:'Awaiting confirmation from the venue.',
     backToMenu:'← Back to menu', noDishes:'No dishes in this category',
+    rateOrder:'Rate your order', reviewCommentPh:'Comment (optional)', sendReview:'✓ Send review', reviewThanksMenu:'🙏 Thanks for your review!', reviewRatingAlert:'Please give a rating',
     emptyCart:'Cart is empty', add:'Add', discount:'Discount', namePh:'Your name',
     signIn:'Sign in', signUp:'Sign up',
     authTitle:'Sign in or create account',
@@ -2191,9 +2236,10 @@ window.placeOrder = async () => {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Помилка замовлення');
+    const reviewItems = items.map(i => ({ itemId: i.itemId || i.id, name: i.name }));
     cart = {}; updateCart(); closeCart();
     if (data.payUrl) {
-      localStorage.setItem('mq_pending_order', JSON.stringify({ orderId: data.orderId, orderNum: data.orderNum, venueId }));
+      localStorage.setItem('mq_pending_order', JSON.stringify({ orderId: data.orderId, orderNum: data.orderNum, venueId, orderType, items: reviewItems }));
       window.location.href = data.payUrl;
       return;
     }
@@ -2203,10 +2249,122 @@ window.placeOrder = async () => {
     $('back-btn').textContent = ui('backToMenu');
     if (data.orderNum) { $('s-num').textContent = '#' + data.orderNum; $('s-num').style.display = ''; }
     $('success').classList.add('open');
+    showOrderReview({ orderId: data.orderId || null, orderNum: data.orderNum || null, orderType, tableId: orderData.tableId || null, name, items: reviewItems });
   } catch(e) { toast('Помилка: ' + e.message); }
   finally { btn.textContent = ui('placeOrder'); btn.disabled = false; }
 };
-window.resetSuccess = () => { $('success').classList.remove('open'); renderMenu(); };
+window.resetSuccess = () => { $('success').classList.remove('open'); hideOrderReview(); renderMenu(); };
+
+// ── ВІДГУК ПІСЛЯ ЗАМОВЛЕННЯ ──────────────────────────────────────
+let orderReview = { orderId:null, orderNum:null, orderType:null, tableId:null, name:'', items:[] };
+let orderStar = 0;
+let orderReasons = new Set();
+let dishRatings = {};
+
+function escHtml(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function hideOrderReview() {
+  const block = $('order-review');
+  if (block) block.style.display = 'none';
+}
+
+window.showOrderReview = function(ctx) {
+  orderReview = Object.assign({ orderId:null, orderNum:null, orderType:null, tableId:null, name:'', items:[] }, ctx || {});
+  orderStar = 0; orderReasons = new Set(); dishRatings = {};
+  const block = $('order-review');
+  if (!block) return;
+  $('or-title').textContent = ui('rateOrder');
+  document.querySelectorAll('.or-star').forEach(s => s.classList.remove('active'));
+  const reasons = $('or-reasons');
+  if (reasons) { reasons.classList.remove('show'); reasons.querySelectorAll('.or-chip.active').forEach(c=>c.classList.remove('active')); }
+  const txt = $('or-text'); txt.value = ''; txt.placeholder = ui('reviewCommentPh');
+  $('or-submit').textContent = ui('sendReview');
+  $('or-submit').style.display = '';
+  $('or-submit').disabled = false;
+  $('or-thanks').style.display = 'none';
+  $('or-thanks').textContent = ui('reviewThanksMenu');
+  renderOrderDishes();
+  block.style.display = 'block';
+};
+
+function renderOrderDishes() {
+  const wrap = $('or-dishes');
+  if (!wrap) return;
+  wrap.innerHTML = (orderReview.items || []).map(it => {
+    const stars = [1,2,3,4,5].map(n => `<span class="ds" data-n="${n}">★</span>`).join('');
+    return `<div class="or-dish"><span class="or-dish-name">${escHtml(it.name)}</span>`
+         + `<span class="or-dish-stars" data-item="${escHtml(it.itemId)}">${stars}</span></div>`;
+  }).join('');
+}
+
+window.setOrderStar = function(n) {
+  orderStar = n;
+  document.querySelectorAll('.or-star').forEach((s, i) => s.classList.toggle('active', i < n));
+  const reasons = $('or-reasons');
+  if (reasons) {
+    if (n > 0 && n <= 3) reasons.classList.add('show');
+    else { reasons.classList.remove('show'); orderReasons.clear(); reasons.querySelectorAll('.or-chip.active').forEach(c=>c.classList.remove('active')); }
+  }
+};
+
+window.toggleOrderReason = function(el) {
+  const r = el.getAttribute('data-reason');
+  if (orderReasons.has(r)) { orderReasons.delete(r); el.classList.remove('active'); }
+  else { orderReasons.add(r); el.classList.add('active'); }
+};
+
+window.submitOrderReview = async function() {
+  if (!orderStar) { toast(ui('reviewRatingAlert')); return; }
+  const btn = $('or-submit');
+  btn.disabled = true;
+  try {
+    const itemRatings = Object.entries(dishRatings).map(([itemId, rating]) => {
+      const it = (orderReview.items || []).find(x => x.itemId === itemId);
+      return { itemId, name: it?.name || '', rating };
+    });
+    const res = await fetch('https://us-central1-mageqrrest.cloudfunctions.net/submitReview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        venueId,
+        rating:    orderStar,
+        text:      $('or-text').value.trim(),
+        name:      orderReview.name || '',
+        tags:      [...orderReasons],
+        itemRatings,
+        orderId:   orderReview.orderId,
+        orderNum:  orderReview.orderNum,
+        tableId:   orderReview.tableId,
+        orderType: orderReview.orderType,
+        source:    'menu_after_order',
+        uid:       currentUser?.uid || null,
+        lang:      currentLang,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Помилка');
+    $('or-submit').style.display = 'none';
+    $('or-thanks').style.display = 'block';
+  } catch(e) {
+    toast('Помилка: ' + e.message);
+    btn.disabled = false;
+  }
+};
+
+// Делегування кліків для зірок по стравах
+(function(){
+  const wrap = $('or-dishes');
+  if (!wrap) return;
+  wrap.addEventListener('click', e => {
+    const ds = e.target.closest('.ds');
+    if (!ds || !wrap.contains(ds)) return;
+    const box = ds.closest('.or-dish-stars');
+    const itemId = box.getAttribute('data-item');
+    const n = Number(ds.getAttribute('data-n'));
+    dishRatings[itemId] = n;
+    box.querySelectorAll('.ds').forEach((s, i) => s.classList.toggle('active', i < n));
+  });
+})();
 
 function toast(msg) {
   const t = $('toast');
@@ -2431,15 +2589,12 @@ async function checkPaymentAfterRedirect() {
   const urlParams = new URLSearchParams(location.search);
   let orderId = urlParams.get('order');
   let paid = urlParams.get('paid');
-  if (!orderId) {
-    const pending = localStorage.getItem('mq_pending_order');
-    if (pending) {
-      try {
-        const data = JSON.parse(pending);
-        if (data.venueId === venueId) { orderId = data.orderId; paid = '1'; }
-      } catch(e) {}
-    }
-  }
+  let pendingCtx = null;
+  try {
+    const p = JSON.parse(localStorage.getItem('mq_pending_order') || 'null');
+    if (p && p.venueId === venueId) pendingCtx = p;
+  } catch(e) {}
+  if (!orderId && pendingCtx) { orderId = pendingCtx.orderId; paid = '1'; }
   if (!orderId) return;
   window.history.replaceState({}, '', location.pathname + '?v=' + venueId + (urlParams.get('t') ? '&t=' + urlParams.get('t') : ''));
   localStorage.removeItem('mq_pending_order');
@@ -2469,6 +2624,14 @@ async function checkPaymentAfterRedirect() {
         const numEl = $('s-num');
         if (numEl && data.order?.num) { numEl.textContent = '#' + data.order.num; numEl.style.display = ''; }
         $('back-btn').textContent = ui('backToMenu');
+        showOrderReview({
+          orderId,
+          orderNum:  data.order?.num || pendingCtx?.orderNum || null,
+          orderType: pendingCtx?.orderType || null,
+          tableId:   null,
+          name:      '',
+          items:     pendingCtx?.items || [],
+        });
         return;
       }
       if (data.status === 'failure' || data.status === 'expired') {
