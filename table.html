@@ -1352,7 +1352,26 @@ window.copyPayUrl = function() {
 };
 
 // ── ВІДГУК ──────────────────────────────────────────────────────
-window.openReview = function() { openOverlay('review-overlay'); };
+// Локалізація чіпів-причин (усі 7 мов)
+const CHIP_T = {
+  uk:{slow:'Довго чекали',cold_food:'Холодна їжа',wrong_order:'Помилка в замовленні',service:'Сервіс',delivery:'Доставка',portion:'Порція',price:'Ціна',cleanliness:'Чистота'},
+  en:{slow:'Long wait',cold_food:'Cold food',wrong_order:'Wrong order',service:'Service',delivery:'Delivery',portion:'Portion',price:'Price',cleanliness:'Cleanliness'},
+  pl:{slow:'Długie czekanie',cold_food:'Zimne jedzenie',wrong_order:'Błędne zamówienie',service:'Obsługa',delivery:'Dostawa',portion:'Porcja',price:'Cena',cleanliness:'Czystość'},
+  de:{slow:'Lange Wartezeit',cold_food:'Kaltes Essen',wrong_order:'Falsche Bestellung',service:'Service',delivery:'Lieferung',portion:'Portion',price:'Preis',cleanliness:'Sauberkeit'},
+  ro:{slow:'Așteptare lungă',cold_food:'Mâncare rece',wrong_order:'Comandă greșită',service:'Serviciu',delivery:'Livrare',portion:'Porție',price:'Preț',cleanliness:'Curățenie'},
+  es:{slow:'Espera larga',cold_food:'Comida fría',wrong_order:'Pedido incorrecto',service:'Servicio',delivery:'Entrega',portion:'Porción',price:'Precio',cleanliness:'Limpieza'},
+  cnr:{slow:'Dugo čekanje',cold_food:'Hladna hrana',wrong_order:'Pogrešna narudžba',service:'Usluga',delivery:'Dostava',portion:'Porcija',price:'Cijena',cleanliness:'Čistoća'},
+};
+function localizeChips(selector) {
+  const l = CHIP_T[currentLang] ? currentLang : 'uk';
+  document.querySelectorAll(selector).forEach(c => {
+    const r = c.getAttribute('data-reason');
+    const lbl = (CHIP_T[l] && CHIP_T[l][r]) || CHIP_T.uk[r];
+    if (lbl) c.textContent = lbl;
+  });
+}
+
+window.openReview = function() { localizeChips('.chip'); openOverlay('review-overlay'); };
 
 window.setStar = function(n) {
   selectedStar = n;
