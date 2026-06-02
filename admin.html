@@ -1890,11 +1890,9 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
     </div>
 
 
-  </div>
-</div>
 
-<!-- DELIVERY INTEGRATIONS TAB -->
-<div id="t-delivery" class="tab-section">
+    <!-- DELIVERY INTEGRATIONS TAB -->
+    <div id="t-delivery" class="tab-section">
   <div class="topbar">
     <div>
       <div class="page-title" data-i18n="deliveryIntegrations">🚚 Інтеграції доставок</div>
@@ -1997,13 +1995,13 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       </div>
     </div>
 
-    <!-- MAGE FOOD -->
+    <!-- MAGE DELIVERY -->
     <div class="settings-section" style="margin-bottom:1rem">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
         <div style="display:flex;align-items:center;gap:.75rem">
           <div style="width:40px;height:40px;background:linear-gradient(135deg,#C1440E,#8B2500);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;font-family:var(--font-head)">MAGE</div>
           <div>
-            <div style="font-weight:600">Mage Food</div>
+            <div style="font-weight:600">Mage Delivery</div>
             <div class="pos-status off" id="magefood-status" data-i18n="notConnected">Не підключено</div>
           </div>
         </div>
@@ -2015,8 +2013,15 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <input type="text" id="magefood-webhook-url" placeholder="https://api.magefood.com/webhook/orders"/>
         </div>
         <div>
+          <label class="pay-field-label">Тип авторизації</label>
+          <select id="magefood-auth-type" onchange="toggleDeliveryAuth('magefood',this.value)">
+            <option value="apikey">З API-ключем</option>
+            <option value="none">Без авторизації</option>
+          </select>
+        </div>
+        <div id="magefood-apikey-wrap">
           <label class="pay-field-label">API Key</label>
-          <input type="text" id="magefood-api-key" placeholder="API key від Mage Food"/>
+          <input type="text" id="magefood-api-key" placeholder="API key від Mage Delivery"/>
         </div>
       </div>
     </div>
@@ -2040,10 +2045,20 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <div style="font-size:11px;color:var(--muted);margin-top:.25rem" data-i18n="ownDeliveryNote">На цей URL будуть надсилатись всі нові замовлення з доставкою у форматі JSON</div>
         </div>
         <div>
+          <label class="pay-field-label">Тип авторизації</label>
+          <select id="own-delivery-auth-type" onchange="toggleDeliveryAuth('own',this.value)">
+            <option value="apikey">З підписом (secret key)</option>
+            <option value="none">Без авторизації</option>
+          </select>
+        </div>
+        <div id="own-delivery-secret-wrap">
           <label class="pay-field-label" data-i18n="webhookSecret">Secret key (необов'язково)</label>
           <input type="text" id="own-delivery-secret" placeholder="для підпису запитів"/>
         </div>
         <button class="btn btn-outline btn-sm" style="width:fit-content" onclick="testOwnDeliveryWebhook()" data-i18n="testWebhook">🧪 Тест webhook</button>
+      </div>
+    </div>
+
       </div>
     </div>
 
@@ -7255,6 +7270,13 @@ window.toggleDelivery = function(provider, on) {
   }
 };
 
+// Перемикач типу авторизації (з ключем / без ключа)
+window.toggleDeliveryAuth = function(provider, type) {
+  const wrapId = provider === 'own' ? 'own-delivery-secret-wrap' : `${provider}-apikey-wrap`;
+  const wrap = document.getElementById(wrapId);
+  if (wrap) wrap.style.display = (type === 'none') ? 'none' : '';
+};
+
 // Завантаження налаштувань
 async function loadDeliveryIntegrations() {
   if (!db || !window.__FS) return;
@@ -7291,11 +7313,15 @@ async function loadDeliveryIntegrations() {
       if (d.loko.storeId)  document.getElementById('loko-store-id').value  = d.loko.storeId;
       toggleDelivery('loko', d.loko.enabled);
     }
-    // Mage Food
+    // Mage Delivery
     if (d.magefood) {
       document.getElementById('magefood-enabled').checked = d.magefood.enabled || false;
       if (d.magefood.webhookUrl) document.getElementById('magefood-webhook-url').value = d.magefood.webhookUrl;
       if (d.magefood.apiKey)     document.getElementById('magefood-api-key').value     = d.magefood.apiKey;
+      const mfAuth = d.magefood.authType || (d.magefood.apiKey ? 'apikey' : 'none');
+      const mfSel = document.getElementById('magefood-auth-type');
+      if (mfSel) mfSel.value = mfAuth;
+      toggleDeliveryAuth('magefood', mfAuth);
       toggleDelivery('magefood', d.magefood.enabled);
     }
     // Власна доставка
@@ -7303,6 +7329,10 @@ async function loadDeliveryIntegrations() {
       document.getElementById('own-delivery-enabled').checked = d.own.enabled || false;
       if (d.own.webhookUrl) document.getElementById('own-delivery-webhook').value = d.own.webhookUrl;
       if (d.own.secret)     document.getElementById('own-delivery-secret').value  = d.own.secret;
+      const ownAuth = d.own.authType || (d.own.secret ? 'apikey' : 'none');
+      const ownSel = document.getElementById('own-delivery-auth-type');
+      if (ownSel) ownSel.value = ownAuth;
+      toggleDeliveryAuth('own', ownAuth);
       toggleDelivery('own', d.own.enabled);
     }
   } catch(e) { console.warn('loadDeliveryIntegrations:', e.message); }
@@ -7332,12 +7362,16 @@ window.saveDeliveryIntegrations = async function() {
       magefood: {
         enabled:    document.getElementById('magefood-enabled')?.checked      || false,
         webhookUrl: document.getElementById('magefood-webhook-url')?.value    || '',
-        apiKey:     document.getElementById('magefood-api-key')?.value        || '',
+        authType:   document.getElementById('magefood-auth-type')?.value       || 'apikey',
+        apiKey:     (document.getElementById('magefood-auth-type')?.value === 'none')
+                      ? '' : (document.getElementById('magefood-api-key')?.value || ''),
       },
       own: {
         enabled:    document.getElementById('own-delivery-enabled')?.checked  || false,
         webhookUrl: document.getElementById('own-delivery-webhook')?.value    || '',
-        secret:     document.getElementById('own-delivery-secret')?.value     || '',
+        authType:   document.getElementById('own-delivery-auth-type')?.value   || 'apikey',
+        secret:     (document.getElementById('own-delivery-auth-type')?.value === 'none')
+                      ? '' : (document.getElementById('own-delivery-secret')?.value || ''),
       },
       updatedAt: new Date().toISOString(),
     };
