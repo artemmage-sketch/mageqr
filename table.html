@@ -1411,7 +1411,7 @@ window.submitReview = async function() {
         venueId,
         rating:    selectedStar,
         text:      $('review-text').value.trim(),
-        name:      $('review-name').value.trim() || 'Гість',
+        name:      $('review-name').value.trim(),
         tags:      [...selectedReasons],
         tableNum:  tableNum ? Number(tableNum) : null,
         orderType: 'dine_in',
