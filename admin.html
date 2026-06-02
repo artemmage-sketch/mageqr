@@ -387,6 +387,8 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <button class="nav-item" onclick="nav(this,'t-settings')" data-i18n="settings">⚙️ Налаштування</button>
       <button class="nav-item" onclick="nav(this,'t-delivery')" data-i18n="deliveryIntegrations">🚚 Інтеграції доставок</button>
       <button class="nav-item" onclick="nav(this,'t-ai')" data-i18n="aiAnalytics">🤖 AI-аналітика</button>
+      <button class="nav-item" onclick="nav(this,'t-reviews')" data-i18n="reviewsTab">⭐ Відгуки</button>
+      <button class="nav-item" onclick="nav(this,'t-assistant')" data-i18n="assistantTab">💬 AI-асистент</button>
     </div>
     <div class="sb-bottom">
       <button class="btn btn-outline btn-sm" style="flex:1" data-i18n="viewMenuBtn" onclick="window.open('menu.html?v=temari','_blank')">👁 Переглянути</button>
@@ -2156,6 +2158,102 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
             <div id="advice-meta" style="font-size:11px;color:var(--muted);margin-top:1rem;text-align:right"></div>
           </div>
         </div>
+
+        <!-- МОДУЛЬ 3: ФІНАНСОВИЙ ПРОГНОЗ -->
+        <div class="settings-section" style="margin-top:1.5rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+            <div>
+              <h3 style="border:none;padding:0;margin:0" data-i18n="forecastTitle">📈 Прогноз виручки</h3>
+              <div class="page-sub" data-i18n="forecastDesc">Прогноз на 14 днів: тренд + тижнева сезонність</div>
+            </div>
+            <button class="btn btn-accent btn-sm" id="forecast-btn" onclick="forecastRevenue()" data-i18n="forecastGet">📊 Побудувати прогноз</button>
+          </div>
+
+          <div id="forecast-empty" style="color:var(--muted);font-size:.85rem;margin-top:1rem" data-i18n="forecastEmpty">
+            Натисніть «Побудувати прогноз», щоб спрогнозувати виручку на 14 днів.
+          </div>
+
+          <div id="forecast-loading" style="display:none;text-align:center;color:var(--muted);padding:2rem 1rem">
+            <div class="loader-spin" style="margin:0 auto .75rem"></div>
+            <div data-i18n="forecastLoading">Рахуємо тренд і сезонність…</div>
+          </div>
+
+          <div id="forecast-result" style="display:none;margin-top:1rem">
+            <div id="forecast-confidence" style="display:none;margin-bottom:1rem;padding:.6rem .9rem;border-radius:8px;font-size:.83rem"></div>
+
+            <div id="forecast-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;margin-bottom:1rem"></div>
+
+            <div style="background:var(--bg2);border-radius:10px;padding:1rem;margin-bottom:1rem">
+              <div style="font-size:12px;color:var(--muted);margin-bottom:.6rem" data-i18n="forecastChartTitle">Прогноз по днях</div>
+              <div id="forecast-chart" style="display:flex;align-items:flex-end;gap:3px;height:140px"></div>
+            </div>
+
+            <div id="forecast-summary" style="font-size:.9rem;line-height:1.6;margin-bottom:1rem;padding:.7rem .9rem;background:var(--accent-soft);border-radius:8px;color:var(--text)"></div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem">
+              <div class="settings-section" style="margin:0">
+                <h3 data-i18n="forecastInsights">🔍 Спостереження</h3>
+                <ul id="forecast-insights" style="margin:0;padding-left:1.1rem;font-size:.86rem;line-height:1.7"></ul>
+              </div>
+              <div class="settings-section" style="margin:0">
+                <h3 data-i18n="forecastRisks">⚠️ Ризики</h3>
+                <ul id="forecast-risks" style="margin:0;padding-left:1.1rem;font-size:.86rem;line-height:1.7"></ul>
+              </div>
+            </div>
+
+            <div id="forecast-meta" style="font-size:11px;color:var(--muted);margin-top:1rem;text-align:right"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS / COMPLAINTS TAB -->
+    <div id="t-reviews" class="tab-section">
+      <div class="topbar">
+        <div>
+          <div class="page-title" data-i18n="reviewsTitle">⭐ Відгуки та рекламації</div>
+          <div class="page-sub" data-i18n="reviewsDesc">Оцінки клієнтів, скарги та AI-класифікація</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="loadReviews()" data-i18n="reviewsRefresh">🔄 Оновити</button>
+      </div>
+
+      <div class="content">
+        <!-- Зведення -->
+        <div id="reviews-summary" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.75rem;margin-bottom:1rem"></div>
+
+        <!-- Фільтри -->
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+          <button class="btn btn-sm rev-filter" data-filter="all" onclick="setReviewFilter('all')" style="background:var(--accent);color:#fff" data-i18n="reviewsFilterAll">Усі</button>
+          <button class="btn btn-sm rev-filter" data-filter="new" onclick="setReviewFilter('new')" style="background:transparent;color:var(--muted)" data-i18n="reviewsFilterNew">Нові</button>
+          <button class="btn btn-sm rev-filter" data-filter="complaints" onclick="setReviewFilter('complaints')" style="background:transparent;color:var(--muted)" data-i18n="reviewsFilterComplaints">Скарги</button>
+        </div>
+
+        <div id="reviews-loading" style="display:none;text-align:center;color:var(--muted);padding:2rem"><div class="loader-spin" style="margin:0 auto"></div></div>
+        <div id="reviews-empty" style="display:none;text-align:center;color:var(--muted);padding:3rem 1rem" data-i18n="reviewsEmpty">Поки що немає відгуків.</div>
+        <div id="reviews-list" style="display:flex;flex-direction:column;gap:.75rem"></div>
+      </div>
+    </div>
+
+    <!-- AI ASSISTANT TAB -->
+    <div id="t-assistant" class="tab-section">
+      <div class="topbar">
+        <div>
+          <div class="page-title" data-i18n="assistantTitle">💬 AI-асистент</div>
+          <div class="page-sub" data-i18n="assistantDesc">Питайте про продажі, страви, відгуки, прогноз — природною мовою</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="resetAssistant()" data-i18n="assistantReset">🗑 Очистити</button>
+      </div>
+
+      <div class="content" style="display:flex;flex-direction:column;height:calc(100vh - 70px)">
+        <div id="assistant-messages" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.75rem;padding-bottom:1rem"></div>
+
+        <div id="assistant-suggestions" style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem"></div>
+
+        <div style="display:flex;gap:.5rem;align-items:flex-end">
+          <textarea id="assistant-input" rows="1" placeholder="Запитайте щось…" data-i18n-ph="assistantPlaceholder"
+            style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--font);font-size:.9rem;padding:.7rem;resize:none;outline:none;max-height:120px"></textarea>
+          <button class="btn btn-accent" id="assistant-send" onclick="sendAssistantMessage()" style="flex-shrink:0">➤</button>
+        </div>
       </div>
     </div>
 
@@ -2695,7 +2793,7 @@ var I18N = {
     venueName:'Назва закладу', venueCity:'Місто', venuePhone:'Телефон',
     venueAddress:'Адреса', venueHours:'Години роботи', venueTagline:'Слоган / кухня',
     venueLanguage:'Мова інтерфейсу адмін панелі', logoLbl:'Логотип', bannerLbl:'Банер',
-    settingsVenue:'⚙️ Налаштування закладу', deliveryIntegrations:'🚚 Інтеграції доставок', deliveryIntegrationsDesc:'Підключення служб доставки та маркетплейсів їжі', aiAnalytics:'🤖 AI-аналітика', aiAnalyticsDesc:'Дайджест продажів, оцінок і поради на основі ваших даних', periodDay:'День', periodWeek:'Тиждень', aiGenerate:'✨ Згенерувати', aiEmpty:'Натисніть «Згенерувати», щоб отримати дайджест за обраний період.', aiLoading:'Аналізуємо дані та готуємо поради…', aiReady:'Дайджест готовий', aiSummaryTitle:'📋 Огляд', aiInsightsTitle:'🔍 Спостереження', aiAdviceTitle:'💡 Поради', aiTopItems:'⭐ Топ страв', aiBottomItems:'📉 Найслабші страви', kpiOrders:'Замовлень', kpiRevenue:'Виручка', kpiAvgCheck:'Середній чек', kpiCancelled:'Скасовано', kpiRating:'Середня оцінка', adviceTitle:'💡 Поради: що покращити', adviceDesc:'Глибокий аналіз за 30 днів: комбо, ціни, акції, чистка меню, якість', adviceGet:'🔍 Отримати поради', adviceEmpty:'Натисніть «Отримати поради», щоб проаналізувати останні 30 днів.', adviceLoading:'Аналізуємо кошикові пари, ціни, меню та оцінки…', deliveryWebhookInfo:'Скопіюйте Webhook URL і вставте в кабінет служби доставки', yourWebhookUrl:'🔗 Ваш Webhook URL', deliveryWebhookNote:'Вставте цей URL в Glovo Partner Portal, Bolt Food Partner Hub тощо', glovoSetupNote:'Зареєструйте Webhook URL в Glovo Partner Portal', boltSetupNote:'Зареєструйте Webhook URL в Bolt Food Partner Hub', ownDelivery:'Власна доставка', ownDeliveryNote:'На цей URL надсилатимуться всі нові замовлення', deliveryOutboundWebhook:'URL для відправки замовлень', webhookSecret:'Secret key', webhookUrl:'Webhook URL', testWebhook:'🧪 Тест webhook', wifiPassword:'📶 WiFi пароль', aboutVenue:'📝 Про заклад', socialLinks:'🔗 Соцмережі', googleMaps:'🌐 Google Maps', legalInfo:'📄 Правова інформація', companyInfo:'ℹ️ Інформація про компанію', cookiePolicy:'🍪 Політика cookie', termsOfUse:'📋 Умови користування', privacyPolicy:'🔒 Конфіденційність',
+    settingsVenue:'⚙️ Налаштування закладу', deliveryIntegrations:'🚚 Інтеграції доставок', deliveryIntegrationsDesc:'Підключення служб доставки та маркетплейсів їжі', aiAnalytics:'🤖 AI-аналітика', aiAnalyticsDesc:'Дайджест продажів, оцінок і поради на основі ваших даних', periodDay:'День', periodWeek:'Тиждень', aiGenerate:'✨ Згенерувати', aiEmpty:'Натисніть «Згенерувати», щоб отримати дайджест за обраний період.', aiLoading:'Аналізуємо дані та готуємо поради…', aiReady:'Дайджест готовий', aiSummaryTitle:'📋 Огляд', aiInsightsTitle:'🔍 Спостереження', aiAdviceTitle:'💡 Поради', aiTopItems:'⭐ Топ страв', aiBottomItems:'📉 Найслабші страви', kpiOrders:'Замовлень', kpiRevenue:'Виручка', kpiAvgCheck:'Середній чек', kpiCancelled:'Скасовано', kpiRating:'Середня оцінка', adviceTitle:'💡 Поради: що покращити', adviceDesc:'Глибокий аналіз за 30 днів: комбо, ціни, акції, чистка меню, якість', adviceGet:'🔍 Отримати поради', adviceEmpty:'Натисніть «Отримати поради», щоб проаналізувати останні 30 днів.', adviceLoading:'Аналізуємо кошикові пари, ціни, меню та оцінки…', forecastTitle:'📈 Прогноз виручки', forecastDesc:'Прогноз на 14 днів: тренд + тижнева сезонність', forecastGet:'📊 Побудувати прогноз', forecastEmpty:'Натисніть «Побудувати прогноз», щоб спрогнозувати виручку на 14 днів.', forecastLoading:'Рахуємо тренд і сезонність…', forecastChartTitle:'Прогноз по днях', forecastInsights:'🔍 Спостереження', forecastRisks:'⚠️ Ризики', reviewsTab:'⭐ Відгуки', reviewsTitle:'⭐ Відгуки та рекламації', reviewsDesc:'Оцінки клієнтів, скарги та AI-класифікація', reviewsRefresh:'🔄 Оновити', reviewsFilterAll:'Усі', reviewsFilterNew:'Нові', reviewsFilterComplaints:'Скарги', reviewsEmpty:'Поки що немає відгуків.', assistantTab:'💬 AI-асистент', assistantTitle:'💬 AI-асистент', assistantDesc:'Питайте про продажі, страви, відгуки, прогноз — природною мовою', assistantReset:'🗑 Очистити', assistantPlaceholder:'Запитайте щось…', deliveryWebhookInfo:'Скопіюйте Webhook URL і вставте в кабінет служби доставки', yourWebhookUrl:'🔗 Ваш Webhook URL', deliveryWebhookNote:'Вставте цей URL в Glovo Partner Portal, Bolt Food Partner Hub тощо', glovoSetupNote:'Зареєструйте Webhook URL в Glovo Partner Portal', boltSetupNote:'Зареєструйте Webhook URL в Bolt Food Partner Hub', ownDelivery:'Власна доставка', ownDeliveryNote:'На цей URL надсилатимуться всі нові замовлення', deliveryOutboundWebhook:'URL для відправки замовлень', webhookSecret:'Secret key', webhookUrl:'Webhook URL', testWebhook:'🧪 Тест webhook', wifiPassword:'📶 WiFi пароль', aboutVenue:'📝 Про заклад', socialLinks:'🔗 Соцмережі', googleMaps:'🌐 Google Maps', legalInfo:'📄 Правова інформація', companyInfo:'ℹ️ Інформація про компанію', cookiePolicy:'🍪 Політика cookie', termsOfUse:'📋 Умови користування', privacyPolicy:'🔒 Конфіденційність',
     // Налаштування замовлень
     orderTypes:'Типи замовлень', discounts:'Знижки',
     minOrder:'Мінімальне замовлення', deliveryCost:'Вартість доставки', freeFrom:'Безкоштовно від', freeTo:'До', deliveryZonesExample:'Приклад: Центр — 30 грн, Передмістя — 80 грн',
@@ -3085,7 +3183,7 @@ var I18N = {
     venueName:'Venue name', venueCity:'City', venuePhone:'Phone',
     venueAddress:'Address', venueHours:'Working hours', venueTagline:'Tagline / cuisine',
     venueLanguage:'Admin panel language', logoLbl:'Logo', bannerLbl:'Banner',
-    settingsVenue:'⚙️ Venue settings', deliveryIntegrations:'🚚 Delivery Integrations', deliveryIntegrationsDesc:'Connect delivery services and food marketplaces', aiAnalytics:'🤖 AI Analytics', aiAnalyticsDesc:'Sales & ratings digest with advice based on your data', periodDay:'Day', periodWeek:'Week', aiGenerate:'✨ Generate', aiEmpty:'Tap “Generate” to get a digest for the selected period.', aiLoading:'Analyzing data and preparing advice…', aiReady:'Digest ready', aiSummaryTitle:'📋 Overview', aiInsightsTitle:'🔍 Insights', aiAdviceTitle:'💡 Advice', aiTopItems:'⭐ Top items', aiBottomItems:'📉 Weakest items', kpiOrders:'Orders', kpiRevenue:'Revenue', kpiAvgCheck:'Avg check', kpiCancelled:'Cancelled', kpiRating:'Avg rating', adviceTitle:'💡 Improvement advice', adviceDesc:'Deep 30-day analysis: combos, pricing, promos, menu cleanup, quality', adviceGet:'🔍 Get advice', adviceEmpty:'Tap “Get advice” to analyze the last 30 days.', adviceLoading:'Analyzing baskets, prices, menu and ratings…', deliveryWebhookInfo:'Copy the Webhook URL and paste it into your delivery service cabinet', yourWebhookUrl:'🔗 Your Webhook URL', deliveryWebhookNote:'Paste this URL into Glovo Partner Portal, Bolt Food Partner Hub etc.', glovoSetupNote:'Register Webhook URL in Glovo Partner Portal', boltSetupNote:'Register Webhook URL in Bolt Food Partner Hub', ownDelivery:'Own Delivery', ownDeliveryNote:'All new orders will be sent to this URL', deliveryOutboundWebhook:'URL for sending orders', webhookSecret:'Secret key', webhookUrl:'Webhook URL', testWebhook:'🧪 Test webhook', wifiPassword:'📶 WiFi password', aboutVenue:'📝 About venue', socialLinks:'🔗 Social links', googleMaps:'🌐 Google Maps', legalInfo:'📄 Legal info', companyInfo:'ℹ️ Company info', cookiePolicy:'🍪 Cookie policy', termsOfUse:'📋 Terms of use', privacyPolicy:'🔒 Privacy policy',
+    settingsVenue:'⚙️ Venue settings', deliveryIntegrations:'🚚 Delivery Integrations', deliveryIntegrationsDesc:'Connect delivery services and food marketplaces', aiAnalytics:'🤖 AI Analytics', aiAnalyticsDesc:'Sales & ratings digest with advice based on your data', periodDay:'Day', periodWeek:'Week', aiGenerate:'✨ Generate', aiEmpty:'Tap “Generate” to get a digest for the selected period.', aiLoading:'Analyzing data and preparing advice…', aiReady:'Digest ready', aiSummaryTitle:'📋 Overview', aiInsightsTitle:'🔍 Insights', aiAdviceTitle:'💡 Advice', aiTopItems:'⭐ Top items', aiBottomItems:'📉 Weakest items', kpiOrders:'Orders', kpiRevenue:'Revenue', kpiAvgCheck:'Avg check', kpiCancelled:'Cancelled', kpiRating:'Avg rating', adviceTitle:'💡 Improvement advice', adviceDesc:'Deep 30-day analysis: combos, pricing, promos, menu cleanup, quality', adviceGet:'🔍 Get advice', adviceEmpty:'Tap “Get advice” to analyze the last 30 days.', adviceLoading:'Analyzing baskets, prices, menu and ratings…', forecastTitle:'📈 Revenue forecast', forecastDesc:'14-day forecast: trend + weekly seasonality', forecastGet:'📊 Build forecast', forecastEmpty:'Tap “Build forecast” to project revenue for 14 days.', forecastLoading:'Computing trend and seasonality…', forecastChartTitle:'Daily forecast', forecastInsights:'🔍 Insights', forecastRisks:'⚠️ Risks', reviewsTab:'⭐ Reviews', reviewsTitle:'⭐ Reviews & complaints', reviewsDesc:'Customer ratings, complaints and AI classification', reviewsRefresh:'🔄 Refresh', reviewsFilterAll:'All', reviewsFilterNew:'New', reviewsFilterComplaints:'Complaints', reviewsEmpty:'No reviews yet.', assistantTab:'💬 AI Assistant', assistantTitle:'💬 AI Assistant', assistantDesc:'Ask about sales, dishes, reviews, forecast — in plain language', assistantReset:'🗑 Clear', assistantPlaceholder:'Ask something…', deliveryWebhookInfo:'Copy the Webhook URL and paste it into your delivery service cabinet', yourWebhookUrl:'🔗 Your Webhook URL', deliveryWebhookNote:'Paste this URL into Glovo Partner Portal, Bolt Food Partner Hub etc.', glovoSetupNote:'Register Webhook URL in Glovo Partner Portal', boltSetupNote:'Register Webhook URL in Bolt Food Partner Hub', ownDelivery:'Own Delivery', ownDeliveryNote:'All new orders will be sent to this URL', deliveryOutboundWebhook:'URL for sending orders', webhookSecret:'Secret key', webhookUrl:'Webhook URL', testWebhook:'🧪 Test webhook', wifiPassword:'📶 WiFi password', aboutVenue:'📝 About venue', socialLinks:'🔗 Social links', googleMaps:'🌐 Google Maps', legalInfo:'📄 Legal info', companyInfo:'ℹ️ Company info', cookiePolicy:'🍪 Cookie policy', termsOfUse:'📋 Terms of use', privacyPolicy:'🔒 Privacy policy',
     orderTypes:'Order types', discounts:'Discounts',
     minOrder:'Min. order', deliveryCost:'Delivery cost', freeFrom:'Free from', freeTo:'To', deliveryZonesExample:'Example: Downtown — 30 UAH, Suburbs — 80 UAH',
     minTime:'Min. time', deliveryZones:'Delivery zones',
@@ -6464,6 +6562,8 @@ window.nav = function(btn,tab){
   if(tab==='t-tables') { loadTablesFromFirestore(); loadStaffFromFirestore(); }
   if(tab==='t-delivery')  loadDeliveryIntegrations();
   if(tab==='t-ai')        loadAIDigest();
+  if(tab==='t-reviews')   loadReviews();
+  if(tab==='t-assistant') initAssistant();
 };
 
 // ── AI-ДАЙДЖЕСТ (Модуль 1) ──────────────────────────────────────
@@ -6688,6 +6788,405 @@ function renderAdvice(data){
   }
   adviceShow('advice-result');
 }
+
+// ── МОДУЛЬ 3: ФІНАНСОВИЙ ПРОГНОЗ ────────────────────────────────
+let forecastBusy = false;
+
+function forecastShow(which){
+  ['forecast-empty','forecast-loading','forecast-result'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  const el=document.getElementById(which); if(el) el.style.display='';
+}
+
+window.forecastRevenue = async function(){
+  if(forecastBusy) return;
+  forecastBusy = true;
+  const btn = document.getElementById('forecast-btn');
+  if(btn) btn.disabled = true;
+  forecastShow('forecast-loading');
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const resp = await fetch(`${window.__CF_URL}/forecastRevenue`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({ venueId }),
+    });
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error || 'Помилка прогнозу');
+    renderForecast(data);
+  } catch(e){
+    forecastShow('forecast-empty');
+    notify('Помилка: ' + e.message, 'err');
+  } finally {
+    forecastBusy = false;
+    if(btn) btn.disabled = false;
+  }
+};
+
+const FC_CONF = {
+  high:   { label:'Висока впевненість', color:'#15803D', bg:'#DCFCE7' },
+  medium: { label:'Середня впевненість', color:'#B45309', bg:'#FEF3C7' },
+  low:    { label:'Низька впевненість — даних мало', color:'#B91C1C', bg:'#FEE2E2' },
+};
+
+function renderForecast(data){
+  const fc = data.forecast || {};
+  const exp = data.explanation || {};
+
+  // Банер впевненості
+  const conf = FC_CONF[fc.confidence] || FC_CONF.low;
+  const confEl = document.getElementById('forecast-confidence');
+  if(confEl){
+    confEl.style.display = '';
+    confEl.style.color = conf.color;
+    confEl.style.background = conf.bg;
+    confEl.textContent = (fc.confidence==='high'?'✅ ':fc.confidence==='medium'?'➖ ':'⚠️ ') + conf.label
+      + (fc.mapePct!=null ? ` · похибка моделі ~${fc.mapePct}%` : '')
+      + ` · активних днів: ${fc.activeDays}`;
+  }
+
+  // KPI
+  const trendArrow = fc.trendPerDay > 0 ? '↗' : (fc.trendPerDay < 0 ? '↘' : '→');
+  const changeStr = fc.changePct==null ? '—' : (fc.changePct>0?'+':'') + fc.changePct + '%';
+  const kpis = [
+    { label:'Прогноз на 14 днів', value: (fc.forecastTotal??0).toLocaleString() },
+    { label:'Поперед. 14 днів', value: (fc.lastActualTotal??0).toLocaleString() },
+    { label:'Зміна', value: changeStr },
+    { label:'Тренд/день', value: trendArrow + ' ' + (fc.trendPerDay??0).toLocaleString() },
+    { label:'Сер. виручка/день', value: (fc.avgDaily??0).toLocaleString() },
+  ];
+  const kpiWrap = document.getElementById('forecast-kpis');
+  if(kpiWrap){
+    kpiWrap.innerHTML = kpis.map(k=>`
+      <div style="background:var(--bg2);border-radius:10px;padding:.75rem">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em">${escAI(k.label)}</div>
+        <div style="font-size:1.2rem;font-weight:600;margin-top:2px">${escAI(String(k.value))}</div>
+      </div>`).join('');
+  }
+
+  // Стовпчиковий графік прогнозу
+  const chart = document.getElementById('forecast-chart');
+  const days = Array.isArray(fc.forecast) ? fc.forecast : [];
+  if(chart){
+    const max = Math.max(1, ...days.map(d=>d.value));
+    chart.innerHTML = days.map(d=>{
+      const h = Math.round((d.value/max)*100);
+      const isWeekend = d.weekday==='Сб' || d.weekday==='Нд';
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px" title="${escAI(d.date)}: ${d.value.toLocaleString()}">
+        <div style="width:100%;background:${isWeekend?'var(--accent)':'var(--accent-soft)'};border-radius:3px 3px 0 0;height:${h}%;min-height:2px"></div>
+        <div style="font-size:9px;color:var(--muted)">${escAI(d.weekday)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Текст від GPT
+  const sum = document.getElementById('forecast-summary');
+  if(sum) sum.textContent = exp.summary || '—';
+  const ins = document.getElementById('forecast-insights');
+  if(ins) ins.innerHTML = (exp.insights||[]).map(x=>`<li>${escAI(x)}</li>`).join('') || `<li style="color:var(--muted)">—</li>`;
+  const risks = document.getElementById('forecast-risks');
+  if(risks){
+    const arr = [...(exp.risks||[])];
+    if(exp.confidenceNote) arr.push(exp.confidenceNote);
+    risks.innerHTML = arr.map(x=>`<li>${escAI(x)}</li>`).join('') || `<li style="color:var(--muted)">—</li>`;
+  }
+
+  const meta = document.getElementById('forecast-meta');
+  if(meta) meta.textContent = `${data.model||'gpt-5.4-mini'} · історія ${fc.historyDays||60} дн · ${new Date().toLocaleString()}`;
+
+  forecastShow('forecast-result');
+}
+
+// ── МОДУЛЬ 4: ВІДГУКИ / РЕКЛАМАЦІЇ ──────────────────────────────
+let reviewsCache = [];
+let reviewFilter = 'all';
+
+const REV_SENTIMENT = {
+  positive: { icon:'😊', label:'Позитивний', color:'#15803D', bg:'#DCFCE7' },
+  neutral:  { icon:'😐', label:'Нейтральний', color:'#B45309', bg:'#FEF3C7' },
+  negative: { icon:'😞', label:'Негативний', color:'#B91C1C', bg:'#FEE2E2' },
+};
+const REV_CATEGORY = {
+  food_quality:'Якість їжі', service:'Сервіс', wait_time:'Час очікування',
+  delivery:'Доставка', price:'Ціна', cleanliness:'Чистота', praise:'Похвала', other:'Інше',
+};
+const REV_TAG = {
+  slow:'Довго чекали', cold_food:'Холодна їжа', wrong_order:'Помилка в замовленні',
+  service:'Сервіс', delivery:'Доставка', price:'Ціна', cleanliness:'Чистота', portion:'Порція', other:'Інше',
+};
+
+window.setReviewFilter = function(f){
+  reviewFilter = f;
+  document.querySelectorAll('.rev-filter').forEach(b=>{
+    const on = b.getAttribute('data-filter')===f;
+    b.style.background = on ? 'var(--accent)' : 'transparent';
+    b.style.color = on ? '#fff' : 'var(--muted)';
+  });
+  renderReviews();
+};
+
+window.loadReviews = async function(){
+  const loading = document.getElementById('reviews-loading');
+  const empty = document.getElementById('reviews-empty');
+  const list = document.getElementById('reviews-list');
+  if(loading) loading.style.display='';
+  if(empty) empty.style.display='none';
+  if(list) list.innerHTML='';
+  try {
+    const { getFirestore, collection, query, orderBy, limit, getDocs } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const fdb = getFirestore();
+    const q = query(collection(fdb,'venues',venueId,'reviews'), orderBy('createdAt','desc'), limit(200));
+    const snap = await getDocs(q);
+    reviewsCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+  } catch(e){
+    reviewsCache = [];
+    notify('Помилка завантаження: '+e.message,'err');
+  } finally {
+    if(loading) loading.style.display='none';
+  }
+  renderReviewsSummary();
+  renderReviews();
+};
+
+function renderReviewsSummary(){
+  const wrap = document.getElementById('reviews-summary');
+  if(!wrap) return;
+  const total = reviewsCache.length;
+  const withRating = reviewsCache.filter(r=>Number.isFinite(Number(r.rating)));
+  const avg = withRating.length ? (withRating.reduce((s,r)=>s+Number(r.rating),0)/withRating.length).toFixed(1) : '—';
+  const complaints = reviewsCache.filter(r=>r.aiSentiment==='negative' || Number(r.rating)<=2).length;
+  const newCount = reviewsCache.filter(r=>r.status!=='resolved').length;
+  const cards = [
+    { label:'Усього', value: total },
+    { label:'Середня оцінка', value: avg==='—'?'—':avg+'★' },
+    { label:'Скарги', value: complaints },
+    { label:'Не оброблені', value: newCount },
+  ];
+  wrap.innerHTML = cards.map(c=>`
+    <div style="background:var(--bg2);border-radius:10px;padding:.75rem">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em">${escAI(c.label)}</div>
+      <div style="font-size:1.4rem;font-weight:600;margin-top:2px">${escAI(String(c.value))}</div>
+    </div>`).join('');
+}
+
+function reviewMatchesFilter(r){
+  if(reviewFilter==='new') return r.status!=='resolved';
+  if(reviewFilter==='complaints') return r.aiSentiment==='negative' || Number(r.rating)<=2;
+  return true;
+}
+
+function renderReviews(){
+  const list = document.getElementById('reviews-list');
+  const empty = document.getElementById('reviews-empty');
+  if(!list) return;
+  const filtered = reviewsCache.filter(reviewMatchesFilter);
+  if(!filtered.length){
+    list.innerHTML='';
+    if(empty) empty.style.display='';
+    return;
+  }
+  if(empty) empty.style.display='none';
+
+  list.innerHTML = filtered.map(r=>{
+    const sent = REV_SENTIMENT[r.aiSentiment];
+    const stars = '★'.repeat(Math.max(0,Math.min(5,Number(r.rating)||0))) + '☆'.repeat(5-Math.max(0,Math.min(5,Number(r.rating)||0)));
+    const tags = (Array.isArray(r.tags)?r.tags:[]).map(t=>`<span style="font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg2);color:var(--muted)">${escAI(REV_TAG[t]||t)}</span>`).join(' ');
+    const when = r.createdAt && r.createdAt.seconds ? new Date(r.createdAt.seconds*1000).toLocaleString() : '';
+    const isResolved = r.status==='resolved';
+    const dt = r.createdAt && r.createdAt.seconds ? r.createdAt.seconds : 0;
+    return `
+    <div class="rev-card" data-id="${escAI(r.id)}" style="border:1px solid var(--border);border-radius:10px;padding:.85rem 1rem;${isResolved?'opacity:.6':''}">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem">
+        <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+          <span style="font-weight:600">${escAI(r.name||'Гість')}</span>
+          <span style="color:var(--accent);letter-spacing:1px">${stars}</span>
+          ${sent?`<span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;color:${sent.color};background:${sent.bg}">${sent.icon} ${escAI(sent.label)}</span>`:''}
+          ${r.aiCategory?`<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--bg2);color:var(--muted)">${escAI(REV_CATEGORY[r.aiCategory]||r.aiCategory)}</span>`:''}
+        </div>
+        <span style="font-size:10px;color:var(--muted)">${escAI(when)}</span>
+      </div>
+      ${r.text?`<div style="font-size:.88rem;line-height:1.5;margin-bottom:.4rem">${escAI(r.text)}</div>`:''}
+      ${r.aiSummary?`<div style="font-size:.78rem;color:var(--muted);margin-bottom:.4rem">🤖 ${escAI(r.aiSummary)}</div>`:''}
+      ${tags?`<div style="display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.5rem">${tags}</div>`:''}
+      <div class="rev-reply-box" style="display:none;margin:.5rem 0">
+        <textarea class="rev-reply-text" rows="3" style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.85rem;padding:.6rem;resize:vertical;box-sizing:border-box"></textarea>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button class="btn btn-outline btn-sm rev-act" data-act="reply" data-id="${escAI(r.id)}" data-dt="${dt}">✍️ Чернетка відповіді</button>
+        ${isResolved
+          ? `<button class="btn btn-outline btn-sm rev-act" data-act="reopen" data-id="${escAI(r.id)}" data-dt="${dt}">↩️ Відновити</button>`
+          : `<button class="btn btn-accent btn-sm rev-act" data-act="resolve" data-id="${escAI(r.id)}" data-dt="${dt}">✓ Вирішено</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Делегування дій у списку відгуків
+(function(){
+  const list = document.getElementById('reviews-list');
+  if(!list) return;
+  list.addEventListener('click', async (e)=>{
+    const btn = e.target.closest('.rev-act');
+    if(!btn) return;
+    const act = btn.getAttribute('data-act');
+    const id = btn.getAttribute('data-id');
+    const card = btn.closest('.rev-card');
+    if(act==='resolve' || act==='reopen'){
+      await updateReviewStatus(id, act==='resolve'?'resolved':'new');
+    } else if(act==='reply'){
+      await draftReply(id, card, btn);
+    }
+  });
+})();
+
+async function updateReviewStatus(reviewId, status){
+  try {
+    const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const fdb = getFirestore();
+    await updateDoc(doc(fdb,'venues',venueId,'reviews',reviewId), { status });
+    const r = reviewsCache.find(x=>x.id===reviewId); if(r) r.status = status;
+    renderReviewsSummary(); renderReviews();
+    notify(status==='resolved'?'Позначено як вирішене':'Відновлено','ok');
+  } catch(e){ notify('Помилка: '+e.message,'err'); }
+}
+
+async function draftReply(reviewId, card, btn){
+  const box = card.querySelector('.rev-reply-box');
+  const ta = card.querySelector('.rev-reply-text');
+  if(box.style.display==='block' && ta.value){ box.style.display='none'; return; }
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = '⏳ Генерую…';
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const resp = await fetch(`${window.__CF_URL}/draftReviewReply`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({ venueId, reviewId }),
+    });
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error||'Помилка');
+    ta.value = data.reply || '';
+    box.style.display = 'block';
+  } catch(e){
+    notify('Помилка: '+e.message,'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = orig;
+  }
+}
+
+// ── МОДУЛЬ 5: AI-ЧАТ-АСИСТЕНТ ───────────────────────────────────
+let assistantHistory = [];
+let assistantBusy = false;
+let assistantInited = false;
+
+const ASSISTANT_SUGGESTIONS = [
+  'Як продажі за тиждень?',
+  'Які страви найпопулярніші?',
+  'Що показує прогноз виручки?',
+  'Які найчастіші скарги?',
+];
+
+window.initAssistant = function(){
+  if(assistantInited) return;
+  assistantInited = true;
+  renderSuggestions();
+  if(!assistantHistory.length){
+    addAssistantBubble('assistant', 'Вітаю! Я ваш AI-асистент. Запитайте про продажі, страви, відгуки чи прогноз — або попросіть пораду по бізнесу.');
+  }
+  // Enter надсилає, Shift+Enter — новий рядок; авто-висота
+  const inp = document.getElementById('assistant-input');
+  if(inp && !inp.dataset.bound){
+    inp.dataset.bound = '1';
+    inp.addEventListener('keydown', e=>{
+      if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendAssistantMessage(); }
+    });
+    inp.addEventListener('input', ()=>{ inp.style.height='auto'; inp.style.height=Math.min(120,inp.scrollHeight)+'px'; });
+  }
+};
+
+function renderSuggestions(){
+  const wrap = document.getElementById('assistant-suggestions');
+  if(!wrap) return;
+  if(assistantHistory.length){ wrap.innerHTML=''; return; }
+  wrap.innerHTML = ASSISTANT_SUGGESTIONS.map(s=>
+    `<button class="btn btn-outline btn-sm" onclick="askSuggestion(this)" style="font-size:.78rem">${escAI(s)}</button>`
+  ).join('');
+}
+
+window.askSuggestion = function(el){
+  const inp = document.getElementById('assistant-input');
+  if(inp) inp.value = el.textContent;
+  sendAssistantMessage();
+};
+
+window.resetAssistant = function(){
+  assistantHistory = [];
+  const box = document.getElementById('assistant-messages');
+  if(box) box.innerHTML='';
+  renderSuggestions();
+  addAssistantBubble('assistant', 'Готово, почнімо спочатку. Чим допомогти?');
+};
+
+function addAssistantBubble(role, text){
+  const box = document.getElementById('assistant-messages');
+  if(!box) return null;
+  const isUser = role==='user';
+  const wrap = document.createElement('div');
+  wrap.style.cssText = `display:flex;${isUser?'justify-content:flex-end':'justify-content:flex-start'}`;
+  const bubble = document.createElement('div');
+  bubble.style.cssText = `max-width:80%;padding:.6rem .85rem;border-radius:12px;font-size:.88rem;line-height:1.5;white-space:pre-wrap;`
+    + (isUser ? 'background:var(--accent);color:#fff;border-bottom-right-radius:3px'
+              : 'background:var(--bg2);color:var(--text);border-bottom-left-radius:3px');
+  bubble.textContent = text;
+  wrap.appendChild(bubble);
+  box.appendChild(wrap);
+  box.scrollTop = box.scrollHeight;
+  return bubble;
+}
+
+window.sendAssistantMessage = async function(){
+  if(assistantBusy) return;
+  const inp = document.getElementById('assistant-input');
+  const text = (inp.value || '').trim();
+  if(!text) return;
+
+  assistantBusy = true;
+  const sendBtn = document.getElementById('assistant-send');
+  if(sendBtn) sendBtn.disabled = true;
+  inp.value=''; inp.style.height='auto';
+
+  addAssistantBubble('user', text);
+  assistantHistory.push({ role:'user', content:text });
+  renderSuggestions();
+
+  const thinking = addAssistantBubble('assistant', '⏳ Думаю…');
+
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const resp = await fetch(`${window.__CF_URL}/chatAssistant`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({ venueId, messages: assistantHistory }),
+    });
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error||'Помилка');
+    if(thinking) thinking.textContent = data.reply;
+    assistantHistory.push({ role:'assistant', content:data.reply });
+  } catch(e){
+    if(thinking){ thinking.textContent = '⚠️ Помилка: '+e.message; thinking.style.color='#B91C1C'; }
+  } finally {
+    assistantBusy = false;
+    if(sendBtn) sendBtn.disabled = false;
+    const box = document.getElementById('assistant-messages');
+    if(box) box.scrollTop = box.scrollHeight;
+  }
+};
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function notify(msg,type='ok'){const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';setTimeout(()=>n.classList.remove('show'),2800);}
