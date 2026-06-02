@@ -386,6 +386,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <button class="nav-item" onclick="nav(this,'t-ordering')" data-i18n="ordering">📋 Налаш. замовлень</button>
       <button class="nav-item" onclick="nav(this,'t-settings')" data-i18n="settings">⚙️ Налаштування</button>
       <button class="nav-item" onclick="nav(this,'t-delivery')" data-i18n="deliveryIntegrations">🚚 Інтеграції доставок</button>
+      <button class="nav-item" onclick="nav(this,'t-ai')" data-i18n="aiAnalytics">🤖 AI-аналітика</button>
     </div>
     <div class="sb-bottom">
       <button class="btn btn-outline btn-sm" style="flex:1" data-i18n="viewMenuBtn" onclick="window.open('menu.html?v=temari','_blank')">👁 Переглянути</button>
@@ -2062,6 +2063,102 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       </div>
     </div>
 
+    <!-- AI ANALYTICS TAB -->
+    <div id="t-ai" class="tab-section">
+      <div class="topbar">
+        <div>
+          <div class="page-title" data-i18n="aiAnalytics">🤖 AI-аналітика</div>
+          <div class="page-sub" data-i18n="aiAnalyticsDesc">Дайджест продажів, оцінок і поради на основі ваших даних</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div class="seg" id="ai-period-seg" style="display:inline-flex;border:1px solid var(--border2);border-radius:8px;overflow:hidden">
+            <button class="btn btn-sm" id="ai-seg-day" style="border-radius:0;background:var(--accent);color:#fff" onclick="setAIPeriod('day')" data-i18n="periodDay">День</button>
+            <button class="btn btn-sm" id="ai-seg-week" style="border-radius:0;background:transparent;color:var(--muted)" onclick="setAIPeriod('week')" data-i18n="periodWeek">Тиждень</button>
+          </div>
+          <button class="btn btn-accent btn-sm" id="ai-generate-btn" onclick="generateAIDigest()" data-i18n="aiGenerate">✨ Згенерувати</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div id="ai-empty" style="text-align:center;color:var(--muted);padding:3rem 1rem">
+          <div style="font-size:2.5rem;margin-bottom:.5rem">🤖</div>
+          <div data-i18n="aiEmpty">Натисніть «Згенерувати», щоб отримати дайджест за обраний період.</div>
+        </div>
+
+        <div id="ai-loading" style="display:none;text-align:center;color:var(--muted);padding:3rem 1rem">
+          <div class="loader-spin" style="margin:0 auto .75rem"></div>
+          <div data-i18n="aiLoading">Аналізуємо дані та готуємо поради…</div>
+        </div>
+
+        <div id="ai-result" style="display:none">
+          <!-- KPI -->
+          <div class="settings-section" style="margin-bottom:1rem">
+            <div id="ai-period-label" style="font-size:12px;color:var(--muted);margin-bottom:.75rem"></div>
+            <div id="ai-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem"></div>
+          </div>
+
+          <!-- Огляд від AI -->
+          <div class="settings-section" style="margin-bottom:1rem">
+            <h3 data-i18n="aiSummaryTitle">📋 Огляд</h3>
+            <div id="ai-summary" style="font-size:.9rem;line-height:1.6;color:var(--text)"></div>
+            <div id="ai-alert" style="display:none;margin-top:.75rem;padding:.7rem .9rem;border-radius:8px;background:#FEF2F2;color:#991B1B;font-size:.85rem;border:1px solid #FECACA"></div>
+          </div>
+
+          <!-- Спостереження та поради -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-bottom:1rem">
+            <div class="settings-section" style="margin:0">
+              <h3 data-i18n="aiInsightsTitle">🔍 Спостереження</h3>
+              <ul id="ai-insights" style="margin:0;padding-left:1.1rem;font-size:.86rem;line-height:1.7;color:var(--text)"></ul>
+            </div>
+            <div class="settings-section" style="margin:0">
+              <h3 data-i18n="aiAdviceTitle">💡 Поради</h3>
+              <ul id="ai-advice" style="margin:0;padding-left:1.1rem;font-size:.86rem;line-height:1.7;color:var(--text)"></ul>
+            </div>
+          </div>
+
+          <!-- Топ / анти-топ страв -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem">
+            <div class="settings-section" style="margin:0">
+              <h3 data-i18n="aiTopItems">⭐ Топ страв</h3>
+              <div id="ai-top-items" style="font-size:.86rem;line-height:1.8"></div>
+            </div>
+            <div class="settings-section" style="margin:0">
+              <h3 data-i18n="aiBottomItems">📉 Найслабші страви</h3>
+              <div id="ai-bottom-items" style="font-size:.86rem;line-height:1.8"></div>
+            </div>
+          </div>
+
+          <div id="ai-meta" style="font-size:11px;color:var(--muted);margin-top:1rem;text-align:right"></div>
+        </div>
+
+        <!-- МОДУЛЬ 2: ПОРАДИ «ЩО ПОКРАЩИТИ» -->
+        <div class="settings-section" style="margin-top:1.5rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+            <div>
+              <h3 style="border:none;padding:0;margin:0" data-i18n="adviceTitle">💡 Поради: що покращити</h3>
+              <div class="page-sub" data-i18n="adviceDesc">Глибокий аналіз за 30 днів: комбо, ціни, акції, чистка меню, якість</div>
+            </div>
+            <button class="btn btn-accent btn-sm" id="advice-btn" onclick="getImprovementAdvice()" data-i18n="adviceGet">🔍 Отримати поради</button>
+          </div>
+
+          <div id="advice-empty" style="color:var(--muted);font-size:.85rem;margin-top:1rem" data-i18n="adviceEmpty">
+            Натисніть «Отримати поради», щоб проаналізувати останні 30 днів.
+          </div>
+
+          <div id="advice-loading" style="display:none;text-align:center;color:var(--muted);padding:2rem 1rem">
+            <div class="loader-spin" style="margin:0 auto .75rem"></div>
+            <div data-i18n="adviceLoading">Аналізуємо кошикові пари, ціни, меню та оцінки…</div>
+          </div>
+
+          <div id="advice-result" style="display:none;margin-top:1rem">
+            <div id="advice-summary" style="font-size:.9rem;line-height:1.6;margin-bottom:1rem;padding:.7rem .9rem;background:var(--accent-soft);border-radius:8px;color:var(--text)"></div>
+            <div id="advice-list" style="display:flex;flex-direction:column;gap:.75rem"></div>
+            <div id="advice-meta" style="font-size:11px;color:var(--muted);margin-top:1rem;text-align:right"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -2598,7 +2695,7 @@ var I18N = {
     venueName:'Назва закладу', venueCity:'Місто', venuePhone:'Телефон',
     venueAddress:'Адреса', venueHours:'Години роботи', venueTagline:'Слоган / кухня',
     venueLanguage:'Мова інтерфейсу адмін панелі', logoLbl:'Логотип', bannerLbl:'Банер',
-    settingsVenue:'⚙️ Налаштування закладу', deliveryIntegrations:'🚚 Інтеграції доставок', deliveryIntegrationsDesc:'Підключення служб доставки та маркетплейсів їжі', deliveryWebhookInfo:'Скопіюйте Webhook URL і вставте в кабінет служби доставки', yourWebhookUrl:'🔗 Ваш Webhook URL', deliveryWebhookNote:'Вставте цей URL в Glovo Partner Portal, Bolt Food Partner Hub тощо', glovoSetupNote:'Зареєструйте Webhook URL в Glovo Partner Portal', boltSetupNote:'Зареєструйте Webhook URL в Bolt Food Partner Hub', ownDelivery:'Власна доставка', ownDeliveryNote:'На цей URL надсилатимуться всі нові замовлення', deliveryOutboundWebhook:'URL для відправки замовлень', webhookSecret:'Secret key', webhookUrl:'Webhook URL', testWebhook:'🧪 Тест webhook', wifiPassword:'📶 WiFi пароль', aboutVenue:'📝 Про заклад', socialLinks:'🔗 Соцмережі', googleMaps:'🌐 Google Maps', legalInfo:'📄 Правова інформація', companyInfo:'ℹ️ Інформація про компанію', cookiePolicy:'🍪 Політика cookie', termsOfUse:'📋 Умови користування', privacyPolicy:'🔒 Конфіденційність',
+    settingsVenue:'⚙️ Налаштування закладу', deliveryIntegrations:'🚚 Інтеграції доставок', deliveryIntegrationsDesc:'Підключення служб доставки та маркетплейсів їжі', aiAnalytics:'🤖 AI-аналітика', aiAnalyticsDesc:'Дайджест продажів, оцінок і поради на основі ваших даних', periodDay:'День', periodWeek:'Тиждень', aiGenerate:'✨ Згенерувати', aiEmpty:'Натисніть «Згенерувати», щоб отримати дайджест за обраний період.', aiLoading:'Аналізуємо дані та готуємо поради…', aiReady:'Дайджест готовий', aiSummaryTitle:'📋 Огляд', aiInsightsTitle:'🔍 Спостереження', aiAdviceTitle:'💡 Поради', aiTopItems:'⭐ Топ страв', aiBottomItems:'📉 Найслабші страви', kpiOrders:'Замовлень', kpiRevenue:'Виручка', kpiAvgCheck:'Середній чек', kpiCancelled:'Скасовано', kpiRating:'Середня оцінка', adviceTitle:'💡 Поради: що покращити', adviceDesc:'Глибокий аналіз за 30 днів: комбо, ціни, акції, чистка меню, якість', adviceGet:'🔍 Отримати поради', adviceEmpty:'Натисніть «Отримати поради», щоб проаналізувати останні 30 днів.', adviceLoading:'Аналізуємо кошикові пари, ціни, меню та оцінки…', deliveryWebhookInfo:'Скопіюйте Webhook URL і вставте в кабінет служби доставки', yourWebhookUrl:'🔗 Ваш Webhook URL', deliveryWebhookNote:'Вставте цей URL в Glovo Partner Portal, Bolt Food Partner Hub тощо', glovoSetupNote:'Зареєструйте Webhook URL в Glovo Partner Portal', boltSetupNote:'Зареєструйте Webhook URL в Bolt Food Partner Hub', ownDelivery:'Власна доставка', ownDeliveryNote:'На цей URL надсилатимуться всі нові замовлення', deliveryOutboundWebhook:'URL для відправки замовлень', webhookSecret:'Secret key', webhookUrl:'Webhook URL', testWebhook:'🧪 Тест webhook', wifiPassword:'📶 WiFi пароль', aboutVenue:'📝 Про заклад', socialLinks:'🔗 Соцмережі', googleMaps:'🌐 Google Maps', legalInfo:'📄 Правова інформація', companyInfo:'ℹ️ Інформація про компанію', cookiePolicy:'🍪 Політика cookie', termsOfUse:'📋 Умови користування', privacyPolicy:'🔒 Конфіденційність',
     // Налаштування замовлень
     orderTypes:'Типи замовлень', discounts:'Знижки',
     minOrder:'Мінімальне замовлення', deliveryCost:'Вартість доставки', freeFrom:'Безкоштовно від', freeTo:'До', deliveryZonesExample:'Приклад: Центр — 30 грн, Передмістя — 80 грн',
@@ -2988,7 +3085,7 @@ var I18N = {
     venueName:'Venue name', venueCity:'City', venuePhone:'Phone',
     venueAddress:'Address', venueHours:'Working hours', venueTagline:'Tagline / cuisine',
     venueLanguage:'Admin panel language', logoLbl:'Logo', bannerLbl:'Banner',
-    settingsVenue:'⚙️ Venue settings', deliveryIntegrations:'🚚 Delivery Integrations', deliveryIntegrationsDesc:'Connect delivery services and food marketplaces', deliveryWebhookInfo:'Copy the Webhook URL and paste it into your delivery service cabinet', yourWebhookUrl:'🔗 Your Webhook URL', deliveryWebhookNote:'Paste this URL into Glovo Partner Portal, Bolt Food Partner Hub etc.', glovoSetupNote:'Register Webhook URL in Glovo Partner Portal', boltSetupNote:'Register Webhook URL in Bolt Food Partner Hub', ownDelivery:'Own Delivery', ownDeliveryNote:'All new orders will be sent to this URL', deliveryOutboundWebhook:'URL for sending orders', webhookSecret:'Secret key', webhookUrl:'Webhook URL', testWebhook:'🧪 Test webhook', wifiPassword:'📶 WiFi password', aboutVenue:'📝 About venue', socialLinks:'🔗 Social links', googleMaps:'🌐 Google Maps', legalInfo:'📄 Legal info', companyInfo:'ℹ️ Company info', cookiePolicy:'🍪 Cookie policy', termsOfUse:'📋 Terms of use', privacyPolicy:'🔒 Privacy policy',
+    settingsVenue:'⚙️ Venue settings', deliveryIntegrations:'🚚 Delivery Integrations', deliveryIntegrationsDesc:'Connect delivery services and food marketplaces', aiAnalytics:'🤖 AI Analytics', aiAnalyticsDesc:'Sales & ratings digest with advice based on your data', periodDay:'Day', periodWeek:'Week', aiGenerate:'✨ Generate', aiEmpty:'Tap “Generate” to get a digest for the selected period.', aiLoading:'Analyzing data and preparing advice…', aiReady:'Digest ready', aiSummaryTitle:'📋 Overview', aiInsightsTitle:'🔍 Insights', aiAdviceTitle:'💡 Advice', aiTopItems:'⭐ Top items', aiBottomItems:'📉 Weakest items', kpiOrders:'Orders', kpiRevenue:'Revenue', kpiAvgCheck:'Avg check', kpiCancelled:'Cancelled', kpiRating:'Avg rating', adviceTitle:'💡 Improvement advice', adviceDesc:'Deep 30-day analysis: combos, pricing, promos, menu cleanup, quality', adviceGet:'🔍 Get advice', adviceEmpty:'Tap “Get advice” to analyze the last 30 days.', adviceLoading:'Analyzing baskets, prices, menu and ratings…', deliveryWebhookInfo:'Copy the Webhook URL and paste it into your delivery service cabinet', yourWebhookUrl:'🔗 Your Webhook URL', deliveryWebhookNote:'Paste this URL into Glovo Partner Portal, Bolt Food Partner Hub etc.', glovoSetupNote:'Register Webhook URL in Glovo Partner Portal', boltSetupNote:'Register Webhook URL in Bolt Food Partner Hub', ownDelivery:'Own Delivery', ownDeliveryNote:'All new orders will be sent to this URL', deliveryOutboundWebhook:'URL for sending orders', webhookSecret:'Secret key', webhookUrl:'Webhook URL', testWebhook:'🧪 Test webhook', wifiPassword:'📶 WiFi password', aboutVenue:'📝 About venue', socialLinks:'🔗 Social links', googleMaps:'🌐 Google Maps', legalInfo:'📄 Legal info', companyInfo:'ℹ️ Company info', cookiePolicy:'🍪 Cookie policy', termsOfUse:'📋 Terms of use', privacyPolicy:'🔒 Privacy policy',
     orderTypes:'Order types', discounts:'Discounts',
     minOrder:'Min. order', deliveryCost:'Delivery cost', freeFrom:'Free from', freeTo:'To', deliveryZonesExample:'Example: Downtown — 30 UAH, Suburbs — 80 UAH',
     minTime:'Min. time', deliveryZones:'Delivery zones',
@@ -6366,7 +6463,231 @@ window.nav = function(btn,tab){
   if(tab==='t-customers') loadCustomers();
   if(tab==='t-tables') { loadTablesFromFirestore(); loadStaffFromFirestore(); }
   if(tab==='t-delivery')  loadDeliveryIntegrations();
+  if(tab==='t-ai')        loadAIDigest();
 };
+
+// ── AI-ДАЙДЖЕСТ (Модуль 1) ──────────────────────────────────────
+let aiPeriod = 'day';
+let aiBusy = false;
+
+window.setAIPeriod = function(p){
+  aiPeriod = (p === 'week') ? 'week' : 'day';
+  const dayBtn = document.getElementById('ai-seg-day');
+  const weekBtn = document.getElementById('ai-seg-week');
+  if(dayBtn && weekBtn){
+    const on = b => { b.style.background='var(--accent)'; b.style.color='#fff'; };
+    const off = b => { b.style.background='transparent'; b.style.color='var(--muted)'; };
+    if(aiPeriod==='day'){ on(dayBtn); off(weekBtn); } else { on(weekBtn); off(dayBtn); }
+  }
+};
+
+function aiShow(which){
+  ['ai-empty','ai-loading','ai-result'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  const t=document.getElementById(which); if(t) t.style.display='';
+}
+
+function fmtHour(h){ return String(h).padStart(2,'0')+':00'; }
+
+const AI_TAG_LABELS = {
+  slow:'Довго чекали', cold_food:'Холодна їжа', wrong_order:'Помилка в замовленні',
+  service:'Сервіс', delivery:'Доставка', price:'Ціна', cleanliness:'Чистота',
+  portion:'Порція', other:'Інше',
+};
+
+window.loadAIDigest = async function(){
+  // Підтягуємо останній збережений дайджест періоду (без виклику GPT)
+  try {
+    const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const fdb = getFirestore();
+    const snap = await getDoc(doc(fdb, 'venues', venueId, 'ai_digests', `latest_${aiPeriod}`));
+    if(snap.exists()){
+      renderAIDigest(snap.data());
+      return;
+    }
+  } catch(e){ /* немає збереженого — показуємо порожній стан */ }
+  aiShow('ai-empty');
+};
+
+window.generateAIDigest = async function(){
+  if(aiBusy) return;
+  aiBusy = true;
+  const btn = document.getElementById('ai-generate-btn');
+  if(btn) btn.disabled = true;
+  aiShow('ai-loading');
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const resp = await fetch(`${window.__CF_URL}/generateDigest`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({ venueId, period: aiPeriod }),
+    });
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error || 'Помилка генерації');
+    renderAIDigest(data);
+    notify(t('aiReady') || 'Дайджест готовий', 'ok');
+  } catch(e){
+    aiShow('ai-empty');
+    notify('Помилка: ' + e.message, 'err');
+  } finally {
+    aiBusy = false;
+    if(btn) btn.disabled = false;
+  }
+};
+
+function renderAIDigest(d){
+  const stats = d.stats || {};
+  const nar = d.narrative || {};
+  const ccy = stats.currency || '';
+
+  // Період
+  const fromD = d.from ? new Date(d.from.seconds ? d.from.seconds*1000 : d.from) : null;
+  const toD   = d.to   ? new Date(d.to.seconds   ? d.to.seconds*1000   : d.to)   : null;
+  const periodLabel = document.getElementById('ai-period-label');
+  if(periodLabel){
+    const fmt = dt => dt ? dt.toLocaleDateString() : '';
+    periodLabel.textContent = (aiPeriod==='day' ? (t('periodDay')||'День') : (t('periodWeek')||'Тиждень'))
+      + (fromD && toD ? ` · ${fmt(fromD)} – ${fmt(toD)}` : '');
+  }
+
+  // KPI-картки
+  const rev = stats.reviews || {};
+  const kpis = [
+    { label: t('kpiOrders')||'Замовлень', value: stats.ordersCount ?? 0 },
+    { label: t('kpiRevenue')||'Виручка', value: (stats.revenue ?? 0) },
+    { label: t('kpiAvgCheck')||'Середній чек', value: (stats.avgCheck ?? 0) },
+    { label: t('kpiCancelled')||'Скасовано', value: stats.cancelled ?? 0 },
+    { label: t('kpiRating')||'Середня оцінка', value: rev.avgRating != null ? `${rev.avgRating}★ (${rev.count})` : '—' },
+  ];
+  const kpiWrap = document.getElementById('ai-kpis');
+  if(kpiWrap){
+    kpiWrap.innerHTML = kpis.map(k=>`
+      <div style="background:var(--bg2);border-radius:10px;padding:.75rem">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em">${escAI(k.label)}</div>
+        <div style="font-size:1.3rem;font-weight:600;margin-top:2px">${escAI(String(k.value))}</div>
+      </div>`).join('');
+  }
+
+  // Огляд + alert
+  const sum = document.getElementById('ai-summary');
+  if(sum) sum.textContent = nar.summary || '—';
+  const alert = document.getElementById('ai-alert');
+  if(alert){
+    if(nar.alert){ alert.style.display=''; alert.textContent = '⚠️ ' + nar.alert; }
+    else alert.style.display='none';
+  }
+
+  // Спостереження / поради
+  const ins = document.getElementById('ai-insights');
+  if(ins) ins.innerHTML = (nar.insights||[]).map(x=>`<li>${escAI(x)}</li>`).join('') || `<li style="color:var(--muted)">—</li>`;
+  const adv = document.getElementById('ai-advice');
+  if(adv) adv.innerHTML = (nar.advice||[]).map(x=>`<li>${escAI(x)}</li>`).join('') || `<li style="color:var(--muted)">—</li>`;
+
+  // Топ / анти-топ страв
+  const renderItems = (arr) => (arr && arr.length)
+    ? arr.map(i=>`<div style="display:flex;justify-content:space-between;gap:.5rem"><span>${escAI(i.name)}</span><span style="color:var(--muted)">×${i.qty}</span></div>`).join('')
+    : `<div style="color:var(--muted)">—</div>`;
+  const top = document.getElementById('ai-top-items');
+  if(top) top.innerHTML = renderItems(stats.topItems);
+  const bot = document.getElementById('ai-bottom-items');
+  if(bot) bot.innerHTML = renderItems(stats.bottomItems);
+
+  // Мета
+  const meta = document.getElementById('ai-meta');
+  if(meta) meta.textContent = (d.model ? `${d.model}` : '') + (toD ? ` · ${toD.toLocaleString()}` : '');
+
+  aiShow('ai-result');
+}
+
+function escAI(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ── МОДУЛЬ 2: ПОРАДИ «ЩО ПОКРАЩИТИ» ─────────────────────────────
+let adviceBusy = false;
+
+const ADVICE_CAT = {
+  combo:        { icon:'🧩', label:'Комбо',        color:'#7C3AED', bg:'#F3E8FF' },
+  pricing:      { icon:'💰', label:'Ціна',         color:'#B45309', bg:'#FEF3C7' },
+  promo:        { icon:'📣', label:'Акція',        color:'#0E7490', bg:'#CFFAFE' },
+  upsell:       { icon:'⬆️', label:'Апсел',        color:'#15803D', bg:'#DCFCE7' },
+  menu_cleanup: { icon:'🧹', label:'Чистка меню',  color:'#6B7280', bg:'#F3F4F6' },
+  quality:      { icon:'⚠️', label:'Якість',       color:'#B91C1C', bg:'#FEE2E2' },
+};
+const ADVICE_IMPACT = {
+  high:   { label:'Високий вплив', color:'#15803D', bg:'#DCFCE7' },
+  medium: { label:'Середній',      color:'#B45309', bg:'#FEF3C7' },
+  low:    { label:'Низький',       color:'#6B7280', bg:'#F3F4F6' },
+};
+
+function adviceShow(which){
+  ['advice-empty','advice-loading','advice-result'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  const t=document.getElementById(which); if(t) t.style.display='';
+}
+
+window.getImprovementAdvice = async function(){
+  if(adviceBusy) return;
+  adviceBusy = true;
+  const btn = document.getElementById('advice-btn');
+  if(btn) btn.disabled = true;
+  adviceShow('advice-loading');
+  try {
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const resp = await fetch(`${window.__CF_URL}/getImprovementAdvice`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({ venueId, days: 30 }),
+    });
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error || 'Помилка аналізу');
+    renderAdvice(data);
+  } catch(e){
+    adviceShow('advice-empty');
+    notify('Помилка: ' + e.message, 'err');
+  } finally {
+    adviceBusy = false;
+    if(btn) btn.disabled = false;
+  }
+};
+
+function renderAdvice(data){
+  const advice = data.advice || {};
+  const sum = document.getElementById('advice-summary');
+  if(sum) sum.textContent = advice.summary || '—';
+
+  const list = document.getElementById('advice-list');
+  const recs = Array.isArray(advice.recommendations) ? advice.recommendations : [];
+  if(list){
+    if(!recs.length){
+      list.innerHTML = `<div style="color:var(--muted)">Недостатньо даних для порад. Зберіть більше замовлень і відгуків.</div>`;
+    } else {
+      list.innerHTML = recs.map(r=>{
+        const cat = ADVICE_CAT[r.category] || ADVICE_CAT.quality;
+        const imp = ADVICE_IMPACT[r.impact] || ADVICE_IMPACT.medium;
+        return `
+        <div style="border:1px solid var(--border);border-radius:10px;padding:.85rem 1rem">
+          <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem">
+            <span style="font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;color:${cat.color};background:${cat.bg}">${cat.icon} ${escAI(cat.label)}</span>
+            <span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;color:${imp.color};background:${imp.bg}">${escAI(imp.label)}</span>
+            <span style="font-weight:600;font-size:.9rem">${escAI(r.title)}</span>
+          </div>
+          <div style="font-size:.86rem;line-height:1.55;margin-bottom:.35rem">${escAI(r.action)}</div>
+          <div style="font-size:.8rem;color:var(--muted);line-height:1.5">📊 ${escAI(r.rationale)}</div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  const meta = document.getElementById('advice-meta');
+  if(meta){
+    const ds = data.dataset || {};
+    meta.textContent = `${data.model || 'gpt-5.4'} · ${ds.windowDays||30} дн · ${ds.ordersCount||0} замовлень · ${ds.menuSize||0} позицій меню`;
+  }
+  adviceShow('advice-result');
+}
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function notify(msg,type='ok'){const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';setTimeout(()=>n.classList.remove('show'),2800);}
