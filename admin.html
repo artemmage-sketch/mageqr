@@ -6756,6 +6756,7 @@ window.generateAIDigest = async function(){
 };
 
 function renderAIDigest(d){
+  lastDigestData = d;
   const stats = d.stats || {};
   const nar = d.narrative || {};
   const ccy = stats.currency || '';
@@ -6872,6 +6873,7 @@ window.getImprovementAdvice = async function(){
 };
 
 function renderAdvice(data){
+  lastAdviceData = data;
   const advice = data.advice || {};
   const sum = document.getElementById('advice-summary');
   if(sum) sum.textContent = advice.summary || '—';
@@ -6949,7 +6951,9 @@ const FC_CONF = {
   low:    { label:'Низька впевненість — даних мало', color:'#B91C1C', bg:'#FEE2E2' },
 };
 
+let lastDigestData = null, lastAdviceData = null, lastForecastData = null;
 function renderForecast(data){
+  lastForecastData = data;
   const fc = data.forecast || {};
   const exp = data.explanation || {};
 
@@ -7143,7 +7147,7 @@ function renderReviews(){
     <div class="rev-card" data-id="${escAI(r.id)}" style="border:1px solid var(--border);border-radius:10px;padding:.85rem 1rem;${isResolved?'opacity:.6':''}">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem">
         <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
-          <span style="font-weight:600">${escAI(r.name||ait('rc_guest'))}</span>
+          <span style="font-weight:600">${escAI((r.name && r.name!=='Гість') ? r.name : ait('rc_guest'))}</span>
           <span style="color:var(--accent);letter-spacing:1px">${stars}</span>
           ${sent?`<span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;color:${sent.color};background:${sent.bg}">${sent.icon} ${escAI(ait('sent_'+r.aiSentiment))}</span>`:''}
           ${r.aiCategory?`<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--bg2);color:var(--muted)">${escAI(ait('cat_'+r.aiCategory))}</span>`:''}
@@ -9738,6 +9742,21 @@ function applyAdminLang(lang) {
   try { if(typeof renderItems==='function') renderItems(); } catch(e){}
   try { if(typeof renderCats==='function') renderCats(); } catch(e){}
   try { if(typeof renderTables==='function') renderTables(); } catch(e){}
+
+  // 5b. AI-модулі та відгуки (динамічні підписи через ait())
+  try { if(lastDigestData) renderAIDigest(lastDigestData); } catch(e){}
+  try { if(lastAdviceData) renderAdvice(lastAdviceData); } catch(e){}
+  try { if(lastForecastData) renderForecast(lastForecastData); } catch(e){}
+  try { if(typeof reviewsCache!=='undefined' && reviewsCache && reviewsCache.length){ renderReviewsSummary(); renderReviews(); } } catch(e){}
+  try {
+    if(typeof assistantInited!=='undefined' && assistantInited){
+      renderSuggestions();
+      if(!assistantHistory.length){
+        const b=document.getElementById('assistant-messages');
+        if(b){ b.innerHTML=''; addAssistantBubble('assistant', ait('as_hello')); }
+      }
+    }
+  } catch(e){}
 
   renderAdminLangSwitcher();
 }
