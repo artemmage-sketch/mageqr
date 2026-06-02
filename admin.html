@@ -7186,9 +7186,15 @@ function renderReviews(){
 
 async function updateReviewStatus(reviewId, status){
   try {
-    const { getFirestore, doc, updateDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-    const fdb = getFirestore();
-    await updateDoc(doc(fdb,'venues',venueId,'reviews',reviewId), { status });
+    const {getAuth} = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    const token = await getAuth().currentUser?.getIdToken();
+    const resp = await fetch(`${window.__CF_URL}/updateReviewStatus`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({ venueId, reviewId, status }),
+    });
+    const data = await resp.json();
+    if(!resp.ok) throw new Error(data.error || 'Помилка');
     const r = reviewsCache.find(x=>x.id===reviewId); if(r) r.status = status;
     renderReviewsSummary(); renderReviews();
     notify(status==='resolved'?'Позначено як вирішене':'Відновлено','ok');
