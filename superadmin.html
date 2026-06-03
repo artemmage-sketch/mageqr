@@ -790,7 +790,19 @@ window.applyPlanChange = async function() {
   const { doc, updateDoc } = window.__FS;
   const newPlan = document.getElementById('chplan-select').value;
   try {
-    await updateDoc(doc(db,'venues',chplanVenueId), { plan: newPlan });
+    // Окрім тарифу, виставляємо й дату дії/наступного списання,
+    // щоб у панелі закладу коректно показувалось "Наступне списання".
+    const update = { plan: newPlan, status: 'active' };
+    if (newPlan === 'free') {
+      update.planEndsAt = null;                 // безкоштовний — без списань
+    } else if (newPlan === 'trial') {
+      update.trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000); // +14 днів
+      update.planEndsAt  = null;
+    } else {
+      // платний тариф — наступне списання через 30 днів (JS Date → Firestore Timestamp)
+      update.planEndsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+    }
+    await updateDoc(doc(db,'venues',chplanVenueId), update);
     await loadVenues();
     closeModal('modal-chplan');
     notify('✅ Тариф змінено!', 'success');
