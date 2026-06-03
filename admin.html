@@ -389,6 +389,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
       <button class="nav-item" onclick="nav(this,'t-ai')" data-i18n="aiAnalytics">🤖 AI-аналітика</button>
       <button class="nav-item" onclick="nav(this,'t-reviews')" data-i18n="reviewsTab">⭐ Відгуки</button>
       <button class="nav-item" onclick="nav(this,'t-assistant')" data-i18n="assistantTab">💬 AI-асистент</button>
+      <button class="nav-item" id="nav-loyalty" onclick="nav(this,'t-loyalty')">🎁 Лояльність</button>
     </div>
     <div class="sb-bottom">
       <button class="btn btn-outline btn-sm" style="flex:1" data-i18n="viewMenuBtn" onclick="window.open('menu.html?v=temari','_blank')">👁 Переглянути</button>
@@ -2253,6 +2254,62 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
           <textarea id="assistant-input" rows="1" placeholder="Запитайте щось…" data-i18n-ph="assistantPlaceholder"
             style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--font);font-size:.9rem;padding:.7rem;resize:none;outline:none;max-height:120px"></textarea>
           <button class="btn btn-accent" id="assistant-send" onclick="sendAssistantMessage()" style="flex-shrink:0">➤</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOYALTY TAB -->
+    <div id="t-loyalty" class="tab-section">
+      <div class="topbar">
+        <div>
+          <div class="page-title" id="loy-title">🎁 Програма лояльності</div>
+          <div class="page-sub" id="loy-desc">Бонуси для зареєстрованих клієнтів</div>
+        </div>
+        <button class="btn btn-accent btn-sm" id="loy-save-btn" onclick="saveLoyaltySettings()">💾 Зберегти</button>
+      </div>
+
+      <div class="content">
+        <div class="settings-section" style="margin-bottom:1rem">
+          <label class="switch-row" style="display:flex;align-items:center;gap:.6rem;cursor:pointer">
+            <input type="checkbox" id="loy-enabled" style="width:auto"/>
+            <span id="loy-enable-label" style="font-weight:600">Увімкнути програму лояльності</span>
+          </label>
+          <div id="loy-hint" style="font-size:12px;color:var(--muted);margin-top:.5rem">1 бал = 1 одиниця валюти. Бонуси доступні лише зареєстрованим клієнтам.</div>
+        </div>
+
+        <div id="loy-config" style="display:none">
+          <div class="settings-section" style="margin-bottom:1rem">
+            <label class="pay-field-label" id="loy-type-label">Тип програми</label>
+            <select id="loy-type" onchange="onLoyTypeChange(this.value)">
+              <option value="cashback" id="loy-opt-cashback">Кешбек (єдиний %)</option>
+              <option value="tiered" id="loy-opt-tiered">Рівні (% за сумою покупок)</option>
+            </select>
+
+            <div id="loy-cashback-block" style="margin-top:.75rem">
+              <label class="pay-field-label" id="loy-cashback-label">Відсоток нарахування (%)</label>
+              <input type="number" id="loy-cashback-percent" min="0" max="100" step="0.5" placeholder="5"/>
+            </div>
+
+            <div id="loy-tiered-block" style="margin-top:.75rem;display:none">
+              <label class="pay-field-label" id="loy-tiers-label">Рівні</label>
+              <div id="loy-tiers" style="display:flex;flex-direction:column;gap:.5rem"></div>
+              <button class="btn btn-outline btn-sm" id="loy-add-tier" onclick="addLoyTier()" style="margin-top:.5rem">+ Додати рівень</button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <label class="pay-field-label" id="loy-redeem-label">Правила списання</label>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem;margin-top:.5rem">
+              <div>
+                <label class="pay-field-label" id="loy-maxredeem-label">Макс. частка рахунку балами (%)</label>
+                <input type="number" id="loy-max-redeem" min="0" max="100" step="5" placeholder="50"/>
+              </div>
+              <div>
+                <label class="pay-field-label" id="loy-minorder-label">Мін. сума замовлення для списання</label>
+                <input type="number" id="loy-min-order" min="0" step="10" placeholder="0"/>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -6564,6 +6621,7 @@ window.nav = function(btn,tab){
   if(tab==='t-ai')        loadAIDigest();
   if(tab==='t-reviews')   loadReviews();
   if(tab==='t-assistant') initAssistant();
+  if(tab==='t-loyalty')   loadLoyaltySettings();
 };
 
 // ── AI-ДАЙДЖЕСТ (Модуль 1) ──────────────────────────────────────
@@ -7335,6 +7393,92 @@ window.sendAssistantMessage = async function(){
     if(box) box.scrollTop = box.scrollHeight;
   }
 };
+// ── ПРОГРАМА ЛОЯЛЬНОСТІ (адмін) ──────────────────────────────────
+const LOY_T = {
+  uk:{nav:'🎁 Лояльність',title:'🎁 Програма лояльності',desc:'Бонуси для зареєстрованих клієнтів',save:'💾 Зберегти',enable:'Увімкнути програму лояльності',hint:'1 бал = 1 одиниця валюти. Бонуси доступні лише зареєстрованим клієнтам.',type:'Тип програми',cashback:'Кешбек (єдиний %)',tiered:'Рівні (% за сумою покупок)',cashbackP:'Відсоток нарахування (%)',tiers:'Рівні',addTier:'+ Додати рівень',redeem:'Правила списання',maxRedeem:'Макс. частка рахунку балами (%)',minOrder:'Мін. сума замовлення для списання',from:'Сума від',percent:'%',saved:'Налаштування лояльності збережено'},
+  en:{nav:'🎁 Loyalty',title:'🎁 Loyalty program',desc:'Bonuses for registered customers',save:'💾 Save',enable:'Enable loyalty program',hint:'1 point = 1 currency unit. Bonuses are available to registered customers only.',type:'Program type',cashback:'Cashback (flat %)',tiered:'Tiers (% by total spent)',cashbackP:'Accrual percentage (%)',tiers:'Tiers',addTier:'+ Add tier',redeem:'Redemption rules',maxRedeem:'Max % of bill payable by points',minOrder:'Min order to redeem',from:'Spent from',percent:'%',saved:'Loyalty settings saved'},
+  pl:{nav:'🎁 Lojalność',title:'🎁 Program lojalnościowy',desc:'Bonusy dla zarejestrowanych klientów',save:'💾 Zapisz',enable:'Włącz program lojalnościowy',hint:'1 punkt = 1 jednostka waluty. Bonusy dostępne tylko dla zarejestrowanych klientów.',type:'Typ programu',cashback:'Cashback (stały %)',tiered:'Poziomy (% wg wydatków)',cashbackP:'Procent naliczania (%)',tiers:'Poziomy',addTier:'+ Dodaj poziom',redeem:'Zasady wykorzystania',maxRedeem:'Maks. % rachunku punktami',minOrder:'Min. zamówienie do wykorzystania',from:'Wydatki od',percent:'%',saved:'Ustawienia lojalności zapisane'},
+  de:{nav:'🎁 Treue',title:'🎁 Treueprogramm',desc:'Boni für registrierte Kunden',save:'💾 Speichern',enable:'Treueprogramm aktivieren',hint:'1 Punkt = 1 Währungseinheit. Boni nur für registrierte Kunden.',type:'Programmtyp',cashback:'Cashback (fester %)',tiered:'Stufen (% nach Umsatz)',cashbackP:'Gutschrift-Prozentsatz (%)',tiers:'Stufen',addTier:'+ Stufe hinzufügen',redeem:'Einlöseregeln',maxRedeem:'Max. % der Rechnung per Punkte',minOrder:'Mindestbestellung zum Einlösen',from:'Umsatz ab',percent:'%',saved:'Treueeinstellungen gespeichert'},
+  ro:{nav:'🎁 Loialitate',title:'🎁 Program de loialitate',desc:'Bonusuri pentru clienții înregistrați',save:'💾 Salvează',enable:'Activează programul de loialitate',hint:'1 punct = 1 unitate valutară. Bonusurile sunt doar pentru clienții înregistrați.',type:'Tip program',cashback:'Cashback (% fix)',tiered:'Niveluri (% după cheltuieli)',cashbackP:'Procent de acumulare (%)',tiers:'Niveluri',addTier:'+ Adaugă nivel',redeem:'Reguli de utilizare',maxRedeem:'Max. % din notă cu puncte',minOrder:'Comandă minimă pentru utilizare',from:'Cheltuieli de la',percent:'%',saved:'Setări de loialitate salvate'},
+  es:{nav:'🎁 Fidelidad',title:'🎁 Programa de fidelidad',desc:'Bonificaciones para clientes registrados',save:'💾 Guardar',enable:'Activar programa de fidelidad',hint:'1 punto = 1 unidad de moneda. Las bonificaciones son solo para clientes registrados.',type:'Tipo de programa',cashback:'Cashback (% fijo)',tiered:'Niveles (% por gasto)',cashbackP:'Porcentaje de acumulación (%)',tiers:'Niveles',addTier:'+ Añadir nivel',redeem:'Reglas de canje',maxRedeem:'Máx. % de la cuenta con puntos',minOrder:'Pedido mínimo para canjear',from:'Gasto desde',percent:'%',saved:'Ajustes de fidelidad guardados'},
+  cnr:{nav:'🎁 Lojalnost',title:'🎁 Program lojalnosti',desc:'Bonusi za registrovane kupce',save:'💾 Sačuvaj',enable:'Uključi program lojalnosti',hint:'1 poen = 1 jedinica valute. Bonusi su dostupni samo registrovanim kupcima.',type:'Tip programa',cashback:'Cashback (fiksni %)',tiered:'Nivoi (% po potrošnji)',cashbackP:'Procenat obračuna (%)',tiers:'Nivoi',addTier:'+ Dodaj nivo',redeem:'Pravila trošenja',maxRedeem:'Maks. % računa poenima',minOrder:'Min. porudžbina za trošenje',from:'Potrošnja od',percent:'%',saved:'Podešavanja lojalnosti sačuvana'},
+};
+function loyT(){ return LOY_T[adminLang] || LOY_T.uk; }
+let loyTiers = [];
+
+function applyLoyaltyLabels(){
+  const T = loyT();
+  const set=(id,txt)=>{const e=document.getElementById(id); if(e) e.textContent=txt;};
+  set('nav-loyalty', T.nav); set('loy-title', T.title); set('loy-desc', T.desc);
+  set('loy-save-btn', T.save); set('loy-enable-label', T.enable); set('loy-hint', T.hint);
+  set('loy-type-label', T.type); set('loy-opt-cashback', T.cashback); set('loy-opt-tiered', T.tiered);
+  set('loy-cashback-label', T.cashbackP); set('loy-tiers-label', T.tiers); set('loy-add-tier', T.addTier);
+  set('loy-redeem-label', T.redeem); set('loy-maxredeem-label', T.maxRedeem); set('loy-minorder-label', T.minOrder);
+  renderLoyTiers();
+}
+
+window.onLoyTypeChange = function(v){
+  document.getElementById('loy-cashback-block').style.display = (v==='tiered') ? 'none' : '';
+  document.getElementById('loy-tiered-block').style.display = (v==='tiered') ? '' : 'none';
+};
+
+function renderLoyTiers(){
+  const wrap = document.getElementById('loy-tiers');
+  if(!wrap) return;
+  const T = loyT();
+  wrap.innerHTML = loyTiers.map((t,i)=>`
+    <div style="display:flex;gap:.5rem;align-items:center">
+      <input type="number" min="0" step="10" value="${Number(t.minSpent)||0}" onchange="loyTiers[${i}].minSpent=Number(this.value)" placeholder="${escAI(T.from)}" style="flex:1"/>
+      <input type="number" min="0" max="100" step="0.5" value="${Number(t.percent)||0}" onchange="loyTiers[${i}].percent=Number(this.value)" placeholder="${escAI(T.percent)}" style="width:90px"/>
+      <button class="btn btn-outline btn-sm" onclick="removeLoyTier(${i})">✕</button>
+    </div>`).join('');
+}
+window.addLoyTier = function(){ loyTiers.push({minSpent:0,percent:0}); renderLoyTiers(); };
+window.removeLoyTier = function(i){ loyTiers.splice(i,1); renderLoyTiers(); };
+
+window.loadLoyaltySettings = async function(){
+  applyLoyaltyLabels();
+  try {
+    const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const fdb = getFirestore();
+    const snap = await getDoc(doc(fdb,'venues',venueId,'settings','loyalty'));
+    const d = snap.exists() ? snap.data() : {};
+    document.getElementById('loy-enabled').checked = !!d.enabled;
+    document.getElementById('loy-config').style.display = d.enabled ? '' : 'none';
+    document.getElementById('loy-type').value = d.type==='tiered' ? 'tiered' : 'cashback';
+    document.getElementById('loy-cashback-percent').value = d.cashbackPercent ?? '';
+    document.getElementById('loy-max-redeem').value = d.maxRedeemPercent ?? 50;
+    document.getElementById('loy-min-order').value = d.minOrderToRedeem ?? 0;
+    loyTiers = Array.isArray(d.tiers) ? d.tiers.map(t=>({minSpent:Number(t.minSpent)||0,percent:Number(t.percent)||0})) : [];
+    onLoyTypeChange(document.getElementById('loy-type').value);
+    renderLoyTiers();
+  } catch(e){ /* нові налаштування */ }
+  // показ/приховування конфігу при перемиканні
+  const en = document.getElementById('loy-enabled');
+  if(en && !en.dataset.bound){ en.dataset.bound='1';
+    en.addEventListener('change', ()=>{ document.getElementById('loy-config').style.display = en.checked ? '' : 'none'; });
+  }
+};
+
+window.saveLoyaltySettings = async function(){
+  const type = document.getElementById('loy-type').value === 'tiered' ? 'tiered' : 'cashback';
+  const data = {
+    enabled: document.getElementById('loy-enabled').checked,
+    type,
+    cashbackPercent: Number(document.getElementById('loy-cashback-percent').value) || 0,
+    tiers: loyTiers.filter(t=>t && (t.minSpent>=0) && t.percent>0).sort((a,b)=>a.minSpent-b.minSpent),
+    maxRedeemPercent: Number(document.getElementById('loy-max-redeem').value) || 0,
+    minOrderToRedeem: Number(document.getElementById('loy-min-order').value) || 0,
+    updatedAt: new Date().toISOString(),
+  };
+  try {
+    const { getFirestore, doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+    const fdb = getFirestore();
+    await setDoc(doc(fdb,'venues',venueId,'settings','loyalty'), data, { merge:true });
+    notify(loyT().saved, 'ok');
+  } catch(e){ notify('Помилка: '+e.message,'err'); }
+};
+
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function notify(msg,type='ok'){const n=document.getElementById('notif');n.textContent=msg;n.className='notif '+type+' show';setTimeout(()=>n.classList.remove('show'),2800);}
@@ -9757,6 +9901,8 @@ function applyAdminLang(lang) {
       }
     }
   } catch(e){}
+
+  try { if(typeof applyLoyaltyLabels==='function') applyLoyaltyLabels(); } catch(e){}
 
   renderAdminLangSwitcher();
 }
