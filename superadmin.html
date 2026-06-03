@@ -229,6 +229,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <button class="nav-btn" onclick="nav(this,'t-plans')"><span class="nav-icon">💎</span> Тарифи</button>
     <button class="nav-btn" onclick="nav(this,'t-revenue')"><span class="nav-icon">💰</span> Доходи</button>
     <button class="nav-btn" onclick="nav(this,'t-users')"><span class="nav-icon">👥</span> Користувачі</button>
+    <button class="nav-btn" onclick="nav(this,'t-content')"><span class="nav-icon">📝</span> Контент</button>
     <div class="sb-bottom">
       <div class="sb-user">
         <div class="sb-avatar">SA</div>
@@ -474,6 +475,42 @@ tr:hover td{background:rgba(255,255,255,.02)}
           </div>
         </div>
         <div id="u-pagination" style="display:flex;gap:.5rem;justify-content:center;margin-top:1rem;flex-wrap:wrap"></div>
+      </div>
+    </div>
+
+    <!-- CONTENT: SUPPORT + KNOWLEDGE BASE -->
+    <div id="t-content" class="tab-section">
+      <h1 style="font-size:1.3rem;margin:0 0 .25rem">📝 Контент для закладів</h1>
+      <p style="color:var(--muted);font-size:13px;margin:0 0 1.5rem">Глобальні налаштування — застосовуються одразу до всіх закладів.</p>
+
+      <!-- Служба підтримки -->
+      <div class="card" style="padding:1.25rem;margin-bottom:1.5rem">
+        <h2 style="font-size:1rem;margin:0 0 1rem">🆘 Служба підтримки</h2>
+        <div style="display:flex;flex-direction:column;gap:.85rem;max-width:560px">
+          <label style="font-size:13px;color:var(--muted)">Посилання на Telegram чат-бот
+            <input id="sup-telegram" type="url" placeholder="https://t.me/your_bot" style="width:100%;margin-top:.35rem;padding:.6rem;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);box-sizing:border-box"/>
+          </label>
+          <label style="font-size:13px;color:var(--muted)">Посилання на WhatsApp чат-бот
+            <input id="sup-whatsapp" type="url" placeholder="https://wa.me/380XXXXXXXXX" style="width:100%;margin-top:.35rem;padding:.6rem;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);box-sizing:border-box"/>
+          </label>
+          <div style="display:flex;gap:.75rem;align-items:center">
+            <button class="btn-primary" onclick="saveSupport()" style="padding:.6rem 1.25rem">💾 Зберегти контакти</button>
+            <span id="sup-status" style="font-size:13px;color:var(--muted)"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- База знань -->
+      <div class="card" style="padding:1.25rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
+          <h2 style="font-size:1rem;margin:0">📚 База знань</h2>
+          <button class="btn-primary" onclick="addKbArticle()" style="padding:.5rem 1rem">＋ Додати статтю</button>
+        </div>
+        <div id="kb-editor" style="display:flex;flex-direction:column;gap:1rem"></div>
+        <div style="display:flex;gap:.75rem;align-items:center;margin-top:1.25rem">
+          <button class="btn-primary" onclick="saveKnowledge()" style="padding:.6rem 1.25rem">💾 Зберегти базу знань</button>
+          <span id="kb-status" style="font-size:13px;color:var(--muted)"></span>
+        </div>
       </div>
     </div>
 
@@ -1281,6 +1318,98 @@ window.exportUsersCSV = function() {
 };
 
 // ── NAV ─────────────────────────────────────────────────────
+// ── КОНТЕНТ: ПІДТРИМКА + БАЗА ЗНАНЬ (глобальні config-документи) ──
+let kbArticles = [];
+
+window.loadContent = async function(){
+  const { doc, getDoc } = window.__FS;
+  // Підтримка
+  try {
+    const s = await getDoc(doc(db,'config','support'));
+    const d = s.exists() ? (s.data()||{}) : {};
+    document.getElementById('sup-telegram').value = d.telegram || '';
+    document.getElementById('sup-whatsapp').value = d.whatsapp || '';
+  } catch(e){ console.warn('loadContent support:', e.message); }
+  // База знань
+  try {
+    const s = await getDoc(doc(db,'config','knowledge'));
+    kbArticles = (s.exists() && Array.isArray(s.data().articles)) ? s.data().articles.slice() : [];
+  } catch(e){ kbArticles = []; console.warn('loadContent knowledge:', e.message); }
+  renderKbEditor();
+};
+
+window.saveSupport = async function(){
+  const { doc, setDoc } = window.__FS;
+  const st = document.getElementById('sup-status');
+  st.textContent = '⏳ Зберігаємо...';
+  try {
+    await setDoc(doc(db,'config','support'), {
+      telegram: document.getElementById('sup-telegram').value.trim(),
+      whatsapp: document.getElementById('sup-whatsapp').value.trim(),
+    }, { merge: true });
+    st.textContent = '✅ Збережено';
+    setTimeout(()=>{ st.textContent=''; }, 2500);
+  } catch(e){ st.textContent = '❌ ' + e.message; }
+};
+
+window.addKbArticle = function(){
+  kbArticles.push({ title:'', text:'', youtube:'' });
+  renderKbEditor();
+};
+window.removeKbArticle = function(i){
+  kbArticles.splice(i, 1);
+  renderKbEditor();
+};
+
+function renderKbEditor(){
+  const wrap = document.getElementById('kb-editor');
+  if(!wrap) return;
+  if(!kbArticles.length){
+    wrap.innerHTML = '<div style="color:var(--muted);font-size:13px">Статей ще немає. Натисніть «Додати статтю».</div>';
+    return;
+  }
+  wrap.innerHTML = '';
+  kbArticles.forEach((a, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'border:1px solid var(--border);border-radius:10px;padding:1rem;background:var(--bg2)';
+    row.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem">' +
+        '<span style="font-size:12px;color:var(--muted)">Стаття #' + (i+1) + '</span>' +
+        '<button onclick="removeKbArticle(' + i + ')" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:13px">🗑 Видалити</button>' +
+      '</div>' +
+      '<input class="kb-title" placeholder="Підпис (заголовок)" style="width:100%;margin-bottom:.5rem;padding:.55rem;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);box-sizing:border-box"/>' +
+      '<textarea class="kb-text" rows="3" placeholder="Текстовий опис" style="width:100%;margin-bottom:.5rem;padding:.55rem;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);box-sizing:border-box;resize:vertical;font-family:inherit"></textarea>' +
+      '<input class="kb-youtube" placeholder="Посилання на YouTube (необов\'язково)" style="width:100%;padding:.55rem;border:1px solid var(--border);border-radius:8px;background:var(--bg3);color:var(--text);box-sizing:border-box"/>';
+    // Значення ставимо через .value (уникаємо проблем з екрануванням)
+    const titleEl = row.querySelector('.kb-title');
+    const textEl  = row.querySelector('.kb-text');
+    const ytEl    = row.querySelector('.kb-youtube');
+    titleEl.value = a.title || '';
+    textEl.value  = a.text || '';
+    ytEl.value    = a.youtube || '';
+    titleEl.addEventListener('input', e => kbArticles[i].title = e.target.value);
+    textEl.addEventListener('input',  e => kbArticles[i].text = e.target.value);
+    ytEl.addEventListener('input',    e => kbArticles[i].youtube = e.target.value);
+    wrap.appendChild(row);
+  });
+}
+
+window.saveKnowledge = async function(){
+  const { doc, setDoc } = window.__FS;
+  const st = document.getElementById('kb-status');
+  st.textContent = '⏳ Зберігаємо...';
+  try {
+    // Лишаємо лише статті з заголовком
+    const clean = kbArticles
+      .map(a => ({ title:(a.title||'').trim(), text:(a.text||'').trim(), youtube:(a.youtube||'').trim() }))
+      .filter(a => a.title || a.text || a.youtube);
+    await setDoc(doc(db,'config','knowledge'), { articles: clean }, { merge: true });
+    kbArticles = clean;
+    st.textContent = '✅ Збережено (' + clean.length + ')';
+    setTimeout(()=>{ st.textContent=''; }, 2500);
+  } catch(e){ st.textContent = '❌ ' + e.message; }
+};
+
 window.nav = function(btn, tab){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -1288,6 +1417,7 @@ window.nav = function(btn, tab){
   document.getElementById(tab).classList.add('active');
   if(tab === 't-plans') loadPlansFromFirestore();
   if(tab === 't-users') loadUsers();
+  if(tab === 't-content') loadContent();
 };
 
 // ── MODAL ───────────────────────────────────────────────────
