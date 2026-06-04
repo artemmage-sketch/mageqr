@@ -5639,6 +5639,7 @@ async function initFirebase() {
       }, { merge: true });
     } catch(e) { console.warn('set adminUid:', e.message); }
     await Promise.all([loadSettings(), loadCats(), loadItems(), loadPlanPrices()]);
+    applyPlanTabAccess();
     subscribeOrders();
     renderMappingRows();
     renderPresetsRow();
@@ -6321,7 +6322,39 @@ async function loadPlanPrices() {
     Object.keys(PLAN_LIMITS).forEach(key => {
       if(data[key]?.price !== undefined) PLAN_LIMITS[key].price = data[key].price;
     });
+    // Зберігаємо дозволені вкладки по тарифах (якщо задані superadmin)
+    Object.keys(data).forEach(key => {
+      if(data[key] && Array.isArray(data[key].tabs)) PLAN_TABS[key] = data[key].tabs;
+    });
   } catch(e) { console.warn('loadPlanPrices:', e.message); }
+}
+
+// Доступ до вкладок за тарифом (керується в superadmin → config/plans[plan].tabs)
+const PLAN_TABS = {};                                  // plan -> [t-ids] (порожньо = всі)
+const CORE_TABS = ['t-orders','t-settings','t-billing']; // завжди видимі
+
+async function applyPlanTabAccess(){
+  if(!db || !window.__FS) return;
+  try {
+    const {doc, getDoc} = window.__FS;
+    const vs = await getDoc(doc(db,'venues',venueId));
+    const plan = (vs.exists() && (vs.data().plan)) ? vs.data().plan : 'trial';
+    const allowList = PLAN_TABS[plan];
+    // Якщо для тарифу перелік не заданий — показуємо все (зворотна сумісність)
+    if(!Array.isArray(allowList)) return;
+    const allowed = new Set([...CORE_TABS, ...allowList]);
+    // Ховаємо пункти навігації
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      const m = (btn.getAttribute('onclick')||'').match(/t-[a-z]+/);
+      if(m && !allowed.has(m[0])) btn.style.display = 'none';
+    });
+    // Якщо активна вкладка стала недоступною — перемикаємо на Замовлення
+    const active = document.querySelector('.tab-section.active');
+    if(active && !allowed.has(active.id)){
+      const ordersBtn = document.querySelector('.nav-item[onclick*="t-orders"]');
+      if(ordersBtn) ordersBtn.click();
+    }
+  } catch(e){ console.warn('applyPlanTabAccess:', e.message); }
 }
 
 async function loadBilling(){
