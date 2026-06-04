@@ -6325,12 +6325,15 @@ async function loadPlanPrices() {
     // Зберігаємо дозволені вкладки по тарифах (якщо задані superadmin)
     Object.keys(data).forEach(key => {
       if(data[key] && Array.isArray(data[key].tabs)) PLAN_TABS[key] = data[key].tabs;
+      if(data[key] && data[key].features) PLAN_FEATURES[key] = data[key].features;
     });
   } catch(e) { console.warn('loadPlanPrices:', e.message); }
 }
 
 // Доступ до вкладок за тарифом (керується в superadmin → config/plans[plan].tabs)
 const PLAN_TABS = {};                                  // plan -> [t-ids] (порожньо = всі)
+const PLAN_FEATURES = {};                              // plan -> [фічі] або {lang:[фічі]} (з config/plans)
+let lastBillingPlan = null;                            // останній відрендерений тариф (для ре-рендеру при зміні мови)
 const CORE_TABS = ['t-orders','t-settings','t-billing']; // завжди видимі
 
 async function applyPlanTabAccess(){
@@ -6441,6 +6444,7 @@ async function loadBilling(){
       `${t('ordersCount')||'Замовлень'}: <b>${ordSnap.size}/${lim.orders}</b><br/>` +
       `✨ AI: <b>${aiUsed}/${aiStr}</b>`;
 
+    lastBillingPlan = plan;
     renderBillingPlanCards(plan);
 
     // Історія платежів — з колекції venues/{venueId}/payments
@@ -6474,6 +6478,14 @@ function renderBillingPlanCards(currentPlan){
     {key:'pro',       name:PLANS_BILLING.pro?.name||'Pro',          price:PLANS_BILLING.pro?.price||19, features:[t('feat500Dishes'),t('feat5000Orders'),t('featFullDesign'),t('featPhotoBanner')],popular:true},
     {key:'enterprise',name:PLANS_BILLING.enterprise?.name||'Enterprise',price:PLANS_BILLING.enterprise?.price||49,features:[t('featUnlimited'),t('featPOS'),t('featDomain')]},
   ];
+  // Якщо superadmin задав фічі в config/plans — беремо їх мовою адміна (фолбек: uk → вшиті переклади)
+  plans.forEach(p => {
+    const cf = PLAN_FEATURES[p.key];
+    let arr = null;
+    if (Array.isArray(cf)) arr = cf;
+    else if (cf && typeof cf === 'object') arr = cf[adminLang] || cf.uk || null;
+    if (arr && arr.length) p.features = arr;
+  });
   document.getElementById('billing-plan-cards').innerHTML=plans.map(p=>`
     <div style="background:var(--card);border:1.5px solid ${p.key===currentPlan?'var(--accent)':'var(--border)'};border-radius:var(--radius);padding:1rem;position:relative;${p.key===currentPlan?'background:var(--accent-soft)':''}">
       ${p.popular?`<div style="position:absolute;top:.5rem;right:.5rem;background:var(--accent);color:#fff;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600">${t('popular')}</div>`:''}
@@ -10046,6 +10058,7 @@ function applyAdminLang(lang) {
   } catch(e){}
 
   try { if(typeof applyLoyaltyLabels==='function') applyLoyaltyLabels(); } catch(e){}
+  try { if(typeof renderBillingPlanCards==='function' && lastBillingPlan) renderBillingPlanCards(lastBillingPlan); } catch(e){}
 
   renderAdminLangSwitcher();
 }
