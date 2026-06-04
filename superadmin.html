@@ -44,6 +44,7 @@ button{cursor:pointer}
 .nav-btn{display:flex;align-items:center;gap:.65rem;padding:.6rem .75rem;margin:1px .5rem;border-radius:8px;font-size:13px;color:var(--muted);background:none;border:none;width:calc(100% - 1rem);text-align:left;transition:all .15s}
 .nav-btn:hover{background:var(--bg3);color:var(--text)}
 .nav-btn.active{background:rgba(108,99,255,.15);color:var(--accent2);border:1px solid rgba(108,99,255,.2)}
+.pf-tab-row{display:flex;align-items:center;gap:.4rem;font-size:12px;color:var(--text);cursor:pointer}
 .nav-icon{width:18px;text-align:center;font-size:.95rem}
 .sb-bottom{margin-top:auto;padding:1rem;border-top:1px solid var(--border)}
 .sb-user{display:flex;align-items:center;gap:.6rem}
@@ -580,6 +581,27 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <div class="field-group"><label class="field-label">Кастомний дизайн</label>
       <select id="pf-design"><option value="0">Не доступно</option><option value="1">Кольори + шрифт</option><option value="2">Повна кастомізація</option></select>
     </div>
+    <div class="field-group">
+      <label class="field-label">🧩 Доступні вкладки в адмінці закладу</label>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:.5rem">Зняті галочки — вкладка не показується закладам цього тарифу. «Замовлення», «Налаштування» та «Підписка» видно завжди.</div>
+      <div id="pf-tabs" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.4rem .75rem">
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-items"/> 🍽️ Страви</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-cats"/> 📂 Категорії</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-tables"/> 🪑 Столи та QR</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-design"/> 🎨 Дизайн меню</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-payments"/> 💳 Платежі</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-pos"/> 🖥️ POS-інтеграція</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-customers"/> 👥 Клієнти</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-ordering"/> 📋 Налаш. замовлень</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-delivery"/> 🚚 Інтеграції доставок</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-ai"/> 🤖 AI-аналітика</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-reviews"/> ⭐ Відгуки</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-assistant"/> 💬 AI-асистент</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-loyalty"/> 🎁 Лояльність</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-support"/> 🆘 Служба підтримки</label>
+        <label class="pf-tab-row"><input type="checkbox" class="pf-tab-chk" value="t-knowledge"/> 📚 База знань</label>
+      </div>
+    </div>
     <div id="pf-save-status" style="font-size:12px;color:var(--muted);margin-bottom:.5rem;min-height:1.2em"></div>
     <button class="btn btn-accent" style="width:100%" onclick="savePlan()">💾 Зберегти тариф</button>
   </div>
@@ -1068,6 +1090,11 @@ window.openPlanModal = function(key){
   document.getElementById('pf-orders').value=p.orders===999999?'':p.orders;
   document.getElementById('pf-design').value=p.design;
   document.getElementById('pf-ai').value=p.aiEnhancements??0;
+  // Вкладки: якщо перелік заданий — відмічаємо його; якщо ні — всі (дефолт = видно все)
+  const allowed = Array.isArray(p.tabs) ? p.tabs : null;
+  document.querySelectorAll('.pf-tab-chk').forEach(chk => {
+    chk.checked = allowed ? allowed.includes(chk.value) : true;
+  });
   document.getElementById('pf-save-status').textContent='';
   openModal('modal-plan');
 };
@@ -1090,6 +1117,7 @@ window.savePlan = async function(){
     orders:         parseInt(document.getElementById('pf-orders').value)||999999,
     design:         parseInt(document.getElementById('pf-design').value),
     aiEnhancements: parseInt(document.getElementById('pf-ai').value) || 0,
+    tabs:           Array.from(document.querySelectorAll('.pf-tab-chk:checked')).map(c=>c.value),
   };
 
   // Зберігаємо в Firestore config/plans
