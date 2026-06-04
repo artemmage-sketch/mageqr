@@ -569,7 +569,18 @@ tr:hover td{background:rgba(255,255,255,.02)}
     </div>
     <div class="field-group"><label class="field-label">Назва тарифу</label><input id="pf-name" type="text"/></div>
     <div class="field-group"><label class="field-label">Опис (підзаголовок)</label><input id="pf-desc" type="text" placeholder="Ідеально для малого бізнесу"/></div>
-    <div class="field-group"><label class="field-label">Функції (кожна з нового рядка)</label><textarea id="pf-features" rows="4" style="resize:vertical;font-size:13px" placeholder="20 страв&#10;100 замовлень/міс&#10;Базовий дизайн"></textarea></div>
+    <div class="field-group"><label class="field-label">Функції тарифу — по мовах (кожна з нового рядка)</label>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:.5rem">Введіть фічі окремо для кожної мови. Якщо мову лишити порожньою — підставиться українська.</div>
+      <div style="display:grid;gap:.4rem">
+        <textarea id="pf-feat-uk" class="pf-feat" data-lang="uk" rows="3" style="resize:vertical;font-size:13px" placeholder="🇺🇦 Українська&#10;20 страв&#10;100 замовлень/міс"></textarea>
+        <textarea id="pf-feat-en" class="pf-feat" data-lang="en" rows="3" style="resize:vertical;font-size:13px" placeholder="🇬🇧 English&#10;20 dishes&#10;100 orders/mo"></textarea>
+        <textarea id="pf-feat-pl" class="pf-feat" data-lang="pl" rows="3" style="resize:vertical;font-size:13px" placeholder="🇵🇱 Polski"></textarea>
+        <textarea id="pf-feat-de" class="pf-feat" data-lang="de" rows="3" style="resize:vertical;font-size:13px" placeholder="🇩🇪 Deutsch"></textarea>
+        <textarea id="pf-feat-ro" class="pf-feat" data-lang="ro" rows="3" style="resize:vertical;font-size:13px" placeholder="🇷🇴 Română"></textarea>
+        <textarea id="pf-feat-es" class="pf-feat" data-lang="es" rows="3" style="resize:vertical;font-size:13px" placeholder="🇪🇸 Español"></textarea>
+        <textarea id="pf-feat-cnr" class="pf-feat" data-lang="cnr" rows="3" style="resize:vertical;font-size:13px" placeholder="🇲🇪 Crnogorski"></textarea>
+      </div>
+    </div>
     <div class="grid-2">
       <div class="field-group"><label class="field-label">Ціна (€/міс)</label><input id="pf-price" type="number" min="0" step="1" placeholder="9"/></div>
       <div class="field-group"><label class="field-label">Макс. страв</label><input id="pf-items" type="number" placeholder="∞ = порожньо"/></div>
@@ -1083,7 +1094,15 @@ window.openPlanModal = function(key){
   document.getElementById('plan-modal-title').textContent='Тариф: '+p.name;
   document.getElementById('pf-name').value=p.name;
   document.getElementById('pf-desc').value=p.desc||'';
-  document.getElementById('pf-features').value=(p.features||[]).join('\n');
+  // Фічі по мовах: новий формат {uk:[],en:[]...} або старий масив (= uk)
+  ['uk','en','pl','de','ro','es','cnr'].forEach(lg => {
+    const el = document.getElementById('pf-feat-'+lg);
+    if(!el) return;
+    let arr = [];
+    if (Array.isArray(p.features)) arr = (lg === 'uk') ? p.features : [];
+    else if (p.features && typeof p.features === 'object') arr = p.features[lg] || [];
+    el.value = arr.join('\n');
+  });
   document.getElementById('pf-price').value=p.price;
   document.getElementById('pf-items').value=p.items===999999?'':p.items;
   document.getElementById('pf-cats').value=p.cats===999?'':p.cats;
@@ -1102,8 +1121,13 @@ window.openPlanModal = function(key){
 window.savePlan = async function(){
   if(!editPlanKey)return;
   const price = parseInt(document.getElementById('pf-price').value)||0;
-  const features = document.getElementById('pf-features').value
-    .split('\n').map(s=>s.trim()).filter(Boolean);
+  // Фічі по мовах → об'єкт {uk:[...],en:[...]}; порожні мови не зберігаємо
+  const features = {};
+  ['uk','en','pl','de','ro','es','cnr'].forEach(lg => {
+    const el = document.getElementById('pf-feat-'+lg);
+    const arr = el ? el.value.split('\n').map(s=>s.trim()).filter(Boolean) : [];
+    if (arr.length) features[lg] = arr;
+  });
 
   PLANS_DATA[editPlanKey]={
     ...PLANS_DATA[editPlanKey],
