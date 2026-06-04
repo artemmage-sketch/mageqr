@@ -77,7 +77,20 @@ h1{font-size:1.8rem;font-weight:700;letter-spacing:-.5px;margin-bottom:.5rem}
 .plan-price{font-size:18px;font-weight:700}
 .plan-price .per{font-size:12px;font-weight:400;color:var(--muted)}
 .plan-features{display:flex;gap:.375rem;flex-wrap:wrap}
-.plan-feat{font-size:11px;color:var(--muted);background:rgba(255,255,255,.04);border-radius:4px;padding:2px 7px}
+.plan-feat{font-size:11px;color:var(--text);background:rgba(255,255,255,.04);border-radius:4px;padding:2px 7px;display:inline-flex;align-items:center;gap:5px}
+.plan-feat::before{content:"•";color:var(--accent2);font-weight:700;line-height:1;flex:none}
+/* Модалка умов використання */
+.terms-link{color:var(--accent2);cursor:pointer;text-decoration:underline}
+.terms-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:1000;padding:1rem}
+.terms-overlay.open{display:flex}
+.terms-modal{background:var(--bg);border:1px solid var(--border2);border-radius:14px;max-width:680px;width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.terms-head{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border2)}
+.terms-head h2{margin:0;font-size:1.05rem;color:var(--text)}
+.terms-close{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;line-height:1}
+.terms-body{padding:1.25rem;overflow-y:auto;color:var(--text);font-size:13px;line-height:1.65}
+.terms-body h3{font-size:.92rem;color:var(--accent2);margin:1.1rem 0 .35rem}
+.terms-body h3:first-child{margin-top:0}
+.terms-body p{margin:.2rem 0;color:#CFC9C0}
 .plan-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .plan-option.selected .plan-radio{border-color:var(--accent);background:var(--accent)}
 .plan-option.selected .plan-radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
@@ -300,7 +313,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
     </button>
     <button class="btn btn-outline" id="back-to-step2" style="margin-top:.5rem" data-i18n="r_back">← Назад</button>
     <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:.75rem">
-      Реєструючись ви погоджуєтесь з умовами використання.<br/>Картка не потрібна для пробного періоду.
+      <span data-i18n="r_agreePre">Реєструючись ви погоджуєтесь з </span><span class="terms-link" data-i18n="r_termsLink" onclick="openTerms()">умовами використання</span><span data-i18n="r_agreePost">.</span><br/><span data-i18n="r_noCard">Картка не потрібна для пробного періоду.</span>
     </div>
   </div>
 
@@ -329,6 +342,52 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
 <div style="text-align:center;margin-top:1.5rem;font-size:13px;color:var(--muted)">
   <span data-i18n="r_haveAccount">Вже є акаунт?</span> <a href="login.html" style="color:var(--accent)" data-i18n="r_loginBtn">Увійти</a>
+</div>
+
+<!-- TERMS MODAL -->
+<div class="terms-overlay" id="terms-overlay" onclick="if(event.target===this)closeTerms()">
+  <div class="terms-modal">
+    <div class="terms-head">
+      <h2 data-i18n="r_termsTitle">📄 Умови використання</h2>
+      <button class="terms-close" onclick="closeTerms()">✕</button>
+    </div>
+    <div class="terms-body" id="terms-body">
+      <p style="color:var(--muted)">Дата останнього оновлення: 04.06.2026</p>
+
+      <h3>1. Загальні положення</h3>
+      <p>Ці Умови використання регулюють відносини між сервісом Mage QR Rest (далі — «Сервіс») та користувачем (далі — «Заклад»). Реєструючись у Сервісі, ви підтверджуєте, що ознайомилися з цими Умовами та погоджуєтесь їх дотримуватися.</p>
+
+      <h3>2. Опис послуги</h3>
+      <p>Сервіс надає програмне забезпечення для створення цифрового меню, приймання замовлень через QR-код, керування закладом, аналітики та супутніх функцій згідно з обраним тарифом.</p>
+
+      <h3>3. Обліковий запис</h3>
+      <p>Заклад відповідає за достовірність наданих під час реєстрації даних і за збереження доступу до облікового запису. Усі дії, виконані під обліковим записом, вважаються діями Закладу.</p>
+
+      <h3>4. Тарифи та оплата</h3>
+      <p>Користування платними тарифами здійснюється на умовах щомісячної підписки. Вартість і набір функцій кожного тарифу зазначені у Сервісі та можуть змінюватися з попереднім повідомленням. Оплата проводиться через платіжного провайдера; дані картки зберігаються у зашифрованому вигляді на стороні провайдера.</p>
+
+      <h3>5. Пробний період</h3>
+      <p>Сервіс може надавати безкоштовний пробний період. Після його завершення доступ до функцій визначається обраним тарифом. Картка для активації пробного періоду не потрібна.</p>
+
+      <h3>6. Обов'язки користувача</h3>
+      <p>Заклад зобов'язується використовувати Сервіс лише в законних цілях, не порушувати права третіх осіб і не намагатися отримати несанкціонований доступ до систем Сервісу.</p>
+
+      <h3>7. Дані та конфіденційність</h3>
+      <p>Сервіс обробляє дані Закладу та його клієнтів виключно для надання функцій Сервісу. Заклад є відповідальним за законність обробки даних своїх клієнтів.</p>
+
+      <h3>8. Інтелектуальна власність</h3>
+      <p>Усі права на програмне забезпечення Сервісу належать його власнику. Контент, який завантажує Заклад (меню, фото, описи), лишається власністю Закладу.</p>
+
+      <h3>9. Обмеження відповідальності</h3>
+      <p>Сервіс надається «як є». Власник Сервісу не несе відповідальності за непрямі збитки, спричинені перервами в роботі сторонніх систем (платіжних, POS, доставки) або форс-мажорними обставинами.</p>
+
+      <h3>10. Зміна умов та припинення</h3>
+      <p>Власник може оновлювати ці Умови; актуальна версія завжди доступна у Сервісі. Заклад може припинити користування в будь-який момент. Власник може призупинити доступ у разі порушення цих Умов.</p>
+
+      <h3>11. Контакти</h3>
+      <p>З питань щодо цих Умов звертайтеся через розділ «Служба підтримки» в адмін-панелі.</p>
+    </div>
+  </div>
 </div>
 
 <script type="module">
@@ -376,7 +435,7 @@ const REG_I18N = {
     'r_featDomain':'Власний домен',
     'r_popular':'ПОПУЛЯРНИЙ',
     'r_free':'Безкоштовно',
-    'r_perMonth':'/міс',
+    'r_perMonth':'/міс' 'r_termsTitle':'Умови використання', 'r_termsLink':'умовами використання', 'r_agreePre':'Реєструючись ви погоджуєтесь з ', 'r_agreePost':'.', 'r_noCard':'Картка не потрібна для пробного періоду.',,
     'r_successTitle':'Заклад зареєстровано!',
     'r_successDesc':'Ваш пробний період розпочато. Увійдіть в адмін-панель щоб додати страви та налаштувати меню.',
     'r_yourMenu':'Ваше публічне меню:',
@@ -415,7 +474,7 @@ const REG_I18N = {
     'r_featDomain':'Custom domain',
     'r_popular':'POPULAR',
     'r_free':'Free',
-    'r_perMonth':'/mo',
+    'r_perMonth':'/mo' 'r_termsTitle':'Terms of Use', 'r_termsLink':'the Terms of Use', 'r_agreePre':'By registering you agree to ', 'r_agreePost':'.', 'r_noCard':'No card required for the trial period.',,
     'r_successTitle':'Venue registered!',
     'r_successDesc':'Your trial period has started. Log in to the admin panel to add dishes and set up your menu.',
     'r_yourMenu':'Your public menu:',
@@ -454,7 +513,7 @@ const REG_I18N = {
     'r_featDomain':'Własna domena',
     'r_popular':'POPULARNY',
     'r_free':'Bezpłatnie',
-    'r_perMonth':'/mies',
+    'r_perMonth':'/mies' 'r_termsTitle':'Warunki korzystania', 'r_termsLink':'warunkami korzystania', 'r_agreePre':'Rejestrując się akceptujesz ', 'r_agreePost':'.', 'r_noCard':'Karta nie jest wymagana w okresie próbnym.',,
     'r_successTitle':'Lokal zarejestrowany!',
     'r_successDesc':'Twój okres próbny rozpoczął się. Zaloguj się do panelu administracyjnego, aby dodać dania i skonfigurować menu.',
     'r_yourMenu':'Twoje publiczne menu:',
@@ -493,7 +552,7 @@ const REG_I18N = {
     'r_featDomain':'Eigene Domain',
     'r_popular':'BELIEBT',
     'r_free':'Kostenlos',
-    'r_perMonth':'/Mo',
+    'r_perMonth':'/Mo' 'r_termsTitle':'Nutzungsbedingungen', 'r_termsLink':'die Nutzungsbedingungen', 'r_agreePre':'Mit der Registrierung akzeptieren Sie ', 'r_agreePost':'.', 'r_noCard':'Für die Testphase ist keine Karte erforderlich.',,
     'r_successTitle':'Lokal registriert!',
     'r_successDesc':'Ihr Testzeitraum hat begonnen. Melden Sie sich im Admin-Panel an, um Gerichte hinzuzufügen und das Menü einzurichten.',
     'r_yourMenu':'Ihr öffentliches Menü:',
@@ -532,7 +591,7 @@ const REG_I18N = {
     'r_featDomain':'Domeniu propriu',
     'r_popular':'POPULAR',
     'r_free':'Gratuit',
-    'r_perMonth':'/lună',
+    'r_perMonth':'/lună' 'r_termsTitle':'Termeni de utilizare', 'r_termsLink':'termenii de utilizare', 'r_agreePre':'Prin înregistrare acceptați ', 'r_agreePost':'.', 'r_noCard':'Nu este necesar un card pentru perioada de probă.',,
     'r_successTitle':'Local înregistrat!',
     'r_successDesc':'Perioada dvs. de probă a început. Conectați-vă la panoul de administrare pentru a adăuga preparate și a configura meniul.',
     'r_yourMenu':'Meniul dvs. public:',
@@ -571,7 +630,7 @@ const REG_I18N = {
     'r_featDomain':'Dominio propio',
     'r_popular':'POPULAR',
     'r_free':'Gratis',
-    'r_perMonth':'/mes',
+    'r_perMonth':'/mes' 'r_termsTitle':'Términos de uso', 'r_termsLink':'los términos de uso', 'r_agreePre':'Al registrarte aceptas ', 'r_agreePost':'.', 'r_noCard':'No se requiere tarjeta para el período de prueba.',,
     'r_successTitle':'¡Local registrado!',
     'r_successDesc':'Su período de prueba ha comenzado. Inicie sesión en el panel de administración para agregar platos y configurar el menú.',
     'r_yourMenu':'Su menú público:',
@@ -610,7 +669,7 @@ const REG_I18N = {
     'r_featDomain':'Vlastita domena',
     'r_popular':'POPULARNO',
     'r_free':'Besplatno',
-    'r_perMonth':'/mj',
+    'r_perMonth':'/mj' 'r_termsTitle':'Uslovi korišćenja', 'r_termsLink':'uslove korišćenja', 'r_agreePre':'Registracijom prihvatate ', 'r_agreePost':'.', 'r_noCard':'Kartica nije potrebna za probni period.',,
     'r_successTitle':'Lokal registrovan!',
     'r_successDesc':'Vaš probni period je počeo. Prijavite se u admin panel da dodate jela i podesite meni.',
     'r_yourMenu':'Vaš javni meni:',
@@ -679,6 +738,8 @@ window._selectRegLang = window.selectRegLang = function(lang) {
   applyRegLang(lang);
   // Перемальовуємо тарифи мовою користувача (якщо вже завантажені)
   if(typeof renderPlanCards === 'function' && publicPlans) renderPlanCards(lang);
+  // Оновлюємо умови, якщо модалка відкрита
+  if(window.renderTermsBody) window.renderTermsBody();
 };
 // Відновлюємо збережену мову при завантаженні
 document.querySelectorAll('.lang-choice-btn, .lang-sel-btn').forEach(b => {
@@ -905,10 +966,44 @@ function hideErr(id) {
 }
 </script>
 <script>
+// Глобальні функції модалки умов (onclick працює у глобальній області)
+let _termsData = null;          // {uk:"...",en:"..."} з config/terms (superadmin)
+let _termsDefaultHTML = null;   // вбудований шаблон (запасний)
+let _termsFetched = false;
+function _escTerms(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+async function _ensureTerms(){
+  if(_termsFetched) return;
+  _termsFetched = true;
+  try {
+    const res = await fetch(`${window.__CF_URL}/getPublicTerms`);
+    if(res.ok){ const d = await res.json(); _termsData = (d && d.terms) ? d.terms : null; }
+  } catch(e){ /* лишаємо вбудований шаблон */ }
+}
+function renderTermsBody(){
+  const body = document.getElementById('terms-body');
+  if(!body) return;
+  if(_termsDefaultHTML === null) _termsDefaultHTML = body.innerHTML;   // зберігаємо вбудований шаблон один раз
+  const lang = localStorage.getItem('mq_admin_lang') || 'uk';
+  let txt = '';
+  if(_termsData){ txt = (_termsData[lang] || _termsData.uk || '').trim(); }
+  if(txt){
+    body.innerHTML = '<p style="white-space:pre-wrap;color:#CFC9C0;line-height:1.65;margin:0">' + _escTerms(txt) + '</p>';
+  } else {
+    body.innerHTML = _termsDefaultHTML;   // запасний вбудований шаблон
+  }
+}
+function openTerms(){
+  var o=document.getElementById('terms-overlay'); if(o) o.classList.add('open');
+  renderTermsBody();                                  // одразу показуємо (шаблон або вже кешоване)
+  _ensureTerms().then(renderTermsBody);               // після завантаження з config — оновлюємо
+}
+function closeTerms(){ var o=document.getElementById('terms-overlay'); if(o) o.classList.remove('open'); }
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeTerms(); });
+
 // Ініціалізація кнопок мови через addEventListener (script module не дає global scope)
 document.addEventListener('DOMContentLoaded', function() {
-  // Підвантажуємо актуальні тарифи з config/plans
-  loadPublicPlans();
+  // Підвантажуємо актуальні тарифи з config/plans (через window — функція з модуля)
+  if(window.loadPublicPlans) window.loadPublicPlans();
   // Кнопки вибору мови
   document.querySelectorAll('.lang-choice-btn').forEach(btn => {
     btn.addEventListener('click', function() {
