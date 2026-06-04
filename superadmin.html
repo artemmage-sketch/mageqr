@@ -513,6 +513,25 @@ tr:hover td{background:rgba(255,255,255,.02)}
           <span id="kb-status" style="font-size:13px;color:var(--muted)"></span>
         </div>
       </div>
+
+      <!-- Умови використання -->
+      <div class="card" style="padding:1.25rem;margin-top:1.5rem">
+        <h2 style="font-size:1rem;margin:0 0 .5rem">📄 Умови використання</h2>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:1rem">Текст по мовах — показується на сторінці реєстрації мовою користувача. Якщо мову лишити порожньою — підставиться українська. Якщо порожньо все — на реєстрації покажеться вбудований шаблон.</div>
+        <div style="display:grid;gap:.75rem">
+          <label style="font-size:12px;color:var(--muted)">🇺🇦 Українська<textarea id="terms-uk" rows="5" style="width:100%;margin-top:.3rem;padding:.6rem;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);box-sizing:border-box;resize:vertical;font-family:inherit;font-size:13px"></textarea></label>
+          <label style="font-size:12px;color:var(--muted)">🇬🇧 English<textarea id="terms-en" rows="5" style="width:100%;margin-top:.3rem;padding:.6rem;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);box-sizing:border-box;resize:vertical;font-family:inherit;font-size:13px"></textarea></label>
+          <label style="font-size:12px;color:var(--muted)">🇵🇱 Polski<textarea id="terms-pl" rows="5" style="width:100%;margin-top:.3rem;padding:.6rem;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);box-sizing:border-box;resize:vertical;font-family:inherit;font-size:13px"></textarea></label>
+          <label style="font-size:12px;color:var(--muted)">🇩🇪 Deutsch<textarea id="terms-de" rows="5" style="width:100%;margin-top:.3rem;padding:.6rem;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);box-sizing:border-box;resize:vertical;font-family:inherit;font-size:13px"></textarea></label>
+          <label style="font-size:12px;color:var(--muted)">🇷🇴 Română<textarea id="terms-ro" rows="5" style="width:100%;margin-top:.3rem;padding:.6rem;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);box-sizing:border-box;resize:vertical;font-family:inherit;font-size:13px"></textarea></label>
+          <label style="font-size:12px;color:var(--muted)">🇪🇸 Español<textarea id="terms-es" rows="5" style="width:100%;margin-top:.3rem;padding:.6rem;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);box-sizing:border-box;resize:vertical;font-family:inherit;font-size:13px"></textarea></label>
+          <label style="font-size:12px;color:var(--muted)">🇲🇪 Crnogorski<textarea id="terms-cnr" rows="5" style="width:100%;margin-top:.3rem;padding:.6rem;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);box-sizing:border-box;resize:vertical;font-family:inherit;font-size:13px"></textarea></label>
+        </div>
+        <div style="display:flex;gap:.75rem;align-items:center;margin-top:1rem">
+          <button class="btn-primary" onclick="saveTerms()" style="padding:.6rem 1.25rem">💾 Зберегти умови</button>
+          <span id="terms-status" style="font-size:13px;color:var(--muted)"></span>
+        </div>
+      </div>
     </div>
 
 <!-- ADD VENUE MODAL -->
@@ -1388,6 +1407,15 @@ window.loadContent = async function(){
     kbArticles = (s.exists() && Array.isArray(s.data().articles)) ? s.data().articles.slice() : [];
   } catch(e){ kbArticles = []; console.warn('loadContent knowledge:', e.message); }
   renderKbEditor();
+  // Умови використання
+  try {
+    const s = await getDoc(doc(db,'config','terms'));
+    const d = s.exists() ? (s.data()||{}) : {};
+    ['uk','en','pl','de','ro','es','cnr'].forEach(lg => {
+      const el = document.getElementById('terms-'+lg);
+      if(el) el.value = d[lg] || '';
+    });
+  } catch(e){ console.warn('loadContent terms:', e.message); }
 };
 
 window.saveSupport = async function(){
@@ -1458,6 +1486,22 @@ window.saveKnowledge = async function(){
     await setDoc(doc(db,'config','knowledge'), { articles: clean }, { merge: true });
     kbArticles = clean;
     st.textContent = '✅ Збережено (' + clean.length + ')';
+    setTimeout(()=>{ st.textContent=''; }, 2500);
+  } catch(e){ st.textContent = '❌ ' + e.message; }
+};
+
+window.saveTerms = async function(){
+  const { doc, setDoc } = window.__FS;
+  const st = document.getElementById('terms-status');
+  st.textContent = '⏳ Зберігаємо...';
+  try {
+    const data = {};
+    ['uk','en','pl','de','ro','es','cnr'].forEach(lg => {
+      const el = document.getElementById('terms-'+lg);
+      data[lg] = el ? el.value.trim() : '';
+    });
+    await setDoc(doc(db,'config','terms'), data, { merge: true });
+    st.textContent = '✅ Збережено';
     setTimeout(()=>{ st.textContent=''; }, 2500);
   } catch(e){ st.textContent = '❌ ' + e.message; }
 };
