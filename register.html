@@ -228,7 +228,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
       <span data-i18n="r_trialNoteDesc">Будь-який тариф — без оплати. Картка не потрібна зараз. Після пробного періоду ви зможете оплатити або перейти на Free.</span>
     </div>
 
-    <div class="plans-grid">
+    <div class="plans-grid" id="plans-grid">
       <div class="plan-option" id="plan-free" onclick="selectPlan('free')">
         <div class="plan-top">
           <div>
@@ -256,7 +256,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
               <span class="plan-feat" data-i18n="r_featColors">Кольори+шрифт</span>
             </div>
           </div>
-          <div class="plan-price">299₴<span class="per" data-i18n="r_perMonth">/міс</span></div>
+          <div class="plan-price">€9<span class="per" data-i18n="r_perMonth">/міс</span></div>
         </div>
       </div>
 
@@ -273,7 +273,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
               <span class="plan-feat" data-i18n="r_featPhotoBanner">Фото+банер</span>
             </div>
           </div>
-          <div class="plan-price" style="color:#A78BFA">699₴<span class="per" data-i18n="r_perMonth">/міс</span></div>
+          <div class="plan-price" style="color:#A78BFA">€19<span class="per" data-i18n="r_perMonth">/міс</span></div>
         </div>
       </div>
 
@@ -288,7 +288,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
               <span class="plan-feat" data-i18n="r_featDomain">Власний домен</span>
             </div>
           </div>
-          <div class="plan-price">1999₴<span class="per" data-i18n="r_perMonth">/міс</span></div>
+          <div class="plan-price">€49<span class="per" data-i18n="r_perMonth">/міс</span></div>
         </div>
       </div>
     </div>
@@ -677,6 +677,8 @@ window._selectRegLang = window.selectRegLang = function(lang) {
   });
   // Перекладаємо сторінку
   applyRegLang(lang);
+  // Перемальовуємо тарифи мовою користувача (якщо вже завантажені)
+  if(typeof renderPlanCards === 'function' && publicPlans) renderPlanCards(lang);
 };
 // Відновлюємо збережену мову при завантаженні
 document.querySelectorAll('.lang-choice-btn, .lang-sel-btn').forEach(b => {
@@ -770,8 +772,57 @@ window.nextStep = function(from) {
 window.selectPlan = function(plan) {
   selectedPlan = plan;
   document.querySelectorAll('.plan-option').forEach(el => el.classList.remove('selected'));
-  document.getElementById(`plan-${plan}`).classList.add('selected');
+  const el = document.getElementById(`plan-${plan}`);
+  if(el) el.classList.add('selected');
 };
+
+// ── ДИНАМІЧНІ ТАРИФИ (з config/plans через getPublicPlans) ──
+let publicPlans = null;
+function escapeRegHtml(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function planFeaturesFor(p, lang){
+  const f = p.features;
+  if (Array.isArray(f)) return f;                  // старий формат — спільний для всіх мов
+  if (f && typeof f === 'object') return f[lang] || f.uk || [];
+  return [];
+}
+function renderPlanCards(lang){
+  if(!publicPlans) return;
+  const grid = document.getElementById('plans-grid');
+  if(!grid) return;
+  const s = REG_I18N[lang] || REG_I18N.uk || {};
+  grid.innerHTML = publicPlans.map(p => {
+    const feats = planFeaturesFor(p, lang)
+      .map(x => `<span class="plan-feat">${escapeRegHtml(x)}</span>`).join('');
+    const price = (p.key === 'free' || !p.price)
+      ? `<div class="plan-price">${escapeRegHtml(s.r_free || 'Безкоштовно')}</div>`
+      : `<div class="plan-price">€${p.price}<span class="per">${escapeRegHtml(s.r_perMonth || '/міс')}</span></div>`;
+    const pop = p.popular ? `<div class="plan-pop">${escapeRegHtml(s.r_popular || 'ПОПУЛЯРНИЙ')}</div>` : '';
+    const cls = 'plan-option' + (p.popular ? ' featured' : '') + (p.key === selectedPlan ? ' selected' : '');
+    return `<div class="${cls}" id="plan-${p.key}" onclick="selectPlan('${p.key}')">
+      ${pop}
+      <div class="plan-top">
+        <div><div class="plan-radio"></div></div>
+        <div style="flex:1;margin-left:.75rem">
+          <div class="plan-name">${escapeRegHtml(p.name||p.key)}</div>
+          <div class="plan-features" style="margin-top:.25rem">${feats}</div>
+        </div>
+        ${price}
+      </div>
+    </div>`;
+  }).join('');
+}
+async function loadPublicPlans(){
+  try {
+    const res = await fetch(`${window.__CF_URL}/getPublicPlans`);
+    if(!res.ok) return;                            // не вийшло — лишаємо запасні картки з HTML
+    const data = await res.json();
+    if(data && Array.isArray(data.plans) && data.plans.length){
+      publicPlans = data.plans;
+      renderPlanCards(selectedAdminLang || 'uk');
+    }
+  } catch(e){ /* лишаємо запасні картки */ }
+}
+window.loadPublicPlans = loadPublicPlans;   // щоб виклик зі звичайного <script> (DOMContentLoaded) працював
 
 // ── REGISTER ─────────────────────────────────────────────
 window.doRegister = async function() {
@@ -856,6 +907,8 @@ function hideErr(id) {
 <script>
 // Ініціалізація кнопок мови через addEventListener (script module не дає global scope)
 document.addEventListener('DOMContentLoaded', function() {
+  // Підвантажуємо актуальні тарифи з config/plans
+  loadPublicPlans();
   // Кнопки вибору мови
   document.querySelectorAll('.lang-choice-btn').forEach(btn => {
     btn.addEventListener('click', function() {
