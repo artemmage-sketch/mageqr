@@ -601,7 +601,14 @@ tr:hover td{background:rgba(255,255,255,.02)}
       </div>
     </div>
     <div class="grid-2">
-      <div class="field-group"><label class="field-label">Ціна (€/міс)</label><input id="pf-price" type="number" min="0" step="1" placeholder="9"/></div>
+      <div class="field-group"><label class="field-label">Ціна в € /міс (для білінгу та сторінки тарифів)</label><input id="pf-price" type="number" min="0" step="1" placeholder="9"/></div>
+      <div class="field-group"><label class="field-label">Ціни для сторінки тарифів (вписуються вручну)</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+          <div><label style="font-size:11px;color:var(--muted)">₴ гривня/міс</label><input id="pf-price-uah" type="number" min="0" step="1" placeholder="399"/></div>
+          <div><label style="font-size:11px;color:var(--muted)">$ долар/міс</label><input id="pf-price-usd" type="number" min="0" step="1" placeholder="11"/></div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:.35rem">€ береться з поля вище. Порожнє поле = валюта не показується на сторінці тарифів.</div>
+      </div>
       <div class="field-group"><label class="field-label">Макс. страв</label><input id="pf-items" type="number" placeholder="∞ = порожньо"/></div>
       <div class="field-group"><label class="field-label">Макс. категорій</label><input id="pf-cats" type="number"/></div>
       <div class="field-group"><label class="field-label">Макс. замовлень/міс</label><input id="pf-orders" type="number"/></div>
@@ -1123,6 +1130,8 @@ window.openPlanModal = function(key){
     el.value = arr.join('\n');
   });
   document.getElementById('pf-price').value=p.price;
+  document.getElementById('pf-price-uah').value=(p.prices&&p.prices.uah)||'';
+  document.getElementById('pf-price-usd').value=(p.prices&&p.prices.usd)||'';
   document.getElementById('pf-items').value=p.items===999999?'':p.items;
   document.getElementById('pf-cats').value=p.cats===999?'':p.cats;
   document.getElementById('pf-orders').value=p.orders===999999?'':p.orders;
@@ -1140,6 +1149,13 @@ window.openPlanModal = function(key){
 window.savePlan = async function(){
   if(!editPlanKey)return;
   const price = parseInt(document.getElementById('pf-price').value)||0;
+  const priceUah = parseInt(document.getElementById('pf-price-uah').value)||0;
+  const priceUsd = parseInt(document.getElementById('pf-price-usd').value)||0;
+  // Ціни по валютах для сторінки тарифів (порожні не показуються)
+  const prices = {};
+  if (price)    prices.eur = price;
+  if (priceUah) prices.uah = priceUah;
+  if (priceUsd) prices.usd = priceUsd;
   // Фічі по мовах → об'єкт {uk:[...],en:[...]}; порожні мови не зберігаємо
   const features = {};
   ['uk','en','pl','de','ro','es','cnr'].forEach(lg => {
@@ -1154,6 +1170,7 @@ window.savePlan = async function(){
     desc:        document.getElementById('pf-desc').value.trim(),
     features,
     price,
+    prices,
     amountCents: price * 100,
     items:          parseInt(document.getElementById('pf-items').value)||999999,
     cats:           parseInt(document.getElementById('pf-cats').value)||999,
