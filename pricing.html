@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Тарифи — Mage QR Rest</title>
+<style>
+:root{
+  --bg:#0A0A0A;--card:#111;--border:#1E1E1E;--border2:#2A2A2A;
+  --accent:#C1440E;--accent2:#FF6B35;--text:#F0EDE8;--muted:#555;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:var(--font);background:var(--bg);color:var(--text)}
+.wrap{max-width:1080px;margin:0 auto;padding:2rem 1.25rem 4rem}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:2.5rem}
+.logo{font-size:1.3rem;font-weight:700;letter-spacing:-.5px}
+.logo span{color:var(--accent2)}
+.selectors{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
+.seg{display:inline-flex;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:3px;gap:2px}
+.seg button{background:none;border:none;color:var(--muted);font-size:13px;font-weight:600;padding:.4rem .7rem;border-radius:7px;cursor:pointer;font-family:inherit;transition:all .15s}
+.seg button.active{background:var(--accent);color:#fff}
+.seg.lang button{padding:.4rem .55rem;font-size:12px}
+.head{text-align:center;margin-bottom:2.5rem}
+.head h1{font-size:2rem;margin:0 0 .5rem;letter-spacing:-.5px}
+.head p{color:var(--muted);font-size:15px;margin:0}
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;align-items:start}
+.plan{position:relative;background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:1.5rem 1.25rem;display:flex;flex-direction:column}
+.plan.featured{border-color:var(--accent2);box-shadow:0 0 0 1px var(--accent2)}
+.plan-pop{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--accent2);color:#fff;font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 10px;border-radius:20px}
+.plan-name{font-size:1.15rem;font-weight:700;margin-bottom:.25rem}
+.plan-price{font-size:1.9rem;font-weight:800;margin:.5rem 0 .25rem;min-height:2.2rem}
+.plan-price .per{font-size:.85rem;font-weight:500;color:var(--muted)}
+.plan-feats{list-style:none;padding:0;margin:1rem 0 1.25rem;display:flex;flex-direction:column;gap:.5rem;flex:1}
+.plan-feats li{font-size:13px;color:var(--text);display:flex;gap:.5rem;align-items:flex-start;line-height:1.45}
+.plan-feats li::before{content:"•";color:var(--accent2);font-weight:700;flex:none}
+.plan-cta{display:block;text-align:center;text-decoration:none;background:var(--accent);color:#fff;font-weight:700;font-size:14px;padding:.7rem;border-radius:10px;transition:background .15s}
+.plan.featured .plan-cta{background:var(--accent2)}
+.plan-cta:hover{filter:brightness(1.08)}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:2.5rem;line-height:1.6}
+.foot a{color:var(--accent2)}
+@media(max-width:520px){.head h1{font-size:1.6rem}.topbar{justify-content:center}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="logo">Mage QR <span>Rest</span></div>
+    <div class="selectors">
+      <div class="seg currency" id="currency-sel">
+        <button data-cur="uah">₴ UAH</button>
+        <button data-cur="eur">€ EUR</button>
+        <button data-cur="usd">$ USD</button>
+      </div>
+      <div class="seg lang" id="lang-sel">
+        <button data-lang="uk">🇺🇦</button>
+        <button data-lang="en">🇬🇧</button>
+        <button data-lang="pl">🇵🇱</button>
+        <button data-lang="de">🇩🇪</button>
+        <button data-lang="ro">🇷🇴</button>
+        <button data-lang="es">🇪🇸</button>
+        <button data-lang="cnr">🇲🇪</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="head">
+    <h1 data-i18n="title">Тарифи</h1>
+    <p data-i18n="subtitle">Оберіть план, що підходить вашому закладу</p>
+  </div>
+
+  <div class="plans-grid" id="plans-grid"></div>
+
+  <div class="foot">
+    <span data-i18n="footNote">Ціни вказані за місяць. Підписку можна змінити будь-коли.</span><br/>
+    <a href="register.html" data-i18n="footReg">Зареєструватися →</a>
+  </div>
+</div>
+
+<script>
+window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
+
+const I18N = {
+  uk:{title:'Тарифи',subtitle:'Оберіть план, що підходить вашому закладу',perMonth:'/міс',popular:'ПОПУЛЯРНИЙ',free:'Безкоштовно',cta:'Почати',footNote:'Ціни вказані за місяць. Підписку можна змінити будь-коли.',footReg:'Зареєструватися →'},
+  en:{title:'Pricing',subtitle:'Choose the plan that fits your venue',perMonth:'/mo',popular:'POPULAR',free:'Free',cta:'Get started',footNote:'Prices are per month. You can change your plan anytime.',footReg:'Sign up →'},
+  pl:{title:'Cennik',subtitle:'Wybierz plan dla swojego lokalu',perMonth:'/mies',popular:'POPULARNY',free:'Bezpłatnie',cta:'Zacznij',footNote:'Ceny za miesiąc. Plan można zmienić w każdej chwili.',footReg:'Zarejestruj się →'},
+  de:{title:'Preise',subtitle:'Wählen Sie den passenden Plan',perMonth:'/Mo',popular:'BELIEBT',free:'Kostenlos',cta:'Loslegen',footNote:'Preise pro Monat. Plan jederzeit änderbar.',footReg:'Registrieren →'},
+  ro:{title:'Prețuri',subtitle:'Alegeți planul potrivit pentru localul dvs.',perMonth:'/lună',popular:'POPULAR',free:'Gratuit',cta:'Începeți',footNote:'Prețuri pe lună. Puteți schimba planul oricând.',footReg:'Înregistrare →'},
+  es:{title:'Precios',subtitle:'Elige el plan para tu local',perMonth:'/mes',popular:'POPULAR',free:'Gratis',cta:'Empezar',footNote:'Precios por mes. Puedes cambiar tu plan cuando quieras.',footReg:'Registrarse →'},
+  cnr:{title:'Cijene',subtitle:'Izaberite plan za vaš objekat',perMonth:'/mj',popular:'POPULARNO',free:'Besplatno',cta:'Počni',footNote:'Cijene po mjesecu. Plan možete promijeniti bilo kada.',footReg:'Registracija →'},
+};
+const CUR_FMT = {
+  uah:(n)=>`${n} ₴`,
+  eur:(n)=>`€${n}`,
+  usd:(n)=>`$${n}`,
+};
+
+let CUR  = localStorage.getItem('mq_pricing_cur') || 'uah';
+let LANG = localStorage.getItem('mq_admin_lang') || 'uk';
+let plans = null;
+
+function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function featuresFor(p, lang){
+  const f = p.features;
+  if (Array.isArray(f)) return f;
+  if (f && typeof f === 'object') return f[lang] || f.uk || [];
+  return [];
+}
+function priceFor(p, cur){
+  const s = I18N[LANG] || I18N.uk;
+  if (p.key === 'free') return { text: s.free, per:false };
+  const pr = p.prices || {};
+  let val = (pr[cur] !== undefined) ? pr[cur] : undefined;
+  if (val === undefined && pr.eur !== undefined) { val = pr.eur; cur = 'eur'; } // запасний — євро
+  if (val === undefined || val === 0) return { text: '—', per:false };
+  const fmt = CUR_FMT[cur] || ((n)=>`${n}`);
+  return { text: fmt(val), per:true };
+}
+
+function applyI18n(){
+  const s = I18N[LANG] || I18N.uk;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if (s[k] != null) el.textContent = s[k];
+  });
+  document.documentElement.lang = LANG;
+}
+
+function render(){
+  const grid = document.getElementById('plans-grid');
+  if (!grid || !plans) return;
+  const s = I18N[LANG] || I18N.uk;
+  grid.innerHTML = plans.map(p=>{
+    const pr = priceFor(p, CUR);
+    const feats = featuresFor(p, LANG).map(x=>`<li>${escHtml(x)}</li>`).join('');
+    const pop = p.popular ? `<div class="plan-pop">${escHtml(s.popular)}</div>` : '';
+    const priceHtml = `<div class="plan-price">${escHtml(pr.text)}${pr.per?`<span class="per">${escHtml(s.perMonth)}</span>`:''}</div>`;
+    return `<div class="plan${p.popular?' featured':''}">
+      ${pop}
+      <div class="plan-name">${escHtml(p.name||p.key)}</div>
+      ${priceHtml}
+      <ul class="plan-feats">${feats}</ul>
+      <a class="plan-cta" href="register.html">${escHtml(s.cta)}</a>
+    </div>`;
+  }).join('');
+}
+
+async function loadPlans(){
+  try{
+    const res = await fetch(`${window.__CF_URL}/getPublicPlans`);
+    if(!res.ok) return;
+    const data = await res.json();
+    if(data && Array.isArray(data.plans) && data.plans.length){
+      plans = data.plans;
+      render();
+    }
+  }catch(e){ /* сторінка лишиться без карток, але не зламається */ }
+}
+
+function setActive(){
+  document.querySelectorAll('#currency-sel button').forEach(b=>b.classList.toggle('active', b.dataset.cur===CUR));
+  document.querySelectorAll('#lang-sel button').forEach(b=>b.classList.toggle('active', b.dataset.lang===LANG));
+}
+
+document.getElementById('currency-sel').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  CUR = b.dataset.cur; localStorage.setItem('mq_pricing_cur', CUR);
+  setActive(); render();
+});
+document.getElementById('lang-sel').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  LANG = b.dataset.lang; localStorage.setItem('mq_admin_lang', LANG);
+  setActive(); applyI18n(); render();
+});
+
+setActive();
+applyI18n();
+loadPlans();
+</script>
+</body>
+</html>
