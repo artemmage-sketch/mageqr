@@ -1195,6 +1195,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';</script>
               <strong data-i18n="howToConnect">Як підключити:</strong> <span data-i18n="posterConnectInstr">Poster Admin → Додатки → Маркет → Mage QR Rest → Встановити → Скопіювати токен</span>
             </div>
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <button class="btn btn-accent btn-sm" onclick="connectPosterOAuth()">🔗 Під'єднати в один клік</button>
               <button class="btn btn-outline btn-sm" onclick="testPOS('poster')">🧪 Тест</button>
               <button class="btn btn-accent btn-sm" onclick="connectPOS('poster')" data-i18n="connectBtn" id="btn-connect-poster">Підключити</button>
               <button class="btn btn-outline btn-sm" onclick="disconnectPOS('poster')" data-i18n="disconnectBtn" id="btn-disconnect-poster" style="display:none;color:var(--red)">✕ Деактивувати</button>
@@ -5640,6 +5641,7 @@ async function initFirebase() {
     } catch(e) { console.warn('set adminUid:', e.message); }
     await Promise.all([loadSettings(), loadCats(), loadItems(), loadPlanPrices()]);
     applyPlanTabAccess();
+    try { handlePosterReturn(); } catch(e){}
     subscribeOrders();
     renderMappingRows();
     renderPresetsRow();
@@ -9320,6 +9322,44 @@ window.disconnectPOS = async function(sys) {
 window.syncIikoMenu = async function() {
   notify('Синхронізація меню з iiko...', 'ok');
   // TODO: реалізувати через бекенд endpoint
+};
+
+// Poster OAuth: під'єднання в один клік (редірект на старт OAuth)
+window.connectPosterOAuth = function(){
+  if(!venueId || venueId==='demo'){ notify('Спершу збережіть заклад','err'); return; }
+  window.location.href = window.__CF_URL + '/posterConnectStart?venueId=' + encodeURIComponent(venueId);
+};
+
+// Обробка повернення з Poster OAuth (?poster=connected | ?poster=link&account=)
+window.handlePosterReturn = async function(){
+  const p = new URLSearchParams(window.location.search);
+  const st = p.get('poster');
+  if(!st) return;
+  // прибираємо параметри з URL, щоб не спрацьовувало повторно
+  const clean = () => history.replaceState(null,'',window.location.pathname);
+  if(st === 'connected'){
+    notify('✅ Poster під\'єднано','ok');
+    clean();
+    if(typeof loadPOSSettings==='function') try{ loadPOSSettings(); }catch(e){}
+    return;
+  }
+  if(st === 'link'){
+    const account = p.get('account') || '';
+    if(!account){ clean(); return; }
+    if(!confirm('Під\'єднати акаунт Poster "'+account+'" до цього закладу?')){ clean(); return; }
+    try{
+      const {getAuth}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+      const token=await getAuth().currentUser.getIdToken();
+      const res=await fetch(window.__CF_URL+'/posterClaimPending',{
+        method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body:JSON.stringify({venueId,account})
+      });
+      const d=await res.json();
+      if(res.ok && d.success){ notify('✅ Poster під\'єднано','ok'); if(typeof loadPOSSettings==='function') try{ loadPOSSettings(); }catch(e){} }
+      else notify('Помилка: '+(d.error||'не вдалось долінкувати'),'err');
+    }catch(e){ notify('Помилка: '+e.message,'err'); }
+    clean();
+  }
 };
 
 window.connectPOS=async function(sys){
