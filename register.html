@@ -138,7 +138,7 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 <div class="header">
   <div class="logo">✦ Mage <span>QR</span> Rest</div>
   <h1 data-i18n="r_startBtn">Почніть безкоштовно</h1>
-  <p class="subtitle"><span data-i18n="r_subtitle">Цифрове меню для вашого закладу</span><br/><span data-i18n="r_in5min">за 5 хвилин</span></p>
+  <p class="subtitle"><span data-i18n="r_subtitle">Платформа для керування рестораном з ШІ</span></p>
 </div>
 
 <div class="trial-badge" data-i18n="r_trialBadge">🎁 14 днів безкоштовно — будь-який тариф</div>
@@ -308,12 +308,16 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
 
 
     <div class="err" id="step3-err"></div>
+    <div class="agree-row" style="display:flex;align-items:flex-start;gap:.5rem;font-size:12px;color:var(--text);text-align:left;margin-bottom:.75rem">
+      <input type="checkbox" id="reg-agree" style="margin-top:2px;flex:none"/>
+      <span><span data-i18n="r_agreePre">Реєструючись ви погоджуєтесь з </span><span class="terms-link" data-i18n="r_termsLink" onclick="openTerms()">умовами використання</span><span data-i18n="r_agreePost">.</span></span>
+    </div>
     <button class="btn btn-accent" id="register-btn" onclick="doRegister()">
       Розпочати 14 днів безкоштовно 🚀
     </button>
     <button class="btn btn-outline" id="back-to-step2" style="margin-top:.5rem" data-i18n="r_back">← Назад</button>
     <div style="font-size:11px;color:var(--muted);text-align:center;margin-top:.75rem">
-      <span data-i18n="r_agreePre">Реєструючись ви погоджуєтесь з </span><span class="terms-link" data-i18n="r_termsLink" onclick="openTerms()">умовами використання</span><span data-i18n="r_agreePost">.</span><br/><span data-i18n="r_noCard">Картка не потрібна для пробного періоду.</span>
+      <span data-i18n="r_noCard">Картка не потрібна для пробного періоду.</span>
     </div>
   </div>
 
@@ -435,7 +439,7 @@ const REG_I18N = {
     'r_featDomain':'Власний домен',
     'r_popular':'ПОПУЛЯРНИЙ',
     'r_free':'Безкоштовно',
-    'r_perMonth':'/міс' 'r_termsTitle':'Умови використання', 'r_termsLink':'умовами використання', 'r_agreePre':'Реєструючись ви погоджуєтесь з ', 'r_agreePost':'.', 'r_noCard':'Картка не потрібна для пробного періоду.',,
+    'r_perMonth':'/міс', 'r_termsTitle':'Умови використання', 'r_termsLink':'умовами використання', 'r_agreePre':'Реєструючись ви погоджуєтесь з ', 'r_agreePost':'.', 'r_noCard':'Картка не потрібна для пробного періоду.', 'r_mustAgree':'Потрібно погодитись з умовами використання',
     'r_successTitle':'Заклад зареєстровано!',
     'r_successDesc':'Ваш пробний період розпочато. Увійдіть в адмін-панель щоб додати страви та налаштувати меню.',
     'r_yourMenu':'Ваше публічне меню:',
@@ -444,7 +448,7 @@ const REG_I18N = {
     'phVenueName':'Кафе «Смачно»',
     'phCity':'Тернопіль',
     'phSlug':'miy-zaklad',
-    'r_subtitle':'Цифрове меню для вашого закладу',
+    'r_subtitle':'Платформа для керування рестораном з ШІ',
     'r_haveAccount':'Вже є акаунт?'},
   en: {
     langTitle:'Choose your language', langSubtitle:'For comfortable work with admin panel',
@@ -474,7 +478,7 @@ const REG_I18N = {
     'r_featDomain':'Custom domain',
     'r_popular':'POPULAR',
     'r_free':'Free',
-    'r_perMonth':'/mo' 'r_termsTitle':'Terms of Use', 'r_termsLink':'the Terms of Use', 'r_agreePre':'By registering you agree to ', 'r_agreePost':'.', 'r_noCard':'No card required for the trial period.',,
+    'r_perMonth':'/mo', 'r_termsTitle':'Terms of Use', 'r_termsLink':'the Terms of Use', 'r_agreePre':'By registering you agree to ', 'r_agreePost':'.', 'r_noCard':'No card required for the trial period.', 'r_mustAgree':'You must accept the Terms of Use',
     'r_successTitle':'Venue registered!',
     'r_successDesc':'Your trial period has started. Log in to the admin panel to add dishes and set up your menu.',
     'r_yourMenu':'Your public menu:',
@@ -483,7 +487,7 @@ const REG_I18N = {
     'phVenueName':'My Cafe',
     'phCity':'London',
     'phSlug':'my-cafe',
-    'r_subtitle':'Digital menu for your venue',
+    'r_subtitle':'AI-powered restaurant management platform',
     'r_haveAccount':'Already have an account?'},
   pl: {
     langTitle:'Wybierz język', langSubtitle:'Dla wygodnej pracy z panelem administracyjnym',
@@ -513,7 +517,7 @@ const REG_I18N = {
     'r_featDomain':'Własna domena',
     'r_popular':'POPULARNY',
     'r_free':'Bezpłatnie',
-    'r_perMonth':'/mies' 'r_termsTitle':'Warunki korzystania', 'r_termsLink':'warunkami korzystania', 'r_agreePre':'Rejestrując się akceptujesz ', 'r_agreePost':'.', 'r_noCard':'Karta nie jest wymagana w okresie próbnym.',,
+    'r_perMonth':'/mies', 'r_termsTitle':'Warunki korzystania', 'r_termsLink':'warunkami korzystania', 'r_agreePre':'Rejestrując się akceptujesz ', 'r_agreePost':'.', 'r_noCard':'Karta nie jest wymagana w okresie próbnym.', 'r_mustAgree':'Musisz zaakceptować warunki korzystania',
     'r_successTitle':'Lokal zarejestrowany!',
     'r_successDesc':'Twój okres próbny rozpoczął się. Zaloguj się do panelu administracyjnego, aby dodać dania i skonfigurować menu.',
     'r_yourMenu':'Twoje publiczne menu:',
@@ -522,7 +526,7 @@ const REG_I18N = {
     'phVenueName':'Moja Restauracja',
     'phCity':'Warszawa',
     'phSlug':'moja-restauracja',
-    'r_subtitle':'Cyfrowe menu dla Twojego lokalu',
+    'r_subtitle':'Platforma do zarządzania restauracją z AI',
     'r_haveAccount':'Masz już konto?'},
   de: {
     langTitle:'Sprache wählen', langSubtitle:'Für komfortable Arbeit mit dem Admin-Panel',
@@ -552,7 +556,7 @@ const REG_I18N = {
     'r_featDomain':'Eigene Domain',
     'r_popular':'BELIEBT',
     'r_free':'Kostenlos',
-    'r_perMonth':'/Mo' 'r_termsTitle':'Nutzungsbedingungen', 'r_termsLink':'die Nutzungsbedingungen', 'r_agreePre':'Mit der Registrierung akzeptieren Sie ', 'r_agreePost':'.', 'r_noCard':'Für die Testphase ist keine Karte erforderlich.',,
+    'r_perMonth':'/Mo', 'r_termsTitle':'Nutzungsbedingungen', 'r_termsLink':'die Nutzungsbedingungen', 'r_agreePre':'Mit der Registrierung akzeptieren Sie ', 'r_agreePost':'.', 'r_noCard':'Für die Testphase ist keine Karte erforderlich.', 'r_mustAgree':'Sie müssen die Nutzungsbedingungen akzeptieren',
     'r_successTitle':'Lokal registriert!',
     'r_successDesc':'Ihr Testzeitraum hat begonnen. Melden Sie sich im Admin-Panel an, um Gerichte hinzuzufügen und das Menü einzurichten.',
     'r_yourMenu':'Ihr öffentliches Menü:',
@@ -561,7 +565,7 @@ const REG_I18N = {
     'phVenueName':'Mein Restaurant',
     'phCity':'Berlin',
     'phSlug':'mein-restaurant',
-    'r_subtitle':'Digitale Speisekarte für Ihr Lokal',
+    'r_subtitle':'KI-Plattform für Restaurantmanagement',
     'r_haveAccount':'Haben Sie ein Konto?'},
   ro: {
     langTitle:'Alegeți limba', langSubtitle:'Pentru lucru comod cu panoul de administrare',
@@ -591,7 +595,7 @@ const REG_I18N = {
     'r_featDomain':'Domeniu propriu',
     'r_popular':'POPULAR',
     'r_free':'Gratuit',
-    'r_perMonth':'/lună' 'r_termsTitle':'Termeni de utilizare', 'r_termsLink':'termenii de utilizare', 'r_agreePre':'Prin înregistrare acceptați ', 'r_agreePost':'.', 'r_noCard':'Nu este necesar un card pentru perioada de probă.',,
+    'r_perMonth':'/lună', 'r_termsTitle':'Termeni de utilizare', 'r_termsLink':'termenii de utilizare', 'r_agreePre':'Prin înregistrare acceptați ', 'r_agreePost':'.', 'r_noCard':'Nu este necesar un card pentru perioada de probă.', 'r_mustAgree':'Trebuie să acceptați termenii de utilizare',
     'r_successTitle':'Local înregistrat!',
     'r_successDesc':'Perioada dvs. de probă a început. Conectați-vă la panoul de administrare pentru a adăuga preparate și a configura meniul.',
     'r_yourMenu':'Meniul dvs. public:',
@@ -600,7 +604,7 @@ const REG_I18N = {
     'phVenueName':'Restaurantul meu',
     'phCity':'București',
     'phSlug':'restaurantul-meu',
-    'r_subtitle':'Meniu digital pentru localul dvs.',
+    'r_subtitle':'Platformă de gestionare a restaurantului cu IA',
     'r_haveAccount':'Aveți deja un cont?'},
   es: {
     langTitle:'Elige tu idioma', langSubtitle:'Para trabajar cómodamente con el panel de administración',
@@ -630,7 +634,7 @@ const REG_I18N = {
     'r_featDomain':'Dominio propio',
     'r_popular':'POPULAR',
     'r_free':'Gratis',
-    'r_perMonth':'/mes' 'r_termsTitle':'Términos de uso', 'r_termsLink':'los términos de uso', 'r_agreePre':'Al registrarte aceptas ', 'r_agreePost':'.', 'r_noCard':'No se requiere tarjeta para el período de prueba.',,
+    'r_perMonth':'/mes', 'r_termsTitle':'Términos de uso', 'r_termsLink':'los términos de uso', 'r_agreePre':'Al registrarte aceptas ', 'r_agreePost':'.', 'r_noCard':'No se requiere tarjeta para el período de prueba.', 'r_mustAgree':'Debes aceptar los términos de uso',
     'r_successTitle':'¡Local registrado!',
     'r_successDesc':'Su período de prueba ha comenzado. Inicie sesión en el panel de administración para agregar platos y configurar el menú.',
     'r_yourMenu':'Su menú público:',
@@ -639,7 +643,7 @@ const REG_I18N = {
     'phVenueName':'Mi Restaurante',
     'phCity':'Madrid',
     'phSlug':'mi-restaurante',
-    'r_subtitle':'Menú digital para tu local',
+    'r_subtitle':'Plataforma de gestión de restaurantes con IA',
     'r_haveAccount':'¿Ya tienes cuenta?'},
   cnr: {
     langTitle:'Odaberite jezik', langSubtitle:'Za udoban rad s admin panelom',
@@ -669,7 +673,7 @@ const REG_I18N = {
     'r_featDomain':'Vlastita domena',
     'r_popular':'POPULARNO',
     'r_free':'Besplatno',
-    'r_perMonth':'/mj' 'r_termsTitle':'Uslovi korišćenja', 'r_termsLink':'uslove korišćenja', 'r_agreePre':'Registracijom prihvatate ', 'r_agreePost':'.', 'r_noCard':'Kartica nije potrebna za probni period.',,
+    'r_perMonth':'/mj', 'r_termsTitle':'Uslovi korišćenja', 'r_termsLink':'uslove korišćenja', 'r_agreePre':'Registracijom prihvatate ', 'r_agreePost':'.', 'r_noCard':'Kartica nije potrebna za probni period.', 'r_mustAgree':'Morate prihvatiti uslove korišćenja',
     'r_successTitle':'Lokal registrovan!',
     'r_successDesc':'Vaš probni period je počeo. Prijavite se u admin panel da dodate jela i podesite meni.',
     'r_yourMenu':'Vaš javni meni:',
@@ -678,7 +682,7 @@ const REG_I18N = {
     'phVenueName':'Moj Restoran',
     'phCity':'Podgorica',
     'phSlug':'moj-restoran',
-    'r_subtitle':'Digitalni meni za vaš lokal',
+    'r_subtitle':'Platforma za upravljanje restoranom uz AI',
     'r_haveAccount':'Već imate nalog?'},
 }
 
@@ -897,6 +901,15 @@ window.doRegister = async function() {
   const phone = document.getElementById('r-phone').value.trim();
   const email = document.getElementById('r-email').value.trim();
   const pass  = document.getElementById('r-pass').value;
+
+  const agree = document.getElementById('reg-agree');
+  if (agree && !agree.checked) {
+    const s = REG_I18N[selectedAdminLang] || REG_I18N.uk;
+    showErr('step3-err', (s && s.r_mustAgree) || 'Потрібно погодитись з умовами використання');
+    btn.textContent = 'Розпочати 14 днів безкоштовно 🚀';
+    btn.disabled = false;
+    return;
+  }
 
   try {
     // Зберігаємо мову
