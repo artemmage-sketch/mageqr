@@ -447,6 +447,10 @@ window.__CF_URL = 'https://us-central1-mageqrrest.cloudfunctions.net';
         <label class="auth-label" id="reg-city-label">—</label>
         <input class="auth-input" type="text" id="reg-city" autocomplete="address-level2"/>
       </div>
+      <div class="auth-agree" style="display:flex;gap:.5rem;align-items:flex-start;font-size:13px;margin:.25rem 0 .5rem;text-align:left;color:var(--text,#fff)">
+        <input type="checkbox" id="reg-agree-menu" style="margin-top:3px;flex:none"/>
+        <span id="reg-agree-text"></span>
+      </div>
       <div class="auth-err" id="auth-err-2"></div>
       <button class="auth-btn" id="reg-submit-btn" onclick="doRegisterStep2()">—</button>
     </div>
@@ -1155,6 +1159,8 @@ window.doRegisterStep2 = async function() {
   if (!name)          { errEl.textContent = ui('authErrName');   return; }
   if (!selectedGender){ errEl.textContent = ui('authErrGender'); return; }
   if (!age)           { errEl.textContent = ui('authErrAge');    return; }
+  const agreeChk = document.getElementById('reg-agree-menu');
+  if (agreeChk && !agreeChk.checked) { errEl.textContent = ui('authErrAgree'); return; }
 
   try {
     // Якщо вже авторизований (Google) — просто оновлюємо профіль
@@ -1240,6 +1246,12 @@ function applyAuthLang() {
   document.getElementById('reg-city-label').textContent  = ui('authCityPh');
   document.getElementById('reg-city').placeholder        = ui('authCityPh');
   document.getElementById('reg-submit-btn').textContent  = ui('authSignUpBtn');
+  // Згода з умовами/політикою (з клікабельними посиланнями)
+  const at = document.getElementById('reg-agree-text');
+  if (at) at.innerHTML = ui('agreePre')
+    + ' <a class="legal-link" style="color:var(--accent,#FF6B35);cursor:pointer;text-decoration:underline" onclick="showLegalModal(\'terms\')">' + ui('agreeTerms') + '</a> '
+    + ui('agreeAnd')
+    + ' <a class="legal-link" style="color:var(--accent,#FF6B35);cursor:pointer;text-decoration:underline" onclick="showLegalModal(\'privacy\')">' + ui('agreePrivacy') + '</a>';
   // Reset
   document.getElementById('reset-desc').textContent     = ui('authEmailPh');
   document.getElementById('reset-send-btn').textContent = ui('authReset');
@@ -1318,7 +1330,7 @@ const UI_STRINGS = {
     authErrExists:'Цей email вже зареєстрований',
     authErrWeak:'Пароль занадто слабкий (мін. 6 символів)',
     authErrName:"Введіть ваше ім'я",
-    authErrAge:'Оберіть вікову категорію',
+    authErrAge:'Оберіть вікову категорію', agreePre:'Я погоджуюсь з', agreeTerms:'умовами користування', agreeAnd:'та', agreePrivacy:'політикою конфіденційності', authErrAgree:'Потрібно погодитись з умовами та політикою',
     authErrGender:'Оберіть стать',
     authResetSent:'Лист відновлення надіслано на вашу пошту',
     profOrders:'Історія замовлень',
@@ -1379,7 +1391,7 @@ const UI_STRINGS = {
     authErrExists:'This email is already registered',
     authErrWeak:'Password too weak (min. 6 characters)',
     authErrName:'Please enter your name',
-    authErrAge:'Please select age range',
+    authErrAge:'Please select age range', agreePre:'I agree to', agreeTerms:'terms of use', agreeAnd:'and', agreePrivacy:'privacy policy', authErrAgree:'You must accept the terms and privacy policy',
     authErrGender:'Please select gender',
     authResetSent:'Reset email sent to your address',
     profOrders:'Order history',
@@ -1433,7 +1445,7 @@ const UI_STRINGS = {
     authErrExists:'Ten email jest już zarejestrowany',
     authErrWeak:'Hasło zbyt słabe (min. 6 znaków)',
     authErrName:'Wprowadź swoje imię',
-    authErrAge:'Wybierz przedział wiekowy',
+    authErrAge:'Wybierz przedział wiekowy', agreePre:'Akceptuję', agreeTerms:'warunki korzystania', agreeAnd:'oraz', agreePrivacy:'politykę prywatności', authErrAgree:'Musisz zaakceptować warunki i politykę prywatności',
     authErrGender:'Wybierz płeć',
     authResetSent:'Link resetowania wysłany na twój email',
     profOrders:'Historia zamówień',
@@ -1487,7 +1499,7 @@ const UI_STRINGS = {
     authErrExists:'Diese E-Mail ist bereits registriert',
     authErrWeak:'Passwort zu schwach (mind. 6 Zeichen)',
     authErrName:'Bitte geben Sie Ihren Namen ein',
-    authErrAge:'Bitte Altersgruppe wählen',
+    authErrAge:'Bitte Altersgruppe wählen', agreePre:'Ich akzeptiere die', agreeTerms:'Nutzungsbedingungen', agreeAnd:'und', agreePrivacy:'Datenschutzrichtlinie', authErrAgree:'Sie müssen die Bedingungen und Datenschutzrichtlinie akzeptieren',
     authErrGender:'Bitte Geschlecht wählen',
     authResetSent:'Reset-E-Mail wurde gesendet',
     profOrders:'Bestellverlauf',
@@ -1541,7 +1553,7 @@ const UI_STRINGS = {
     authErrExists:'Acest email este deja înregistrat',
     authErrWeak:'Parola prea slabă (min. 6 caractere)',
     authErrName:'Introduceți numele dvs.',
-    authErrAge:'Selectați grupa de vârstă',
+    authErrAge:'Selectați grupa de vârstă', agreePre:'Sunt de acord cu', agreeTerms:'termenii de utilizare', agreeAnd:'și', agreePrivacy:'politica de confidențialitate', authErrAgree:'Trebuie să acceptați termenii și politica de confidențialitate',
     authErrGender:'Selectați genul',
     authResetSent:'Email de resetare trimis la adresa dvs.',
     profOrders:'Istoricul comenzilor',
@@ -1595,7 +1607,7 @@ const UI_STRINGS = {
     authErrExists:'Este email ya está registrado',
     authErrWeak:'Contraseña demasiado débil (mín. 6 caracteres)',
     authErrName:'Por favor ingresa tu nombre',
-    authErrAge:'Por favor selecciona rango de edad',
+    authErrAge:'Por favor selecciona rango de edad', agreePre:'Acepto los', agreeTerms:'términos de uso', agreeAnd:'y la', agreePrivacy:'política de privacidad', authErrAgree:'Debes aceptar los términos y la política de privacidad',
     authErrGender:'Por favor selecciona género',
     authResetSent:'Email de restablecimiento enviado a tu dirección',
     profOrders:'Historial de pedidos',
@@ -1649,7 +1661,7 @@ const UI_STRINGS = {
     authErrExists:'Ovaj email je već registrovan',
     authErrWeak:'Lozinka je preslaba (min. 6 znakova)',
     authErrName:'Unesite vaše ime',
-    authErrAge:'Odaberite starosnu grupu',
+    authErrAge:'Odaberite starosnu grupu', agreePre:'Prihvatam', agreeTerms:'uslove korišćenja', agreeAnd:'i', agreePrivacy:'politiku privatnosti', authErrAgree:'Morate prihvatiti uslove i politiku privatnosti',
     authErrGender:'Odaberite pol',
     authResetSent:'Email za reset poslan na vašu adresu',
     profOrders:'Historija narudžbina',
@@ -2644,6 +2656,36 @@ window.toggleLegal = function(key) {
   arrow.classList.toggle('open', !isOpen);
 };
 
+// Умови/політика: власні закладу або стандартні (фолбек з config/default_legal)
+function resolveLegal(kind) {
+  const s = _venueSettings || {};
+  const own = kind === 'terms' ? s.legalTerms : s.legalPrivacy;
+  if (own && String(own).trim()) return String(own);
+  const dl = window.__defaultLegal || {};
+  const obj = (kind === 'terms' ? dl.terms : dl.privacy) || {};
+  return obj[currentLang] || obj.uk || '';
+}
+window.showLegalModal = function(kind) {
+  const title = ui(kind === 'terms' ? 'viTerms' : 'viPrivacy');
+  const text  = resolveLegal(kind) || '—';
+  let ov = document.getElementById('legal-modal');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'legal-modal';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:3000;padding:1rem';
+    ov.onclick = (e) => { if (e.target === ov) closeLegalModal(); };
+    ov.innerHTML = '<div style="background:var(--card,#111);border:1px solid var(--border,#2A2A2A);border-radius:14px;max-width:560px;width:100%;max-height:80vh;display:flex;flex-direction:column;overflow:hidden">'
+      + '<div style="display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border,#2A2A2A)"><b id="legal-modal-title" style="font-size:1rem"></b><span onclick="closeLegalModal()" style="cursor:pointer;font-size:1.3rem;color:var(--muted,#888)">✕</span></div>'
+      + '<div id="legal-modal-body" style="padding:1.25rem;overflow-y:auto;white-space:pre-wrap;line-height:1.6;font-size:14px;color:var(--text,#eee)"></div></div>';
+    document.body.appendChild(ov);
+  }
+  document.getElementById('legal-modal-title').textContent = title;
+  document.getElementById('legal-modal-body').textContent  = text;
+  ov.style.display = 'flex';
+};
+window.closeLegalModal = function() { const ov = document.getElementById('legal-modal'); if (ov) ov.style.display = 'none'; };
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLegalModal(); });
+
 window.viCopy = function(elId) {
   const val = $(elId)?.textContent || '';
   navigator.clipboard?.writeText(val).then(() => {
@@ -2663,6 +2705,12 @@ async function init() {
       const ordSnap = await getDoc(doc(db, 'venues', venueId, 'settings', 'ordering'));
       orderingSettings = ordSnap.exists() ? ordSnap.data() : {};
     } catch(e) { orderingSettings = {}; }
+
+    // Стандартні політики (фолбек, якщо заклад не задав власні)
+    try {
+      const dlSnap = await getDoc(doc(db, 'config', 'default_legal'));
+      window.__defaultLegal = dlSnap.exists() ? (dlSnap.data() || {}) : {};
+    } catch(e) { window.__defaultLegal = {}; }
 
     try { applySettings(sSnap.exists() ? sSnap.data() : {}); } catch(e) { console.warn('applySettings:', e.message); }
     try { design = dSnap.exists() ? dSnap.data() : {}; applyDesign(design); } catch(e) { console.warn('applyDesign:', e.message); }
