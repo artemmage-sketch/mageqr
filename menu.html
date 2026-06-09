@@ -1264,6 +1264,15 @@ const params   = new URLSearchParams(location.search);
 const rawVenueId = params.get('v') || 'demo';
 const venueId  = rawVenueId.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 50) || 'demo';
 
+// Лічильник візитів (раз на сесію, fire-and-forget — не блокує меню)
+try {
+  const _vk = 'mq_visit_' + venueId;
+  if (venueId !== 'demo' && !sessionStorage.getItem(_vk)) {
+    sessionStorage.setItem(_vk, '1');
+    fetch(window.__CF_URL + '/recordVisit?venueId=' + encodeURIComponent(venueId) + '&page=menu').catch(() => {});
+  }
+} catch (e) {}
+
 // Валюта закладу (завантажується з settings)
 let menuCurrencySymbol = '₴';
 let menuCurrencyPostfix = false; // true = символ після числа (грн, zł...)
