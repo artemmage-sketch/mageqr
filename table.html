@@ -969,6 +969,16 @@ const params   = new URLSearchParams(location.search);
 const venueId  = (params.get('v') || '').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,50) || 'demo';
 const tableNum = params.get('t') || null;
 
+// Лічильник візитів (раз на сесію, fire-and-forget)
+try {
+  const _vk = 'mq_visit_' + venueId;
+  if (venueId !== 'demo' && !sessionStorage.getItem(_vk)) {
+    sessionStorage.setItem(_vk, '1');
+    fetch(CF + '/recordVisit?venueId=' + encodeURIComponent(venueId) + '&page=table').catch(() => {});
+  }
+} catch (e) {}
+
+
 let venueSettings = {};
 let openBillData  = null;   // поточний відкритий рахунок
 let staff         = [];
