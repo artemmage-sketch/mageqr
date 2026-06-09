@@ -45,6 +45,8 @@ button{cursor:pointer}
 .nav-btn:hover{background:var(--bg3);color:var(--text)}
 .nav-btn.active{background:rgba(108,99,255,.15);color:var(--accent2);border:1px solid rgba(108,99,255,.2)}
 .pf-tab-row{display:flex;align-items:center;gap:.4rem;font-size:12px;color:var(--text);cursor:pointer}
+.dl-lang-btn{background:var(--bg2);border:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:600;padding:.35rem .6rem;border-radius:7px;cursor:pointer;font-family:inherit}
+.dl-lang-btn.active{background:var(--accent,#6C63FF);border-color:var(--accent,#6C63FF);color:#fff}
 .nav-icon{width:18px;text-align:center;font-size:.95rem}
 .sb-bottom{margin-top:auto;padding:1rem;border-top:1px solid var(--border)}
 .sb-user{display:flex;align-items:center;gap:.6rem}
@@ -224,6 +226,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
     </div>
     <div class="sb-section">Головне</div>
     <button class="nav-btn active" onclick="nav(this,'t-overview')"><span class="nav-icon">📊</span> Огляд</button>
+    <button class="nav-btn" onclick="nav(this,'t-stats')"><span class="nav-icon">📈</span> Статистика</button>
     <button class="nav-btn" onclick="nav(this,'t-venues')"><span class="nav-icon">🏪</span> Заклади</button>
     <button class="nav-btn" onclick="nav(this,'t-activity')"><span class="nav-icon">⚡</span> Активність</button>
     <div class="sb-section">Бізнес</div>
@@ -280,6 +283,47 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div class="table-wrap">
           <div class="table-header"><div class="table-title">Остання активність</div></div>
           <div class="activity-list" id="activity-mini"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATISTICS -->
+    <div id="t-stats" class="tab-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem">
+        <h1 style="font-size:1.3rem;margin:0">📈 Статистика</h1>
+        <div id="stats-range" style="display:inline-flex;background:var(--bg3);border-radius:9px;padding:3px;gap:2px">
+          <button data-r="today" class="srbtn active" onclick="setStatsRange('today')">Сьогодні</button>
+          <button data-r="7d" class="srbtn" onclick="setStatsRange('7d')">7 днів</button>
+          <button data-r="30d" class="srbtn" onclick="setStatsRange('30d')">30 днів</button>
+        </div>
+      </div>
+      <style>
+        .srbtn{background:none;border:none;color:var(--muted);font-size:13px;font-weight:500;padding:.4rem .8rem;border-radius:7px;cursor:pointer;font-family:inherit}
+        .srbtn.active{background:var(--accent2);color:#fff}
+        .stat-card{background:var(--bg3);border-radius:10px;padding:.9rem 1rem}
+        .stat-val{font-size:1.45rem;font-weight:700;color:var(--text)}
+        .stat-lbl{font-size:12px;color:var(--muted);margin-top:2px}
+        #stats-venues{width:100%;border-collapse:collapse;font-size:13px}
+        #stats-venues th{text-align:left;color:var(--muted);font-weight:500;padding:.5rem .6rem;border-bottom:1px solid var(--border)}
+        #stats-venues td{padding:.5rem .6rem;border-bottom:1px solid var(--border);color:var(--text)}
+      </style>
+      <div id="stats-loading" style="color:var(--muted);font-size:13px">Завантаження…</div>
+      <div id="stats-err" style="color:#ff6b6b;font-size:13px;display:none"></div>
+      <div id="stats-body" style="display:none">
+        <div id="stats-kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin-bottom:1.25rem"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1.25rem">
+          <div class="card" style="padding:1.1rem"><h3 style="margin:0 0 .6rem;font-size:.95rem">Типи замовлень</h3><div id="stats-ordertypes"></div></div>
+          <div class="card" style="padding:1.1rem"><h3 style="margin:0 0 .6rem;font-size:.95rem">Типи оплат</h3><div id="stats-payments"></div></div>
+          <div class="card" style="padding:1.1rem"><h3 style="margin:0 0 .6rem;font-size:.95rem">Розподіл по тарифах</h3><div id="stats-plans"></div></div>
+        </div>
+        <div class="card" style="padding:1.1rem">
+          <h3 style="margin:0 0 .75rem;font-size:.95rem">По закладах</h3>
+          <div style="overflow-x:auto">
+            <table id="stats-venues">
+              <thead><tr><th>Заклад</th><th>Тариф</th><th>Візити</th><th>Замовл.</th><th>Оборот</th><th>Сер. чек</th><th>Оплата</th></tr></thead>
+              <tbody id="stats-venues-body"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -530,6 +574,27 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div style="display:flex;gap:.75rem;align-items:center;margin-top:1rem">
           <button class="btn-primary" onclick="saveTerms()" style="padding:.6rem 1.25rem">💾 Зберегти умови</button>
           <span id="terms-status" style="font-size:13px;color:var(--muted)"></span>
+        </div>
+      </div>
+
+      <!-- Стандартні політики для закладів (фолбек у меню) -->
+      <div class="card" style="padding:1.25rem;margin-top:1.5rem">
+        <h2 style="font-size:1rem;margin:0 0 .5rem">🛡️ Стандартні політики для закладів (фолбек)</h2>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:1rem">Показуються клієнтам у меню при реєстрації, <b>якщо заклад не задав власні</b> умови/політику. По мовах — клієнту показується його мова (фолбек на українську).</div>
+        <div style="display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.75rem" id="dl-lang-row">
+          <button class="dl-lang-btn" data-lang="uk" onclick="switchDlLang('uk')">🇺🇦 UA</button>
+          <button class="dl-lang-btn" data-lang="en" onclick="switchDlLang('en')">🇬🇧 EN</button>
+          <button class="dl-lang-btn" data-lang="pl" onclick="switchDlLang('pl')">🇵🇱 PL</button>
+          <button class="dl-lang-btn" data-lang="de" onclick="switchDlLang('de')">🇩🇪 DE</button>
+          <button class="dl-lang-btn" data-lang="ro" onclick="switchDlLang('ro')">🇷🇴 RO</button>
+          <button class="dl-lang-btn" data-lang="es" onclick="switchDlLang('es')">🇪🇸 ES</button>
+          <button class="dl-lang-btn" data-lang="cnr" onclick="switchDlLang('cnr')">🇲🇪 ME</button>
+        </div>
+        <label style="font-size:12px;color:var(--muted)">📋 Умови користування<textarea id="dl-terms" rows="5" style="width:100%;margin-top:.3rem;padding:.6rem;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);box-sizing:border-box;resize:vertical;font-family:inherit;font-size:13px"></textarea></label>
+        <label style="font-size:12px;color:var(--muted);display:block;margin-top:.75rem">🔒 Політика конфіденційності<textarea id="dl-privacy" rows="5" style="width:100%;margin-top:.3rem;padding:.6rem;border:1px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);box-sizing:border-box;resize:vertical;font-family:inherit;font-size:13px"></textarea></label>
+        <div style="display:flex;gap:.75rem;align-items:center;margin-top:1rem">
+          <button class="btn-primary" onclick="saveDefaultLegal()" style="padding:.6rem 1.25rem">💾 Зберегти стандартні політики</button>
+          <span id="dl-status" style="font-size:13px;color:var(--muted)"></span>
         </div>
       </div>
     </div>
@@ -1433,6 +1498,14 @@ window.loadContent = async function(){
       if(el) el.value = d[lg] || '';
     });
   } catch(e){ console.warn('loadContent terms:', e.message); }
+  // Стандартні політики (фолбек)
+  try {
+    const s = await getDoc(doc(db,'config','default_legal'));
+    const d = s.exists() ? (s.data()||{}) : {};
+    defaultLegal = { terms: d.terms || {}, privacy: d.privacy || {} };
+  } catch(e){ defaultLegal = { terms:{}, privacy:{} }; console.warn('loadContent default_legal:', e.message); }
+  dlLang = 'uk';
+  renderDl();
 };
 
 window.saveSupport = async function(){
@@ -1523,15 +1596,97 @@ window.saveTerms = async function(){
   } catch(e){ st.textContent = '❌ ' + e.message; }
 };
 
+// ── Стандартні політики закладів (config/default_legal) ──
+let defaultLegal = { terms:{}, privacy:{} };
+let dlLang = 'uk';
+function captureDl(){
+  const t = document.getElementById('dl-terms');
+  const p = document.getElementById('dl-privacy');
+  if(t) defaultLegal.terms[dlLang]   = t.value;
+  if(p) defaultLegal.privacy[dlLang] = p.value;
+}
+function renderDl(){
+  const t = document.getElementById('dl-terms');
+  const p = document.getElementById('dl-privacy');
+  if(t) t.value = defaultLegal.terms[dlLang]   || '';
+  if(p) p.value = defaultLegal.privacy[dlLang] || '';
+  document.querySelectorAll('.dl-lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===dlLang));
+}
+window.switchDlLang = function(lang){ captureDl(); dlLang = lang; renderDl(); };
+window.saveDefaultLegal = async function(){
+  const { doc, setDoc } = window.__FS;
+  const st = document.getElementById('dl-status');
+  st.textContent = '⏳ Зберігаємо...';
+  captureDl();
+  // прибираємо порожні мови
+  const clean = (o)=>{ const r={}; Object.keys(o).forEach(k=>{ const v=(o[k]||'').trim(); if(v) r[k]=v; }); return r; };
+  try {
+    await setDoc(doc(db,'config','default_legal'), { terms: clean(defaultLegal.terms), privacy: clean(defaultLegal.privacy) }, { merge: true });
+    st.textContent = '✅ Збережено';
+    setTimeout(()=>{ st.textContent=''; }, 2500);
+  } catch(e){ st.textContent = '❌ ' + e.message; }
+};
+
 window.nav = function(btn, tab){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));
   document.getElementById(tab).classList.add('active');
   if(tab === 't-plans') loadPlansFromFirestore();
+  if(tab === 't-stats') loadStats();
   if(tab === 't-users') loadUsers();
   if(tab === 't-content') loadContent();
 };
+
+// ── СТАТИСТИКА ──────────────────────────────────────────────
+let _statsRange = 'today';
+function _se(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+window.setStatsRange = function(r){
+  _statsRange = r;
+  document.querySelectorAll('#stats-range .srbtn').forEach(b=>b.classList.toggle('active', b.dataset.r===r));
+  loadStats();
+};
+window.loadStats = async function(){
+  const load=document.getElementById('stats-loading'), body=document.getElementById('stats-body'), err=document.getElementById('stats-err');
+  if(!load) return;
+  load.style.display='block'; body.style.display='none'; err.style.display='none';
+  try {
+    if(!auth || !auth.currentUser) throw new Error('Не авторизовано');
+    const token = await auth.currentUser.getIdToken();
+    const res = await fetch(window.__CF_URL+'/getPlatformStats?range='+_statsRange, { headers:{ Authorization:'Bearer '+token } });
+    const d = await res.json();
+    if(!res.ok || !d.success) throw new Error(d.error || 'Помилка завантаження');
+    renderPlatformStats(d);
+    load.style.display='none'; body.style.display='block';
+  } catch(e){
+    load.style.display='none'; err.style.display='block'; err.textContent='❌ '+e.message;
+  }
+};
+function _statCard(label,val){
+  return '<div class="stat-card"><div class="stat-val">'+_se(val)+'</div><div class="stat-lbl">'+_se(label)+'</div></div>';
+}
+function _rows(obj){
+  const e=Object.entries(obj||{}).filter(([k,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  if(!e.length) return '<div style="color:var(--muted);font-size:13px">—</div>';
+  return e.map(([k,v])=>'<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--border)"><span>'+_se(k)+'</span><b>'+v+'</b></div>').join('');
+}
+function renderPlatformStats(d){
+  document.getElementById('stats-kpis').innerHTML = [
+    _statCard('Візити', d.visits),
+    _statCard('Замовлення', d.orders),
+    _statCard('Оборот', d.turnover+' ₴'),
+    _statCard('Середній чек', d.avgCheck+' ₴'),
+    _statCard('Конверсія', d.conversion+'%'),
+    _statCard('Дохід підписок/міс', d.monthRevenue+' ₴'),
+    _statCard('Активні заклади', d.activeVenues+' / '+d.total),
+  ].join('');
+  const ot=d.byOrderType||{};
+  document.getElementById('stats-ordertypes').innerHTML = _rows({'У залі':ot.dine_in||0,'З собою':ot.takeaway||0,'Доставка':ot.delivery||0});
+  document.getElementById('stats-payments').innerHTML = _rows(d.byPayment);
+  document.getElementById('stats-plans').innerHTML = _rows(d.byPlan);
+  const rows=(d.perVenue||[]).map(v=>'<tr><td>'+_se(v.name)+'</td><td>'+_se(v.plan)+'</td><td>'+v.visits+'</td><td>'+v.orders+'</td><td>'+v.turnover+' ₴</td><td>'+v.avgCheck+' ₴</td><td>'+_se(v.topPayment)+'</td></tr>').join('');
+  document.getElementById('stats-venues-body').innerHTML = rows || '<tr><td colspan="7" style="color:var(--muted)">Немає даних за період</td></tr>';
+}
 
 // ── MODAL ───────────────────────────────────────────────────
 window.openModal  = id => document.getElementById(id).classList.add('open');
