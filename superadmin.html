@@ -422,10 +422,10 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div class="topbar"><div><div class="topbar-title">Доходи платформи</div></div></div>
       <div class="content">
         <div class="stats-row">
-          <div class="stat-card purple"><div class="stat-label">MRR</div><div class="stat-val purple">₴48 200</div><div class="stat-delta"><span class="delta-up">↑ 18%</span> vs минулий місяць</div></div>
-          <div class="stat-card green"><div class="stat-label">ARR (прогноз)</div><div class="stat-val green">₴578K</div><div class="stat-delta">Прогноз на рік</div></div>
-          <div class="stat-card amber"><div class="stat-label">ARPU</div><div class="stat-val amber">₴482</div><div class="stat-delta">Середній дохід/заклад</div></div>
-          <div class="stat-card red"><div class="stat-label">Churn rate</div><div class="stat-val red">2.4%</div><div class="stat-delta"><span class="delta-up">↓ 0.3%</span> покращення</div></div>
+          <div class="stat-card purple"><div class="stat-label">MRR</div><div class="stat-val purple" id="rev-mrr">—</div><div class="stat-delta">Місячний регулярний дохід</div></div>
+          <div class="stat-card green"><div class="stat-label">ARR (прогноз)</div><div class="stat-val green" id="rev-arr">—</div><div class="stat-delta">MRR × 12</div></div>
+          <div class="stat-card amber"><div class="stat-label">ARPU</div><div class="stat-val amber" id="rev-arpu">—</div><div class="stat-delta">Середній дохід / заклад</div></div>
+          <div class="stat-card red"><div class="stat-label">Дохід за місяць (факт)</div><div class="stat-val red" id="rev-actual">—</div><div class="stat-delta">Отримані оплати цього місяця</div></div>
         </div>
         <div class="chart-card">
           <div class="chart-title">Доходи по місяцях</div>
@@ -775,6 +775,7 @@ async function initFirebase() {
     if (user && user.email === SUPER_EMAIL) {
       document.getElementById('s-login').style.display = 'none';
       document.getElementById('s-app').style.display   = 'block';
+      try { const el = document.querySelector('.sb-uname'); if (el) el.textContent = user.email; } catch(_){}
       init();
     } else if (user && user.email !== SUPER_EMAIL) {
       // Авторизований але не супер-адмін
@@ -1634,6 +1635,8 @@ window.nav = function(btn, tab){
   document.getElementById(tab).classList.add('active');
   if(tab === 't-plans') loadPlansFromFirestore();
   if(tab === 't-stats') loadStats();
+  if(tab === 't-revenue') loadRevenue();
+  if(tab === 't-activity') loadActivity();
   if(tab === 't-users') loadUsers();
   if(tab === 't-content') loadContent();
 };
@@ -1651,11 +1654,17 @@ window.loadStats = async function(){
   if(!load) return;
   load.style.display='block'; body.style.display='none'; err.style.display='none';
   try {
-    if(!auth || !auth.currentUser) throw new Error('Не авторизовано');
-    const token = await auth.currentUser.getIdToken();
+    // Дочекатись, поки Firebase визначить стан авторизації (інакше currentUser може бути null)
+    if (auth && typeof auth.authStateReady === 'function') { try { await auth.authStateReady(); } catch(_){} }
+    const user = auth && auth.currentUser;
+    if (!user) throw new Error('Сесія не активна — оновіть сторінку (Ctrl+Shift+R) і увійдіть знову');
+    const token = await user.getIdToken();
     const res = await fetch(window.__CF_URL+'/getPlatformStats?range='+_statsRange, { headers:{ Authorization:'Bearer '+token } });
-    const d = await res.json();
-    if(!res.ok || !d.success) throw new Error(d.error || 'Помилка завантаження');
+    let d = null; try { d = await res.json(); } catch(_){}
+    if (res.status === 401) throw new Error('Сервер: токен не прийнято (функцію задеплоєно? сесія дійсна?)');
+    if (res.status === 403) throw new Error('Сервер: немає прав — email акаунта ≠ секрету SUPER_ADMIN_EMAIL функцій');
+    if (res.status === 404) throw new Error('Функцію getPlatformStats не задеплоєно');
+    if (!res.ok || !d || !d.success) throw new Error((d && d.error) || ('HTTP ' + res.status));
     renderPlatformStats(d);
     load.style.display='none'; body.style.display='block';
   } catch(e){
@@ -1687,6 +1696,63 @@ function renderPlatformStats(d){
   const rows=(d.perVenue||[]).map(v=>'<tr><td>'+_se(v.name)+'</td><td>'+_se(v.plan)+'</td><td>'+v.visits+'</td><td>'+v.orders+'</td><td>'+v.turnover+' ₴</td><td>'+v.avgCheck+' ₴</td><td>'+_se(v.topPayment)+'</td></tr>').join('');
   document.getElementById('stats-venues-body').innerHTML = rows || '<tr><td colspan="7" style="color:var(--muted)">Немає даних за період</td></tr>';
 }
+
+// ── ДОХОДИ (реальні дані) ───────────────────────────────────
+window.loadRevenue = async function(){
+  try {
+    if (auth && typeof auth.authStateReady === 'function') { try { await auth.authStateReady(); } catch(_){} }
+    const user = auth && auth.currentUser; if(!user) return;
+    const token = await user.getIdToken();
+    const res = await fetch(window.__CF_URL+'/getPlatformStats?range=30d', { headers:{ Authorization:'Bearer '+token } });
+    const d = await res.json();
+    if(!res.ok || !d.success) return;
+    const mrr = Number(d.mrr) || 0;
+    const arr = mrr*12, arpu = d.total ? Math.round(mrr/d.total) : 0;
+    const fmt = n => '€'+Number(n||0).toLocaleString('uk-UA');
+    document.getElementById('rev-mrr').textContent    = fmt(mrr);
+    document.getElementById('rev-arr').textContent    = arr>=1000 ? '€'+Math.round(arr/1000)+'K' : fmt(arr);
+    document.getElementById('rev-arpu').textContent   = fmt(arpu);
+    document.getElementById('rev-actual').textContent = fmt(d.monthRevenue||0);
+    renderRevChart(d.revenueByMonth||[]);
+  } catch(e){ console.warn('loadRevenue:', e.message); }
+};
+function renderRevChart(arr){
+  const chart=document.getElementById('rev-chart'), labels=document.getElementById('rev-labels');
+  if(!chart) return;
+  const max = Math.max(1, ...arr.map(m=>m.revenue||0));
+  chart.style.display='flex'; chart.style.alignItems='flex-end'; chart.style.gap='8px'; chart.style.height='120px';
+  chart.innerHTML = arr.map(m=>{
+    const h = Math.round(((m.revenue||0)/max)*100);
+    return '<div title="€'+(m.revenue||0)+'" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="background:var(--accent2);border-radius:4px 4px 0 0;height:'+h+'%;min-height:2px"></div></div>';
+  }).join('');
+  if(labels){ labels.style.display='flex'; labels.style.gap='8px'; labels.style.marginTop='6px';
+    labels.innerHTML = arr.map(m=>'<span style="flex:1;text-align:center;font-size:11px;color:var(--muted)">'+_se(m.month.slice(5))+'</span>').join(''); }
+}
+
+// ── ЖУРНАЛ ПОДІЙ ────────────────────────────────────────────
+window.loadActivity = async function(){
+  const box=document.getElementById('activity-full');
+  if(!box) return;
+  box.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:.5rem">Завантаження…</div>';
+  try {
+    if (auth && typeof auth.authStateReady === 'function') { try { await auth.authStateReady(); } catch(_){} }
+    const user = auth && auth.currentUser;
+    if(!user){ box.innerHTML='<div style="color:#ff6b6b;font-size:13px;padding:.5rem">Сесія не активна — оновіть сторінку</div>'; return; }
+    const token = await user.getIdToken();
+    const res = await fetch(window.__CF_URL+'/getActivityLog', { headers:{ Authorization:'Bearer '+token } });
+    const d = await res.json();
+    if(res.status===403){ box.innerHTML='<div style="color:#ff6b6b;font-size:13px;padding:.5rem">Немає прав (email ≠ SUPER_ADMIN_EMAIL)</div>'; return; }
+    if(!res.ok || !d.success) throw new Error(d.error || ('HTTP '+res.status));
+    if(!d.events || !d.events.length){ box.innerHTML='<div style="color:var(--muted);font-size:13px;padding:.5rem">Поки немає подій</div>'; return; }
+    box.innerHTML = d.events.map(ev=>{
+      const when = ev.at ? new Date(ev.at).toLocaleString('uk-UA') : '';
+      let icon, text;
+      if(ev.type==='signup'){ icon='🏪'; text='Реєстрація закладу <b>'+_se(ev.venue)+'</b> ('+_se(ev.plan)+')'; }
+      else { icon='💳'; text='Оплата €'+(ev.amount||0)+(ev.method?(' · '+_se(ev.method)):'')+' — <b>'+_se(ev.venue)+'</b>'; }
+      return '<div style="display:flex;gap:.6rem;align-items:center;padding:.6rem .4rem;border-bottom:1px solid var(--border)"><span style="font-size:1.1rem">'+icon+'</span><div style="flex:1;font-size:13px">'+text+'</div><span style="font-size:12px;color:var(--muted)">'+_se(when)+'</span></div>';
+    }).join('');
+  } catch(e){ box.innerHTML='<div style="color:#ff6b6b;font-size:13px;padding:.5rem">❌ '+_se(e.message)+'</div>'; }
+};
 
 // ── MODAL ───────────────────────────────────────────────────
 window.openModal  = id => document.getElementById(id).classList.add('open');
