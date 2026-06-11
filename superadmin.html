@@ -240,6 +240,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
         <div class="sb-uname">superadmin</div>
         <button class="sb-logout" onclick="doLogout()">вийти</button>
       </div>
+      <div style="font-size:10px;color:var(--muted);opacity:.6;padding:2px 4px">build: stats+revenue+activity</div>
     </div>
   </div>
 
@@ -1662,7 +1663,7 @@ window.loadStats = async function(){
     const res = await fetch(window.__CF_URL+'/getPlatformStats?range='+_statsRange, { headers:{ Authorization:'Bearer '+token } });
     let d = null; try { d = await res.json(); } catch(_){}
     if (res.status === 401) throw new Error('Сервер: токен не прийнято (функцію задеплоєно? сесія дійсна?)');
-    if (res.status === 403) throw new Error('Сервер: немає прав — email акаунта ≠ секрету SUPER_ADMIN_EMAIL функцій');
+    if (res.status === 403) throw new Error('Немає прав. Ваш email: ' + ((d&&d.you)||'?') + ' · довжина секрету: ' + ((d&&d.secretLen)!=null?d.secretLen:'?') + ' (для "super@mageqrrest.com" має бути 20)');
     if (res.status === 404) throw new Error('Функцію getPlatformStats не задеплоєно');
     if (!res.ok || !d || !d.success) throw new Error((d && d.error) || ('HTTP ' + res.status));
     renderPlatformStats(d);
